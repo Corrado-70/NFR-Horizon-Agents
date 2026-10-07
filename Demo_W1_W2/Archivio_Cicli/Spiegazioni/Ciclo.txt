@@ -1,0 +1,48 @@
+SPIEGAZIONI DEL REGISTRO NFR — CICLO 2026Q4 — valori VALIDATI dal validatore.
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+Data di riferimento: 2026-12-31; ciclo precedente: 2026Q3.
+
+RISCHI DEL CICLO, DAL PIU' ALTO PER SCORE (dettaglio nel file Rischio_nn.txt che ha il codice in testa)
+1. NFR-01 Frodi su pagamenti istantanei abilitate da AI generativa: score 4,40, AGIRE ORA: X+Y > Z, livello Attivazione, esito Variato
+2. NFR-07 Ransomware presso un fornitore di servizi di pagamento: score 3,75, Agire entro l'anno, livello Attenzione, esito Confermato
+3. NFR-12 Errori operativi nei pagamenti istantanei obbligatori: score 3,65, Agire entro l'anno, livello Attenzione, esito Confermato
+4. NFR-02 Concentrazione su un fornitore cloud critico: score 3,30, Margine 1 anno, livello Monitoraggio, esito Confermato
+5. NFR-03 Greenwashing nella commercializzazione di prodotti ESG: score 3, Agire entro l'anno, livello Attenzione, esito Confermato
+6. NFR-05 Errori di processo nella migrazione del core banking: score 3, Margine 1 anno, livello Monitoraggio, esito Confermato
+7. NFR-06 Esfiltrazione di dati tramite strumenti di AI non autorizzati: score 3, Agire entro l'anno, livello Attenzione, esito Confermato
+8. NFR-10 Informazioni errate ai clienti da assistenti di AI generativa: score 3, Margine 1 anno, livello Monitoraggio, esito Confermato
+9. NFR-13 Vertenze e carenza di competenze in funzioni IT critiche: score 3, Agire entro l'anno, livello Monitoraggio, esito Nuovo
+10. NFR-09 Violazione di sanzioni internazionali tramite triangolazioni: score 2,90, Margine 1,3 anni, livello Monitoraggio, esito Confermato
+11. NFR-04 Eventi climatici estremi su sedi e data center: score 2,80, Agire entro l'anno, livello Attenzione, esito Confermato
+12. NFR-11 Fine del supporto dei sistemi di pagamento legacy: score 2,80, AGIRE ORA: X+Y > Z, livello Attivazione, esito Confermato
+13. NFR-08 Accessi impropri di dipendenti ai dati dei clienti: score 2,75, Margine 1 anno, livello Monitoraggio, esito Confermato
+
+COMMENTO DI A1 PER IL COMITATO
+Nel quarto trimestre 2026 entra nel registro un rischio nuovo sui rapporti di impiego (NFR-13): la vertenza nazionale del settore e la carenza di tecnici in ruoli IT critici, segnalate dall'aggiornamento settimanale come area non presidiata, hanno ora un riscontro interno. Sale la prossimita' delle frodi con voce sintetica (NFR-01) dopo i primi casi su clienti della Banca. Gli altri undici rischi sono confermati.
+
+CONTROLLI
+Sintesi di A5: A5 non usato in questo ciclo (facoltativo, D-71): valgono i controlli dello script e la validazione.
+Segnalazioni sul ciclo: nessuna
+Segnalazioni da motivare: nessuna
+
+PARAMETRI DEL RADAR
+Pesi dello score composito: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20 (media pesata delle dimensioni valutate).
+Z di Mosca per Prossimita 1..5 (anni prima che il rischio possa manifestarsi): 1 -> 3,50, 2 -> 2,50, 3 -> 1,50, 4 -> 0,50, 5 -> 0,00.
+X di Mosca, anni per decidere e avviare: 0,25
+Y di riserva, anni (senza azioni): 1,00
+Soglia di direzione dei segnali netti: 2,00
+Soglia del Delta composito: 0,30
+Livello di allerta: P x I alta da: 12,00
+Livello di allerta: quota di KRI in ambra o rosso da: 0,50
+Livello di allerta: margine stretto sotto (anni): 1,00
+Livello di allerta: segnali forti per l'Attivazione: 2,00
+
+FENOMENI CONSIDERATI DA A1 E NON CENSITI COME RISCHI
+- Truffe con QR code falsi sui parcometri [L1-02]: gia' coperto da un rischio del registro. Il meccanismo, frode che induce il cliente a un pagamento verso terzi, e' quello di NFR-01: le fonti ne arricchiscono le evidenze, non serve un rischio nuovo. Fonti: FNT-03 Banca d'Italia, comunicato sulle truffe con codici QR (2026-11-05)
+- Crittografia dei pagamenti esposta ai computer quantistici [L1-06]: troppo lontano: candidato alla lista di osservazione. Meccanismo plausibile per i sistemi di pagamento, ma le fonti lo collocano oltre cinque anni: oltre l'orizzonte della Prossimita 1, candidato alla lista di osservazione. Fonti: FNT-25 ENISA, rapporto sulla crittografia post-quantistica (2026-10-20)
+
+RISCHI DISMESSI (usciti dal registro)
+Nessuno.
+
+NOTE DELL'ANALISTA (prima pagina del report)
+Nessuna nota per il ciclo corrente.

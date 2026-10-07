@@ -1,0 +1,1396 @@
+# Guida passo passo — per chi usa il sistema, senza conoscerne l'interno
+
+Questa guida dice **cosa fare, in che ordine, cosa scrivere e cosa si deve
+vedere**. Non serve capire come funziona dentro. Se un passo non da' il
+risultato descritto, **fermarsi** e guardare la sezione 7 ("Se qualcosa va
+storto"): il sistema e' fatto per fermarsi prima di sbagliare, non dopo.
+
+Vale per la variante senza Copilot Studio: agenti in Microsoft 365 Copilot
+(Agent Builder) e uno script sul PC. Contiene anche l'**avvio del progetto**
+(decisioni, collaudo sul primo ciclo, cancelli e tempi: sezione "Avvio del
+progetto", che dal 07/10/2026 sostituisce il vecchio piano di deploy) e la
+configurazione iniziale del tenant (sezione 0); dettaglio tecnico in
+`07_Senza_Studio/README_variante_locale.md`.
+
+## Le parole che servono
+
+| Parola | Significato |
+|---|---|
+| **Registro** | il file Excel `NFR_Registro.xlsx`: contiene tutto, cresce a ogni ciclo. |
+| **Ciclo** | un trimestre, scritto cosi': `2026Q3` (anno, Q, numero del trimestre). |
+| **Settimana** | indicata dal suo lunedi', scritto cosi': `2026-10-12`. |
+| **Agente** | un assistente di Copilot: A1 (valuta i rischi ogni trimestre), A5 (controlla A1, facoltativo), A6 (scrive i testi delle schede dei rischi, dopo la validazione), A3 (legge le notizie ogni settimana), A4 (pareri su richiesta), A7 (risponde in chat sul perche' delle valutazioni, D-72). |
+| **Schede** | il file `Schede_<ciclo>.xlsx`, a parte rispetto al registro: una scheda per rischio (contenuto nella sezione 4). |
+| **Script** | il programma sul PC che scrive nel registro: `esegui_ciclo_locale.py` e `raccogli_notizie.py`. |
+| **Baseline** | il file `Baseline_corrente.json` (e la sua copia `.txt`): la fotografia del registro che si da' agli agenti. |
+| **Allegato di A1** | il file `Input_A1_<ciclo>.txt`, accanto alla baseline: baseline, controlli di A5 e guida di scrittura in un file solo. Lo scrive lo script ogni volta che aggiorna la baseline; si allega ad A1 (D-69). |
+| **Validare** | accettare, correggere ("rettificare") o respingere le proposte degli agenti. Lo fa una persona. |
+
+## Python: a cosa serve e cosa devi sapere
+
+**Gli agenti non usano Python.** Vivono in Microsoft 365 Copilot: si aprono,
+si scrive una richiesta, rispondono. Pero' non possono scrivere in Excel ne'
+salvare file. Python fa questo lavoro: e' un programma sul tuo PC che prende
+le risposte degli agenti, le **controlla**, le **scrive** nel registro Excel
+e ne **archivia** una copia. Senza Python le risposte degli agenti restano
+nella chat e andrebbero ricopiate a mano, senza nessun controllo.
+
+### Cosa lanci tu, e quando
+
+Solo due programmi, sempre dal Prompt dei comandi, dalla cartella degli script:
+`raccogli_notizie.py` (le notizie del lunedi') ed `esegui_ciclo_locale.py`
+(tutto il resto, un comando per ogni azione: `baseline`, `trimestrale`,
+`settimanale`, `valida`...). Quale passo usa quale comando: "In breve: i cicli
+standard", qui sotto. Ogni comando con parametri, opzioni, file che scrive ed
+errori tipici: **sezione 9**.
+
+Nella stessa cartella ci sono altri file `.py` (`excel_com.py`,
+`controlli_a5.py`, `valida_output.py`, `fonti.py`, `input_a1.py`, `precontrollo.py`,
+`schede.py`, `spiegazioni.py`): **non si lanciano**, li usano i due programmi. Non spostarli e non rinominarli.
+
+Nel pacchetto ci sono anche programmi che **tu non usi**: `componi_prompt.py`
+(rigenera il testo dei prompt quando cambiano le regole), `genera_dashboard.py`
+(rigenera il template Excel), la cartella `99_Collaudo` (verifica che una
+modifica non abbia rotto niente). Li usa solo chi mantiene il pacchetto.
+
+### Cosa fa sempre, prima di scrivere
+
+Ogni volta che scrive nel registro, lo script:
+1. controlla che la risposta dell'agente abbia il formato giusto e rispetti le
+   regole (se no si ferma con **FERMATO** e il registro non viene toccato);
+2. fa una copia di sicurezza del registro in `Archivio_Cicli\Backup\`;
+3. scrive, ricalcola Excel e controlla che non ci siano errori;
+4. salva e mette una copia con nome proprio nell'archivio.
+
+Excel si apre e si chiude da solo, invisibile: non va aperto a mano. Anzi,
+**il registro deve essere chiuso** mentre lo script lavora.
+
+### Come si scrive un comando (per chi non l'ha mai fatto)
+
+1. Menu Start, scrivere `cmd`, aprire **Prompt dei comandi**.
+2. Andare nella cartella degli script: scrivere `cd` e il percorso fra
+   virgolette, poi Invio. Esempio:
+   `cd "C:\Users\nome\NFR\07_Senza_Studio"`. Suggerimento: in Esplora file
+   si puo' copiare il percorso dalla barra degli indirizzi.
+3. Scrivere il comando, per esempio `python esegui_ciclo_locale.py baseline`, e
+   premere Invio. Aspettare che ricompaia la riga con il percorso: i comandi
+   che scrivono nel registro impiegano uno-due minuti (Excel si apre e
+   ricalcola tutto, invisibile).
+4. I nomi di file con spazi vanno fra virgolette. I file degli agenti conviene
+   salvarli nella cartella degli script, cosi' basta scriverne il nome.
+5. Il tasto Freccia su richiama l'ultimo comando: utile per rilanciarlo.
+
+Cosa fa ciascun agente e che cosa gli si puo' scrivere (messaggio base e variazioni): sezione 8.
+
+Per sapere se il comando e' andato bene basta leggere l'ultima riga: il testo
+atteso e' scritto nelle tabelle delle sezioni 1, 2 e 3. **FERMATO** vuol dire
+che lo script ha trovato un problema e non ha toccato niente; **ERRORE
+TECNICO** vuol dire un problema del PC (sezione 7).
+
+### Raccolta notizie automatica ogni lunedi' (una volta sola)
+
+1. Menu Start, aprire **Utilita' di pianificazione**, poi *Crea attivita' di base*.
+2. Nome: `Raccolta notizie NFR`. Attivazione: *Settimanale*, lunedi', ore 7:00.
+3. Azione: *Avvio programma*. Programma: `python`. Argomenti:
+   `raccogli_notizie.py`. *Inizio in*: il percorso della cartella degli script
+   (senza virgolette).
+4. Il lunedi' successivo controllare che in `News_Inbox\<lunedi'>\` ci sia il
+   file `Raccolta_<data>.txt`.
+
+La raccolta normale scarica solo le fonti con `stato: approvata` in
+`fonti.md` (al 24/09 tutte tranne FNT-19, esclusa: `08_Deploy/DECISIONI.md`).
+Una fonte nuova, ancora "da validare", si prova con
+`python raccogli_notizie.py --anche-da-validare`.
+
+## In breve: i cicli standard
+
+Un promemoria per chi conosce gia' il sistema: un passo per riga. I dettagli,
+cio' che si deve vedere e cosa fare se qualcosa non torna sono nelle sezioni
+indicate; per i messaggi d'errore la sezione 7, per cosa scrivere agli agenti la
+sezione 8. Tutti i comandi si lanciano dalla cartella degli script, con il
+registro chiuso.
+
+**Ogni lunedi'** (sezione 1)
+
+| # | Passo | In una riga |
+|---|---|---|
+| 1 | `python raccogli_notizie.py` (di solito automatico alle 7) | scarica le notizie delle fonti in `News_Inbox\<lunedi'>\` |
+| 2 | file in `News_Inbox\<lunedi'>\Manuali\` | aggiungi a mano cio' che non arriva dai feed |
+| 3 | A3: "Esegui l'aggiornamento settimanale" | valuta le notizie; salva la risposta come `A3_<lunedi'>.json` |
+| 4 | `python esegui_ciclo_locale.py settimanale --payload A3_<lunedi'>.json` | scrive le notizie nel registro |
+| 5 | facoltativo: griglia del foglio Validazione, poi `python esegui_ciclo_locale.py valida --periodo <lunedi'> --validatore "..."` | conferma o corregge le notizie (sezione 3) |
+
+**Ogni trimestre** (sezione 2)
+
+| # | Passo | In una riga |
+|---|---|---|
+| 1 | Registro, riga 4: "Ciclo validato" | il trimestre prima deve essere validato |
+| 2 | `python esegui_ciclo_locale.py baseline` | prepara la baseline e l'allegato di A1 `Input_A1_<ciclo>.txt` |
+| 3 | copia `Baseline_corrente.txt` nella library Kernel | serve ad A3 e A4 |
+| 4 | A1: allega `Input_A1_<ciclo>.txt`, "Esegui il ciclo" | valuta i rischi; salva come `A1_<ciclo>.json` |
+| 5 | facoltativi: `python esegui_ciclo_locale.py precontrollo --payload A1_<ciclo>.json` e A5 | controllano A1 prima di scrivere (sezione 2, punti 5-bis e 6) |
+| 6 | `python esegui_ciclo_locale.py trimestrale --payload A1_<ciclo>.json` (con `--challenger A5_<ciclo>.json` se hai usato A5) | scrive il ciclo; se FERMATO, dai ad A1 il messaggio `Correzione_A1_<ciclo>.txt` (sezione 2, punto 8) |
+| 7 | griglia del foglio Validazione, poi `python esegui_ciclo_locale.py valida --periodo <ciclo> --validatore "..."` | il validatore decide le proposte (anche le voci della lista di osservazione) e motiva le segnalazioni ⚑ (sezione 3) |
+| 8 | `python esegui_ciclo_locale.py schede-input`, A6 "Scrivi le schede", `python esegui_ciclo_locale.py schede --payload A6_<ciclo>.json` | schede dei rischi (sezione 2, punti 11-12) |
+| 9 | `python esegui_ciclo_locale.py report` | PDF del report al comitato (sezione 2, punto 13) |
+
+**Quando serve**
+
+| Passo | In una riga | Dettagli |
+|---|---|---|
+| A7: domande in chat | il perche' di valori, urgenza, livello, temi non censiti, voci in osservazione; "sintesi per il Quadro" da incollare nelle Note dell'analista | sezioni 4 e 8 |
+| A4: la notizia in chat | parere su una notizia, senza numeri nuovi | sezione 8 |
+| Celle gialle del registro (presidio, anni di adeguamento, supervisore, stato delle azioni, Note dell'analista) | modifiche a mano ammesse; poi `python esegui_ciclo_locale.py report` per il PDF | sezione 6 |
+| Ciclo straordinario: `python esegui_ciclo_locale.py baseline --straordinario --rischi NFR-nn --motivo "..." --decisore "..."`, A1 "Esegui il ciclo straordinario", `trimestrale`, `valida` | rivaluta subito i rischi toccati da un evento critico (proposto da A3 o A4, o di tua iniziativa) | sezione 2-bis |
+| `python esegui_ciclo_locale.py dismetti --rischio NFR-nn --motivazione "..." --decisore "..."` | toglie un rischio dal registro, la storia resta | sezione 3-bis |
+| `python esegui_ciclo_locale.py griglia` | ricostruisce il foglio Validazione rovinato a mano | sezione 3 |
+| `python esegui_ciclo_locale.py aggiorna-registro` | porta il registro su un template nuovo, dopo un aggiornamento del pacchetto | sezione 0-bis |
+
+## Avvio del progetto (responsabile, funzioni di controllo, manutentore — una volta)
+
+Dal via al primo ciclo in esercizio: **dieci fasi** (0-9). Ogni fase ha i suoi
+passi con chi li fa; le fasi 0, 1, 6, 7 e 8 si chiudono con un **cancello**: non
+si passa alla fase dopo senza il si' della persona indicata, scritto in
+`08_Deploy/DECISIONI.md`. I passi tecniche dell'installazione (fasi 2-6) sono
+nella sezione 0. Riguarda la soluzione cosi' com'e' nel pacchetto (Agent Builder
+e script locale, senza Copilot Studio ne' Power Automate); dal 05/10/2026 ci sono
+anche due prove fuori dalle fasi: `08_Deploy/Prova_senza_Copilot_Studio.md` (la
+versione corrente su un registro separato) e
+`09_Copilot_Studio/Prova_con_Copilot_Studio.md` (D-70).
+
+**Ruoli**
+
+| Ruolo | Chi (da nominare) | Cosa fa |
+|---|---|---|
+| **Responsabile del progetto** | funzione di rischio | decide, presiede i cancelli, tiene `DECISIONI.md` |
+| **Manutentore del pacchetto** | una persona con Python (IT o funzione di rischio) | adatta il kernel, rigenera prompt e template, lancia il collaudo |
+| **Analista** | 1-2 persone della funzione di rischio | usa il sistema ogni settimana e ogni trimestre (sezioni 1-4) |
+| **Validatore** | funzione di rischio o comitato | valida ogni ciclo (sezione 3) |
+| **IT / postazioni** | informatica | Python e pywin32 sul PC, proxy, Utilita' di pianificazione |
+| **Amministratore SharePoint / M365** | informatica | sito, library, permessi; verifica che Agent Builder sia attivo |
+| **Compliance, model risk, DPO** | funzioni di controllo | qualificazione, trattamento dei dati in Agent Builder, licenze delle fonti |
+
+**Fase 0 — Decisioni e autorizzazioni** (2-6 settimane, dipende dalle funzioni di controllo). Sapere se si puo' fare e con quali regole, prima di configurare qualunque cosa.
+
+| # | Chi | Passo |
+|---|---|---|
+| 0.1 | Responsabile | Tenere `DECISIONI.md` (nel pacchetto in `08_Deploy/`; da caricare nella library `Kernel`): ogni decisione con data, chi l'ha presa, perche'. |
+| 0.2 | Amministratore M365 | Agent Builder attivo per il tenant e per gli utenti del progetto; licenza Microsoft 365 Copilot ad analisti e validatore. |
+| 0.3 | Compliance, DPO | Parere sul trattamento: dati interni (audit, incidenti) come knowledge di agenti Agent Builder, elaborati da servizi Copilot Studio, senza chiavi gestite dal cliente (`06_Governance`, sezione 6). |
+| 0.4 | Model risk | Decidere se l'output e' un modello ai sensi della policy (`06_Governance`, sezione 1) e con quali requisiti di convalida. |
+| 0.5 | Responsabile | Il registro **alimenta** o **affianca** il processo di rischio operativo esistente? |
+| 0.6 | Responsabile | Nominare validatore, analisti, manutentore; decidere se la validazione delle notizie settimanali e' obbligatoria (oggi facoltativa). |
+| 0.7 | IT | Python e pywin32 installabili sul PC dell'analista; il proxy lascia raggiungere i feed RSS (o si rinuncia alla raccolta automatica). |
+| 0.8 | Responsabile | Fissare in `DECISIONI.md` i **criteri di accettazione del primo ciclo** (fase 7): riproducibilita' minima fra due run di A1, quota massima di rettifiche del validatore. **Non serve un trimestre gia' valutato a mano**: il registro parte vuoto. |
+
+**Cancello G0** — Responsabile, con compliance e model risk: pareri positivi (anche con condizioni) in `DECISIONI.md`. Senza G0 non si configura niente nel tenant.
+
+**Fase 1 — Kernel della Banca** (1-2 settimane, in parallelo alla fine della fase 0). Regole, scale e fonti della Banca, non i segnaposto del pacchetto. Come si cambia ogni file: sezione 6.
+
+| # | Chi | Passo |
+|---|---|---|
+| 1.1 | Responsabile + manutentore | Rivedere `01_Kernel/tassonomia_nfr.md`: categorie (dal 07/10 le nove in perimetro della tassonomia interna, D-74) e driver. |
+| 1.2 | Responsabile | Descrittori di `01_Kernel/rubrica_scoring.md` (Impatto, Probabilita, Prossimita, Velocity, rilevanza delle fonti) nel linguaggio della Banca (prima revisione: D-61); regole di variazione. Il presidio dei controlli e' un giudizio della Banca nell'anagrafica (D-49). |
+| 1.3 | Responsabile | Pesi del composito (D-50: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20), soglia di direzione (2), soglia del Delta (0,30, D-61), parametri dell'urgenza (X = 0,25 anni, Y di riserva 1 anno, anni per livello di Prossimita, D-59). Si scrivono poi nel foglio Parametri del registro (sezione 0.4). |
+| 1.4 | Responsabile + compliance | Validare `01_Kernel/fonti.md`: `stato` approvata o esclusa, licenza d'uso, i **4 siti** con `sito_agente: si` (fatto il 24/09: D-15, D-16, D-27..D-29). |
+| 1.5 | Manutentore | `python 02_Agenti/componi_prompt.py`: ogni prompt sotto 8.000 caratteri. |
+| 1.6 | Manutentore | Se sono cambiati categorie o driver: `python 03_Excel/genera_dashboard.py`. |
+| 1.7 | Manutentore | `python 99_Collaudo/esegui_collaudo.py`: **tutto OK** (circa un'ora con la catena; serve Excel desktop). Un KO dice quale file allineare. |
+
+**Cancello G1** — Responsabile: "rubrica, tassonomia e fonti sono quelle della Banca", collaudo tutto OK, in `DECISIONI.md`.
+
+**Fasi 2-6 — Installazione** (3-4 giorni, piu' due settimane di rodaggio della raccolta notizie): i passi sono nella sezione 0.
+
+| Fase | Cosa | Dove |
+|---|---|---|
+| 2 Postazione dell'analista | Python, pywin32, pypac, openpyxl, Excel; script in una cartella locale; prova di rete | sezione 0.3 |
+| 3 SharePoint | sito, sette library, controllo versione, permessi; `Kernel` caricato; sottocartelle di `Analisi_Interne`; sincronizzazione e `configurazione.json` | sezioni 0.1, 0.2 (punto 2), 0.3 |
+| 4 Registro vivo | `inizializza`, Parametri compilati, baseline (mai un registro creato a mano dal template) | sezione 0.4 |
+| 5 Raccolta notizie | raccolta pianificata il lunedi'; `Manuali`; dopo due settimane le fonti "non raggiungibili" o senza notizie si correggono in `fonti.md` (e si ricarica A3) | "Raccolta notizie automatica ogni lunedi'", sezione 1 |
+| 6 Agenti | creazione degli agenti, capability spente, prompt schedulato di A3, istruzioni archiviate, prova di fumo | sezione 0.2 |
+
+**Cancello G2** — Manutentore: gli agenti rispondono nel formato atteso (prova di fumo della sezione 0.2).
+
+**Fase 7 — Collaudo sul primo ciclo, da registro vuoto** (2-3 settimane). Misurare, **prima** di usarlo sul serio, se l'analisi di A1 e' stabile (due run danno lo stesso quadro) e accettabile per il validatore. Tutto su una **copia** del registro, mai su quello vivo; il metro sono il doppio run e la validazione umana.
+
+| # | Chi | Passo |
+|---|---|---|
+| 7.1 | Manutentore | Copia di prova vuota: `python esegui_ciclo_locale.py --workbook <cartella_prova>\NFR_Prova.xlsx --cartella-uscita <cartella_prova>\Uscita inizializza --ciclo-precedente <trimestre prima del primo da valutare> --settimana <lunedi'>`. Tutti i comandi di questa fase usano le stesse due opzioni. |
+| 7.2 | Analista | Mettere in `Analisi_Interne`, `Analisi_Esterne` e `News_Inbox` i documenti disponibili oggi. |
+| 7.3 | Analista | Baseline della copia (senza rischi); A1 con `Input_A1_<ciclo>.txt` della cartella di uscita della copia: `A1_run1.json`; **rifare A1** sullo stesso input: `A1_run2.json`. |
+| 7.4 | Manutentore | `python 99_Collaudo/confronta.py A1_run1.json A1_run2.json --primo-ciclo`: i rischi si abbinano per categoria e nome; quanti rischi in entrambi, quanti punteggi identici (controllare a occhio gli abbinamenti). |
+| 7.5 | Responsabile + analista | Leggere `A1_run1.json`: i rischi coprono le aree che la funzione conosce? Motivazioni e fonti verificabili? Confronto con i **sette rischi di riferimento** (tabella sotto, D-37): trovati? se no, perche'? Annotare in `DECISIONI.md` (osservazione, non criterio). |
+| 7.6 | Analista | `precontrollo --payload A1_run1.json` e, se scrive il messaggio di correzione, darlo ad A1 finche' non resta niente che fermi (annotare i giri); A5 se lo si usa; `trimestrale` sulla copia. Obiettivo: un giro. |
+| 7.7 | Validatore | Validare il ciclo di prova sulla copia (sezione 3); annotare il tempo, la quota di rettifiche e i rischi che non avrebbe voluto nel registro. |
+| 7.8 | Analista | Una settimana di prova: A3 sulla raccolta reale, `settimanale` sulla copia, validazione delle notizie. |
+| 7.9 | Responsabile | Se i criteri di 0.8 non sono raggiunti: rivedere descrittori o istruzioni (fase 1), ricomporre e ricaricare i prompt, ripetere 7.3-7.7. |
+
+Sette rischi di riferimento (passo 7.5, D-37): da un Horizon Scanning fatto a mano con Copilot M365 e i report ORX (`Analisi_Architettura/Archivio/08`); **non si danno ad A1** (un'analisi a cui si dice cosa trovare lo conferma).
+
+| Rischio dell'esempio | Categoria (D-74) | Driver | Nota |
+|---|---|---|---|
+| R1 AI agentica, identita' non umane | 9.7 Sicurezza informatica | DRV-AI, DRV-CYB | se il danno e' un'indisponibilita' dei sistemi: secondo rischio 9.6 |
+| R2 Attacco ai modelli AI, data poisoning | 9.7 Sicurezza informatica | DRV-AI, DRV-CYB | il degrado non doloso (drift) e' un altro rischio, 9.13 o 9.6 |
+| R3 Frodi con AI, deepfake | fuori perimetro (frode) | DRV-AI, DRV-CYB | la tassonomia interna mette la frode fuori dal perimetro dell'agente: fenomeno non censito |
+| R4 Terze parti, concentrazione cloud | 9.9 Terze parti | DRV-TPR, DRV-CYB | |
+| R5 Quantum / PQC | 9.7 Sicurezza informatica | DRV-CYB, DRV-TEC | caso tipico di anni di adeguamento (D-33) o di lista di osservazione (D-73) |
+| R6 Frammentazione normativa e sanzioni | 9.4 Legale | DRV-GEO, DRV-CON | serve un meccanismo di perdita legale; il financial crime e' fuori perimetro |
+| R7 Competenze, eccessivo affidamento sull'AI | 9.11 Employer o 9.13 Processo | DRV-HUM, DRV-AI | |
+
+Mancano 9.1, 9.5 e 9.8 e prevalgono i rischi tecnologici: e' il confronto atteso. A1 non deve coprire tutte le categorie (D-55); una categoria senza rischi resta visibile (sintesi di A1, "AREA NON PRESIDIATA"). Nel doppio run si guarda anche che meccanismi diversi restino rischi separati.
+
+**Cancello G3** — Responsabile e model risk: criteri di 0.8 raggiunti, validatore d'accordo che la validazione e' praticabile. Esito in `DECISIONI.md`.
+
+**Fase 8 — Primo ciclo reale, in parallelo al processo attuale** (un trimestre)
+
+| # | Chi | Passo |
+|---|---|---|
+| 8.1 | Analisti | Ogni lunedi': sezione 1. |
+| 8.2 | Analisti | A fine trimestre: sezione 2 (il primo ciclo propone tutti i rischi come "Nuovi"). |
+| 8.3 | Validatore | Sezione 3. |
+| 8.4 | Analista | Archiviare i prompt in uso; schede con A6 (sezione 2, punti 11-12); leggerle prima del comitato (nessun nome di persona, testi coerenti con i dati). |
+| 8.5 | Responsabile | Confrontare registro e report con il processo attuale dello stesso trimestre; portare al comitato le differenze con il primo report (PDF da Quadro a Metodologia e file delle schede, con i limiti dichiarati di `06_Governance`, sezione 5). |
+
+**Cancello G4 (finale)** — Responsabile, model risk, compliance: via all'esercizio (strumento ufficiale o affiancamento, come deciso in 0.5).
+
+**Fase 9 — Esercizio e manutenzione** (continua)
+
+| Cadenza | Chi | Cosa |
+|---|---|---|
+| Ogni lunedi' | analista | sezione 1; controllare le fonti non raggiungibili in testa alla raccolta |
+| Ogni trimestre | analista, validatore | sezioni 2 e 3; archiviare i prompt in uso |
+| A ogni "ATTENZIONE: l'anagrafica ha N posti liberi" | manutentore | template con `MAX_RISCHI` piu' alto (oggi 20) e le capacita' collegate, versione nuova della struttura, `aggiorna-registro` (sezione 0-bis); oltre i 20-25 rischi verificare la lunghezza delle risposte di A1, A5 e A6 |
+| Quando un rischio non va piu' seguito | responsabile, analista | `dismetti` (sezione 3-bis) |
+| Ogni modifica a rubrica, tassonomia, fonti | manutentore | sezione 6 e procedura "Se cambia il kernel" di `00_LEGGIMI.md` |
+| Ogni anno | responsabile, compliance | revisione dell'elenco fonti e delle licenze, e della quota di rettifiche (validazione "di facciata"?) |
+| A ogni aggiornamento di Agent Builder | manutentore | rileggere i limiti (8.000 caratteri, knowledge, tipi di file) in `07_Senza_Studio/README_variante_locale.md` |
+
+**Cancelli e tempi**
+
+| Cancello | Dopo la fase | Chi dice si' | Su cosa | Durata della fase |
+|---|---|---|---|---|
+| G0 | 0 | responsabile, compliance, model risk | si puo' fare, con quali regole | 2-6 settimane |
+| G1 | 1 | responsabile | kernel e fonti della Banca, collaudo tutto OK | 1-2 settimane |
+| G2 | 6 | manutentore | gli agenti rispondono nel formato atteso | 2-6: 3-4 giorni (5: due settimane in parallelo) |
+| G3 | 7 | responsabile, model risk | primo ciclo riproducibile e accettabile; validazione praticabile | 2-3 settimane |
+| G4 | 8 | responsabile, model risk, compliance | via all'esercizio | un trimestre |
+
+Dal via (G0) al primo ciclo in parallelo: circa **6-10 settimane**; esercizio pieno dopo il trimestre in parallelo.
+
+**Checklist prima del G4**: `DECISIONI.md` con G0-G3 firmati; kernel della Banca, `fonti.md` validato, prompt ricomposti, caricati e archiviati; collaudo tutto OK sull'ultima versione; registro creato con `inizializza`, Parametri compilati, baseline corretta; raccolta notizie pianificata e funzionante da due settimane; doppio run documentato; un ciclo di prova validato sulla copia con il tempo di validazione; backup verificati (un ripristino di prova da `Backup\`); guida consegnata ad analisti e validatore.
+
+## 0. Prima installazione (una volta sola)
+
+Percorso tecnico completo, dal tenant vuoto al primo ciclo pronto da
+eseguire, **nell'ordine in cui va fatto**: prima l'amministratore (0.1), poi
+chi mantiene il pacchetto (0.2), poi ogni analista sul proprio PC (0.3), poi
+la creazione del registro (0.4). Chi segue solo la propria parte puo' andare
+diretto alla sua sezione, ma i passi prima della propria vanno gia' fatti da
+altri.
+
+Questa e' la parte tecnica delle fasi 2-6 dell'avvio del progetto (sezione
+precedente, con i pareri, il collaudo sul primo ciclo, i cancelli G0-G4 e i
+tempi): qui i comandi e gli esiti attesi, una sola volta.
+
+### 0.1 Amministratore SharePoint / M365 (prima di tutto il resto)
+
+1. Verificare che **Agent Builder** sia attivo per il tenant e per gli utenti
+   del progetto, e che la licenza Microsoft 365 Copilot sia assegnata ad
+   analisti e validatore.
+2. Creare il sito SharePoint (es. `NFR-Emerging-Risk`) con le **sette library**
+   di `04_SharePoint/struttura_e_liste.md`: `Kernel`, `Analisi_Interne`,
+   `Analisi_Esterne`, `News_Inbox`, `Report_Trimestrali`, `Report_Settimanali`,
+   `Archivio_Cicli` (`Report_Settimanali` in questa variante resta vuota e si
+   puo' non creare: l'output della settimana va in `Archivio_Cicli\Settimane`,
+   la sintesi di A3 nel foglio Sintesi_Settimane del registro).
+   `Analisi_Interne` e `Analisi_Esterne` sono separate apposta
+   (D-45): solo documenti della Banca su se stessa nella prima, solo materiale
+   di terzi (report di settore, database di perdite di consorzio come ORX)
+   nella seconda. A1 fa corrispondere `fonti[].tipo` alla cartella di
+   provenienza ("Interna" per `Analisi_Interne`, "Esterna" per
+   `Analisi_Esterne`): un documento di terzi finito per errore in
+   `Analisi_Interne` verrebbe etichettato "Interna", quindi va spostato.
+   (Le tre liste di quel documento non servono in questa variante senza
+   Copilot Studio.)
+3. Attivare il **controllo versione** su tutte le library. Permessi: `Kernel`
+   e `Archivio_Cicli` in sola lettura per chi non e' manutentore o analista;
+   il sito visibile solo al gruppo della funzione di rischio.
+
+4. (analisti) Creare in `Analisi_Interne` le sottocartelle indicate dagli
+   indirizzi delle fonti `share` di `01_Kernel/fonti.md` e caricarvi i documenti
+   interni recenti (audit, incidenti, report di funzione); in `Analisi_Esterne`
+   i report di settore e di consorzio.
+
+**Verifica**: le sette library esistono nel sito, ciascuna con il controllo
+versione attivo.
+
+### 0.2 Manutentore del pacchetto (dopo 0.1, prima che un analista arrivi a 0.3)
+
+1. Se non gia' fatto, adattare il kernel alla Banca: `01_Kernel/tassonomia_nfr.md`,
+   `01_Kernel/rubrica_scoring.md`, `01_Kernel/fonti.md` (sezione 6 piu' sotto,
+   "Cambiare le regole"). Poi `python 02_Agenti/componi_prompt.py` e, se e'
+   cambiata la tassonomia, `python 03_Excel/genera_dashboard.py`.
+2. Caricare nella library `Kernel`: i file di `01_Kernel/` e `DECISIONI.md`. Servono
+   allo script (che li legge da li') e agli agenti A3 e A4 per la baseline; non
+   si aggiungono come knowledge degli agenti (vedi sotto).
+3. Creare gli **agenti** in Agent Builder (A1, A3, A4, A5 facoltativo, A6, A7) (rimando per il "perche'" — limiti di Agent Builder, fonti verificate su Microsoft Learn, capacita' che evolvono in fretta: `07_Senza_Studio/README_variante_locale.md`; qui solo i passi):
+   Microsoft 365 Copilot ->
+   Nuovo agente -> **"Passa a Configura"** (configurazione manuale, NON la
+   descrizione in linguaggio naturale, che riscriverebbe le istruzioni). Per
+   ciascuno, incollare **il file intero** delle istruzioni nel campo
+   Istruzioni — mai i file di `02_Agenti/modelli/`, che contengono ancora i
+   segnaposto `{{TASSONOMIA}}` / `{{RUBRICA:...}}` non risolti:
+
+   | Agente | Istruzioni (file intero) | Modalita' | Capability | Condivisione |
+   |---|---|---|---|---|
+   | A1 Horizon Scanner | `02_Agenti/A1_Horizon_Scanner.md` | Think deeper | nessuna (spegnere entrambe) | analisti |
+   | A3 Interim Update | `02_Agenti/A3_Interim_Update.md` | Auto | nessuna | analisti |
+   | A4 News Assessor | `02_Agenti/A4_News_Assessor.md` | Auto | nessuna | gruppo della funzione di rischio |
+   | A5 Challenger (facoltativo, D-71) | `02_Agenti/A5_Challenger.md` | Think deeper | nessuna | analisti |
+   | A6 Schede dei rischi | `02_Agenti/A6_Schede.md` | Think deeper | nessuna | chi prepara il report al comitato |
+   | A7 Assistente del registro | `02_Agenti/A7_Assistente_registro.md` | Think deeper | nessuna | gruppo della funzione di rischio |
+
+   **Perche' questa modalita'** (non e' una decisione registrata in
+   `DECISIONI.md`: e' il ragionamento su cosa fa ciascun agente — se non
+   convince, e' una modalita' che si cambia con un clic, senza toccare
+   istruzioni o knowledge):
+   - **A1 — Think deeper**: valuta TUTTI i rischi in anagrafica insieme, su
+     quattro dimensioni e gli anni di adeguamento ciascuno, confrontando due cicli precedenti e
+     rispettando regole di variazione rigide (max un punto, evidenza datata
+     specifica). E' il compito con piu' vincoli incrociati da tenere insieme:
+     quello dove un ragionamento superficiale produce piu' facilmente un
+     errore che A5 poi deve fermare.
+   - **A3 — Auto**: per ogni notizia della settimana, un compito
+     classificatorio ripetuto (intensita' 0-3 su nove categorie fisse,
+     direzione fra quattro valori). Gira anche su un **prompt schedulato
+     automatico** ogni lunedi': un tempo di risposta prevedibile conta, e il
+     compito non ha il ragionamento multi-vincolo di A1.
+   - **A4 — Auto**: valuta UNA notizia alla volta, su richiesta, con una
+     struttura di risposta fissa. Meno superficie di errore di A1: non tocca
+     punteggi, non confronta cicli, non deve tenere coerenti piu' rischi
+     insieme.
+   - **A5 — Think deeper**: deve far passare l'output di A1 attraverso nove
+     controlli indipendenti (C1-C9), alcuni sottili (C4 plausibilita', C6
+     deriva sistematica su piu' rischi), e puo' **fermare il ciclo**: un
+     controllo superficiale vanificherebbe il suo scopo di contrappeso
+     indipendente.
+   - **A6 — Think deeper**: scrive testi estesi (300-1800 caratteri per
+     rischio) dove ogni numero citato deve stare esattamente nei dati
+     validati, senza liberta' creativa sui valori. Lo script comunque
+     respinge un numero o una fonte alterati (`schede.controlla_a6`), ma un
+     ragionamento piu' attento riduce i giri di correzione avanti e indietro.
+
+   **Knowledge esatta per agente** — Configura -> Knowledge -> Add knowledge
+   source. Per una cartella SharePoint: SharePoint/OneDrive -> selezionare
+   la **cartella intera** (non i singoli file). Per un file: stesso percorso
+   ma selezionare il **singolo file**. Per un sito: "Web site" e incollare
+   l'URL (semplice, senza parametri, max due livelli).
+
+   | Agente | Cartelle SharePoint (intere) | File singolo | Siti web esterni |
+   |---|---|---|---|
+   | A1 Horizon Scanner | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | — | i 4 sotto |
+   | A3 Interim Update | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | `Kernel/Baseline_corrente.txt` | i 4 sotto |
+   | A4 News Assessor | — | `Kernel/Baseline_corrente.txt` | nessuno |
+   | A5 Challenger | **nessuna** (riceve solo i 2 allegati in chat: output di A1 e baseline) | — | nessuno |
+   | A6 Schede dei rischi | **nessuna** (riceve solo l'allegato `Schede_input_<ciclo>.json` in chat) | — | nessuno |
+   | A7 Assistente del registro | `Kernel/Spiegazioni` (la cartella intera: la scrive lo script), `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | — | nessuno |
+
+   I **4 siti web** (gli unici con `sito_agente: si` in `01_Kernel/fonti.md`,
+   uguali per A1 e A3), da aggiungere uno per uno come "Web site":
+   - FNT-20 Banca d'Italia, vigilanza — `https://www.bancaditalia.it/compiti/vigilanza`
+   - FNT-21 CONSOB — `https://www.consob.it`
+   - FNT-22 Garante per la protezione dei dati personali — `https://www.garanteprivacy.it`
+   - FNT-23 Protezione Civile, rischi e allerte — `https://www.protezionecivile.gov.it/it`
+
+   Lasciare **spento** "Search all websites": l'agente citerebbe fonti fuori
+   elenco, che lo script poi rifiuta in scrittura.
+
+   Il kernel (tassonomia, rubrica, elenco fonti) e' gia' dentro le
+   Istruzioni di ogni agente: **non va aggiunto come knowledge**, ne' come
+   cartella `Kernel` intera ne' come elenco fonti a parte — solo il singolo
+   file `Baseline_corrente.txt` va aggiunto dove indicato in tabella.
+
+   Capability: il code interpreter ("Create documents, charts, and code") e'
+   **acceso di default** su ogni agente nuovo — va **spento a mano**, insieme
+   a "Create images" (Configura -> Capabilities): nessuno dei cinque ne ha
+   bisogno, la scrittura resta sempre allo script. Nel tenant della Banca le
+   capability **non sono abilitate** (verificato il 01/10/2026): non c'e'
+   niente da spegnere, ed e' la configurazione voluta (D-11).
+4. A3: creare un **prompt schedulato** settimanale (lunedi' mattina, dopo la
+   raccolta notizie) con il testo "Esegui l'aggiornamento settimanale".
+   Verificare dove arriva la risposta (chat, notifica): va controllato in
+   ambiente, non e' specificato dalla documentazione Microsoft.
+5. Archiviare in `Archivio_Cicli\Prompt\<data>\` il testo delle istruzioni
+   appena incollate: si modificano nell'interfaccia di Agent Builder senza
+   lasciare traccia.
+6. Prova di fumo: dare a ogni agente un input minimo (es. una notizia
+   qualsiasi ad A4) e controllare che risponda nel formato atteso — A3 e A4
+   con un JSON, A5 con un esito, A6 con un JSON che il comando `schede`
+   accetta.
+
+**Verifica**: i cinque agenti rispondono nel formato atteso.
+
+### 0.3 Sul proprio PC (ogni analista, dopo 0.1 e 0.2)
+
+1. Chiedere all'informatica: **Python 3.10 o piu' recente** e, da un Prompt
+   dei comandi, `pip install pywin32 pypac openpyxl` (`pypac` serve solo alla
+   raccolta notizie, per trovare da solo il proxy come fa il browser;
+   `openpyxl` solo al comando `schede`, per il file delle schede). Serve
+   anche Excel desktop. Verifica: nel Prompt dei comandi `python --version`
+   deve rispondere `Python 3.10` o un numero piu' alto; `python -c
+   "import win32com.client, pythoncom;
+   win32com.client.Dispatch('Excel.Application')"` non deve rispondere niente
+   (nessun messaggio = tutto a posto: apre e chiude Excel invisibile). Non
+   basta provare solo `import win32com`: non intercetta un pywin32 installato
+   a meta' (vedi "No module named 'pythoncom'" nella tabella degli errori).
+2. Sincronizzare con OneDrive (pulsante "Sincronizza" di SharePoint) le
+   raccolte `Kernel`, `Report_Trimestrali`, `Archivio_Cicli`, `News_Inbox`.
+3. Nella cartella degli script (`07_Senza_Studio`) copiare
+   `configurazione_esempio.json` in `configurazione.json` e scrivere dentro i
+   percorsi delle cartelle sincronizzate (aprirlo con Blocco note).
+4. Verificare che la cartella `03_Excel`, **fianco a fianco** con
+   `07_Senza_Studio` (stesso livello, NON dentro la cartella sincronizzata da
+   SharePoint), contenga il file `NFR_Dashboard_Template.xlsx`, non solo
+   `genera_dashboard.py` (puo' mancare se l'allegato `.xlsx` e' stato filtrato
+   dalla posta aziendale). Se manca, vedi la sezione 7, "Template non trovato".
+5. Prova, dalla cartella degli script (come si apre: "Come si scrive un
+   comando"):
+
+   ```
+   python esegui_ciclo_locale.py baseline
+   ```
+   Si deve vedere `Baseline scritta: ...Baseline_corrente.json`. Se il registro
+   non c'e' ancora, il messaggio e' "Workbook non trovato" (sezione 7): il
+   registro si crea al passo 0.4.
+
+6. Prova di rete (dopo la sincronizzazione di `News_Inbox`): `python
+   raccogli_notizie.py --anche-da-validare`. Si deve vedere `Raccolta scritta:
+   ...` con delle notizie; se tutte le fonti sono "non raggiungibili", e' il
+   proxy: chiedere all'informatica, oppure rinunciare al canale rss e proseguire
+   con i siti dell'agente e i file in `Manuali`.
+
+Da qui in avanti: ogni comando della guida si scrive nel Prompt dei comandi,
+dalla cartella degli script, e **il registro Excel deve essere chiuso**
+(anche per i colleghi) mentre lo script lavora.
+
+### 0.4 Primo utilizzo reale (una volta, dopo 0.3)
+
+Il template `03_Excel/NFR_Dashboard_Template.xlsx` contiene dati di ESEMPIO
+(righe grigie). Il registro vero non si ricava a mano cancellandoli: lo crea
+lo script.
+
+1. In `configurazione.json` la voce `workbook` deve puntare al registro da
+   creare (es. `...\Report_Trimestrali\NFR_Registro.xlsx`). Il file NON deve
+   esistere.
+2. Dalla cartella degli script (esempio per valutare per primo il 2026Q4, con
+   la settimana del 28 settembre 2026):
+
+   ```
+   python esegui_ciclo_locale.py inizializza --ciclo-precedente 2026Q3 --settimana 2026-09-28
+   ```
+   `--ciclo-precedente` = il trimestre **prima** di quello da valutare;
+   `--settimana` = il lunedi' della settimana in corso.
+3. Si deve vedere `Registro creato: ...NFR_Registro.xlsx` e "Senza dati di
+   esempio". Aprire il registro, foglio **Parametri**: scrivere nelle celle
+   gialle i pesi, le soglie e i parametri dell'urgenza decisi nella fase 1
+   dell'avvio (punto 1.3; la cella accanto alla somma dei pesi deve dire "OK"),
+   salvare e chiudere. Poi `python esegui_ciclo_locale.py baseline`: la baseline
+   dice il primo ciclo da valutare e non contiene rischi; copiare
+   `Baseline_corrente.txt` nella library `Kernel`.
+4. Non serve nessun trimestre gia' valutato: al primo ciclo A1 individua i
+   rischi da zero, leggendo la documentazione disponibile (`Analisi_Interne`,
+   `Analisi_Esterne`, `News_Inbox`, siti): un rischio per ogni meccanismo di
+   perdita sostenuto da almeno una fonte specifica, anche piu' d'uno nella
+   stessa categoria, e **nessuna categoria obbligatoria** (D-55): le categorie
+   rimaste senza rischi le dichiara nella sintesi. Sono tutti nuovi
+   (esito "Nuovo", lo calcola lo script). Tu li validi come ogni ciclo
+   (sezione 3: foglio Validazione, una riga per rischio) e, nell'anagrafica,
+   indichi quando lo sai il **presidio dei controlli** di ogni rischio
+   (sezione 6).
+
+Se il file esiste gia', lo script si ferma e non lo tocca: non sovrascrive mai
+un registro.
+
+### 0-bis. Aggiornare il pacchetto e il registro a un template nuovo (quando il registro e' di un template precedente)
+
+**Non riguarda una prima installazione**: un registro creato con 0.4
+(`inizializza`) nasce gia' con il template in vigore (versione `2026-10-08b`) e
+questa sezione non serve. Si applica a chi ha **gia'** un registro di un
+template piu' vecchio e vuole portarlo avanti senza perdere i dati. Finche' non
+e' aggiornato, **ogni comando si ferma** con "e' stato creato con un template
+precedente al 25/09/2026" o "versione ..." e non tocca niente; lo stesso
+comando vale per qualunque versione precedente.
+
+Che cosa cambia per chi lavora, rispetto ai template dal 25/09 in poi (decisioni
+e dettagli in `08_Deploy/DECISIONI.md`):
+- **tassonomia interna della Banca** (D-74): i rischi si classificano nelle nove
+  categorie in perimetro (9.1 Condotta ... 9.13 Processo) invece che negli event
+  type di Basilea; il radar ha nove settori, le notizie nove intensita'. Dopo
+  `aggiorna-registro` i rischi hanno ancora i codici di Basilea e **il radar non li
+  mostra finche' A1 non li riclassifica**: al primo ciclo dopo l'aggiornamento A1
+  assegna a ogni rischio una categoria (Osservazione nella colonna Segnalazioni) o
+  lo segnala fuori perimetro (FP, da motivare: poi `dismetti`). Una categoria
+  sbagliata si corregge a mano nell'anagrafica (Parametri, colonna J, elenco a
+  discesa). Le intensita' delle notizie di prima (colonne Imp_L1_0x) restano solo
+  nel registro vecchio;
+- **ciclo straordinario** (D-75): un evento critico si valuta subito, solo per i
+  rischi toccati, con un periodo `AAAAQn-Sk` (sezione 2-bis); A3 e A4 lo possono
+  proporre;
+- **lista di osservazione** (D-73): i fenomeni lontani o solo teorici hanno una
+  valutazione preliminare fuori dal registro, si validano nella sezione nuova del
+  foglio Validazione e si leggono nel foglio Osservazione e nella pagina
+  **Fenomeni** del report (sezione 2, "Lista di osservazione");
+- **A7 Assistente del registro** risponde in chat sul perche' delle valutazioni,
+  senza allegati: lo script scrive la sua knowledge nella cartella
+  `Kernel\Spiegazioni`; nella prima pagina del Quadro la cella gialla **Note
+  dell'analista** (D-72, sezione 4);
+- A5 e' facoltativo e il ciclo si ferma solo per difetti di integrita'; le altre
+  segnalazioni dei controlli e di A5 sono nella colonna **Segnalazioni dei
+  controlli** del foglio Validazione, e quelle da motivare chiedono la
+  Motivazione (D-71, sezione 3);
+- il foglio **Validazione** ha una riga per rischio, KRI, azione e notizia, con le
+  celle gialle gia' compilate con le proposte (D-67, sezione 3); il dettaglio
+  campo per campo e' nel foglio dati **Storico_Validazioni**;
+- la sintesi di A3 e i flag proposti di ogni settimana stanno in
+  **Sintesi_Settimane** (D-66);
+- **livello di allerta** calcolato dal foglio e mostrato nel radar (D-63) e
+  colonna **Tipo** dei KRI, due per rischio (D-64);
+- Severity si chiama **Impatto**; la Confidence non c'e' piu' e ogni fonte ha una
+  **rilevanza** 1-3; gli **anni di adeguamento** li propone A1 e li decidi in
+  validazione (D-57...D-60);
+- lo scoring e' semplificato: il **presidio dei controlli** e' un giudizio della
+  Banca nell'anagrafica, fuori dallo score; la Velocity e' facoltativa; i KRI
+  possono non avere soglie (D-49...D-56);
+- l'anagrafica arriva a 20 rischi.
+
+0. **Prima di sostituire qualunque file**: se la Banca ha modificato il
+   kernel sul PC (`01_Kernel\tassonomia_nfr.md`, `rubrica_scoring.md`,
+   `fonti.md`) o `08_Deploy\DECISIONI.md`, quelle modifiche vanno date a chi
+   mantiene il pacchetto **prima** dell'aggiornamento: il pacchetto nuovo
+   contiene la sua versione di quei file e la sovrascrive, e i prompt degli
+   agenti sono composti da quella versione. Se l'aggiornamento e' gia' stato
+   estratto, la versione precedente si recupera dalla cronologia versioni di
+   OneDrive o della library `Kernel`.
+1. Estrarre il pacchetto (o lo zip di aggiornamento) **sopra la cartella del
+   pacchetto** sul PC, sostituendo i file: `configurazione.json` non e' nello
+   zip e resta com'e'. Poi copiare **tutti i file di `01_Kernel`** e
+   `08_Deploy\DECISIONI.md` nella library `Kernel`, cioe' nella cartella
+   sincronizzata indicata alla voce `kernel` di `configurazione.json`: **lo
+   script legge da li'** mappa dei campi, schemi, rubrica ed elenco fonti, non
+   da `01_Kernel`. Senza `controlli_A5.md` e `guida_scrittura_A1.md` l'allegato
+   di A1 ha solo la baseline (lo script lo dice). Il pacchetto del 05/10
+   aggiunge `07_Senza_Studio\precontrollo.py` (senza, lo script non parte) e la
+   cartella `09_Copilot_Studio`; la prova della versione, dall'installazione a un
+   ciclo completo su un registro separato, e' in
+   `08_Deploy\Prova_senza_Copilot_Studio.md`.
+   Ricaricare in Agent Builder le istruzioni degli agenti cambiati rispetto alla
+   tua installazione (file `.md` di `02_Agenti`, gia' pronti: **non** serve
+   `componi_prompt.py`, che e' per chi mantiene il pacchetto). Rispetto al
+   01/10 cambiano **A1, A5 e A6** (D-68, D-69); il pacchetto del 06/10 cambia
+   di nuovo **A5** (D-71: i suoi rilievi vanno al validatore) e
+   `controlli_A5.md` nel kernel; il pacchetto del 07/10 aggiunge l'agente **A7**
+   (da creare: sezione 0.2) e cambia l'allegato di A1 (la guida di scrittura
+   chiede i fenomeni non censiti e, dalla sera del 07/10, la lista di
+   osservazione: basta copiare il kernel, A1 non si ricarica); con la lista di
+   osservazione cambiano di poco le istruzioni di **A7** (se l'hai gia' creato,
+   reincollale) e quelle di **A3**, che collega le notizie alle voci (reincollarle);
+   con il ciclo straordinario cambiano **A3** e **A4** (proposta di ciclo
+   straordinario: reincollarle); con la tassonomia interna (D-74) cambiano
+   **A1, A3, A4 e A5** (le categorie sono nelle loro istruzioni: reincollarle
+   tutte) e il kernel (copiarlo tutto).
+   In dubbio, ricaricarli tutti.
+2. **Non serve validare prima**: le righe ancora da validare (per esempio le
+   notizie di una settimana) passano nel foglio Validazione nuovo, con cio' che
+   avevi gia' scritto nel vecchio foglio (Decisione Rettificato con il valore
+   = cella gialla cambiata; Respinto = Respingi Sì; la Motivazione). Unica
+   eccezione, per registri fino alla versione `2026-09-25c`: righe da decidere su
+   campi tolti dal modello (Severity, Confidence, Gap_Controlli) vanno validate
+   prima con il pacchetto con cui sono state scritte; lo script lo dice e non
+   tocca niente.
+3. **Chiudere** il registro (anche i colleghi), poi dalla cartella degli script:
+
+   ```
+   python esegui_ciclo_locale.py aggiorna-registro
+   ```
+4. Si deve vedere `Registro aggiornato alla versione 2026-10-08b`, il numero di
+   righe copiate per tabella e dove e' stato conservato il registro vecchio
+   (`Archivio_Cicli\Backup\..._prima_di_aggiorna-registro_...`); se c'erano
+   righe da validare, anche `Righe ancora da validare: N (periodi ...)`. Lo script
+   elenca le colonne rinominate e quelle tolte dal modello, che restano solo nel
+   registro vecchio. Il presidio dei controlli parte da "Non verificato" se non
+   c'era; i KRI esistenti restano senza tipo finche' A1 non li ripropone (al primo
+   ciclo ne ripropone due per rischio, il terzo esce di vigore). Il file mantiene
+   nome e percorso.
+5. Prova: `python esegui_ciclo_locale.py baseline` deve rispondere come sempre;
+   poi ricaricare `Baseline_corrente.txt` nella raccolta `Kernel` (A3 e A4 la
+   leggono).
+
+Prima di sostituire il file lo script verifica che le righe siano le stesse,
+che non ci siano errori di formula e che la baseline sia identica a parte i
+campi tolti; se una verifica fallisce si ferma con "Aggiornamento NON
+applicato" e il registro resta com'era. Copia tutto per nome di colonna
+(notizie, validazioni, cicli, anagrafica, ciclo e settimana correnti, parametri
+dell'urgenza). **Pesi, soglie e anni per Prossimita (Z)** diventano quelli del
+template nuovo (valori nella sezione 4): lo script stampa quelli che c'erano
+prima, da reinserire a mano in Parametri solo se la Banca li aveva cambiati di
+proposito.
+
+## 1. Ogni lunedi' — aggiornamento settimanale (circa 20 minuti)
+
+| # | Chi | Cosa fare | Cosa si deve vedere |
+|---|---|---|---|
+| 1 | automatico o tu | `python raccogli_notizie.py` (di solito lo lancia da solo l'Utilita' di pianificazione di Windows alle 7) | `Raccolta scritta: ...News_Inbox\<lunedi'>\Raccolta_<oggi>.txt` e il numero di notizie. Se compare "ATTENZIONE: ... non raggiungibile", la raccolta e' incompleta per quella fonte: annotarlo, si puo' proseguire. |
+| 2 | tu | Salvare nella cartella `News_Inbox\<lunedi'>\Manuali\` cio' che non arriva da solo: circolari CERTFin, rapporti di threat intelligence, newsletter, notizie viste sui siti senza feed. | I file sono nella cartella. |
+| 3 | A3 | In Copilot, aprire l'agente **A3 Interim Update** e scrivere `Esegui l'aggiornamento settimanale` (o aspettare il prompt schedulato). | Una risposta che e' **solo** un blocco JSON (comincia con `{` e finisce con `}`). |
+| 4 | tu | Copiare tutta la risposta, incollarla in Blocco note, *Salva con nome*: tipo "Tutti i file", codifica **UTF-8**, nome `A3_<lunedi'>.json` (es. `A3_2026-10-12.json`) nella cartella di lavoro. | Il file esiste. |
+| 5 | tu | `python esegui_ciclo_locale.py settimanale --payload A3_2026-10-12.json` | `Settimana 2026-10-12: N notizie aggiunte`, i segnali netti oltre la soglia, le aree non presidiate, e `Excel di output: ...Settimane\2026-10-12\...`. |
+| 6 | tu | Aprire l'Excel di output della settimana: Registro (colonna "Segnali netti"), Notizie (colonna Presidio e, a destra, la **sintesi di A3 e i flag proposti** della settimana). | Un ▲ o "AREA NON PRESIDIATA" sono segnali da riportare al prossimo trimestre: **nessuno score cambia di settimana in settimana**. |
+| 7 | tu (consigliato) | Validare le notizie della settimana: sezione 3, con `--periodo 2026-10-12`. | `Validazione del periodo 2026-10-12 applicata: ...` |
+
+## 2. Ogni trimestre — ciclo trimestrale (mezza giornata, piu' la validazione)
+
+Si fa nei primi giorni dopo la fine del trimestre. Esempio per il `2026Q3`.
+
+| # | Chi | Cosa fare | Cosa si deve vedere |
+|---|---|---|---|
+| 1 | tu | Controllare che il trimestre PRECEDENTE sia validato: nel registro, foglio Registro riga 4 deve dire **"Ciclo validato"** (anche la fascia blu in cima a ogni foglio dice "validato" o "da validare"). Se dice "CICLO NON ANCORA VALIDATO", fare prima la sezione 3 per quel ciclo. | "Ciclo validato". |
+| 2 | tu | `python esegui_ciclo_locale.py baseline` | `Baseline scritta: ...` e `Allegato per A1: ...Input_A1_2026Q3.txt`. Se compare "ATTENZIONE: il ciclo ... ha ancora N righe da validare", tornare al passo 1. Se compare "Avviso: nel kernel ... mancano", copiare nella library `Kernel` tutti i file di `01_Kernel` (sezione 0-bis, punto 1). |
+| 3 | tu | Copiare `Baseline_corrente.txt` (cartella di uscita) nella raccolta `Kernel`, sostituendo quella vecchia. | — |
+| 4 | A1 | In Copilot, agente **A1 Horizon Scanner**, chat nuova: **allegare al messaggio** `Input_A1_2026Q3.txt` (cartella di uscita) e scrivere `Esegui il ciclo`. L'allegato va nella chat: A1 non lo legge dalla library `Kernel`, che non e' tra le sue knowledge. | Solo JSON, con `"ciclo":"2026Q3"`. Se risponde "Baseline mancante", l'allegato non e' arrivato (per esempio e' solo nel `Kernel`): allegarlo al messaggio. |
+| 5 | tu | Salvare la risposta come `A1_2026Q3.json` (Blocco note, UTF-8, come al punto 4 della sezione 1). | — |
+| 5-bis | tu | **Precontrollo, facoltativo** (pochi secondi, senza Excel, non scrive niente): `python esegui_ciclo_locale.py precontrollo --payload A1_2026Q3.json`. Serve prima di A5, se lo usi, o per far correggere ad A1 le segnalazioni prima di scrivere; altrimenti si passa al punto 7, che fa gli stessi controlli. | `Precontrollo dell'output di A1 (2026Q3): nessun rilievo.` (la riga dopo, `Impronta dell'output di A1: ...`, serve solo alla prova di Copilot Studio). Altrimenti i punti da correggere (fermerebbero il ciclo) e da verificare (finirebbero nella colonna Segnalazioni), e il file `Cicli\2026Q3\Correzione_A1_2026Q3.txt`: aprirlo con Blocco note, copiarlo tutto, incollarlo nella chat di A1, salvare la nuova risposta (punto 5) e ripetere. |
+| 6 | A5 | **Facoltativo** (D-71). Agente **A5 Challenger**: allegare SOLO `A1_2026Q3.json` e `Baseline_corrente.json`, scrivere `Esegui i nove controlli`, salvare come `A5_2026Q3.json`. I suoi rilievi non fermano il ciclo: vanno nella colonna Segnalazioni del foglio Validazione (un suo Bloccante rende obbligatoria la Motivazione). Se lo usi, va rifatto ogni volta che A1 viene rifatto (vale solo per l'output esaminato); mai per le settimane, per A4 o dopo la validazione. | Solo JSON con `"ciclo":"2026Q3"` e `"esito":"Approvato"` o `"Da rivedere"`. |
+| 7 | tu | `python esegui_ciclo_locale.py trimestrale --payload A1_2026Q3.json` e, se hai usato A5, `--challenger A5_2026Q3.json` | `Ciclo 2026Q3 scritto: 12/12 rischi, zero errori di formula.`, `A5: usato` o `non usato (facoltativo)`, se ce ne sono `SEGNALAZIONI DA MOTIVARE: N su M rischi` (punto 8-bis), `Lista di osservazione: N voci in osservazione; proposte di A1 da validare: K (...)` e `Excel di output: ...Cicli\2026Q3\NFR_Registro_2026Q3.xlsx`. Se compare "ATTENZIONE: l'anagrafica ha N posti liberi", avvisare chi mantiene il pacchetto. |
+| 8 | tu | Se invece compare **FERMATO** con "Ciclo da rivedere": l'output di A1 ha un difetto che renderebbe incoerente il registro (C1 un rischio mancante o con un'altra categoria, C2 variazioni che non tornano, C7 o C9 un KRI con un identificativo sbagliato). Aprire il file `Cicli\2026Q3\Correzione_A1_2026Q3.txt` indicato, copiarlo tutto nella chat di A1, salvare la nuova risposta (punto 5) e ripetere il punto 7 (e A5, se lo usi, sul nuovo file). | Il registro non e' stato toccato: si puo' ripetere quante volte serve. |
+| 8-bis | tu | **Segnalazioni da motivare**: non si rilancia niente. Sono le regole di metodo non rispettate (C3: evidenza fuori finestra o generica, salto di piu' di un punto; C5: fonte datata dopo la data di riferimento; C9: KRI senza la coppia Esposizione/Evoluzione o soglie invertite) e i rilievi Bloccanti di A5. Si decidono in validazione (sezione 3). Se preferisci farle correggere ad A1 prima di scrivere, usa il precontrollo (punto 5-bis). | Nel foglio Validazione quei rischi hanno ⚑ davanti al nome e il testo nella colonna **Segnalazioni dei controlli**; il Quadro dice quante sono (riga "Segnalazioni da motivare"). |
+| 9 | validatore | **Validare il ciclo**: sezione 3, con `--periodo 2026Q3`. Finche' non e' fatto, il trimestre dopo non parte. | Registro riga 4: "Ciclo validato". |
+| 10 | tu | Copiare in `Archivio_Cicli\Cicli\2026Q3\` il testo dei prompt in uso (i file di `02_Agenti`). | — |
+| 11 | tu | **Schede dei rischi**, dati per A6: `python esegui_ciclo_locale.py schede-input` | `Input delle schede del ciclo 2026Q3 (12 rischi): ...Cicli\2026Q3\Schede_input_2026Q3.json`. Se compare "righe da validare", il ciclo non e' ancora validato (punto 9). |
+| 12 | A6, tu | Agente **A6 Schede dei rischi** (solo dopo la validazione, solo con l'allegato di `schede-input`; non valuta, spiega i valori validati): allegare SOLO `Schede_input_2026Q3.json`, scrivere `Scrivi le schede`. Salvare la risposta come `A6_2026Q3.json` (come al punto 5), poi `python esegui_ciclo_locale.py schede --payload A6_2026Q3.json` | `Schede del ciclo 2026Q3: 12 rischi, testi di A6 controllati. File: ...Schede_2026Q3.xlsx`. Se compare **FERMATO** (per esempio "numeri che non stanno nei dati del rischio" o "le fonti devono essere quelle dell'input"), chiedere ad A6 di correggere quei punti e rilanciare. Senza A6: `python esegui_ciclo_locale.py schede` produce le schede con i testi del registro. |
+| 13 | tu | **Report al comitato**: `python esegui_ciclo_locale.py report` (con `--con-lavoro` aggiunge Registro e Parametri, in orizzontale su una pagina ciascuno). Il PDF si fa dal registro com'e' ora: se dopo la validazione cambi a mano il presidio, gli anni di adeguamento, l'attenzione del supervisore o lo stato di un'azione, **rilancia il comando** e il PDF segue le modifiche (la versione precedente resta con la data nel nome). Per un altro Excel: `--file <percorso>`. Allegare `Schede_2026Q3.xlsx` (o il suo PDF). | `Report al comitato del ciclo 2026Q3 rigenerato da ...` e il PDF in `Archivio_Cicli\Cicli\2026Q3\Report_comitato_2026Q3.pdf`, dal Quadro d'insieme alla Metodologia. Se la riga "Dopo il commento" del Quadro e' compilata (fondo giallo), il commento di A1 precede delle rettifiche: valgono i numeri. |
+
+**Che cosa controlla lo script** (D-69, D-71): all'output di A1 applica la
+parte dei controlli che si puo' verificare con una regola (lo schema, C1, C2,
+C3, C7, C9, le date di C5, le osservazioni di C5, C6 e C8) e le parti del
+razionale che servono alle schede. Ferma solo i difetti di integrita' (schema,
+C1, C2, C7, identificativi dei KRI); C3, le date di C5, la coppia e le soglie
+dei KRI diventano segnalazioni da motivare in validazione. Non giudica la
+plausibilita' dei valori (C4): la giudica A5, se usato, e comunque il
+validatore. Il precontrollo fa gli stessi controlli senza scrivere niente.
+
+**Lista di osservazione** (D-73): i fenomeni che hanno un meccanismo di perdita
+per la Banca ma sono oggi troppo lontani (oltre i 3 anni della Prossimita 1) o
+solo teorici non diventano rischi: A1 li propone come **voci in osservazione**
+`OSS-nn`, con una valutazione preliminare (impatto potenziale 1-5 con i
+descrittori della rubrica, orizzonte in anni, plausibilita' teorica / possibile
+/ in crescita) e il **segnale di avvicinamento**, il fatto che li farebbe
+diventare un rischio. Niente KRI, azioni ne' score: non entrano in radar,
+classifica e urgenza. A ogni ciclo A1 scrive solo le voci nuove e quelle con
+evidenza nuova (confermata, avvicinata, **promossa** a rischio quando il segnale
+si verifica, archiviata); le altre lo script le riporta com'erano. Al massimo 30
+voci. Si validano nella sezione Lista di osservazione del foglio Validazione
+(sezione 3) e si leggono nel foglio Osservazione e nella pagina **Fenomeni** del
+report (sezione 4). Le istruzioni per A1 sono nell'allegato `Input_A1`: niente da
+ricaricare.
+
+**Avviso sulle schede** (D-68): i testi delle schede li scrive A1 nel
+razionale, diviso in parti (RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:,
+VELOCITY:, ADEGUAMENTO:; per azioni e KRI EFFETTO:), quindi ci sono anche senza
+A6; con A6 sono riscritti per chi non conosce il tema. Se `trimestrale` stampa "Avviso per le schede: il razionale di ... non e'
+diviso in parti", in Agent Builder ci sono ancora le istruzioni vecchie di A1:
+ricaricarle (sezione 0-bis); per quel ciclo la scheda mostra il razionale
+intero, come prima.
+
+**Messaggi per gli agenti**: il messaggio base di ogni agente, le sue variazioni (per esempio il messaggio rinforzato per A1, la richiesta di analizzare documenti precisi o di verificare un tema) e cosa un messaggio non puo' cambiare sono nella sezione 8.
+
+## 2-bis. Ciclo straordinario — un evento critico non aspetta il trimestre (D-75)
+
+Si fa solo su decisione della funzione di rischio, quando un evento rende superata la
+valutazione di uno o piu' rischi e non si puo' aspettare il trimestre. La proposta puo'
+venire da A3 (comando `settimanale`: "PROPOSTA DI CICLO STRAORDINARIO di A3 per ...", e
+in rosso nel riquadro del foglio Notizie) o da A4 (in testa al parere), con la regola del
+segnale critico della rubrica: intensita' 3 su un rischio con Impatto 4-5, un evento in
+corso presso la Banca, un fornitore o una controparte, una capacita' nuova di una
+minaccia che rende superato un descrittore. Il periodo si chiama come il trimestre
+appena chiuso con `-S1`, `-S2`... (per esempio `2026Q4-S1`): rivaluta **solo** i rischi
+indicati; gli altri restano come erano, gia' validati.
+
+| # | Chi | Cosa fare | Cosa si deve vedere |
+|---|---|---|---|
+| 1 | tu | Il ciclo corrente deve essere validato (Registro, riga 4: "Ciclo validato"). | "Ciclo validato". |
+| 2 | funzione di rischio, tu | `python esegui_ciclo_locale.py baseline --straordinario --rischi NFR-01,NFR-07 --motivo "l'evento e perche' non puo' aspettare" --decisore "Comitato Rischi"` (facoltativo `--data AAAA-MM-GG`, data di riferimento: di norma oggi) | `CICLO STRAORDINARIO 2026Q4-S1 deciso da ...`, la decisione archiviata in `Cicli\2026Q4-S1\Straordinario_2026Q4-S1.json` e l'allegato `Input_A1_2026Q4-S1.txt`. |
+| 3 | A1 | Chat nuova, allegare `Input_A1_2026Q4-S1.txt` e scrivere `Esegui il ciclo straordinario`; salvare la risposta come `A1_2026Q4-S1.json`. | Solo JSON con `"ciclo":"2026Q4-S1"` e i soli rischi indicati (piu' un rischio nuovo, se l'evento lo crea). |
+| 4 | tu | `python esegui_ciclo_locale.py trimestrale --payload A1_2026Q4-S1.json` (precontrollo e A5 facoltativi come nel trimestre) | `CICLO STRAORDINARIO 2026Q4-S1: rivalutati ...`. Se FERMATO con "non indicato per il ciclo straordinario" o "assente dall'output", A1 ha scritto un rischio in piu' o in meno: dargli il messaggio di correzione (sezione 2, punto 8). |
+| 5 | validatore | Validare con `--periodo 2026Q4-S1` (sezione 3): nella griglia ci sono solo i rischi rivalutati, i loro KRI e le azioni nuove. La regola del punto si misura sul periodo prima (il trimestre o lo straordinario precedente). | Registro riga 4: "Ciclo validato"; la fascia blu dice "Ciclo straordinario 2026Q4-S1". |
+| 6 | tu | Report, schede, knowledge di A7: come nel trimestre (sezione 2, punti 11-13). | — |
+
+Il trimestre dopo (per esempio il `2027Q1`) parte dai valori validati dello
+straordinario: la baseline lo dice (`ciclo_precedente` = `2026Q4-S1`). Nel radar e nei
+fogli lo straordinario e' il ciclo corrente; Delta e trend lo contano come un periodo.
+Per un rischio non rivalutato, la Y dell'urgenza viene dalle azioni del ciclo in cui e'
+stato valutato (colonna Periodo_Valutazione del RiskRegister).
+
+## 3. Validare — accettare, correggere, respingere (validatore)
+
+La validazione e' il momento in cui la Banca fa proprie (o no) le proposte
+degli agenti. Si fa nel foglio **Validazione**, **una riga per rischio, KRI,
+azione, voce della lista di osservazione e notizia** (D-67, dal 02/10/2026; prima
+era una riga per ogni singolo valore). Tutto resta tracciato: la proposta dell'agente non si cancella mai,
+e il comando `valida` registra nel foglio dati **Storico_Validazioni**, campo
+per campo, la decisione, il valore deciso, il motivo, chi e quando. Le righe
+"Rettificato" (l'agente ha proposto X, la Banca ha deciso Y, per questo motivo)
+sono la raccolta che servira' per insegnare agli agenti.
+
+1. **Chiudere** l'Excel di output e aprire il registro vivo `NFR_Registro.xlsx`,
+   foglio **Validazione**. La riga 3 dice che cosa c'e' da validare (per
+   esempio "ciclo 2026Q3 (54 righe) · settimana del 12/10/2026 (5 notizie)"):
+   il foglio mostra solo i periodi non ancora validati, in cinque sezioni
+   (Rischi, KRI, Azioni, Lista di osservazione, Notizie con la colonna
+   Settimana). Della lista di osservazione ci sono solo le voci che A1 ha
+   proposto o aggiornato (colonna Esito di A1); le altre non si rivalidano.
+2. In ogni riga, accanto a ogni proposta dell'agente (colonna grigia, solo da
+   leggere) c'e' una **cella gialla gia' compilata con la stessa proposta**.
+   - **Se sei d'accordo non toccare niente**: la riga vale come accettata.
+   - **Se non sei d'accordo** scrivi il valore giusto nella cella gialla (anche
+     piu' d'uno nella stessa riga) e il perche' nella colonna **Motivazione**,
+     almeno 10 caratteri con l'evidenza: la cella cambiata diventa arancio, la
+     Motivazione resta rossa finche' manca.
+   - **Per scartare** un KRI, un'azione, una voce in osservazione o una notizia:
+     **Respingi = Sì** e la Motivazione. Una voce nuova respinta esce dalla lista;
+     una voce esistente respinta resta com'era nel ciclo prima. Un rischio non si
+     respinge: si rettifica, o si toglie con `dismetti` (sezione 3-bis).
+   - **Segnalazioni dei controlli** (ultima colonna dei rischi, D-71): cio' che lo
+     script e A5 (se usato) hanno trovato su quel rischio, anche sui suoi KRI e
+     sulle sue azioni; sopra la colonna, quelle che riguardano il ciclo intero.
+     **⚑ davanti al nome** = almeno una segnalazione DA MOTIVARE: la Motivazione e'
+     obbligatoria anche se non cambi nulla.
+   - In fondo alle righe dei rischi, **Score composito** e **Margine di Mosca**
+     si ricalcolano mentre scrivi, con i valori gialli e le azioni non respinte
+     (rosso AGIRE ORA, giallo entro l'anno, verde con margine; tra parentesi il
+     valore con le sole proposte, se diverso): vedi l'effetto di una rettifica
+     prima di lanciare il comando. Respingere un'azione puo' rendere un rischio
+     piu' urgente.
+   - **Non si toccano** ID, colonne grigie e righe (niente righe inserite o
+     cancellate). Se succede, `python esegui_ciclo_locale.py griglia` ricostruisce
+     il foglio dalle proposte e conserva cio' che hai gia' scritto.
+
+   Regole che lo script controlla (se non sono rispettate non applica niente
+   e dice cosa correggere, con il numero di riga):
+   - per un rischio: intero da 1 a 5, e **non piu' di un punto** diverso dal
+     trimestre precedente, anche se e' la proposta di A1 che lasci com'e' (in quel
+     caso va corretta: lo segnala la colonna Segnalazioni). La **Velocity** puo' restare vuota ("non valutata",
+     n.v.: nessuna fonte ne documenta i tempi) e, se prima era vuota, puo'
+     prendere qualunque valore;
+   - **anni di adeguamento** di un rischio: la stima di A1 (vuota = non serve);
+     cambiarla con un numero da 0 a 30. Il valore deciso va nell'anagrafica
+     (Parametri, colonna M) e allunga la Y dell'urgenza; una stima vuota non
+     cancella il numero gia' presente;
+   - per un KRI: un numero (vuoto = non rilevato). Le **soglie** le fissa la
+     Banca quando A1 non le ha (celle vuote, stato "Soglie da definire"):
+     scriverle **entrambe**; la soglia di allerta deve restare maggiore o
+     uguale a quella di attenzione, anche quando le ha proposte A1 (soglie
+     invertite o una sola: correggerle, oppure respingere il KRI);
+   - per un'azione: owner = una funzione aziendale, mai il nome di una
+     persona (un owner proposto che sembra una persona va cambiato: lasciato
+     com'e' non si accetta); orizzonte `3 mesi`, `6 mesi` o `12 mesi`;
+   - per una notizia: segnale fra Peggiorativo, Migliorativo, Neutro, Non
+     rilevante; rischio fra quelli in anagrafica o `NON PRESIDIATO`; voce della
+     lista di osservazione (colonna "Voce oss.") fra quelle in osservazione, o
+     vuota;
+   - per una voce in osservazione: impatto potenziale intero da 1 a 5, orizzonte
+     intero da 1 a 20 anni, plausibilita' `teorica`, `possibile` o `in crescita`.
+     Respingerla se il fenomeno non ha un meccanismo di perdita per la Banca o se
+     la proposta non e' sostenuta dalle fonti;
+   - una cella cambiata, un Respingi o un ⚑ vogliono la Motivazione (almeno
+     10 caratteri); Respingi accetta solo `Sì` o vuoto.
+3. **Salvare e chiudere** il registro.
+4. Nel Prompt dei comandi:
+
+   ```
+   python esegui_ciclo_locale.py valida --periodo 2026Q3 --validatore "Comitato Rischi"
+   ```
+   (per le notizie: `--periodo` e' il lunedi' della settimana, es. `2026-10-12`).
+5. Si deve vedere `Validazione del periodo 2026Q3 applicata: 54 righe — accettate
+   N, rettificate N (N valori cambiati), respinte N`, e il file
+   `NFR_Registro_2026Q3_validato.xlsx` nell'archivio del ciclo. Le righe del
+   periodo escono dal foglio Validazione; nel Registro, riga 4: "Ciclo
+   validato".
+
+Cosa succede ai dati: il valore rettificato sostituisce quello proposto nel
+registro (colonna Validazione = "Rettificato"), e l'esito e le Variazioni del
+rischio si riallineano ai valori validati (una rettifica che cambia un valore
+compare come variazione con la tua motivazione; una rettifica che lo riporta
+al trimestre prima toglie la variazione proposta dall'agente); un KRI respinto
+esce di vigore; il valore di un KRI inserito da te riceve data e fonte della
+rilevazione; un'azione accettata diventa "Approvata", una respinta "Respinta";
+una notizia respinta non conta piu' nei segnali netti. La baseline per il trimestre
+dopo e il file `Righe_liste_<ciclo>.json` si aggiornano da soli con i valori
+validati.
+
+## 3-bis. Dismettere un rischio (solo su decisione della funzione di rischio)
+
+Quando un rischio non va piu' seguito (per esempio e' venuta meno la causa):
+
+```
+python esegui_ciclo_locale.py dismetti --rischio NFR-04 --motivazione "Sedi spostate fuori dalle aree a rischio" --decisore "Comitato Rischi"
+```
+
+Si deve vedere `Rischio NFR-04 dismesso: ...`. Il rischio esce dall'anagrafica
+(e quindi dal report, dallo Storico e dai prossimi cicli), i suoi KRI escono di vigore, le
+sue azioni aperte diventano "Annullata"; la sua storia resta nel registro e
+l'atto (chi, quando, perche') e' in `Archivio_Cicli\Dismissioni\`.
+**Non cancellare mai a mano una riga dell'anagrafica** in Parametri: una riga
+vuota in mezzo fa sparire dalle viste l'ultimo rischio.
+
+## 4. Leggere i risultati
+
+| Dove | Cosa guardare |
+|---|---|
+| **Quadro** | la prima pagina per il comitato: cinque numeri (rischi valutati, **livello di allerta** — quanti in attivazione e in attenzione —, variati e nuovi, KRI in rosso, validazione), i primi cinque rischi, la matrice di gravita', il radar di Mosca; a pagina 2 il **commento di A1** (messaggio e decisioni), i controlli (con la sintesi di A5, se usato), quante **segnalazioni da motivare** sono andate in validazione e **i rischi segnalati con il perche'**, calcolato dal foglio. |
+| **Classifica** | i rischi dal piu' alto per score composito; colore della barra = urgenza (rosso = agire ora). A destra, la **lente di Mosca**: per ogni rischio, dal piu' in ritardo, la colonna e' il tempo necessario (X + Y), il rombo il tempo disponibile (Z); la parte rossa sfora. |
+| **Matrice** | ogni rischio nella cella della sua probabilita' e del suo impatto; verde, ambra, rosso secondo P x I. Dice la gravita', non l'urgenza. |
+| **Delta** | cosa e' cambiato dal trimestre prima: una barra per rischio e, a fianco, il motivo con l'evidenza; sotto, quanto vale un punto di ogni dimensione (con e senza Velocity). |
+| **Fenomeni** | la lista di osservazione (D-73): le voci dall'impatto potenziale piu' alto, con categoria, driver, orizzonte, plausibilita' e il segnale che le farebbe diventare un rischio; in fondo le voci uscite nel ciclo (promosse a rischio, archiviate, respinte). Nessuna ha uno score. |
+| **Metodologia** | pesi e parametri in vigore, scale della rubrica, come si leggono i grafici. |
+| Schede (file a parte) | una scheda per rischio, nell'ordine della Classifica: il rischio e il razionale in termini di rischio, perche' di ogni punteggio con i documenti, urgenza, cosa e' cambiato, andamento negli ultimi trimestri, fonti e a cosa servono, azioni e KRI con perche' ed effetto atteso (D-68). |
+| Registro, righe 4 e 5 | "Ciclo validato" o quante righe restano da validare; "Ciclo completo". Se dice CICLO INCOMPLETO, i numeri non sono affidabili. |
+| Registro, tabella | un rischio per riga, dal piu' alto per score; il **fondo dell'ID** e' il colore del livello di allerta: le dimensioni (Vel "n.v." = non valutata), score, variazione sul trimestre prima e su 6 mesi, urgenza, ◆ (attenzione del supervisore), KRI rossi/ambra/verdi, segnali netti delle notizie, **presidio** dei controlli (giudizio della Banca), **rilievi** di A5 e dei controlli (⚑ = da motivare in validazione), owner. |
+| **Radar_Mosca** | **quanto presto bisogna agire**: piu' il cerchio di un rischio e' vicino al centro, prima bisogna agire; dentro il cerchio rosso "Mosca" si e' gia' in ritardo (colonna Urgenza = "AGIRE ORA"); i cerchi grigi indicano 1, 2 e 3 anni di margine. **Area del cerchio del rischio** = probabilita' x impatto; **colore** = livello di allerta: **rosso Attivazione** (almeno due fra AGIRE ORA, un KRI in rosso, notizie in peggioramento: al comitato con un piano), **giallo Attenzione** (uno di questi, oppure margine sotto l'anno con P x I alta, presidio assente o KRI in ambra: l'owner verifica azioni e KRI), **verde Monitoraggio**; il motivo e' nelle colonne U-AB. **◆** accanto all'ID = tema all'attenzione del supervisore (BCE, EBA, Banca d'Italia). Il settore dice la **categoria di rischio** della tassonomia interna della Banca (nove, D-74); un rischio fuori perimetro (FP) o non ancora riclassificato non compare. |
+| Storico | score di ogni rischio negli ultimi otto trimestri. |
+| Indicatori | a sinistra gli indicatori in vigore, con il **tipo** (esposizione: quanto la Banca e' esposta; evoluzione: quanto cresce il fenomeno), lo stato (Verde/Ambra/Rosso, "Soglie da definire" finche' la Banca non le fissa) e tendenza; a destra la storia di un indicatore: sceglierlo in N4. |
+| Notizie | pressione delle notizie per categoria di rischio; "AREA NON PRESIDIATA"; a destra la sintesi di A3 della settimana corrente, i flag proposti e i segnali sulla lista di osservazione (la storia di tutte le settimane e' nel foglio Sintesi_Settimane). |
+| Piano_azioni | tutte le azioni: prima quelle da decidere, poi approvate, in corso, completate, con la scadenza. |
+| Osservazione | la lista di osservazione con tutti i testi (meccanismo, motivazione di A1, validazione), le notizie che A3 ha collegato a ogni voce nelle ultime 4 settimane e, a destra, dove si concentra: voci per driver ed event type accanto ai rischi del registro con lo stesso incrocio (una casella piena sopra e vuota sotto = tema che il registro non copre). La storia: foglio Lista_Osservazione. |
+| Dizionario | ogni dato del workbook: chi lo scrive, cosa significa, come si calcola, un esempio. |
+| Validazione | le righe ancora da validare (vuoto = tutto validato). In testa al foglio: come si valida e i criteri per decidere. |
+| Storico_Validazioni | cosa e' stato accettato, corretto, respinto, campo per campo, da chi, quando e perche'. |
+| Riga 1 e 2 di ogni foglio | la **fascia blu** con ciclo, data, "validato" o "da validare"; la **guida**: chi aggiorna il foglio (azzurro = ciclo trimestrale, verde = settimanale, giallo = validatore, grigio = calcolo), cosa contiene, come si legge. Nelle tabelle dati le righe 3 e 4 dicono chi scrive e cosa significa ogni colonna. Il foglio Guida ha la tabella "chi aggiorna cosa". In fondo ai fogli del report, la legenda delle abbreviazioni. |
+
+Come si calcola l'urgenza (disuguaglianza di Mosca): bisogna agire ora se
+**X + Y > Z**, dove Z = anni prima che il rischio possa manifestarsi (dalla
+Prossimita'), X = tempo per decidere e avviare (un trimestre), Y = tempo per
+completare le azioni proposte (il loro orizzonte) oppure, se maggiori, gli
+**anni di adeguamento** dell'anagrafica (stimati da A1 e decisi in validazione;
+sezione 6). Z e' la meta' della fascia della Prossimita: 5 → 0 anni, 4 → 0,5,
+3 → 1,5, 2 → 2,5, 1 → 3,5.
+Dettagli e limiti: `01_Kernel/rubrica_scoring.md`, sezione 8.
+
+Lo **score composito** e' la media pesata delle dimensioni valutate: 0,35 x
+Impatto + 0,25 x Probabilita + 0,20 x Prossimita' + 0,20 x Velocity; se la
+Velocity non e' valutata, lo stesso calcolo sulle altre tre con i pesi
+ridistribuiti (decisione D-50; pesi nelle celle gialle di Parametri). Il
+presidio dei controlli, gli anni di adeguamento e la rilevanza delle fonti non entrano nello score.
+
+### Chiedere il perche' ad A7 (D-72)
+
+Per capire una valutazione non serve aprire niente: si apre l'agente **A7
+Assistente del registro** e si fanno domande, per esempio "perche' NFR-01 ha
+Prossimita 5?", "perche' NFR-11 e' AGIRE ORA?", "perche' il tema X dei documenti
+non e' un rischio?". Nessun file da allegare: A7 legge la cartella
+`Kernel\Spiegazioni`, che `trimestrale`, `valida` e `dismetti` riscrivono da soli
+(`Ciclo.txt` e un file per ogni posto dell'anagrafica, `Rischio_01.txt` ...
+`Rischio_20.txt`, sempre gli stessi). Nelle risposte distingue cio' che e'
+**registrato** (motivazioni di A1, decisioni del validatore), cio' che e'
+**calcolato** (score, urgenza, livello) e la **sua lettura** dei documenti; non
+propone valori nuovi. Per i temi non censiti usa il motivo che A1 ha registrato
+(i "fenomeni considerati e non censiti") e la lista di osservazione. Alla fine si puo' chiedere "sintesi per
+il Quadro": un testo di al massimo 600 caratteri da incollare nella cella gialla
+**Note dell'analista** della prima pagina del Quadro; il PDF del report la
+mostra, e al ciclo dopo `trimestrale` la archivia nel foglio Sintesi_Cicli.
+I nomi dei file non cambiano mai: un rischio appena censito entra in un
+file che esiste gia', e A7 lo vede subito (solo alla prima installazione la cartella
+puo' entrare nella knowledge il giorno dopo). A7 per ora spiega soltanto: le modifiche ai valori arriveranno con la
+fase 4 (sezione 8, "Modifiche ai valori"). Copione di prova: `08_Deploy/Prova_A7.md`, con il confronto fra
+A7 che legge i file di testo e una copia di prova che legge solo il registro Excel.
+
+## 5. Dove sono i file
+
+| Cosa | Dove |
+|---|---|
+| Registro vivo | `Report_Trimestrali\NFR_Registro.xlsx` |
+| Excel di ogni trimestre (congelato) | `Archivio_Cicli\Cicli\<ciclo>\NFR_Registro_<ciclo>.xlsx` e `..._validato.xlsx` |
+| Schede dei rischi del trimestre | `Archivio_Cicli\Cicli\<ciclo>\Schede_<ciclo>.xlsx` (con `Schede_input_<ciclo>.json` e `A6_<ciclo>.json`) |
+| Excel di ogni settimana | `Archivio_Cicli\Settimane\<lunedi'>\NFR_Registro_<lunedi'>.xlsx` |
+| Output degli agenti, esiti dei controlli, decisioni di validazione | nella stessa cartella del ciclo o della settimana |
+| Ogni tentativo fermato | `Archivio_Cicli\Cicli\<ciclo>\tentativo_<data_ora>\` |
+| Copia del registro prima di ogni scrittura | `Archivio_Cicli\Backup\` |
+| Notizie raccolte | `News_Inbox\<lunedi'>\` |
+
+## 6. Cambiare le regole (solo su decisione della funzione di rischio)
+
+Kernel e prompt sono una cosa sola: i file di `01_Kernel` sono copiati dentro le
+istruzioni degli agenti da `componi_prompt.py`. Modificare un file del kernel
+sul PC, da solo, **non cambia niente negli agenti**, e il prossimo
+aggiornamento del pacchetto lo sovrascrive. Una modifica decisa dalla funzione
+di rischio va quindi data a chi mantiene il pacchetto, che la riporta nella sua
+copia, ricompone i prompt, rilancia il collaudo e consegna un pacchetto in cui
+c'e' gia'.
+
+| Cosa | Dove si cambia | Poi |
+|---|---|---|
+| Descrittori degli score, regole di variazione | `01_Kernel/rubrica_scoring.md` | chi mantiene il pacchetto rilancia `02_Agenti/componi_prompt.py` e il collaudo, poi ricarica i prompt negli agenti |
+| Categorie di rischio, driver | `01_Kernel/tassonomia_nfr.md` (dal 07/10 le nove categorie in perimetro della tassonomia interna, `Tassonomia dei Rischi.csv`, D-74) | come sopra, piu' `03_Excel/genera_dashboard.py`; se cambiano i **codici** (9.n, DRV-...) anche lo schema di A1, la mappa e i dati del collaudo, e poi `aggiorna-registro` |
+| Elenco delle fonti | `01_Kernel/fonti.md` (una voce per fonte, stato "approvata" o "esclusa") | come sopra |
+| Pesi, soglie, parametri dell'urgenza (X, Y di riserva, anni per Prossimita') | celle gialle del foglio Parametri del registro | niente: il registro si ricalcola da solo |
+| Anni di adeguamento di un rischio (es. una migrazione che richiede 3 anni) | di norma in validazione (cella gialla "Anni adeg." della riga del rischio, sezione 3: la stima di A1); a mano, se serve, nel registro vivo, foglio Parametri, colonna M dell'anagrafica | niente: la scrittura dei cicli lo conserva; per il PDF, rilanciare `report` |
+| Tema all'attenzione del supervisore (BCE, EBA, Banca d'Italia) | registro vivo, foglio Parametri, colonna N dell'anagrafica: "Sì" o "No" | niente: compare ◆ accanto all'ID (sezione 4); la scrittura dei cicli lo conserva |
+| Soglie del livello di allerta (P x I alta, quota di KRI in ambra o rosso, margine stretto, segnali forti per l'Attivazione) | registro vivo, foglio Parametri, righe 60-63 (celle gialle) | niente: radar, Registro e Quadro si ricalcolano |
+| Presidio dei controlli di un rischio (giudizio della Banca) | registro vivo, foglio Parametri, colonna O dell'anagrafica: Non verificato, Adeguato, Parziale, Assente | niente: non entra nello score; la scrittura dei cicli lo conserva. Gli agenti non vedono i controlli interni: se non lo indichi resta "Non verificato" |
+| Avanzamento di un'azione approvata | registro vivo, foglio Azioni, colonna Stato: "In corso" o "Completata" (unica colonna dei dati da toccare a mano) | niente: un'azione Completata non passa piu' ad A1 come aperta |
+| Note dell'analista del ciclo (per esempio la sintesi delle spiegazioni di A7) | registro vivo, foglio Quadro, cella gialla in prima pagina (D-72) | niente; per il PDF rilanciare `report`. A un ciclo nuovo `trimestrale` la sposta nel foglio Sintesi_Cicli e la svuota |
+
+## 7. Se qualcosa va storto
+
+| Messaggio | Cosa vuol dire | Cosa fare |
+|---|---|---|
+| `'python' non e' riconosciuto come comando interno o esterno` | Python non e' installato, o non e' nel percorso di sistema | chiedere all'informatica; in alternativa provare `py` al posto di `python` |
+| Il registro e' danneggiato o si vuole tornare indietro | ogni scrittura lascia la copia precedente in `Archivio_Cicli\Backup\`; in piu' c'e' la cronologia versioni di SharePoint | ripristinare la copia, poi rilanciare il comando |
+| Agent Builder disattivato o cambiato | gli agenti non scrivono nulla: il registro resta integro | ricreare gli agenti (sezione 0.2) con le istruzioni archiviate |
+| Il PC dell'analista non e' disponibile | lo script gira su qualunque PC con Python, pywin32, Excel e le cartelle sincronizzate | ripetere la sezione 0.3 su un altro PC |
+| `can't open file ... esegui_ciclo_locale.py` | il Prompt dei comandi non e' nella cartella degli script | rifare il `cd` verso la cartella degli script |
+| `No module named 'win32com'` | manca pywin32 | `pip install pywin32` |
+| `No module named 'openpyxl'` (comando `schede`) | manca openpyxl | `pip install openpyxl` |
+| `No module named 'pythoncom'` (spesso dentro `ERRORE TECNICO`) | pywin32 installato a meta' | `python -m pip install --upgrade --force-reinstall pywin32`, poi verificare con il comando del punto 1 della sezione 0.3. Se compare anche "No module named 'pywin32_postinstall'" tentando `python -m pywin32_postinstall -install`, ignorarlo: nelle versioni recenti di pywin32 (visto: 312) quel modulo non esiste piu' e non serve, basta il reinstall. |
+| `ATTENZIONE: ... non raggiungibile` solo su **alcune** fonti (spesso stesso dominio), ma i siti si aprono nel browser | `urllib` da solo non legge il file di autoconfigurazione del proxy (PAC) che il browser usa; quelle fonti vanno instradate sul proxy | verificare `pip show pypac` (deve essere installato: punto 1 della sezione 0.3); se manca, `pip install pypac` e rilanciare |
+| `ATTENZIONE: ... non raggiungibile` su **tutte** le fonti, e i siti non si aprono nemmeno nel browser | proxy o firewall aziendale blocca davvero l'uscita | chiedere all'IT l'indirizzo del proxy (o un'eccezione per i siti dell'elenco fonti); non e' un problema che lo script possa risolvere da solo |
+| `FERMATO` ... `file non trovato` | il nome del file dell'agente e' scritto male, o il file e' in un'altra cartella | controllare nome ed estensione (Blocco note a volte aggiunge `.txt`: salvare con tipo "Tutti i file") |
+| `FERMATO` ... `non e' un JSON valido` | nel file c'e' anche testo dell'agente, o manca un pezzo | risalvare copiando solo da `{` a `}` (UTF-8, con o senza BOM va bene), oppure chiedere all'agente "Rispondi solo con il JSON" |
+| `non conforme allo schema` subito dopo aver salvato un JSON | il JSON e' leggibile ma non ha i campi o i valori previsti | chiedere all'agente di rispondere rispettando lo schema, o rilanciarlo |
+| `Precontrollo dell'output di A1 (...): N punti da correggere` | lo script ha trovato nell'output di A1 errori che fermerebbero il ciclo (C1-C9 o schema) | sezione 2, punto 5-bis; il registro non e' stato toccato |
+| `Baseline non trovata: ...Baseline_corrente.json` (comando precontrollo) | non e' ancora stata scritta la baseline nella cartella di uscita | `python esegui_ciclo_locale.py baseline`, poi ripetere il precontrollo |
+| `Avviso: nel kernel ... mancano controlli_A5.md ...` | nella library Kernel mancano i file nuovi del 02/10 | sezione 0-bis, punto 1, poi rilanciare `baseline` |
+| `L'esito di A5 ... e' del ciclo ...` / `cita rischi che non sono nell'output di A1` | il file di A5 non e' quello di questo output di A1 (vecchio o di un altro run) | rifare A5 allegando l'output di A1 appena salvato |
+| `id_notizia ripetuti` | A3 ha dato lo stesso id a due notizie | chiedere ad A3 di correggere |
+| `ATTENZIONE: l'anagrafica ha N posti liberi` | ci si avvicina al numero massimo di rischi del template (20) | avvisare chi mantiene il pacchetto prima del prossimo rischio nuovo |
+| `Nota: --procedi-con-rilievi ... non serve piu'` | l'opzione e' rimasta in un comando gia' in uso (D-56, superata da D-71) | niente: i rilievi di A5 vanno sempre in validazione; si puo' togliere con `--motivo` e `--decisore` |
+| `Ciclo da rivedere (difetti che renderebbero incoerente il registro)` | l'output di A1 ha un difetto di integrita' (C1, C2, C7, identificativi dei KRI) | sezione 2, punto 8 |
+| `il rischio ha segnalazioni da motivare` (comando valida) | quel rischio (⚑ davanti al nome) ha una segnalazione DA MOTIVARE nella colonna Segnalazioni | nel foglio Validazione scrivere la Motivazione nella sua riga, anche se i valori restano quelli proposti |
+| `proposta di A1 non accettabile (... piu' di un punto dal ciclo precedente ...)` (comando valida) | A1 ha proposto un salto di due o piu' punti (segnalazione C3) e la riga e' rimasta com'era | scrivere nella cella gialla un valore a non piu' di un punto, con la Motivazione |
+| `Owner ... sembra il nome di una persona` (comando valida) | l'azione ha come owner una persona | scrivere nella cella gialla Owner il nome della funzione aziendale, con la motivazione |
+| `Il registro ha righe 'Da decidere' su campi che il modello non ha piu'` (comando aggiorna-registro) | registro molto vecchio con righe da validare su Severity, Confidence o Gap_Controlli; se il messaggio dice `(None, None)` e periodi `['None']`, sono invece righe **vuote** della tabella dello storico con Stato "Da decidere" (visto in Banca il 06/10) | campi vecchi: validarle con il pacchetto con cui sono state scritte. Righe vuote: con il registro chiuso farne una copia, poi nel foglio dello storico delle validazioni eliminarle (tasto destro → Elimina → Righe della tabella). Poi rilanciare aggiorna-registro |
+| `Il foglio Validazione non corrisponde alle proposte del periodo` | nel foglio Validazione e' stata cancellata o inserita una riga, o cambiato un ID | `python esegui_ciclo_locale.py griglia` (ricostruisce il foglio, conserva cio' che e' gia' scritto nelle righe intatte), poi rilanciare valida |
+| `Le notizie da validare (N...) superano le ... righe del foglio Validazione` (comando settimanale) | molte settimane di notizie non sono ancora state validate | validare le settimane piu' vecchie (`valida --periodo <lunedi'>`: una riga non toccata vale come accettata), poi rilanciare; niente e' stato scritto |
+| `... superano le ... righe della vista` / `Anagrafica piena` | e' stata raggiunta una capacita' del template; niente e' stato salvato | chi mantiene il pacchetto rigenera il template con capacita' piu' alte |
+| `Manca ...\Kernel\mappatura_campi.json` (o un altro file del kernel) | i file di `01_Kernel` non sono stati copiati nella cartella `kernel` di `configurazione.json` (la library Kernel sincronizzata) | copiarli tutti (sezione 0-bis, punto 1) e rilanciare; niente e' stato scritto |
+| `Workbook non trovato: None` | manca `configurazione.json` (c'e' solo `configurazione_esempio.json`), oppure la voce `workbook` e' vuota o assente | copiare `configurazione_esempio.json` in `configurazione.json` e compilare `workbook` (sezione 0.3, punto 3) |
+| `Workbook non trovato: <percorso>` | quel percorso in `configurazione.json` e' sbagliato, o il registro non e' ancora stato creato | correggere il percorso, oppure creare il registro (sezione 0.4, "Primo utilizzo reale") |
+| `Template non trovato: <percorso>...03_Excel\NFR_Dashboard_Template.xlsx` | manca il file nella cartella `03_Excel` del pacchetto (non e' configurabile in `configurazione.json`: lo script lo cerca sempre fianco a fianco a `07_Senza_Studio`); capita se il pacchetto e' arrivato incompleto (es. l'allegato `.xlsx` filtrato dalla posta) | dalla cartella `03_Excel`: `python genera_dashboard.py` lo rigenera sul posto (serve `openpyxl`: `pip install openpyxl`); in alternativa richiedere di nuovo il pacchetto completo |
+| `FERMATO — il workbook non e' stato modificato` + elenco | i controlli hanno trovato difetti nell'output degli agenti | vedi sezione 2, punto 8; il registro e' intatto |
+| `Il ciclo precedente ... non e' ancora validato` | manca la validazione del trimestre prima | fare la sezione 3 per quel trimestre |
+| `Validazione del periodo ... NON applicata (N problemi...)` | alcune righe non rispettano le regole | correggere nel foglio Validazione le righe elencate (il numero di riga e' nel messaggio), salvare, chiudere, rilanciare |
+| `Nessuna riga da validare per il periodo` | quel periodo e' gia' validato (o il periodo e' scritto male: `2026Q3`, `2026-10-12`) | niente, o correggere il periodo |
+| `Il periodo ... ha N righe nel foglio Storico_Validazioni con lo Stato vuoto o modificato a mano` | la colonna Stato dello storico e' stata cancellata o cambiata in Excel | rimettere `Da decidere` in quelle celle (selezionarle, scrivere, Ctrl+Invio), salvare, chiudere, lanciare `python esegui_ciclo_locale.py griglia`, poi validare |
+| `Nota: --accetta-il-resto non serve piu'` | l'opzione e' rimasta in un comando gia' in uso | niente: una riga non toccata vale gia' come accettata; si puo' togliere |
+| `Codici fonte non nell'elenco` | A3 ha citato una fonte che non e' in `fonti.md` | chiedere ad A3 di correggere, o usare `MAN` per un file caricato a mano |
+| `ERRORE TECNICO — il workbook non e' stato salvato` | problema tecnico prima di scrivere (es. Excel bloccato; lo script ha gia' riprovato ad avviare Excel cinque volte) | chiudere Excel, riprovare; se persiste, riavviare il PC e poi chiamare chi mantiene il pacchetto |
+| il comando non finisce da oltre 10 minuti | di solito un altro programma tiene aperto il registro e Excel non riesce a salvarlo | chiudere gli altri programmi; da Task Manager chiudere i processi "Microsoft Excel" in background; controllare in `Archivio_Cicli\Backup\` l'ultima copia e rilanciare il comando (se il registro non risulta cambiato) |
+| `... e' stato creato con un template precedente al 25/09/2026` (o `con un template versione ...`) | il registro e' nato da un template con un'altra struttura: lo script non lo scrive | sezione 0-bis: `python esegui_ciclo_locale.py aggiorna-registro` |
+| `Aggiornamento NON applicato` + elenco | una verifica dell'aggiornamento non e' passata; il registro e' rimasto com'era | inviare il messaggio a chi mantiene il pacchetto |
+| `... e' aperto (in Excel o dalla sincronizzazione)` durante aggiorna-registro | il registro non si puo' sostituire | chiuderlo (e attendere la fine della sincronizzazione di OneDrive), rilanciare |
+| `Avviso: impaginazione del report non aggiornata` | lo script non ha potuto adattare le altezze delle righe con testi calcolati | niente per i dati, che sono scritti; prima di salvare il PDF, nel Quadro (pagina 2), nel Delta e nella pagina Fenomeni allargare a mano le righe con testo tagliato |
+| `Output di A6 non coerente con i dati validati` + elenco | A6 ha saltato un rischio, cambiato o omesso una fonte, o scritto un numero che non sta nei dati | incollare l'elenco nella chat di A6 chiedendo di correggere, salvare di nuovo, rilanciare `schede`; nessun file e' stato scritto |
+| `ERRORE TECNICO DOPO IL SALVATAGGIO` | il registro E' scritto, ma un file dell'archivio non si e' potuto copiare (di solito perche' aperto) | **non rilanciare**: chiudere il file aperto e copiare a mano il registro nella cartella del ciclo con il nome indicato |
+
+## 8. Gli agenti: mansioni e messaggi da usare
+
+Gli agenti si usano scrivendo in chat. Ognuno ha un **messaggio base** (quello
+dei passi delle sezioni 1, 2 e 4) e alcune **variazioni** utili. Regole che
+valgono per tutti:
+- il messaggio **aggiunge** indicazioni per quella volta, non cambia le regole
+  dell'agente: le istruzioni incollate in Agent Builder (sezione 0.2) restano in
+  vigore. Una richiesta che va contro una regola (per esempio "alza la Prossimita
+  senza fonte" o "salta i controlli") viene ignorata o rifiutata, ed e' giusto
+  cosi': quelle regole sono la garanzia del processo;
+- per rifare una valutazione usa una **chat nuova**: una chat che ha gia'
+  risposto piu' volte sullo stesso lavoro tende a ritoccare la risposta di prima
+  invece di rifarla;
+- gli agenti che rispondono in JSON (A1, A3, A5, A6) devono dare **solo** il
+  JSON. Se aggiungono testo: "Rispondi solo con il JSON, senza testo attorno";
+- tra parentesi quadre le parti da sostituire (`[ciclo]`, `[NFR-nn]`...).
+
+| Agente | Mansione | Quando | Cosa gli dai | Cosa restituisce |
+|---|---|---|---|---|
+| A1 Horizon Scanner | valuta i rischi: valori, fonti, motivazioni, azioni, KRI; censisce i rischi nuovi; registra i temi esaminati e non censiti; propone e aggiorna la lista di osservazione | ogni trimestre (sezione 2) | allegato `Input_A1_<ciclo>.txt` nella chat; legge da solo `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` e i siti | JSON da salvare come `A1_<ciclo>.json` |
+| A3 Interim Update | legge le notizie della settimana e le collega ai rischi e alle voci della lista di osservazione | ogni lunedi' (sezione 1) | niente: legge `News_Inbox`, i siti e la baseline in knowledge | JSON da salvare come `A3_<lunedi'>.json` |
+| A4 News Assessor | parere su UNA notizia rispetto al registro, senza numeri nuovi | quando serve | la notizia (testo, link o file) | parere in sei sezioni, in chat; non scrive nel registro |
+| A5 Challenger (facoltativo) | controlla l'output di A1 con i nove controlli | se lo usi, dopo A1 (sezione 2, punto 6) | `A1_<ciclo>.json` e `Baseline_corrente.json` allegati | JSON da salvare come `A5_<ciclo>.json` |
+| A6 Schede dei rischi | scrive i testi delle schede sui dati validati | dopo la validazione (sezione 2, punto 12) | solo `Schede_input_<ciclo>.json` allegato | JSON da salvare come `A6_<ciclo>.json` |
+| A7 Assistente del registro | spiega in chat il perche' delle valutazioni, senza valutare | quando serve (sezione 4, "Chiedere il perche' ad A7") | niente: legge la cartella `Kernel\Spiegazioni` e i documenti | risposte in chat; a richiesta la sintesi per le Note dell'analista |
+
+### A1 Horizon Scanner
+
+Messaggio base, con l'allegato `Input_A1_<ciclo>.txt` (sempre allegato alla
+chat: A1 non lo legge dalla library Kernel):
+
+> Esegui il ciclo
+
+Variazioni:
+- **Rinforzato**, quando le fonti citate sono poche o le segnalazioni su C4 e C5
+  (punteggi o fonti non sostenuti) sono tante. Visto la prima volta nel primo
+  ciclo reale del 29/09/2026:
+
+  > Esegui il ciclo per il [ciclo]. Prima di assegnare i punteggi, consulta tutti
+  > i documenti disponibili in Analisi_Interne e in Analisi_Esterne — non
+  > fermarti ai primi che trovi, verifica le intere cartelle — e tutte le notizie
+  > recenti dei siti pubblici configurati. Il tipo di ogni fonte segue la
+  > cartella: "Interna" solo per i documenti di Analisi_Interne, "Esterna" per
+  > Analisi_Esterne, notizie e siti.
+
+  Limite: rinforza le istruzioni per questa volta ma non obbliga Agent Builder a
+  leggere tutta la knowledge. Se A1 cita ancora solo 2-3 fonti su molte, e' la
+  ricerca della knowledge che ne recupera solo una parte, non il messaggio da
+  correggere.
+- **Documenti precisi**, per far pesare di piu' alcuni documenti:
+
+  > Esegui il ciclo analizzando in particolare, in Analisi_Esterne, il file
+  > "[nome del file]" e, in Analisi_Interne, il file "[nome del file]".
+
+- **Tema da verificare**, per chiedere di valutare un rischio preciso:
+
+  > Esegui il ciclo. Verifica in particolare se le fonti sostengono il rischio
+  > "[descrizione del meccanismo di perdita]": se c'e' almeno una fonte specifica,
+  > censiscilo come rischio nuovo con le regole abituali; se il meccanismo c'e' ma
+  > e' lontano o solo teorico, mettilo nella lista di osservazione; se non c'e',
+  > mettilo fra i fenomeni non censiti con il motivo.
+
+  La richiesta non resta tracciata (vive nella chat); A1 lo censisce solo se le
+  fonti lo sostengono.
+- **Fenomeno da osservare**, per chiedere una voce della lista di osservazione:
+
+  > Esegui il ciclo. Valuta anche il fenomeno "[descrizione]" per la lista di
+  > osservazione: se ha un meccanismo di perdita per la Banca e almeno una fonte,
+  > proponilo come voce nuova con il segnale di avvicinamento.
+
+  Per togliere una voce gia' validata: "... archivia [OSS-nn] se le fonti del ciclo
+  mostrano che non e' piu' plausibile" (A1 la archivia solo con evidenza nuova).
+- **Ciclo straordinario** (sezione 2-bis), con l'allegato `Input_A1_<AAAAQn-Sk>.txt`:
+
+  > Esegui il ciclo straordinario
+
+  L'allegato dice in testa quali rischi rivalutare e perche'; A1 non riscrive gli altri.
+- **Simulazione di un ciclo passato** (registro di prova, per esempio un 2026Q2):
+
+  > Esegui il ciclo. Considera solo documenti e notizie datati fino al
+  > [data di riferimento, es. 30/06/2026].
+
+  I controlli fermano comunque le fonti datate dopo la data di riferimento; il
+  messaggio serve a non farsi influenzare da cio' che e' successo dopo.
+- **Correzione**: dopo un fermo o un precontrollo, incollare tutto il contenuto di
+  `Cicli\<ciclo>\Correzione_A1_<ciclo>.txt`, senza aggiungere altro; poi salvare la
+  nuova risposta come `A1_<ciclo>.json`.
+
+Cosa un messaggio non puo' cambiare: la regola del punto fra un ciclo e l'altro,
+la fonte datata per ogni variazione, i due KRI per rischio, il formato del
+razionale in parti.
+
+### A3 Interim Update
+
+Messaggio base (lo stesso del prompt schedulato del lunedi'):
+
+> Esegui l'aggiornamento settimanale
+
+Variazioni:
+- **Correzione**: dopo un fermo di `settimanale` (per esempio "id_notizia ripetuti"
+  o "Codici fonte non nell'elenco"), incollare il messaggio del fermo:
+
+  > Correggi questi punti e restituisci di nuovo l'intero JSON: [messaggio]
+
+- **Proposta di ciclo straordinario** (D-75): A3 la scrive da solo con la regola del
+  segnale critico della rubrica (`proposta_straordinario`: rischi e motivo); non serve
+  chiederla. E' una proposta: decide la funzione di rischio (sezione 2-bis).
+- **Lista di osservazione** (D-73): non serve chiederlo, A3 legge le voci nella
+  baseline; collega una notizia a una voce (`voce_osservazione`) e, se la notizia
+  avvicina o allontana una voce o realizza il suo segnale, lo propone
+  (`segnali_osservazione`: Avvicina, Segnale verificato, Allontana). Per insistere
+  su una voce: "Esegui l'aggiornamento settimanale; verifica in particolare le
+  notizie su [OSS-nn]". Un "Segnale verificato" e' una proposta: la voce la promuove
+  A1 al ciclo dopo (o, per un evento critico, A8 quando ci sara').
+- **Notizie portate a mano**: se hai messo file in `News_Inbox\<lunedi'>\Manuali\`,
+  non serve dirlo, A3 li legge; per una fonte fuori elenco usa il codice `MAN`
+  (sezione 1, punto 2).
+
+A3 lavora sulla settimana in corso: per recuperare una settimana saltata il
+prompt non prevede un'altra data; meglio aggiungere le notizie di quella
+settimana nei `Manuali` della settimana in corso.
+
+### A4 News Assessor
+
+Messaggio base: la notizia, incollata o allegata.
+
+> Dammi il parere su questa notizia: [testo o link]
+
+Variazioni:
+- **Un rischio preciso**: "Dammi il parere su questa notizia, in particolare
+  rispetto a [NFR-nn]: [testo o link]".
+- **Una categoria**: "... valuta con attenzione l'impatto su [9.n, nome della categoria]".
+
+A4 non propone numeri e non scrive nel registro: se il parere suggerisce di
+rivedere un rischio, la via e' il ciclo trimestrale; se la notizia soddisfa la regola
+del segnale critico, A4 scrive in testa alla sezione 5 "PROPOSTA DI CICLO
+STRAORDINARIO" con i rischi e il motivo, e la funzione di rischio decide (sezione
+2-bis; quando ci sara', l'agente A8 fara' l'analisi approfondita dell'evento).
+
+### A5 Challenger (facoltativo)
+
+Messaggio base, con `A1_<ciclo>.json` e `Baseline_corrente.json` allegati:
+
+> Esegui i nove controlli
+
+Variazioni: nessuna utile. Dopo ogni nuovo output di A1, A5 va rifatto in una
+chat nuova sul file nuovo (il vecchio esito vale solo per il vecchio output).
+
+### A6 Schede dei rischi
+
+Messaggio base, con il solo `Schede_input_<ciclo>.json` allegato:
+
+> Scrivi le schede
+
+Variazioni:
+- **Correzione**: dopo un fermo di `schede`, incollare l'elenco del fermo:
+
+  > Correggi questi punti e restituisci di nuovo l'intero JSON: [elenco]
+
+### A7 Assistente del registro
+
+Nessun allegato e nessun messaggio fisso: si fanno domande. Esempi:
+
+> Perche' [NFR-nn] e' primo in classifica?
+>
+> Perche' [NFR-nn] ha Prossimita [valore]? Da quale documento viene?
+>
+> Perche' [NFR-nn] e' AGIRE ORA?
+>
+> Perche' il livello di [NFR-nn] e' Attenzione e non Attivazione?
+>
+> Il validatore ha cambiato qualcosa su [NFR-nn]? Perche'?
+>
+> Cosa e' cambiato per [NFR-nn] rispetto al ciclo prima?
+>
+> Perche' il tema "[tema]" che compare in [documento] non e' un rischio del registro?
+>
+> Quali rischi sono AGIRE ORA e che cosa li accomuna?
+>
+> Perche' [OSS-nn] e' in osservazione e non e' un rischio? Che cosa lo farebbe diventare un rischio?
+
+Variazioni:
+- **Per il comitato**: "Spiegamelo come a un membro del comitato, senza termini
+  tecnici, in cinque righe".
+- **Confronto**: "Perche' [NFR-nn] ha uno score piu' alto di [NFR-mm]?".
+- **Sintesi per il Quadro**, alla fine della conversazione:
+
+  > Fammi la sintesi per il Quadro
+
+  Restituisce al massimo 600 caratteri da incollare nella cella gialla **Note
+  dell'analista** della prima pagina del Quadro (sezione 6).
+
+A7 distingue cio' che e' registrato, cio' che e' calcolato e cio' che ricava ora
+dai documenti; non propone valori: a "dovrebbe essere piu' alto?" risponde con il
+descrittore e l'evidenza che servirebbero. Copione di prova: `08_Deploy/Prova_A7.md`.
+
+**Modifiche ai valori: non ancora con A7.** Cambiare una valutazione, un KRI, il
+presidio o portare un rischio nella lista di osservazione chiedendolo ad A7 arrivera'
+con la fase 4 del piano degli agenti nuovi (foglio Manutenzione del registro e A7 in
+modo manutenzione: TODO, "Agenti nuovi"). Oggi:
+- valori proposti da A1 (punteggi, anni di adeguamento, KRI, azioni, voci della lista
+  di osservazione): nella griglia del foglio Validazione, prima di `valida` (sezione 3);
+- presidio dei controlli, anni di adeguamento, attenzione del supervisore, stato di
+  un'azione, Note dell'analista: celle gialle del registro (sezione 6);
+- un rischio da togliere: `dismetti` (sezione 3-bis);
+- una valutazione gia' validata, o una voce in osservazione da aggiungere o
+  archiviare: al ciclo dopo (A1, con un messaggio della sezione 8 se serve).
+
+## 9. I comandi Python: parametri, opzioni, errori
+
+Riferimento completo dei due programmi. Si lanciano dal Prompt dei comandi, dalla
+cartella degli script (`07_Senza_Studio`), con il **registro chiuso** (anche per i
+colleghi). Come si scrive un comando: in testa alla guida. I testi da vedere
+passo per passo sono nelle sezioni 1, 2 e 3; i messaggi d'errore con il rimedio
+nella sezione 7.
+
+**Codici di uscita** (uguali per tutti i comandi di `esegui_ciclo_locale.py`):
+- 0 eseguito;
+- 1 **FERMATO**: lo script ha trovato un problema nei dati o nei controlli e **non
+  ha toccato il registro**: si corregge e si rilancia;
+- 2 **ERRORE TECNICO**: un problema del PC o di Excel. Il messaggio dice se e'
+  avvenuto prima del salvataggio (nulla scritto: si rilancia) o **dopo** (registro
+  gia' scritto: **non rilanciare**, sezione 7).
+
+**Opzioni comuni** di `esegui_ciclo_locale.py`, da scrivere **prima** del nome del
+comando; senza, valgono i percorsi di `configurazione.json`:
+- `--workbook <file>`: il registro su cui lavorare (per esempio un registro di prova);
+- `--kernel <cartella>`: la cartella del kernel (la library Kernel sincronizzata);
+- `--cartella-uscita <cartella>`: l'archivio (baseline, cicli, settimane, backup).
+
+Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" --cartella-uscita "C:\NFR_Prova\Archivio" baseline`.
+
+### raccogli_notizie.py
+
+`python raccogli_notizie.py [--giorni N] [--oggi AAAA-MM-GG] [--anche-da-validare] [--kernel <cartella>] [--news-inbox <cartella>]`
+
+- Cosa fa: scarica i feed delle fonti `rss` approvate di `fonti.md` e scrive
+  `News_Inbox\<lunedi'>\Raccolta_<data>.txt` (con la cartella `Manuali` vuota per i
+  file a mano). Non tocca il registro.
+- Opzioni: `--giorni` quanti giorni indietro (7); `--oggi` la data da usare come
+  oggi (per recuperare una raccolta); `--anche-da-validare` prova anche le fonti
+  non ancora approvate; `--kernel`, `--news-inbox` come in `configurazione.json`.
+- Quando: ogni lunedi', di solito dall'Utilita' di pianificazione (in testa alla guida).
+- Errori tipici: "non raggiungibile" su alcune o tutte le fonti (proxy: sezione 7).
+
+### esegui_ciclo_locale.py baseline
+
+`python esegui_ciclo_locale.py baseline [--uscita <file.json>]`
+`python esegui_ciclo_locale.py baseline --straordinario --rischi NFR-nn[,NFR-mm] --motivo "..." --decisore "..." [--data AAAA-MM-GG]`
+
+- Cosa fa: scrive `Baseline_corrente.json` (e la copia `.txt`) e l'allegato di A1
+  `Input_A1_<ciclo>.txt` nella cartella di uscita. Sola lettura del registro. Con
+  `--straordinario` (D-75) la baseline e l'allegato sono per il periodo `AAAAQn-Sk` e
+  la decisione si archivia in `Cicli\<AAAAQn-Sk>\Straordinario_<AAAAQn-Sk>.json`.
+- Opzioni: `--uscita` scrive la baseline in un altro file (prove, confronti);
+  `--straordinario` con `--rischi` (separati da virgole), `--motivo` (almeno 20
+  caratteri), `--decisore` e, facoltativa, `--data` (di norma oggi; dopo la data del
+  ciclo corrente).
+- Quando: all'inizio del trimestre; la riscrivono anche `trimestrale`, `valida`, `dismetti`.
+- Errori tipici: "il ciclo ... ha ancora N righe da validare" (avviso, sezione 3; per uno
+  straordinario e' un fermo); "nel kernel ... mancano" (sezione 0-bis, punto 1); "Workbook
+  non trovato" (sezione 7); con `--straordinario`: "--rischi: indicare i rischi ...",
+  "--motivo ... e --decisore ... sono obbligatori", "--data ... deve venire dopo".
+
+### esegui_ciclo_locale.py precontrollo
+
+`python esegui_ciclo_locale.py precontrollo --payload A1_<ciclo>.json [--baseline <file.json>]`
+
+- Cosa fa: controlla l'output di A1 (schema, controlli, parti del razionale) senza
+  Excel e senza aprire il registro; se trova qualcosa scrive
+  `Cicli\<ciclo>\Correzione_A1_<ciclo>.txt`, il messaggio da dare ad A1. Stampa
+  l'impronta dell'output (serve solo alla prova di Copilot Studio).
+- Obbligatorio: `--payload`. Opzione: `--baseline` (di default `Baseline_corrente.json`).
+- Codice 1 se un punto fermerebbe il ciclo, 0 altrimenti.
+- Quando: facoltativo, prima di A5 se lo usi (sezione 2, punto 5-bis).
+- Errori tipici: "Baseline non trovata" (lanciare `baseline`); "non e' un JSON
+  valido" o "non conforme allo schema" (sezione 7).
+
+### esegui_ciclo_locale.py trimestrale
+
+`python esegui_ciclo_locale.py trimestrale --payload A1_<ciclo>.json [--challenger A5_<ciclo>.json]`
+
+- Cosa fa: controlla l'output di A1 (e quello di A5, se c'e'), lo scrive nel
+  registro (rischi, azioni, KRI, anagrafica, segnalazioni), ricalcola, verifica e
+  salva (backup prima); archivia in `Cicli\<ciclo>\` l'Excel di output, gli output
+  degli agenti e l'esito dei controlli; scrive la lista di osservazione (voci di A1
+  e voci invariate riportate dal ciclo prima); riscrive baseline, allegato di A1 e
+  knowledge di A7; archivia le Note dell'analista del ciclo prima.
+- Obbligatorio: `--payload`. Opzione: `--challenger` (A5 facoltativo, D-71).
+  `--procedi-con-rilievi`, `--motivo`, `--decisore`: superate, accettate ma inutili.
+- Quando: ogni trimestre, dopo A1 (sezione 2, punto 7).
+- Errori tipici: "Il ciclo precedente ... non e' ancora validato" (sezione 3);
+  "Ciclo da rivedere (difetti che renderebbero incoerente il registro)" (sezione 2,
+  punto 8: dare ad A1 `Correzione_A1_<ciclo>.txt`; vale anche per un codice `OSS-nn`
+  sbagliato o una promozione senza il rischio nuovo); "L'esito di A5 ... e' del ciclo
+  ..." (rifare A5); "ATTENZIONE: l'anagrafica ha N posti liberi"; "Avviso per le
+  schede: il razionale ... non e' diviso in parti" (ricaricare A1); per uno straordinario
+  "non c'e' la decisione" (prima `baseline --straordinario`, sezione 2-bis).
+
+### esegui_ciclo_locale.py settimanale
+
+`python esegui_ciclo_locale.py settimanale --payload A3_<lunedi'>.json`
+
+- Cosa fa: controlla l'output di A3 e i codici delle fonti, aggiunge le notizie
+  senza duplicati, la sintesi della settimana, fa scorrere la settimana corrente,
+  ricalcola e salva; archivia in `Settimane\<lunedi'>\`.
+- Obbligatorio: `--payload`.
+- Quando: ogni lunedi', dopo A3 (sezione 1, punto 5).
+- Errori tipici: "id_notizia ripetuti", "Codici fonte non nell'elenco", "Notizie o segnali di A3 su
+  voci che non sono nella lista di osservazione" (dare il messaggio ad A3), "settimana ...
+  non e' un lunedi'", "Le notizie da validare ... superano le ... righe" (sezione 7).
+
+### esegui_ciclo_locale.py valida
+
+`python esegui_ciclo_locale.py valida --periodo <ciclo o lunedi'> --validatore "<funzione o comitato>"`
+
+- Cosa fa: legge la griglia del foglio Validazione per quel periodo (cella gialla
+  uguale alla proposta = accettata, cambiata = rettificata, Respingi = Si' =
+  respinta), controlla tutte le righe e solo se vanno tutte bene le applica ai dati,
+  scrive lo storico, salva (backup prima), archivia l'Excel validato e
+  `Validazione_<periodo>.json`; per il ciclo corrente riscrive baseline e knowledge di A7.
+- Obbligatori: `--periodo` (es. `2026Q3` o `2026-10-12`), `--validatore`.
+  `--accetta-il-resto`: superata, accettata ma inutile.
+- Quando: dopo ogni trimestre (obbligatoria) e, se si vuole, dopo ogni settimana (sezione 3).
+- Errori tipici: "Validazione del periodo ... NON applicata (N problemi)" con il
+  numero di riga; "il rischio ha segnalazioni da motivare"; "proposta di A1 non
+  accettabile"; "Il foglio Validazione non corrisponde alle proposte" (comando
+  `griglia`); "Nessuna riga da validare"; "Stato vuoto o modificato a mano" (sezione 7).
+
+### esegui_ciclo_locale.py griglia
+
+`python esegui_ciclo_locale.py griglia`
+
+- Cosa fa: ricostruisce il foglio Validazione dalle proposte ancora da decidere,
+  conservando cio' che e' gia' scritto nelle righe intatte. Nessun parametro.
+- Quando: solo se il foglio e' stato rovinato a mano (righe cancellate o inserite,
+  ID cambiati).
+
+### esegui_ciclo_locale.py schede-input e schede
+
+`python esegui_ciclo_locale.py schede-input`
+`python esegui_ciclo_locale.py schede [--payload A6_<ciclo>.json]`
+
+- Cosa fanno: `schede-input` scrive `Cicli\<ciclo>\Schede_input_<ciclo>.json`, l'unico
+  allegato di A6; `schede` controlla l'output di A6 e scrive `Schede_<ciclo>.xlsx`
+  (senza `--payload`, le schede con i testi del registro). Sola lettura del registro.
+- Quando: dopo la validazione (sezione 2, punti 11-12).
+- Errori tipici: "righe da validare" (validare prima); "Output di A6 non coerente
+  con i dati validati" con l'elenco (correggere con A6, sezione 8); "No module named
+  'openpyxl'" (sezione 7).
+
+### esegui_ciclo_locale.py report
+
+`python esegui_ciclo_locale.py report [--file <registro.xlsx>] [--con-lavoro]`
+
+- Cosa fa: rigenera il PDF del report al comitato (Quadro..Metodologia) in
+  `Cicli\<ciclo>\Report_comitato_<ciclo>.pdf`; la versione precedente resta con data
+  e ora nel nome. Non modifica l'Excel.
+- Opzioni: `--file` un altro Excel (per esempio l'Excel validato di un ciclo);
+  `--con-lavoro` aggiunge Registro e Parametri, in orizzontale.
+- Quando: dopo la validazione e dopo ogni correzione a mano delle celle gialle
+  (sezione 2, punto 13; sezione 6).
+- Errori tipici: "righe da validare" (il ciclo deve essere validato).
+
+### esegui_ciclo_locale.py dismetti
+
+`python esegui_ciclo_locale.py dismetti --rischio NFR-nn --motivazione "..." --decisore "..."`
+
+- Cosa fa: toglie il rischio dall'anagrafica senza lasciare righe vuote, fa uscire
+  di vigore i suoi KRI, annulla le sue azioni aperte, archivia l'atto in
+  `Dismissioni\`; la storia resta. Riscrive baseline e knowledge di A7.
+- Obbligatori: `--rischio`, `--motivazione` (almeno 10 caratteri), `--decisore`.
+- Quando: solo su decisione della funzione di rischio (sezione 3-bis).
+- Errori tipici: "non e' nell'anagrafica dei rischi attivi"; motivazione troppo corta.
+
+### esegui_ciclo_locale.py inizializza
+
+`python esegui_ciclo_locale.py inizializza --ciclo-precedente AAAAQn --settimana AAAA-MM-GG [--template <file.xlsx>]`
+
+- Cosa fa: crea il registro vuoto dal template (senza i dati di esempio), con il
+  ciclo prima di quello da valutare e la settimana corrente. Non sovrascrive mai un
+  file esistente.
+- Obbligatori: `--ciclo-precedente` (il trimestre **prima** del primo da valutare),
+  `--settimana` (un lunedi'). Opzione: `--template`.
+- Quando: una volta sola, al primo uso (sezione 0.4), o per un registro di prova
+  (con `--workbook` davanti al comando).
+- Errori tipici: "esiste gia'"; "deve essere un lunedi'"; "Template non trovato" (sezione 7).
+
+### esegui_ciclo_locale.py aggiorna-registro
+
+`python esegui_ciclo_locale.py aggiorna-registro [--template <file.xlsx>]`
+
+- Cosa fa: porta il registro su un template nuovo copiando tutto per nome di
+  colonna (righe, anagrafica, parametri, Note dell'analista); verifica righe,
+  errori e baseline prima di sostituire il file; il vecchio resta in `Backup\`.
+  Pesi, soglie e Z diventano quelli del template nuovo (stampa quelli di prima).
+- Opzione: `--template`.
+- Quando: dopo un aggiornamento del pacchetto che cambia la struttura (ogni comando
+  si ferma finche' non e' fatto); con il pacchetto dell'08/10/2026, alla versione
+  2026-10-08b (sezione 0-bis).
+- Errori tipici: "e' gia' sulla versione"; "righe vuote con lo Stato 'Da decidere'"
+  e "campi che il modello non ha piu'" (sezione 7); "Aggiornamento NON applicato";
+  "e' aperto" (chiudere il registro e attendere OneDrive).

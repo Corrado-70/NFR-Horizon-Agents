@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_output_A3",
+  "title": "Output di A3 Interim Update — blocco dati settimanale",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["settimana", "notizie", "flag_proposti", "sintesi"],
+  "properties": {
+    "settimana": {"$ref": "#/$defs/data"},
+    "notizie": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id_notizia", "data", "titolo", "fonte", "codice_fonte", "sintesi", "rischio_collegato", "segnale", "impatti"],
+        "properties": {
+          "id_notizia": {"type": "string", "pattern": "^N-[0-9]{8}-[0-9]{2}$"},
+          "data": {"$ref": "#/$defs/data"},
+          "titolo": {"type": "string", "minLength": 5, "maxLength": 200},
+          "fonte": {"type": "string", "minLength": 3, "maxLength": 150},
+          "codice_fonte": {"type": "string", "pattern": "^(FNT-[0-9]{2}|MAN)$"},
+          "sintesi": {"type": "string", "minLength": 20, "maxLength": 800},
+          "rischio_collegato": {"type": ["string", "null"], "pattern": "^NFR-[0-9]{2}$"},
+          "voce_osservazione": {"type": ["string", "null"], "pattern": "^OSS-[0-9]{2}$"},
+          "segnale": {"$ref": "#/$defs/segnale"},
+          "impatti": {
+            "type": "array",
+            "minItems": 9,
+            "maxItems": 9,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["event_type", "intensita", "direzione"],
+              "properties": {
+                "event_type": {"type": "string", "enum": ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]},
+                "intensita": {"type": "integer", "minimum": 0, "maximum": 3},
+                "direzione": {"$ref": "#/$defs/segnale"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "flag_proposti": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id_rischio", "direzione", "motivazione"],
+        "properties": {
+          "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
+          "direzione": {"type": "string", "enum": ["Peggiorativo", "Migliorativo"]},
+          "motivazione": {"type": "string", "minLength": 20, "maxLength": 600}
+        }
+      }
+    },
+    "proposta_straordinario": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["rischi", "motivo"],
+      "properties": {
+        "rischi": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^NFR-[0-9]{2}$"}},
+        "motivo": {"type": "string", "minLength": 20, "maxLength": 600}
+      }
+    },
+    "segnali_osservazione": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["oss_id", "direzione", "motivazione"],
+        "properties": {
+          "oss_id": {"type": "string", "pattern": "^OSS-[0-9]{2}$"},
+          "direzione": {"type": "string", "enum": ["Avvicina", "Segnale verificato", "Allontana"]},
+          "motivazione": {"type": "string", "minLength": 20, "maxLength": 600}
+        }
+      }
+    },
+    "sintesi": {"type": "string", "minLength": 50, "maxLength": 3000}
+  },
+  "$defs": {
+    "data": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "segnale": {"type": "string", "enum": ["Peggiorativo", "Migliorativo", "Neutro", "Non rilevante"]}
+  }
+}

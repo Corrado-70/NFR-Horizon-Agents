@@ -1,0 +1,60 @@
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-02 — ciclo 2026Q4 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+
+NFR-02 Concentrazione su un fornitore cloud critico
+Event type: L1-06 Interruzione dell'operativita' e disfunzione dei sistemi; driver: DRV-TPR, DRV-CYB; owner: Funzione ICT & Security Risk.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 4 su 13.
+Attenzione del supervisore: si. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
+
+DESCRIZIONE
+Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.
+
+IL RISCHIO (razionale di A1)
+Molti servizi critici della Banca girano presso un solo fornitore cloud (causa); un'interruzione prolungata del fornitore li rende indisponibili insieme (evento); senza un'alternativa attivabile nei tempi di ripristino la Banca non eroga funzioni essenziali, con danno ai clienti e sanzioni (danno). Nel trimestre nessun incidente e nessun nuovo test: valori confermati con le fonti del ciclo precedente.
+
+VALORI E SCORE
+Impatto 4, Probabilita 2, Prossimita 3, Velocity 4.
+Score composito 3,30 (ciclo precedente 3,30); pesi: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20.
+
+PERCHE' OGNI VALORE (motivazioni scritte da A1, con fatti e documenti)
+IMPATTO: Grave. Il Registro delle informazioni DORA classifica critici i servizi ospitati dal fornitore: un'interruzione ferma una funzione essenziale.
+PROBABILITA: Improbabile. Nessuna interruzione grave del fornitore e' documentata e il Report del test completo di exit strategy mostra un'uscita praticabile, con soli rilievi minori.
+PROSSIMITA: Da uno a due anni. Nessun segnale di degrado del fornitore nelle fonti; il Contratto e piano di uscita resta valido.
+VELOCITY: Da uno a tre mesi. E' il tempo che l'Esito del test di exit strategy stima per riattivare i servizi critici su un'alternativa: in quel periodo il danno cresce fino al pieno impatto.
+
+URGENZA (disuguaglianza di Mosca: agire ora se X + Y > Z)
+X 0,25 + Y 0,25 contro Z 1,50: margine 1 anni, esito Margine 1 anno. Anni di adeguamento strutturale: —.
+Livello di allerta: Monitoraggio — motivo: nessun segnale forte. Segnali netti delle notizie nelle ultime 4 settimane: -1.
+
+COSA E' CAMBIATO
+Nessun valore cambiato: confermato sulle fonti del ciclo precedente.
+
+FONTI (riferimento, data, tipo, rilevanza 1-3 per la previsione)
+- Contratto e piano di uscita del fornitore cloud (2025-09-30, Interna, rilevanza 3)
+- Registro delle informazioni DORA — servizi ICT critici (2026-03-20, Interna, rilevanza 3)
+- Esito del test di exit strategy sul fornitore cloud (2026-05-12, Interna, rilevanza 3)
+- Report del test completo di exit strategy sui servizi critici (2026-08-28, Interna, rilevanza 3)
+
+AZIONI
+- 2026Q2-NFR-02-A1 [Approvata, 12 mesi, Funzione ICT & Security Risk]: Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti. Perche': Finche' la exit strategy non e' testata su tutti i servizi critici, un guasto del fornitore non ha alternativa.
+- 2026Q3-NFR-02-A1 [Approvata, 3 mesi, Funzione ICT & Security Risk]: Chiudere i rilievi minori emersi dal test di exit strategy entro il prossimo trimestre. Perche': Porta il lacuna di controllo verso il descrittore 2.
+- 2026Q3-NFR-02-A2 [Approvata, 12 mesi, Direzione Sistemi Informativi]: Valutare lo spostamento di un servizio critico sulla nuova region nazionale del fornitore. Perche': Riduce la severity di un'interruzione di una singola region.
+- 2026Q4-NFR-02-A1 [Approvata, 3 mesi, Funzione ICT & Security Risk]: Chiudere i rilievi minori emersi dal test di exit strategy. Perche': I rilievi minori del Report del test completo di exit strategy sono l'ultimo ostacolo a un'uscita nei tempi di ripristino. Effetto atteso: Un piano di uscita senza rilievi aperti, che mantiene bassa la Probabilita' di un'interruzione senza alternativa; la quota di servizi sul fornitore (NFR-02-K1) non cambia, cambia la capacita' di spostarli.
+
+KRI IN VIGORE
+- NFR-02-K1 (Esposizione) Quota di servizi critici sul fornitore cloud principale [%]: valore 70 (prima 72), soglie 60 / 75, stato Ambra; fonte dati Registro delle informazioni DORA. Perche': Misura la concentrazione, cioe' quanta parte della Banca dipende dal fornitore: piu' la quota e' alta, piu' grave sarebbe un'interruzione.
+- NFR-02-K3 (Evoluzione) Interruzioni di servizi critici presso il fornitore cloud principale nel trimestre [n]: valore 0 (prima —), soglie 1 / 3, stato Verde; fonte dati Incident management ICT e comunicazioni del fornitore. Perche': Conta le interruzioni dei servizi critici presso il fornitore principale, che sono il meccanismo di perdita del rischio.
+
+STORIA (cicli, dal piu' vecchio)
+- 2025Q4: Impatto 4, Probabilita 2, Prossimita 3, Velocity 4, score 3,30
+- 2026Q1: Impatto 4, Probabilita 2, Prossimita 3, Velocity 4, score 3,30
+- 2026Q2: Impatto 4, Probabilita 2, Prossimita 3, Velocity 4, score 3,30
+- 2026Q3: Impatto 4, Probabilita 2, Prossimita 3, Velocity 4, score 3,30
+- 2026Q4: Impatto 4, Probabilita 2, Prossimita 3, Velocity 4, score 3,30
+
+DECISIONI DEL VALIDATORE IN QUESTO CICLO
+Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate
+
+SEGNALAZIONI DEI CONTROLLI E DI A5
+Nessuna.
+

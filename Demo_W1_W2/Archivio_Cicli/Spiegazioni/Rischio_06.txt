@@ -1,0 +1,58 @@
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-06 — ciclo 2026Q4 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+
+NFR-06 Esfiltrazione di dati tramite strumenti di AI non autorizzati
+Event type: L1-01 Frode interna; driver: DRV-AI, DRV-HUM; owner: Funzione Sicurezza delle Informazioni.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 7 su 13.
+Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Assente.
+
+DESCRIZIONE
+Dipendenti che trasferiscono intenzionalmente dati riservati su servizi di AI generativa esterni per uso personale o a favore di terzi.
+
+IL RISCHIO (razionale di A1)
+Strumenti di AI generativa esterni, facili da usare e non autorizzati (causa), vengono usati da dipendenti per trasferire dati riservati, per comodita' o a favore di terzi (evento); i dati escono dal perimetro della Banca, con violazioni di privacy e segreto e possibili sanzioni (danno). Nessun fatto nuovo nel trimestre: valori confermati; la verifica dell'audit sull'estensione del DLP e' pianificata per febbraio 2027.
+
+VALORI E SCORE
+Impatto 3, Probabilita 3, Prossimita 3, Velocity 3.
+Score composito 3 (ciclo precedente 3); pesi: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20.
+
+PERCHE' OGNI VALORE (motivazioni scritte da A1, con fatti e documenti)
+IMPATTO: Rilevante. I Log DLP mostrano tentativi di caricamento di dati riservati di clienti: segnalazione all'autorita' possibile.
+PROBABILITA: Possibile. La Survey interna sull'uso di strumenti di AI generativa indica un uso diffuso fra il personale: la Banca e' esposta.
+PROSSIMITA: Da uno a due anni. Il Verbale del test di blocco DLP mostra che il blocco funziona sui servizi noti, non ancora su tutti.
+VELOCITY: Da tre a sei mesi. Fra un caricamento e la sua scoperta passano settimane o mesi (Log DLP).
+
+URGENZA (disuguaglianza di Mosca: agire ora se X + Y > Z)
+X 0,25 + Y 1 contro Z 1,50: margine 0,25 anni, esito Agire entro l'anno. Anni di adeguamento strutturale: 1.
+Livello di allerta: Attenzione — motivo: margine sotto l'anno con presidio dei controlli assente. Segnali netti delle notizie nelle ultime 4 settimane: 0.
+
+COSA E' CAMBIATO
+Nessun valore cambiato: confermato sulle fonti del ciclo precedente.
+
+FONTI (riferimento, data, tipo, rilevanza 1-3 per la previsione)
+- Log DLP: tentativi di caricamento verso servizi AI esterni (2026-03-15, Interna, rilevanza 3)
+- Survey interna sull'uso di strumenti di AI generativa (2026-02-10, Interna, rilevanza 3)
+- Verbale del test di blocco DLP sui servizi di AI generativa (2026-09-05, Interna, rilevanza 3)
+
+AZIONI
+- 2026Q2-NFR-06-A1 [Approvata, 3 mesi, Funzione Sicurezza delle Informazioni]: Estendere il DLP a tutti i servizi di AI generativa e bloccare quelli non autorizzati. Perche': Il DLP copre solo parte dei servizi di AI generativa: l'azione estende il presidio.
+- 2026Q3-NFR-06-A1 [Approvata, 6 mesi, Direzione Risorse Umane]: Completare la formazione obbligatoria sull'uso dell'AI per tutto il personale. Perche': Riduce la prossimita': meno comportamenti a rischio per inconsapevolezza.
+- 2026Q3-NFR-06-A2 [Approvata, 6 mesi, Funzione Sicurezza delle Informazioni]: Chiedere all'audit interno la verifica dell'estensione del DLP. Perche': Serve un test indipendente per portare il lacuna di controllo al descrittore 2.
+- 2026Q4-NFR-06-A1 [Approvata, 6 mesi, Direzione Risorse Umane]: Inserire nel codice di comportamento gli strumenti di AI ammessi e i dati che non si possono caricare, con le conseguenze disciplinari. Perche': La formazione (2026Q3-NFR-06-A1) spiega le regole; il codice di comportamento le rende vincolanti. Effetto atteso: Meno tentativi di caricamento di dati riservati (NFR-06-K1); al ciclo successivo puo' sostenere una Probabilita' piu' bassa.
+
+KRI IN VIGORE
+- NFR-06-K1 (Evoluzione) Tentativi di caricamento di dati riservati su servizi AI non autorizzati [n/mese]: valore 5 (prima 6), soglie 10 / 30, stato Verde; fonte dati DLP e proxy web. Perche': Misura il comportamento a rischio come lo vede il DLP: ogni tentativo e' un'esfiltrazione fermata o mancata di poco.
+- NFR-06-K2 (Esposizione) Quota di dipendenti senza formazione sull'uso dell'AI [%]: valore 12 (prima 22), soglie 20 / 40, stato Verde; fonte dati Piattaforma di formazione. Perche': Misura quanta parte del personale e' esposta all'errore per inconsapevolezza.
+
+STORIA (cicli, dal piu' vecchio)
+- 2026Q1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+
+DECISIONI DEL VALIDATORE IN QUESTO CICLO
+Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate
+
+SEGNALAZIONI DEI CONTROLLI E DI A5
+Nessuna.
+

@@ -1,0 +1,13 @@
+{
+  "ciclo": "2026Q3",
+  "esito": "Approvato",
+  "sintesi": "Valutazione sostenuta dalle fonti citate. L'aumento di prossimita' di NFR-03 poggia su un caso nel settore; NFR-10 lascia la Velocity non valutata in assenza di fonti sui tempi. Un'osservazione di giudizio su NFR-06.",
+  "rilievi": [
+    {
+      "controllo": "C5",
+      "id_rischio": "NFR-06",
+      "gravita": "Osservazione",
+      "descrizione": "Le fonti di NFR-06 sono interne e recenti; manca un riscontro esterno sul fenomeno: verificare al prossimo ciclo."
+    }
+  ]
+}

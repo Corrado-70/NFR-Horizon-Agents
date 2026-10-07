@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_output_A6",
+  "title": "Output di A6 Schede dei rischi — testi estesi delle schede, dopo la validazione del ciclo",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ciclo", "schede"],
+  "properties": {
+    "ciclo": {"type": "string", "pattern": "^[0-9]{4}Q[1-4](-S[1-9])?$"},
+    "schede": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id_rischio", "descrizione_estesa", "dimensioni", "fonti"],
+        "properties": {
+          "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
+          "descrizione_estesa": {"type": "string", "minLength": 300, "maxLength": 1800},
+          "dimensioni": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["dimensione", "spiegazione"],
+              "properties": {
+                "dimensione": {"type": "string", "enum": ["impatto", "probabilita", "prossimita", "velocity"]},
+                "spiegazione": {"type": "string", "minLength": 40, "maxLength": 600}
+              }
+            }
+          },
+          "fonti": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["riferimento", "a_sostegno_di"],
+              "properties": {
+                "riferimento": {"type": "string", "minLength": 3},
+                "a_sostegno_di": {"type": "string", "minLength": 10, "maxLength": 400}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-13 — ciclo 2026Q4 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+
+NFR-13 Vertenze e carenza di competenze in funzioni IT critiche
+Event type: L1-03 Rapporti di impiego e sicurezza sul lavoro; driver: DRV-HUM; owner: Da assegnare.
+Esito nel ciclo: Nuovo. Posizione in classifica per score: 9 su 13.
+Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
+
+DESCRIZIONE
+Scioperi di settore e uscite di personale tecnico non rimpiazzabile che lasciano scoperti ruoli IT critici, con violazioni di obblighi di lavoro e sicurezza nei turni di copertura.
+
+IL RISCHIO (razionale di A1)
+La vertenza nazionale del settore e le uscite di tecnici difficili da sostituire (causa) lasciano scoperti ruoli IT critici durante scioperi o dimissioni, con turni di copertura che violano obblighi di lavoro e sicurezza (evento); processi critici si degradano e la Banca rischia vertenze e sanzioni (danno). Rischio nuovo: nessun rischio del registro copriva i rapporti di impiego (L1-03).
+
+VALORI E SCORE
+Impatto 3, Probabilita 3, Prossimita 3, Velocity 3.
+Score composito 3 (ciclo precedente —); pesi: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20.
+
+PERCHE' OGNI VALORE (motivazioni scritte da A1, con fatti e documenti)
+IMPATTO: Rilevante. Durante le astensioni si degradano processi critici che dipendono da pochi tecnici (Piano di successione dei ruoli IT critici, Direzione Risorse Umane).
+PROBABILITA: Possibile. Lo sciopero nazionale del personale bancario e la carenza di tecnici IT sono in corso nel settore; la Banca e' esposta perche' il Piano di successione copre solo una parte dei ruoli.
+PROSSIMITA: Da uno a due anni. La vertenza e' in corso nel settore, senza astensioni annunciate presso la Banca.
+VELOCITY: Da tre a sei mesi. Le uscite di personale e i periodi di vertenza si sviluppano in alcuni mesi (Sciopero nazionale del personale bancario).
+
+URGENZA (disuguaglianza di Mosca: agire ora se X + Y > Z)
+X 0,25 + Y 0,50 contro Z 1,50: margine 0,75 anni, esito Agire entro l'anno. Anni di adeguamento strutturale: —.
+Livello di allerta: Monitoraggio — motivo: nessun segnale forte. Segnali netti delle notizie nelle ultime 4 settimane: 0.
+
+COSA E' CAMBIATO
+Rischio nuovo nel ciclo.
+
+FONTI (riferimento, data, tipo, rilevanza 1-3 per la previsione)
+- Sciopero nazionale del personale bancario e carenza di tecnici IT (2026-10-06, Esterna, rilevanza 2)
+- Piano di successione dei ruoli IT critici — Direzione Risorse Umane (2026-11-15, Interna, rilevanza 3)
+
+AZIONI
+- 2026Q4-NFR-13-A1 [Approvata, 6 mesi, Direzione Risorse Umane]: Estendere il piano di successione a tutti i ruoli IT critici, con backup formati. Perche': Oggi il Piano di successione copre circa meta' dei ruoli critici: e' la lacuna principale del rischio. Effetto atteso: Ogni ruolo critico con un sostituto formato; i ruoli senza sostituto (KRI di esposizione) devono scendere sotto la soglia di attenzione.
+- 2026Q4-NFR-13-A2 [Approvata, 3 mesi, Direzione Sistemi Informativi]: Definire i servizi minimi IT garantiti in caso di sciopero, d'intesa con le rappresentanze. Perche': Senza servizi minimi concordati un'astensione puo' fermare processi critici o imporre turni non conformi. Effetto atteso: Un danno minore in caso di sciopero (Impatto) e turni di copertura conformi agli obblighi di lavoro.
+
+KRI IN VIGORE
+- NFR-13-K1 (Esposizione) Ruoli IT critici senza sostituto formato [n]: valore — (prima —), soglie 3 / 6, stato Non rilevato; fonte dati Piano di successione — Direzione Risorse Umane. Perche': Misura quanto la Banca e' esposta: ogni ruolo critico senza sostituto e' un punto di blocco.
+- NFR-13-K2 (Evoluzione) Turnover volontario annualizzato del personale IT [%]: valore — (prima —), soglie 8 / 12, stato Non rilevato; fonte dati Sistema HR di gestione del personale. Perche': Misura quanto cresce la perdita di competenze tecniche.
+
+STORIA (cicli, dal piu' vecchio)
+- 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+
+DECISIONI DEL VALIDATORE IN QUESTO CICLO
+Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate
+
+SEGNALAZIONI DEI CONTROLLI E DI A5
+Nessuna.
+

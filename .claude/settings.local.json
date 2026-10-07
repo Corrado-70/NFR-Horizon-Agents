@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -liE \"installa|setup|prima volta|passo passo|step\")",
+      "Bash(python3 componi_prompt.py --verifica)",
+      "mcp__claude_ai_Claude_Docs__batch",
+      "Bash(PYTHONIOENCODING=utf-8 python -c ' *)",
+      "Bash(python genera_dashboard.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python prova_griglia2.py)",
+      "Bash(python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python test_mappatura.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python test_controlli.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python run_catena.py)",
+      "Bash(echo \"fine: $?\")",
+      "PowerShell(python NFR_Emerging_Risk_Agents\\\\99_Collaudo\\\\esegui_collaudo.py --senza-excel 2>&1)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe' OR Name='EXCEL.EXE'\" | Select-Object ProcessId, Name, CreationDate, @{n='Cmd';e={$_.CommandLine.Substring\\(0,[Math]::Min\\(120,$_.CommandLine.Length\\)\\)}} | Format-Table -AutoSize | Out-String -Width 250)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe' OR Name='EXCEL.EXE' OR Name='pwsh.exe' OR Name='powershell.exe'\")",
+      "PowerShell(Stop-Process -Id 32648,16356,44444 -Force -Confirm:$false)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe' OR Name='EXCEL.EXE'\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\cogra\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-cogra-Documents-NFR-Horizon-Agents\" -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt \\(Get-Date\\).Date } | Sort-Object LastWriteTime -Descending | Select-Object -First 15 LastWriteTime, Length, FullName | Format-Table -AutoSize | Out-String -Width 300)",
+      "PowerShell(Wait-Process -Id 33004 -Timeout 3600 -ErrorAction SilentlyContinue)",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\cogra\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-cogra-Documents-NFR-Horizon-Agents\\\\ae0b37e2-86db-4358-b897-496cda60c80c\\\\scratchpad\\\\catena1.txt\"\\).LastWriteTime)",
+      "PowerShell(\\(Get-Item \"Demo_W1_W2\\\\esegui_demo.py\"\\).LastWriteTime; Get-ChildItem Demo_W1_W2 | Select-Object LastWriteTime, Name | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem Demo_W1_W2 -Recurse -File | Sort-Object LastWriteTime -Descending | Select-Object -First 6 LastWriteTime, @{n='P';e={$_.FullName.Replace\\(\\(Get-Location\\).Path+'\\\\',''\\)}} | Format-Table -AutoSize | Out-String -Width 200)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\")",
+      "PowerShell(python -c \"import pypdf,sys\" 2>$null)",
+      "PowerShell($f = Get-Item \"C:\\\\Users\\\\cogra\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-cogra-Documents-NFR-Horizon-Agents\\\\54956d48-3879-4c5b-9ef2-4dae5868e1be\\\\scratchpad\\\\demo.log\"; \"$\\($f.CreationTime\\) -> $\\($f.LastWriteTime\\)\")",
+      "Bash(grep -v \"fino al 2026-10-01\\\\|2026-10-01\\)\\\\|registri fino\\\\|versione \\\\`2026-10-01\\\\`\\\\|struttura 2026-10-01\\\\|D-66\")",
+      "PowerShell(python NFR_Emerging_Risk_Agents\\\\02_Agenti\\\\componi_prompt.py 2>&1)",
+      "Bash(PYTHONIOENCODING=utf-8 python \"C:/Users/cogra/AppData/Local/Temp/claude/c--Users-cogra-Documents-NFR-Horizon-Agents/54956d48-3879-4c5b-9ef2-4dae5868e1be/scratchpad/converti_run3.py\")",
+      "PowerShell($env:PYTHONIOENCODING='utf-8'; python NFR_Emerging_Risk_Agents\\\\99_Collaudo\\\\test_controlli.py 2>&1 | Select-Object -Last 25)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\cogra\\\\Documents\\\\NFR Horizon Agents\"; $env:PYTHONIOENCODING='utf-8'; python NFR_Emerging_Risk_Agents\\\\03_Excel\\\\genera_dashboard.py 2>&1 | Select-Object -Last 5; python NFR_Emerging_Risk_Agents\\\\99_Collaudo\\\\esegui_collaudo.py --senza-excel 2>&1 | Select-Object -Last 22)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\cogra\\\\Documents\\\\NFR Horizon Agents\"; $env:PYTHONIOENCODING='utf-8'; python NFR_Emerging_Risk_Agents\\\\02_Agenti\\\\componi_prompt.py 2>&1 | Select-Object -Last 6; python NFR_Emerging_Risk_Agents\\\\99_Collaudo\\\\esegui_collaudo.py --senza-excel 2>&1 | Select-Object -Last 20)",
+      "PowerShell($f=\"C:\\\\Users\\\\cogra\\\\Documents\\\\NFR Horizon Agents\\\\NFR_Emerging_Risk_Agents\\\\00_GUIDA_PASSO_PASSO.md\"; \\(Get-Content $f | Measure-Object -Line\\).Lines; \\(Get-Item $f\\).Length; Select-String -Path $f -Pattern '^#{1,4} ' | ForEach-Object { \"$\\($_.LineNumber\\): $\\($_.Line\\)\" })"
+    ]
+  }
+}

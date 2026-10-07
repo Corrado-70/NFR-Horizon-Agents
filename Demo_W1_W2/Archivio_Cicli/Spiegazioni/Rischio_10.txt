@@ -1,0 +1,56 @@
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-10 — ciclo 2026Q4 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+
+NFR-10 Informazioni errate ai clienti da assistenti di AI generativa
+Event type: L1-04 Clientela, prodotti e prassi professionali; driver: DRV-AI, DRV-CON; owner: Funzione Customer Experience.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 8 su 13.
+Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
+
+DESCRIZIONE
+Chatbot di assistenza basati su AI generativa che danno ai clienti informazioni errate su condizioni, costi o diritti, con reclami e rimborsi.
+
+IL RISCHIO (razionale di A1)
+I chatbot di assistenza con AI generativa possono inventare risposte plausibili (causa); un cliente riceve informazioni errate su costi, condizioni o diritti e decide in base a quelle (evento); la Banca deve rimborsare, gestire reclami e rischia sanzioni per informativa scorretta (danno). Nessuna evidenza nuova nel trimestre: valori confermati.
+
+VALORI E SCORE
+Impatto 3, Probabilita 3, Prossimita 3, Velocity 3.
+Score composito 3 (ciclo precedente 3); pesi: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20.
+
+PERCHE' OGNI VALORE (motivazioni scritte da A1, con fatti e documenti)
+IMPATTO: Rilevante. Il Piano di rilascio del chatbot prevede l'uso su tutta la clientela retail: un errore sistematico tocca una clientela ampia.
+PROBABILITA: Possibile. La sanzione a una compagnia aerea per le risposte errate del proprio chatbot e' un caso in un altro settore; la Banca e' esposta perche' usa lo stesso tipo di strumento.
+PROSSIMITA: Da uno a due anni. Nessun caso presso banche.
+VELOCITY: Da tre a sei mesi. Valore fissato in validazione nel 2026Q3 sul registro reclami: le risposte errate arrivano ai clienti in giorni, i reclami si accumulano in mesi.
+
+URGENZA (disuguaglianza di Mosca: agire ora se X + Y > Z)
+X 0,25 + Y 0,25 contro Z 1,50: margine 1 anni, esito Margine 1 anno. Anni di adeguamento strutturale: —.
+Livello di allerta: Monitoraggio — motivo: nessun segnale forte. Segnali netti delle notizie nelle ultime 4 settimane: 0.
+
+COSA E' CAMBIATO
+Nessun valore cambiato: confermato sulle fonti del ciclo precedente.
+
+FONTI (riferimento, data, tipo, rilevanza 1-3 per la previsione)
+- Piano di rilascio del chatbot di assistenza con AI generativa (2026-01-20, Interna, rilevanza 3)
+- Sanzione a una compagnia aerea per risposte errate del proprio chatbot (2026-02-15, Esterna, rilevanza 3)
+
+AZIONI
+- 2026Q2-NFR-10-A1 [Approvata, 3 mesi, Funzione Customer Experience]: Campionamento settimanale delle risposte del chatbot con verifica umana. Perche': Riduce la probabilita' che informazioni errate raggiungano molti clienti.
+- 2026Q3-NFR-10-A1 [Approvata, 3 mesi, Funzione Customer Experience]: Definire i temi su cui il chatbot non risponde e passa la conversazione a un operatore (reclami, condizioni contrattuali, tassi). Perche': Il campionamento (2026Q2-NFR-10-A1) trova gli errori dopo; i temi esclusi evitano le risposte errate dove il danno e' maggiore.
+- 2026Q4-NFR-10-A1 [Approvata, 3 mesi, Funzione Customer Experience]: Mostrare nel chatbot l'avviso che le risposte su condizioni e tassi vanno verificate sul documento di sintesi, con il collegamento. Perche': I temi esclusi (2026Q3-NFR-10-A1) e il campionamento (2026Q2-NFR-10-A1) riducono le risposte errate ma non le azzerano: l'avviso limita il danno quando capitano. Effetto atteso: Meno contestazioni per risposte errate (NFR-10-K1), quindi un Impatto contenuto.
+
+KRI IN VIGORE
+- NFR-10-K1 (Evoluzione) Risposte del chatbot contestate ogni 1.000 conversazioni [n/1000]: valore 2,30 (prima 1,90), soglie 2 / 5, stato Ambra; fonte dati Piattaforma di assistenza. Perche': Misura gli errori del chatbot come li vivono i clienti.
+- NFR-10-K3 (Esposizione) Quota di risposte del chatbot non campionate dal controllo qualita' [%]: valore 40 (prima 45), soglie 20 / 50, stato Ambra; fonte dati Controllo qualita' Customer Experience. Perche': Misura quanta parte delle risposte arriva ai clienti senza alcuna verifica: e' l'esposizione della Banca.
+
+STORIA (cicli, dal piu' vecchio)
+- 2026Q1: Impatto 3, Probabilita 3, Prossimita 3, Velocity —, score 3
+- 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity —, score 3
+- 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+
+DECISIONI DEL VALIDATORE IN QUESTO CICLO
+Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate
+
+SEGNALAZIONI DEI CONTROLLI E DI A5
+Nessuna.
+

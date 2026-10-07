@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_output_A1",
+  "title": "Output di A1 Horizon Scanner — contratto A1 -> A5 -> scrittura",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ciclo", "data_riferimento", "rischi", "ricalcolo_kri_ciclo_precedente", "sintesi"],
+  "properties": {
+    "ciclo": {"type": "string", "pattern": "^[0-9]{4}Q[1-4](-S[1-9])?$"},
+    "data_riferimento": {"$ref": "#/$defs/data"},
+    "rischi": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/rischio"}
+    },
+    "ricalcolo_kri_ciclo_precedente": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/ricalcolo_kri"}
+    },
+    "sintesi": {"type": "string", "minLength": 100, "maxLength": 3000},
+    "fenomeni_non_censiti": {
+      "type": "array",
+      "maxItems": 15,
+      "items": {"$ref": "#/$defs/fenomeno_non_censito"}
+    },
+    "osservazione": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {"$ref": "#/$defs/voce_osservazione"}
+    }
+  },
+  "$defs": {
+    "data": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "fenomeno_non_censito": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fenomeno", "event_type", "fonti", "motivo", "spiegazione"],
+      "properties": {
+        "fenomeno": {"type": "string", "minLength": 5, "maxLength": 200},
+        "event_type": {"type": ["string", "null"], "enum": ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13", null]},
+        "fonti": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["riferimento", "data"],
+            "properties": {
+              "riferimento": {"type": "string", "minLength": 3, "maxLength": 300},
+              "data": {"$ref": "#/$defs/data"}
+            }
+          }
+        },
+        "motivo": {"enum": ["nessun_meccanismo", "fonte_non_specifica", "gia_coperto", "troppo_lontano", "fuori_perimetro", "altro"]},
+        "spiegazione": {"type": "string", "minLength": 10, "maxLength": 300}
+      }
+    },
+    "voce_osservazione": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oss_id", "esito", "nome", "descrizione", "driver", "event_type", "rischi_toccati",
+                   "impatto_potenziale", "orizzonte_anni", "plausibilita", "segnale_avvicinamento", "motivazione",
+                   "fonti", "promosso_a"],
+      "properties": {
+        "oss_id": {"type": ["string", "null"], "pattern": "^OSS-[0-9]{2}$"},
+        "esito": {"enum": ["nuova", "confermata", "avvicinata", "promossa", "archiviata"]},
+        "nome": {"type": "string", "minLength": 5, "maxLength": 120},
+        "descrizione": {"type": "string", "minLength": 20, "maxLength": 500},
+        "driver": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true,
+                   "items": {"type": "string", "enum": ["DRV-CYB", "DRV-TPR", "DRV-AI", "DRV-CLI", "DRV-CON", "DRV-GEO", "DRV-TEC", "DRV-HUM"]}},
+        "event_type": {"type": "string", "enum": ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]},
+        "rischi_toccati": {"type": "array", "maxItems": 5, "uniqueItems": true,
+                           "items": {"type": "string", "pattern": "^NFR-[0-9]{2}$"}},
+        "impatto_potenziale": {"$ref": "#/$defs/punteggio"},
+        "orizzonte_anni": {"type": "integer", "minimum": 1, "maximum": 20},
+        "plausibilita": {"enum": ["teorica", "possibile", "in crescita"]},
+        "segnale_avvicinamento": {"type": "string", "minLength": 10, "maxLength": 300},
+        "motivazione": {"type": "string", "minLength": 20, "maxLength": 600},
+        "fonti": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["riferimento", "data"],
+            "properties": {
+              "riferimento": {"type": "string", "minLength": 3, "maxLength": 300},
+              "data": {"$ref": "#/$defs/data"}
+            }
+          }
+        },
+        "promosso_a": {"type": ["string", "null"], "pattern": "^NFR-[0-9]{2}$"}
+      }
+    },
+    "punteggio": {"type": "integer", "minimum": 1, "maximum": 5},
+    "soglia": {"type": ["number", "null"]},
+    "rischio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id_rischio", "nome", "event_type", "driver", "descrizione",
+                   "impatto", "velocity", "prossimita", "probabilita", "anni_adeguamento",
+                   "variazioni", "fonti", "razionale",
+                   "azioni_mitigazione", "kri_proposti"],
+      "properties": {
+        "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
+        "nome": {"type": "string", "minLength": 5, "maxLength": 120},
+        "event_type": {"type": "string", "enum": ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13", "FP"]},
+        "driver": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"type": "string", "enum": ["DRV-CYB", "DRV-TPR", "DRV-AI", "DRV-CLI", "DRV-CON", "DRV-GEO", "DRV-TEC", "DRV-HUM"]}
+        },
+        "descrizione": {"type": "string", "minLength": 20, "maxLength": 1000},
+        "impatto": {"$ref": "#/$defs/punteggio"},
+        "velocity": {"type": ["integer", "null"], "minimum": 1, "maximum": 5},
+        "prossimita": {"$ref": "#/$defs/punteggio"},
+        "probabilita": {"$ref": "#/$defs/punteggio"},
+        "anni_adeguamento": {"type": ["number", "null"], "minimum": 0, "maximum": 30},
+        "variazioni": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dimensione", "evidenza", "data_evidenza"],
+            "properties": {
+              "dimensione": {"type": "string", "enum": ["impatto", "velocity", "prossimita", "probabilita"]},
+              "evidenza": {"type": "string", "minLength": 20, "maxLength": 600},
+              "data_evidenza": {"$ref": "#/$defs/data"}
+            }
+          }
+        },
+        "fonti": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["riferimento", "data", "tipo", "rilevanza"],
+            "properties": {
+              "riferimento": {"type": "string", "minLength": 5, "maxLength": 300},
+              "data": {"$ref": "#/$defs/data"},
+              "tipo": {"type": "string", "enum": ["Interna", "Esterna"]},
+              "rilevanza": {"type": "integer", "minimum": 1, "maximum": 3}
+            }
+          }
+        },
+        "razionale": {"type": "string", "minLength": 50, "maxLength": 2500},
+        "azioni_mitigazione": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["descrizione", "owner", "orizzonte", "razionale"],
+            "properties": {
+              "descrizione": {"type": "string", "minLength": 20, "maxLength": 500},
+              "owner": {"type": "string", "minLength": 3, "maxLength": 100},
+              "orizzonte": {"type": "string", "enum": ["3 mesi", "6 mesi", "12 mesi"]},
+              "razionale": {"type": "string", "minLength": 20, "maxLength": 700}
+            }
+          }
+        },
+        "kri_proposti": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tipo", "nome", "unita", "fonte_dati", "soglia_attenzione", "soglia_allerta", "razionale"],
+            "properties": {
+              "kri_id": {"type": ["string", "null"], "pattern": "^NFR-[0-9]{2}-K[0-9]+$"},
+              "tipo": {"type": "string", "enum": ["Esposizione", "Evoluzione"]},
+              "nome": {"type": "string", "minLength": 5, "maxLength": 150},
+              "unita": {"type": "string", "minLength": 1, "maxLength": 30},
+              "fonte_dati": {"type": "string", "minLength": 5, "maxLength": 200},
+              "soglia_attenzione": {"$ref": "#/$defs/soglia"},
+              "soglia_allerta": {"$ref": "#/$defs/soglia"},
+              "razionale": {"type": "string", "minLength": 20, "maxLength": 700}
+            }
+          }
+        }
+      }
+    },
+    "ricalcolo_kri": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kri_id", "valore", "fonte", "commento"],
+      "properties": {
+        "kri_id": {"type": "string", "pattern": "^NFR-[0-9]{2}-K[0-9]+$"},
+        "valore": {"type": ["number", "null"]},
+        "fonte": {"type": "string", "minLength": 5, "maxLength": 200},
+        "commento": {"type": "string", "minLength": 10, "maxLength": 500}
+      }
+    }
+  }
+}

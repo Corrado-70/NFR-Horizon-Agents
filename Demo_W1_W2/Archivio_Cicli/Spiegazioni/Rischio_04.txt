@@ -1,0 +1,57 @@
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-04 — ciclo 2026Q4 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+
+NFR-04 Eventi climatici estremi su sedi e data center
+Event type: L1-05 Danni a beni materiali; driver: DRV-CLI; owner: Funzione Business Continuity.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 11 su 13.
+Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
+
+DESCRIZIONE
+Alluvioni o ondate di calore che rendono inagibili sedi operative o degradano il data center secondario.
+
+IL RISCHIO (razionale di A1)
+Eventi climatici estremi sempre piu' frequenti, alluvioni e ondate di calore (causa), possono rendere inagibili sedi operative o degradare il data center secondario (evento); le attivita' di quelle sedi si fermano e il ripristino costa, con disagi per i clienti (danno). Nessun evento sulle sedi nel trimestre e piani per le due sedi critiche in redazione: valori confermati.
+
+VALORI E SCORE
+Impatto 3, Probabilita 3, Prossimita 3, Velocity 2.
+Score composito 2,80 (ciclo precedente 2,80); pesi: Impatto 0,35, Probabilita 0,25, Prossimita 0,20, Velocity 0,20.
+
+PERCHE' OGNI VALORE (motivazioni scritte da A1, con fatti e documenti)
+IMPATTO: Rilevante. La Mappa del rischio idrogeologico delle sedi (BCM) indica sedi critiche esposte, il cui blocco degrada processi critici.
+PROBABILITA: Possibile. L'alluvione in Emilia-Romagna con chiusura di due filiali e' un caso in aziende comparabili e la Banca ha sedi nelle aree a rischio della Mappa.
+PROSSIMITA: Da uno a due anni. Nessun evento in corso sulle sedi della Banca.
+VELOCITY: Da sei a dodici mesi. L'evento e' rapido, ma le attivita' si spostano sulle altre sedi e il danno pieno arriva solo se l'inagibilita' dura mesi (Mappa del rischio idrogeologico, BCM).
+
+URGENZA (disuguaglianza di Mosca: agire ora se X + Y > Z)
+X 0,25 + Y 0,50 contro Z 1,50: margine 0,75 anni, esito Agire entro l'anno. Anni di adeguamento strutturale: —.
+Livello di allerta: Attenzione — motivo: margine sotto l'anno con KRI in ambra o rosso. Segnali netti delle notizie nelle ultime 4 settimane: 0.
+
+COSA E' CAMBIATO
+Nessun valore cambiato: confermato sulle fonti del ciclo precedente.
+
+FONTI (riferimento, data, tipo, rilevanza 1-3 per la previsione)
+- Mappa del rischio idrogeologico delle sedi — BCM (2025-10-30, Interna, rilevanza 3)
+- Alluvione in Emilia-Romagna con chiusura di due filiali (2026-05-06, Esterna, rilevanza 3)
+
+AZIONI
+- 2026Q2-NFR-04-A1 [Approvata, 12 mesi, Funzione Business Continuity]: Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio. Perche': Il KRI NFR-04-K1 mostra due sedi senza piano: e' il punto scoperto principale.
+- 2026Q3-NFR-04-A1 [Approvata, 6 mesi, Funzione Business Continuity]: Provare i piani di continuita' delle due sedi critiche con un'esercitazione di ripartenza in sede alternativa. Perche': I piani delle due sedi (azione 2026Q2-NFR-04-A1) sono in redazione: senza una prova non si sa se reggono a un evento reale.
+- 2026Q4-NFR-04-A1 [Approvata, 6 mesi, Funzione Business Continuity]: Verificare con i fornitori di energia e telecomunicazioni delle due sedi critiche i tempi di ripristino garantiti dopo un'alluvione. Perche': I piani delle due sedi (2026Q2-NFR-04-A1) e la loro prova (2026Q3-NFR-04-A1) presuppongono energia e rete disponibili, ma nessuno ha verificato in quanto tempo i fornitori le ripristinano. Effetto atteso: Piani con tempi di ripartenza realistici; i giorni di indisponibilita' dopo un evento (NFR-04-K2) restano sotto la soglia di attenzione.
+
+KRI IN VIGORE
+- NFR-04-K1 (Esposizione) Sedi critiche in aree a rischio idrogeologico senza piano specifico [n]: valore 2 (prima 2), soglie 1 / 3, stato Ambra; fonte dati Mappatura BCM delle sedi. Perche': Misura l'esposizione: ogni sede critica senza piano specifico e' un punto in cui un'alluvione ferma l'operativita'.
+- NFR-04-K2 (Evoluzione) Giorni di indisponibilita' di sedi per eventi climatici [giorni]: valore 0 (prima 0), soglie 2 / 5, stato Verde; fonte dati Registro incidenti BCM. Perche': Misura quanto il fenomeno colpisce davvero le sedi della Banca: i giorni persi per eventi climatici.
+
+STORIA (cicli, dal piu' vecchio)
+- 2025Q4: Impatto 3, Probabilita 3, Prossimita 2, Velocity 2, score 2,60
+- 2026Q1: Impatto 3, Probabilita 3, Prossimita 2, Velocity 2, score 2,60
+- 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
+- 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
+- 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
+
+DECISIONI DEL VALIDATORE IN QUESTO CICLO
+Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate
+
+SEGNALAZIONI DEI CONTROLLI E DI A5
+Nessuna.
+

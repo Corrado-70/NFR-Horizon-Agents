@@ -1,0 +1,9 @@
+{
+  "_nota": "Decisioni del validatore sulle notizie della settimana del 12/10/2026. Simulato: scritto da Claude.",
+  "periodo": "2026-10-12",
+  "validatore": "Funzione Risk Management",
+  "decisioni": [
+    {"oggetto": "Notizia", "id": "N-20261008-02", "campo": "Segnale", "decisione": "Rettificato", "valore": "Migliorativo",
+     "motivazione": "La seconda region italiana rende praticabile il piano multi-region: per NFR-02 e' un segnale migliorativo."}
+  ]
+}

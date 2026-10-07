@@ -1,0 +1,69 @@
+{
+  "_nota": "Cio' che il validatore scrive nella griglia del foglio Validazione per il ciclo 2026Q3: Rettificato = il valore nella cella gialla del campo, Respinto = Respingi Si', con la Motivazione della riga; le altre righe restano come proposte (= accettate). Simulato: scritto da Claude.",
+  "periodo": "2026Q3",
+  "validatore": "Comitato Rischi",
+  "decisioni": [
+    {
+      "oggetto": "Rischio",
+      "id": "NFR-06",
+      "campo": "Anni_Adeguamento",
+      "decisione": "Rettificato",
+      "valore": 1,
+      "motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori."
+    },
+    {
+      "oggetto": "Rischio",
+      "id": "NFR-10",
+      "campo": "Velocity",
+      "decisione": "Rettificato",
+      "valore": 3,
+      "motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3."
+    },
+    {
+      "oggetto": "KRI",
+      "id": "NFR-10-K1",
+      "campo": "Soglia_Attenzione",
+      "decisione": "Rettificato",
+      "valore": 2,
+      "motivazione": "Soglie fissate dalla funzione di rischio sulla base dello storico reclami del 2025."
+    },
+    {
+      "oggetto": "KRI",
+      "id": "NFR-10-K1",
+      "campo": "Soglia_Allerta",
+      "decisione": "Rettificato",
+      "valore": 5,
+      "motivazione": "Soglie fissate dalla funzione di rischio sulla base dello storico reclami del 2025."
+    },
+    {
+      "oggetto": "KRI",
+      "id": "NFR-01-K1",
+      "campo": "Valore_Corrente",
+      "decisione": "Rettificato",
+      "valore": 5.3,
+      "motivazione": "Dato definitivo del report antifrode di ottobre: 5,3 (il 5,1 era la stima provvisoria)."
+    },
+    {
+      "oggetto": "Azione",
+      "id": "2026Q3-NFR-08-A1",
+      "campo": "Owner",
+      "decisione": "Respinto",
+      "motivazione": "Gia' prevista dal piano IAM approvato a luglio: azione duplicata."
+    },
+    {
+      "oggetto": "Osservazione",
+      "id": "OSS-04",
+      "campo": "Orizzonte_Anni",
+      "decisione": "Rettificato",
+      "valore": 3,
+      "motivazione": "Il piano di successione dei ruoli IT mostra uscite gia' programmate nel 2027-2028: orizzonte 3 anni."
+    },
+    {
+      "oggetto": "Osservazione",
+      "id": "OSS-05",
+      "campo": "",
+      "decisione": "Respinto",
+      "motivazione": "I sistemi di pagamento della Banca e del fornitore cloud si sincronizzano su orologi terrestri (NTP): nessun meccanismo di perdita."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+Il precontrollo dello script ha trovato questi punti nel tuo output del ciclo 2026Q3. Correggili e restituisci di nuovo l'intero JSON, solo JSON, senza cambiare cio' che non e' citato. I controlli sono quelli della parte 2 dell'allegato Input_A1, la forma dei testi e' nella parte 3.
+
+Da verificare (correggi se fondati; se confermi, spiega il perche' nel razionale):
+1. NFR-02 · C9: KRI in vigore non riproposti, escono di vigore: NFR-02-K2.
+
+Forma dei testi (serve alle schede dei rischi):
+1. NFR-01 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azioni 1, 2; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+2. NFR-02 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azioni 1, 2; KRI di Esposizione e di Evoluzione (parte 3 dell'allegato).
+3. NFR-03 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+4. NFR-04 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Esposizione e di Evoluzione (parte 3 dell'allegato).
+5. NFR-05 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+6. NFR-06 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azioni 1, 2; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+7. NFR-07 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Esposizione e di Evoluzione (parte 3 dell'allegato).
+8. NFR-08 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+9. NFR-09 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+10. NFR-10 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+11. NFR-11 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:, ADEGUAMENTO:; EFFETTO: mancante nel razionale di azione 1; KRI di Esposizione e di Evoluzione (parte 3 dell'allegato).
+12. NFR-12 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).

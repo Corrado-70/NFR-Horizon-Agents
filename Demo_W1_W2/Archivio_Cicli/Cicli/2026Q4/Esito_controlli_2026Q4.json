@@ -1,0 +1,12 @@
+{
+  "meccanico": {
+    "ciclo": "2026Q4",
+    "esito": "Approvato",
+    "rilievi": [],
+    "sintesi": "Controlli meccanizzati: 0 rilievi bloccanti, 0 da motivare in validazione, 0 osservazioni. Bloccanti solo per l'integrita' (C1, C2, C7, identificativi dei KRI); C3, date di C5, coppia e soglie dei KRI da motivare; C5 (rilevanza), C6 e C8 come Osservazioni; C4 non coperto: resta al giudizio di A5, se usato."
+  },
+  "agente": null,
+  "esito": "Approvato",
+  "da_motivare": [],
+  "a5_usato": false
+}
