@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-12 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-12 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-12 Errori operativi nei pagamenti istantanei obbligatori
-Event type: L1-07 Esecuzione, consegna e gestione dei processi; driver: DRV-TEC; owner: Funzione Operations.
-Esito nel ciclo: Confermato. Posizione in classifica per score: 3 su 13.
+Categoria: 9.13 Processo; driver: DRV-TEC; owner: Funzione Operations.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 4 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 4 e Probabilita 4: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Parziale.
 
 DESCRIZIONE
@@ -39,8 +40,8 @@ AZIONI
 - 2026Q4-NFR-12-A1 [Approvata, 3 mesi, Funzione Operations]: Introdurre un test di riconciliazione su dati anonimizzati prima di ogni rilascio del motore dei bonifici istantanei. Perche': Il controllo giornaliero (2026Q2-NFR-12-A1) e l'avviso (2026Q3-NFR-12-A1) trovano le differenze dopo; molte nascono dalle modifiche al software, che il test ferma prima. Effetto atteso: Meno differenze dopo i rilasci; quelle aperte oltre un giorno (NFR-12-K1) scendono sotto la soglia di attenzione.
 
 KRI IN VIGORE
-- NFR-12-K1 (Evoluzione) Differenze di riconciliazione sui bonifici istantanei aperte oltre 1 giorno [n]: valore 9 (prima 12), soglie 10 / 30, stato Verde; fonte dati Sistema di riconciliazione. Perche': Misura il fenomeno nel punto in cui produce perdite: le differenze che non si chiudono in giornata.
-- NFR-12-K3 (Esposizione) Tempo medio di risoluzione delle eccezioni sui pagamenti istantanei [ore]: valore 4 (prima 4,50), soglie 4 / 12, stato Ambra; fonte dati Workflow delle eccezioni. Perche': Misura quanto a lungo la Banca resta esposta a un'eccezione aperta.
+- NFR-12-K1 (Evoluzione) Differenze di riconciliazione sui bonifici istantanei aperte oltre 1 giorno [n]: valore 9 (prima 9), soglie 10 / 30, stato Verde; fonte dati Sistema di riconciliazione. Perche': Misura il fenomeno nel punto in cui produce perdite: le differenze che non si chiudono in giornata.
+- NFR-12-K3 (Esposizione) Tempo medio di risoluzione delle eccezioni sui pagamenti istantanei [ore]: valore 4 (prima 4), soglie 4 / 12, stato Ambra; fonte dati Workflow delle eccezioni. Perche': Misura quanto a lungo la Banca resta esposta a un'eccezione aperta.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 3, Probabilita 4, Prossimita 3, Velocity 4, score 3,45
@@ -48,6 +49,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 3, Probabilita 4, Prossimita 4, Velocity 4, score 3,65
 - 2026Q3: Impatto 3, Probabilita 4, Prossimita 4, Velocity 4, score 3,65
 - 2026Q4: Impatto 3, Probabilita 4, Prossimita 4, Velocity 4, score 3,65
+- 2026Q4-S1: Impatto 3, Probabilita 4, Prossimita 4, Velocity 4, score 3,65
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

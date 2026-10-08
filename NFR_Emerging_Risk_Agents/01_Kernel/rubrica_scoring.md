@@ -336,3 +336,21 @@ Segnale critico: proponi un ciclo straordinario solo se una notizia (a) ha inten
 > contraddire D-41 (solo il trimestre modifica uno score). Un rischio nuovo,
 > senza KRI rilevati ne' segnali, parte di solito in Monitoraggio. Tema del
 > supervisore: non alza il livello (e' evidenziato a parte, ◆).
+
+## 9. Registro unico: radar e osservazione
+
+> D-79 (08/10/2026): sostituisce la lista di osservazione della D-73. La regola la
+> applica lo script (07_Senza_Studio/radar.py), nessun agente; i parametri sono
+> celle gialle di Parametri. Nessun prompt riceve questa sezione: A1 la trova
+> nella guida di scrittura dell'allegato.
+
+Il registro e' unico: tutti i rischi NFR-nn, valutati con le stesse dimensioni e lo stesso score. I primi sono nel radar di Mosca, con gestione completa (KRI, azioni, urgenza, livello di allerta, report, schede); gli altri sono in osservazione: stessa scala, niente KRI ne' azioni, rivalutati solo con evidenza nuova.
+
+### Chi entra nel radar
+1. Candidato: Prossimita almeno 2 (puo' manifestarsi entro 3 anni) e Probabilita almeno 2 (non solo teorico).
+2. Sempre nel radar, anche sotto le soglie: un rischio AGIRE ORA (X + Y > Z), un tema all'attenzione del supervisore, un rischio che il validatore mette nel radar con la Motivazione. Mai nel radar: un rischio che il validatore mette in osservazione con la Motivazione.
+3. Se i candidati superano i posti (capienza del radar, 15 all'inizio, fino a 20): prima le eccezioni, poi i piu' alti per score composito; gli altri restano in osservazione "fuori per capienza".
+4. Un rischio del radar che non soddisfa piu' la regola resta un ciclo come "Radar, in uscita" e passa in osservazione solo se lo e' anche al ciclo dopo. Un rischio che sale entra subito, con i due KRI e le azioni.
+
+### In osservazione
+Al massimo 20 rischi. Oltre alle quattro dimensioni: l'orizzonte in anni (la Prossimita non distingue oltre i 3 anni) e il segnale di avvicinamento, il fatto osservabile che lo farebbe salire. Sono note: non entrano nello score.

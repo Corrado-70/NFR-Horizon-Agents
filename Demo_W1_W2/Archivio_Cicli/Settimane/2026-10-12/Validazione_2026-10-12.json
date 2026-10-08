@@ -17,12 +17,12 @@
       "ID": "N-20261006-01",
       "Nome": "Sciopero nazionale del personale bancario e carenza di tecnici IT",
       "Campo": "Rischio_ID",
-      "Proposta_Agente": "NON PRESIDIATO",
+      "Proposta_Agente": "NFR-16",
       "Decisione": "Accettato",
-      "Valore_Validato": "NON PRESIDIATO",
+      "Valore_Validato": "NFR-16",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -36,7 +36,7 @@
       "Valore_Validato": "Peggiorativo",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -50,7 +50,7 @@
       "Valore_Validato": "NFR-01",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -64,7 +64,7 @@
       "Valore_Validato": "Peggiorativo",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -78,7 +78,7 @@
       "Valore_Validato": "NFR-01",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -92,7 +92,7 @@
       "Valore_Validato": "Peggiorativo",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -106,7 +106,7 @@
       "Valore_Validato": "NFR-02",
       "Motivazione": "La seconda region italiana rende praticabile il piano multi-region: per NFR-02 e' un segnale migliorativo.",
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -120,7 +120,7 @@
       "Valore_Validato": "Migliorativo",
       "Motivazione": "La seconda region italiana rende praticabile il piano multi-region: per NFR-02 e' un segnale migliorativo.",
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -134,7 +134,7 @@
       "Valore_Validato": "NFR-01",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -148,7 +148,7 @@
       "Valore_Validato": "Peggiorativo",
       "Motivazione": null,
       "Validato_Da": "Funzione Risk Management",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     }
   ]

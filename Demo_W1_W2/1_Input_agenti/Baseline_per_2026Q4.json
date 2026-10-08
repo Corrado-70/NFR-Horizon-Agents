@@ -7,7 +7,7 @@
     {
       "id_rischio": "NFR-01",
       "nome": "Frodi su pagamenti istantanei abilitate da AI generativa",
-      "event_type": "L1-02",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-CYB"
@@ -15,6 +15,7 @@
       "owner": "Funzione Antifrode",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 4,
@@ -53,6 +54,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -73,7 +76,7 @@
     {
       "id_rischio": "NFR-02",
       "nome": "Concentrazione su un fornitore cloud critico",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-TPR",
         "DRV-CYB"
@@ -81,6 +84,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 4,
       "prossimita": 3,
@@ -113,6 +117,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -133,7 +139,7 @@
     {
       "id_rischio": "NFR-03",
       "nome": "Greenwashing nella commercializzazione di prodotti ESG",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-CON",
         "DRV-CLI"
@@ -141,6 +147,7 @@
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 4,
@@ -167,6 +174,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -187,13 +196,14 @@
     {
       "id_rischio": "NFR-04",
       "nome": "Eventi climatici estremi su sedi e data center",
-      "event_type": "L1-05",
+      "event_type": "9.8",
       "driver": [
         "DRV-CLI"
       ],
       "owner": "Funzione Business Continuity",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -214,6 +224,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -234,13 +246,14 @@
     {
       "id_rischio": "NFR-05",
       "nome": "Errori di processo nella migrazione del core banking",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione Operations",
       "presidio_controlli": "Adeguato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -267,6 +280,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -287,7 +302,7 @@
     {
       "id_rischio": "NFR-06",
       "nome": "Esfiltrazione di dati tramite strumenti di AI non autorizzati",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-HUM"
@@ -295,6 +310,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Assente",
       "anni_adeguamento": 1.0,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -321,6 +337,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -341,7 +359,7 @@
     {
       "id_rischio": "NFR-07",
       "nome": "Ransomware presso un fornitore di servizi di pagamento",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-CYB",
         "DRV-TPR"
@@ -349,6 +367,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 3,
@@ -369,6 +388,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -389,7 +410,7 @@
     {
       "id_rischio": "NFR-08",
       "nome": "Accessi impropri di dipendenti ai dati dei clienti",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-HUM",
         "DRV-CON"
@@ -397,6 +418,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -417,6 +439,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -437,13 +461,14 @@
     {
       "id_rischio": "NFR-09",
       "nome": "Violazione di sanzioni internazionali tramite triangolazioni",
-      "event_type": "L1-04",
+      "event_type": "9.4",
       "driver": [
         "DRV-GEO"
       ],
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 3,
       "prossimita": 2,
@@ -464,6 +489,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -484,7 +511,7 @@
     {
       "id_rischio": "NFR-10",
       "nome": "Informazioni errate ai clienti da assistenti di AI generativa",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-AI",
         "DRV-CON"
@@ -492,6 +519,7 @@
       "owner": "Funzione Customer Experience",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -512,6 +540,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -532,13 +562,14 @@
     {
       "id_rischio": "NFR-11",
       "nome": "Fine del supporto dei sistemi di pagamento legacy",
-      "event_type": "L1-06",
+      "event_type": "9.6",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione IT Operations",
       "presidio_controlli": "Assente",
       "anni_adeguamento": 3.0,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -559,6 +590,8 @@
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -579,13 +612,14 @@
     {
       "id_rischio": "NFR-12",
       "nome": "Errori operativi nei pagamenti istantanei obbligatori",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione Operations",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 4,
       "prossimita": 4,
@@ -606,6 +640,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -622,6 +658,178 @@
           "probabilita": 4
         }
       ]
+    }
+  ],
+  "rischi_in_osservazione": [
+    {
+      "id_rischio": "NFR-16",
+      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "event_type": "9.11",
+      "driver": [
+        "DRV-HUM",
+        "DRV-TEC"
+      ],
+      "descrizione": "Uscite di personale tecnico difficile da sostituire e possibili vertenze di settore lascerebbero scoperti ruoli IT critici, con turni di copertura che violano obblighi di lavoro e sicurezza. Il danno: interruzioni dei servizi e contenzioso con il personale.",
+      "anni_adeguamento": null,
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 2,
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Uno sciopero di settore che coinvolga il personale IT, o l'uscita non rimpiazzata di tecnici in ruoli critici della Banca.",
+      "esito_precedente": "Nuovo",
+      "razionale": "Rischio nuovo, in osservazione: nessun rischio del registro copre i rapporti di impiego (categoria 9.11). Impatto 3: durante un'astensione si degraderebbero processi critici che dipendono da pochi tecnici. Probabilita 2: il rapporto sul mercato del lavoro ICT segnala una carenza crescente di tecnici sui sistemi legacy, ma nessuna vertenza e' aperta nel settore. Prossimita 1: oltre tre anni, nessun segnale presso la Banca. Velocity non valutata: nessuna fonte sui tempi.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sul mercato del lavoro ICT in Italia, carenza di competenze sui sistemi legacy",
+          "data": "2026-09-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-13",
+      "nome": "Rottura della crittografia dei pagamenti con il calcolo quantistico",
+      "event_type": "9.7",
+      "driver": [
+        "DRV-TEC",
+        "DRV-CYB"
+      ],
+      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia.",
+      "anni_adeguamento": null,
+      "impatto": 5,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 1,
+      "orizzonte_anni": 10,
+      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento.",
+      "esito_precedente": "Confermato",
+      "razionale": "Impatto 5 perche' toccherebbe tutti i canali; Probabilita 1 e Prossimita 1: nessun calcolatore oggi ha la capacita' necessaria e nessun caso e' documentato; velocity non valutata: nessuna fonte sui tempi.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza",
+          "data": "2026-02-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2; Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q2",
+          "impatto": 5,
+          "velocity": null,
+          "prossimita": 1,
+          "probabilita": 1
+        },
+        {
+          "ciclo": "2026Q1",
+          "impatto": 5,
+          "velocity": null,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-14",
+      "nome": "Interruzione di cavi sottomarini per una crisi geopolitica",
+      "event_type": "9.6",
+      "driver": [
+        "DRV-GEO",
+        "DRV-TPR"
+      ],
+      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
+      "anni_adeguamento": null,
+      "impatto": 4,
+      "velocity": 4,
+      "prossimita": 1,
+      "probabilita": 2,
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
+      "esito_precedente": "Confermato",
+      "razionale": "Impatto 4 per servizi e pagamenti esteri fermi per giorni; velocity 4 perche' il taglio e' immediato; Probabilita 2 dopo i danneggiamenti nel Mar Baltico e nel Mar Rosso; Prossimita 1: nessun caso sulle rotte italiane.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla resilienza delle infrastrutture critiche sottomarine",
+          "data": "2026-05-20",
+          "tipo": "Esterna",
+          "rilevanza": 3
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q2",
+          "impatto": 4,
+          "velocity": 4,
+          "prossimita": 1,
+          "probabilita": 2
+        },
+        {
+          "ciclo": "2026Q1",
+          "impatto": 4,
+          "velocity": 4,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-15",
+      "nome": "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti",
+      "event_type": "9.4",
+      "driver": [
+        "DRV-AI",
+        "DRV-CON"
+      ],
+      "descrizione": "Agenti di IA che agiscono per conto dei clienti (pagamenti, investimenti) potrebbero eseguire operazioni non volute; la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi e contenzioso.",
+      "anni_adeguamento": null,
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 2,
+      "probabilita": 1,
+      "orizzonte_anni": 4,
+      "segnale_avvicinamento": "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
+      "esito_precedente": "Confermato",
+      "razionale": "Impatto 3 per rimborsi e contenzioso; Prossimita 2 per sperimentazioni presso grandi piattaforme di pagamento; Probabilita 1: nessun caso in banca; velocity non valutata.",
+      "fonti": [
+        {
+          "riferimento": "Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA",
+          "data": "2026-06-03",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q2",
+          "impatto": 3,
+          "velocity": null,
+          "prossimita": 2,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
     }
   ],
   "kri_in_vigore": [
@@ -920,175 +1128,248 @@
       "id_rischio": "NFR-01",
       "descrizione": "Introdurre la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Estendere il DLP a tutti i servizi di AI generativa e bloccare quelli non autorizzati.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Test congiunto di ripristino da ransomware con il fornitore del gateway di pagamento.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-08-A1",
       "id_rischio": "NFR-08",
       "descrizione": "Revisione trimestrale automatica degli accessi ai dati clienti senza pratica associata.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Estendere lo screening sanzioni alle controparti indirette dei pagamenti verso paesi di transito.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Campionamento settimanale delle risposte del chatbot con verifica umana.",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Piano di sostituzione delle componenti fuori supporto del sistema di pagamento.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Controllo giornaliero automatico delle differenze di riconciliazione sui bonifici istantanei.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q3-NFR-01-A1",
       "id_rischio": "NFR-01",
       "descrizione": "Attivare la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-01-A2",
       "id_rischio": "NFR-01",
       "descrizione": "Campagna di sensibilizzazione dei clienti corporate sulle frodi con voce clonata.",
       "owner": "Direzione Marketing e Comunicazione",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy entro il prossimo trimestre.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-02-A2",
       "id_rischio": "NFR-02",
       "descrizione": "Valutare lo spostamento di un servizio critico sulla nuova region nazionale del fornitore.",
       "owner": "Direzione Sistemi Informativi",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Completare la revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Provare i piani di continuita' delle due sedi critiche con un'esercitazione di ripartenza in sede alternativa.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-05-A1",
       "id_rischio": "NFR-05",
       "descrizione": "Monitoraggio giornaliero degli incidenti post-migrazione con escalation entro 4 ore.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Completare la formazione obbligatoria sull'uso dell'AI per tutto il personale.",
       "owner": "Direzione Risorse Umane",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-06-A2",
       "id_rischio": "NFR-06",
       "descrizione": "Chiedere all'audit interno la verifica dell'estensione del DLP.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Inserire nel contratto con il fornitore del gateway di pagamento tempi di ripristino garantiti dopo un attacco ransomware, con penali.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Formare gli operatori dei pagamenti esteri sugli indicatori di triangolazione segnalati dalle autorita'.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Definire i temi su cui il chatbot non risponde e passa la conversazione a un operatore (reclami, condizioni contrattuali, tassi).",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Isolare in un segmento di rete dedicato le componenti fuori supporto del sistema di pagamento, in attesa della sostituzione.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Avvisare in automatico il responsabile delle operazioni di ogni differenza di riconciliazione sui bonifici istantanei aperta a fine giornata.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     }
-  ]
+  ],
+  "regola_radar": {
+    "capienza": 15,
+    "soglia_prossimita": 2,
+    "soglia_probabilita": 2,
+    "cicli_uscita": 2,
+    "max_radar": 20,
+    "max_osservazione": 20,
+    "pesi": {
+      "impatto": 0.35,
+      "probabilita": 0.25,
+      "prossimita": 0.2,
+      "velocity": 0.2
+    },
+    "anni_prossimita": [
+      3.5,
+      2.5,
+      1.5,
+      0.5,
+      0.0
+    ],
+    "mosca_x": 0.25,
+    "mosca_y_riserva": 1.0
+  }
 }

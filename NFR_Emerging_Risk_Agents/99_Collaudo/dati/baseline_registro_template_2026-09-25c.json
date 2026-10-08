@@ -15,6 +15,7 @@
       "owner": "Funzione Antifrode",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 4,
       "prossimita": 4,
@@ -48,6 +49,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -76,6 +79,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 4,
       "prossimita": 3,
@@ -104,6 +108,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -132,6 +138,7 @@
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 4,
@@ -155,6 +162,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -182,6 +191,7 @@
       "owner": "Funzione Business Continuity",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -200,6 +210,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -227,6 +239,7 @@
       "owner": "Funzione Operations",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -250,6 +263,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -278,6 +293,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -301,6 +317,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -329,6 +347,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 3,
@@ -347,6 +366,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -375,6 +396,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -393,6 +415,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -420,6 +444,7 @@
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 3,
       "prossimita": 2,
@@ -438,6 +463,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -466,6 +493,7 @@
       "owner": "Funzione Customer Experience",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -484,6 +512,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -511,6 +541,7 @@
       "owner": "Funzione IT Operations",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": 3.0,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -529,6 +560,8 @@
           "tipo": "Esterna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -556,6 +589,7 @@
       "owner": "Funzione Operations",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 4,
       "prossimita": 4,
@@ -574,6 +608,8 @@
           "tipo": "Interna"
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q2",
@@ -592,6 +628,7 @@
       ]
     }
   ],
+  "rischi_in_osservazione": [],
   "kri_in_vigore": [
     {
       "kri_id": "NFR-01-K1",
@@ -1032,176 +1069,248 @@
       "id_rischio": "NFR-01",
       "descrizione": "Introdurre la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Estendere il DLP a tutti i servizi di AI generativa e bloccare quelli non autorizzati.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Test congiunto di ripristino da ransomware con il fornitore del gateway di pagamento.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-08-A1",
       "id_rischio": "NFR-08",
       "descrizione": "Revisione trimestrale automatica degli accessi ai dati clienti senza pratica associata.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Estendere lo screening sanzioni alle controparti indirette dei pagamenti verso paesi di transito.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Campionamento settimanale delle risposte del chatbot con verifica umana.",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Piano di sostituzione delle componenti fuori supporto del sistema di pagamento.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Controllo giornaliero automatico delle differenze di riconciliazione sui bonifici istantanei.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q3-NFR-01-A1",
       "id_rischio": "NFR-01",
       "descrizione": "Attivare la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-01-A2",
       "id_rischio": "NFR-01",
       "descrizione": "Campagna di sensibilizzazione dei clienti corporate sulle frodi con voce clonata.",
       "owner": "Direzione Marketing e Comunicazione",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy entro il prossimo trimestre.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-02-A2",
       "id_rischio": "NFR-02",
       "descrizione": "Valutare lo spostamento di un servizio critico sulla nuova region nazionale del fornitore.",
       "owner": "Direzione Sistemi Informativi",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Completare la revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-05-A1",
       "id_rischio": "NFR-05",
       "descrizione": "Monitoraggio giornaliero degli incidenti post-migrazione con escalation entro 4 ore.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Completare la formazione obbligatoria sull'uso dell'AI per tutto il personale.",
       "owner": "Direzione Risorse Umane",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-06-A2",
       "id_rischio": "NFR-06",
       "descrizione": "Chiedere all'audit interno la verifica dell'estensione del DLP.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Test congiunto di ripristino da ransomware con il fornitore del gateway di pagamento.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Estendere lo screening sanzioni alle controparti indirette dei pagamenti verso paesi di transito.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Campionamento settimanale delle risposte del chatbot con verifica umana.",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Piano di sostituzione delle componenti fuori supporto del sistema di pagamento.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q3"
     },
     {
       "id_azione": "2026Q3-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Controllo giornaliero automatico delle differenze di riconciliazione sui bonifici istantanei.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q3"
     }
   ],
-  "osservazione": []
+  "regola_radar": {
+    "capienza": 15,
+    "soglia_prossimita": 2,
+    "soglia_probabilita": 2,
+    "cicli_uscita": 2,
+    "max_radar": 20,
+    "max_osservazione": 20,
+    "pesi": {
+      "impatto": 0.35,
+      "probabilita": 0.25,
+      "prossimita": 0.2,
+      "velocity": 0.2
+    },
+    "anni_prossimita": [
+      3.5,
+      2.5,
+      1.5,
+      0.5,
+      0.0
+    ],
+    "mosca_x": 0.25,
+    "mosca_y_riserva": 1.0
+  }
 }

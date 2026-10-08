@@ -1,12 +1,12 @@
 {
   "ciclo": "2026Q3",
   "data_riferimento": "2026-09-30",
-  "sintesi": "MESSAGGIO: nel terzo trimestre 2026 il profilo complessivo resta stabile. Peggiora la prossimita' del rischio di greenwashing (NFR-03) dopo la sanzione a una banca comparabile. Su due rischi l'evidenza e' piu' solida: la exit strategy dal fornitore cloud critico e' ora testata su tutti i servizi (NFR-02) e il DLP copre tutti i servizi di AI generativa (NFR-06); i valori non cambiano. Gli altri nove rischi sono confermati con le fonti del ciclo precedente, integrate dai dati del trimestre. Event type senza rischi: L1-03. DECISIONI: aggiornare il presidio dei controlli di NFR-02 e NFR-06 e chiedere alla Funzione Compliance la revisione dei claim ESG (NFR-03).",
+  "sintesi": "MESSAGGIO: nel terzo trimestre 2026 il profilo complessivo resta stabile. Peggiora la prossimita' del rischio di greenwashing (NFR-03) dopo la sanzione a una banca comparabile. Su due rischi l'evidenza e' piu' solida: la exit strategy dal fornitore cloud critico e' ora testata su tutti i servizi (NFR-02) e il DLP copre tutti i servizi di AI generativa (NFR-06); i valori non cambiano. Gli altri nove rischi sono confermati con le fonti del ciclo precedente, integrate dai dati del trimestre. Categorie senza rischi: 9.5 Fiscale e 9.11 Employer. DECISIONI: aggiornare il presidio dei controlli di NFR-02 e NFR-06 e chiedere alla Funzione Compliance la revisione dei claim ESG (NFR-03). Entra nel registro, in osservazione, un rischio nuovo sui rapporti di impiego (NFR-16): oggi lontano, con il segnale che lo porterebbe nel radar.",
   "rischi": [
     {
       "id_rischio": "NFR-01",
       "nome": "Frodi su pagamenti istantanei abilitate da AI generativa",
-      "event_type": "L1-02",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-CYB"
@@ -91,7 +91,7 @@
     {
       "id_rischio": "NFR-02",
       "nome": "Concentrazione su un fornitore cloud critico",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-TPR",
         "DRV-CYB"
@@ -170,7 +170,7 @@
     {
       "id_rischio": "NFR-03",
       "nome": "Greenwashing nella commercializzazione di prodotti ESG",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-CON",
         "DRV-CLI"
@@ -243,7 +243,7 @@
     {
       "id_rischio": "NFR-04",
       "nome": "Eventi climatici estremi su sedi e data center",
-      "event_type": "L1-05",
+      "event_type": "9.8",
       "driver": [
         "DRV-CLI"
       ],
@@ -303,7 +303,7 @@
     {
       "id_rischio": "NFR-05",
       "nome": "Errori di processo nella migrazione del core banking",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
@@ -369,7 +369,7 @@
     {
       "id_rischio": "NFR-06",
       "nome": "Esfiltrazione di dati tramite strumenti di AI non autorizzati",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-HUM"
@@ -442,7 +442,7 @@
     {
       "id_rischio": "NFR-07",
       "nome": "Ransomware presso un fornitore di servizi di pagamento",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-CYB",
         "DRV-TPR"
@@ -503,7 +503,7 @@
     {
       "id_rischio": "NFR-08",
       "nome": "Accessi impropri di dipendenti ai dati dei clienti",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-HUM",
         "DRV-CON"
@@ -564,7 +564,7 @@
     {
       "id_rischio": "NFR-09",
       "nome": "Violazione di sanzioni internazionali tramite triangolazioni",
-      "event_type": "L1-04",
+      "event_type": "9.4",
       "driver": [
         "DRV-GEO"
       ],
@@ -624,7 +624,7 @@
     {
       "id_rischio": "NFR-10",
       "nome": "Informazioni errate ai clienti da assistenti di AI generativa",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-AI",
         "DRV-CON"
@@ -685,7 +685,7 @@
     {
       "id_rischio": "NFR-11",
       "nome": "Fine del supporto dei sistemi di pagamento legacy",
-      "event_type": "L1-06",
+      "event_type": "9.6",
       "driver": [
         "DRV-TEC"
       ],
@@ -745,7 +745,7 @@
     {
       "id_rischio": "NFR-12",
       "nome": "Errori operativi nei pagamenti istantanei obbligatori",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
@@ -801,6 +801,35 @@
           "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
         }
       ]
+    },
+    {
+      "id_rischio": "NFR-16",
+      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "event_type": "9.11",
+      "driver": [
+        "DRV-HUM",
+        "DRV-TEC"
+      ],
+      "descrizione": "Uscite di personale tecnico difficile da sostituire e possibili vertenze di settore lascerebbero scoperti ruoli IT critici, con turni di copertura che violano obblighi di lavoro e sicurezza. Il danno: interruzioni dei servizi e contenzioso con il personale.",
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 2,
+      "anni_adeguamento": null,
+      "variazioni": [],
+      "fonti": [
+        {
+          "riferimento": "Rapporto sul mercato del lavoro ICT in Italia, carenza di competenze sui sistemi legacy",
+          "data": "2026-09-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "razionale": "Rischio nuovo, in osservazione: nessun rischio del registro copre i rapporti di impiego (categoria 9.11). Impatto 3: durante un'astensione si degraderebbero processi critici che dipendono da pochi tecnici. Probabilita 2: il rapporto sul mercato del lavoro ICT segnala una carenza crescente di tecnici sui sistemi legacy, ma nessuna vertenza e' aperta nel settore. Prossimita 1: oltre tre anni, nessun segnale presso la Banca. Velocity non valutata: nessuna fonte sui tempi.",
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Uno sciopero di settore che coinvolga il personale IT, o l'uscita non rimpiazzata di tecnici in ruoli critici della Banca.",
+      "azioni_mitigazione": [],
+      "kri_proposti": []
     }
   ],
   "ricalcolo_kri_ciclo_precedente": [

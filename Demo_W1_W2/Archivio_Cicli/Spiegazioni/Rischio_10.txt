@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-10 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-10 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-10 Informazioni errate ai clienti da assistenti di AI generativa
-Event type: L1-04 Clientela, prodotti e prassi professionali; driver: DRV-AI, DRV-CON; owner: Funzione Customer Experience.
+Categoria: 9.1 Condotta; driver: DRV-AI, DRV-CON; owner: Funzione Customer Experience.
 Esito nel ciclo: Confermato. Posizione in classifica per score: 8 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 3: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
 
 DESCRIZIONE
@@ -39,14 +40,15 @@ AZIONI
 - 2026Q4-NFR-10-A1 [Approvata, 3 mesi, Funzione Customer Experience]: Mostrare nel chatbot l'avviso che le risposte su condizioni e tassi vanno verificate sul documento di sintesi, con il collegamento. Perche': I temi esclusi (2026Q3-NFR-10-A1) e il campionamento (2026Q2-NFR-10-A1) riducono le risposte errate ma non le azzerano: l'avviso limita il danno quando capitano. Effetto atteso: Meno contestazioni per risposte errate (NFR-10-K1), quindi un Impatto contenuto.
 
 KRI IN VIGORE
-- NFR-10-K1 (Evoluzione) Risposte del chatbot contestate ogni 1.000 conversazioni [n/1000]: valore 2,30 (prima 1,90), soglie 2 / 5, stato Ambra; fonte dati Piattaforma di assistenza. Perche': Misura gli errori del chatbot come li vivono i clienti.
-- NFR-10-K3 (Esposizione) Quota di risposte del chatbot non campionate dal controllo qualita' [%]: valore 40 (prima 45), soglie 20 / 50, stato Ambra; fonte dati Controllo qualita' Customer Experience. Perche': Misura quanta parte delle risposte arriva ai clienti senza alcuna verifica: e' l'esposizione della Banca.
+- NFR-10-K1 (Evoluzione) Risposte del chatbot contestate ogni 1.000 conversazioni [n/1000]: valore 2,30 (prima 2,30), soglie 2 / 5, stato Ambra; fonte dati Piattaforma di assistenza. Perche': Misura gli errori del chatbot come li vivono i clienti.
+- NFR-10-K3 (Esposizione) Quota di risposte del chatbot non campionate dal controllo qualita' [%]: valore 40 (prima 40), soglie 20 / 50, stato Ambra; fonte dati Controllo qualita' Customer Experience. Perche': Misura quanta parte delle risposte arriva ai clienti senza alcuna verifica: e' l'esposizione della Banca.
 
 STORIA (cicli, dal piu' vecchio)
 - 2026Q1: Impatto 3, Probabilita 3, Prossimita 3, Velocity —, score 3
 - 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity —, score 3
 - 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q4-S1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

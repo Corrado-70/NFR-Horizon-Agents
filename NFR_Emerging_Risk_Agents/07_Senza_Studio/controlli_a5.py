@@ -26,24 +26,27 @@ cosi' i due si leggono e si combinano allo stesso modo.
 Dal 06/10/2026 (D-71) tre gravita':
   - "Bloccante": solo l'integrita' del registro (C1, C2, C7 e gli identificativi dei KRI di C9): ferma la
     scrittura, perche' senza queste regole il registro diventerebbe incoerente;
-  - "Da motivare": regole di metodo (C3, date delle fonti di C5, coppia e soglie dei KRI di C9) e i Bloccanti
-    di A5. Non fermano: vanno nella colonna "Segnalazioni dei controlli" del foglio Validazione e chiedono una
+  - "Da motivare": regole di metodo (C3, date delle fonti di C5, coppia e soglie dei KRI di C9, KRI non riletti
+    in un ciclo straordinario di C7, D-77) e i Bloccanti di A5. Non fermano: vanno nella colonna "Segnalazioni dei controlli" del foglio Validazione e chiedono una
     Motivazione al validatore; le soglie e il salto di piu' di un punto li corregge la validazione stessa;
   - "Osservazione": dubbi da considerare, senza obblighi.
 A5 e' facoltativo: senza il suo esito valgono i soli controlli di questo modulo.
 
-Dal 07/10/2026 (D-73) anche la lista di osservazione (campo "osservazione" di A1), solo qui e non in A5 (il suo
-prompt e' al limite degli 8.000 caratteri): codici delle voci e promozioni coerenti come C1 Bloccante, perche' cambiano
-lo stato del registro; il resto come Osservazione. Le regole le legge A1 nella guida di scrittura (allegato).
+Dall'08/10/2026 (D-79, registro unico) i rischi sono nel radar o in osservazione: lo stato si prevede qui con la regola
+della baseline (radar.stati, la stessa dello script). Completezza (C1) solo per il radar; KRI e azioni (C8, C9) solo per
+chi sara' nel radar: mancano a un rischio che entra dall'osservazione = da motivare, a un altro rischio del radar =
+Bloccante; scritti per un rischio in osservazione = Osservazione (lo script non li registra). Piu' di 20 rischi in
+osservazione = C1 Bloccante. Le regole le legge A1 nella guida di scrittura (allegato).
 """
 
 import re
+
+import radar
 
 # Dimensioni valutate da A1 (rubrica, sezione 1). La Velocity puo' essere null.
 DIMENSIONI = ["impatto", "probabilita", "prossimita", "velocity"]
 VALORI = DIMENSIONI
 TIPI_KRI = ["Esposizione", "Evoluzione"]          # D-64: esattamente un KRI per tipo
-MAX_OSSERVAZIONE = 30                             # D-73: voci in osservazione al massimo
 # D-74: categorie della tassonomia interna della Banca in perimetro (01_Kernel/tassonomia_nfr.md; il collaudo verifica che
 # coincidano con il kernel). FP = rischio esistente fuori perimetro, da togliere con dismetti.
 CATEGORIE = ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]
@@ -100,11 +103,68 @@ def _stesso_testo(testo):
     return re.sub(r"\s+", " ", testo.lower()).strip(" .;")
 
 
+def _controlla_analisi_evento(payload, base, ids, d_rif):
+    """Ciclo straordinario (D-77): l'analisi dell'evento di A8. Tutte Osservazioni: l'analisi spiega, non scrive valori
+    nel registro; un ciclo straordinario fatto con A1 (senza analisi) resta possibile."""
+    O = OSSERVAZIONE
+    analisi = payload.get("analisi_evento")
+    if not analisi:
+        return [_rilievo("C1", None, O, "Ciclo straordinario senza analisi_evento: manca l'analisi approfondita dell'evento "
+                                        "(agente A8); il validatore la trova solo nei razionali e nella sintesi.")]
+    r = []
+    toccati = [t["id_rischio"] for t in analisi.get("rischi_toccati") or []]
+    for rid in sorted(set(toccati) - set(ids) - set(base)):
+        r.append(_rilievo("C1", rid, O, "analisi_evento: rischio toccato che non e' ne' nel registro ne' fra i rischi nuovi."))
+    for rid in sorted({t for t in toccati if t in base} - set(ids)):
+        r.append(_rilievo("C1", rid, O, "analisi_evento: rischio toccato dall'evento ma non indicato per lo straordinario: la "
+                                        "funzione di rischio valuti se rivalutarlo (un altro straordinario o il trimestre)."))
+    for rid in sorted(set(ids) - set(toccati)):
+        r.append(_rilievo("C1", rid, O, "analisi_evento: rischio scritto nel ciclo ma assente da rischi_toccati: dire che "
+                                        "cosa gli fa l'evento."))
+    for d in analisi.get("documenti") or []:
+        if d_rif and str(d.get("data")) > d_rif:
+            r.append(_rilievo("C1", None, O, f"analisi_evento: documento datato dopo la data di riferimento ({d.get('data')}): "
+                                             f"{d.get('riferimento')}."))
+    return r
+
+
+def stati_previsti(payload, baseline):
+    """D-79: stato che ogni rischio avra' con i valori proposti da A1, con la regola della baseline (la stessa che applica
+    lo script alla scrittura). Entrano i rischi scritti e quelli che lo script riporta: in osservazione non toccati e, in
+    uno straordinario, quelli del radar non rivalutati. None per una baseline precedente al registro unico."""
+    regola = baseline.get("regola_radar")
+    if not regola:
+        return None
+    nel = {x["id_rischio"]: x for x in baseline.get("rischi", [])}
+    oss = {x["id_rischio"]: x for x in baseline.get("rischi_in_osservazione", [])}
+    scritti = {x["id_rischio"] for x in payload.get("rischi", [])}
+
+    def ingresso(rid, valori, prima, y):
+        return {"id": rid, **{d: valori.get(d) for d in radar.DIMENSIONI},
+                "supervisore": bool((nel.get(rid) or {}).get("attenzione_supervisore")),
+                "anni_adeguamento": (nel[rid].get("anni_adeguamento") if rid in nel else valori.get("anni_adeguamento")),
+                "y_azioni": y, "stato_prima": (prima or {}).get("stato") or (radar.RADAR if rid in nel else None),
+                "decisione": (prima or {}).get("decisione_stato")}
+    ingressi = [ingresso(x["id_rischio"], x, nel.get(x["id_rischio"]) or oss.get(x["id_rischio"]),
+                         radar.y_azioni([a["orizzonte"] for a in x.get("azioni_mitigazione") or []]))
+                for x in payload.get("rischi", [])]
+    riportati = {**oss, **(nel if baseline.get("straordinario") else {})}
+    for rid, p in riportati.items():
+        if rid not in scritti:
+            y = radar.y_azioni([a.get("orizzonte") for a in baseline.get("azioni_aperte", []) if a.get("id_rischio") == rid])
+            ingressi.append(ingresso(rid, p, p, y if rid in nel else None))
+    return radar.stati(ingressi, regola)
+
+
 def controlla(payload, baseline):
     """Applica i controlli meccanizzabili. Restituisce un dict conforme allo schema A5."""
     r = []
     B, M, O = BLOCCANTE, DA_MOTIVARE, OSSERVAZIONE
-    base = {x["id_rischio"]: x for x in baseline.get("rischi", [])}
+    base = {x["id_rischio"]: x for x in baseline.get("rischi", [])}          # il radar (D-79)
+    osservati = {x["id_rischio"]: x for x in baseline.get("rischi_in_osservazione", [])}
+    tutti = {**base, **osservati}
+    previsti = stati_previsti(payload, baseline)
+    nel_radar = lambda rid: previsti is None or radar.nel_radar(previsti[rid]["stato"])
     kri_base = {k["kri_id"]: k for k in baseline.get("kri_in_vigore", [])}
     d_prec = baseline.get("data_riferimento_precedente") or "0000-00-00"
     d_rif = payload.get("data_riferimento", "")
@@ -121,16 +181,23 @@ def controlla(payload, baseline):
         da_rivalutare = set(straord.get("rischi_da_rivalutare") or [])
         for rid in sorted(da_rivalutare - set(ids)):
             r.append(_rilievo("C1", rid, B, "Rischio da rivalutare nel ciclo straordinario assente dall'output."))
-        for rid in sorted({i for i in ids if i in base} - da_rivalutare):
+        for rid in sorted({i for i in ids if i in tutti} - da_rivalutare):
             r.append(_rilievo("C1", rid, B, "Rischio esistente non indicato per il ciclo straordinario: non va riscritto "
                                             "(lo script lo riporta com'era)."))
+        if not da_rivalutare and not any(i not in tutti for i in ids):
+            r.append(_rilievo("C1", None, B, "Ciclo straordinario di solo censimento (nessun rischio da rivalutare): serve "
+                                             "almeno un rischio nuovo creato dall'evento."))
+        r += _controlla_analisi_evento(payload, tutti, ids, d_rif)
     else:
         for rid in sorted(set(base) - set(ids)):
             r.append(_rilievo("C1", rid, B, "Rischio in anagrafica non valutato nel ciclo."))
+        if payload.get("analisi_evento"):
+            r.append(_rilievo("C1", None, O, "analisi_evento e' per i cicli straordinari (A8): in un ciclo trimestrale resta "
+                                             "nell'output archiviato ma non va nel registro."))
     for rid in sorted({i for i in ids if ids.count(i) > 1}):
         r.append(_rilievo("C1", rid, B, "id_rischio ripetuto nel payload."))
     for x in rischi:
-        prec = base.get(x["id_rischio"])
+        prec = tutti.get(x["id_rischio"])
         et, et_prec = x["event_type"], (prec or {}).get("event_type")
         if et == FUORI_PERIMETRO:
             if prec is None:
@@ -153,7 +220,7 @@ def controlla(payload, baseline):
 
     for x in rischi:
         rid = x["id_rischio"]
-        prec = base.get(rid)
+        prec = tutti.get(rid)
         var = x.get("variazioni", [])
 
         # ---------------- C2 Variazioni: una voce per ogni valore cambiato, e solo per quelli
@@ -198,6 +265,27 @@ def controlla(payload, baseline):
             r.append(_rilievo("C5", rid, O, f"Fonti scese da {len(prec['fonti'])} a {len(fonti)} con i valori invariati: "
                                             "verificare che restino sostenuti (regola di variazione 5)."))
 
+        # ---------------- D-79 Registro unico: KRI e azioni solo per chi sara' nel radar
+        if not nel_radar(rid):
+            if x.get("kri_proposti") or x.get("azioni_mitigazione"):
+                r.append(_rilievo("C9", rid, O, f"Rischio in osservazione ({previsti[rid]['motivo']}): KRI e azioni non si "
+                                                "scrivono, lo script non li registra."))
+            if rid in osservati and not any(d_prec < f["data"] for f in x.get("fonti", [])):
+                r.append(_rilievo("C5", rid, O, f"Rischio in osservazione riscritto senza una fonte dopo {d_prec}: senza "
+                                                "evidenza nuova non si riscrive (resta com'era)."))
+            if not x.get("orizzonte_anni") or not x.get("segnale_avvicinamento"):
+                r.append(_rilievo("C1", rid, O, "Rischio in osservazione senza orizzonte_anni o segnale_avvicinamento: "
+                                                "servono a chi legge per capire quanto e' lontano e che cosa lo farebbe salire."))
+            continue
+        entra = previsti is not None and previsti[rid]["movimento"] == radar.ENTRATO
+        if not x.get("kri_proposti") or not x.get("azioni_mitigazione"):
+            manca = " e ".join(m for m, c in (("i due KRI", not x.get("kri_proposti")),
+                                               ("le azioni", not x.get("azioni_mitigazione"))) if c)
+            r.append(_rilievo("C9", rid, M if entra else B,
+                              f"Rischio che entra nel radar senza {manca}: scriverli (o restano da definire al ciclo dopo)."
+                              if entra else f"Rischio del radar senza {manca}: ogni rischio del radar ha due KRI e da 1 a 5 "
+                                            "azioni."))
+
         # ---------------- C8 Azioni (euristica, solo Osservazioni)
         aperte = {_stesso_testo(z["descrizione"]): z["id_azione"] for z in baseline.get("azioni_aperte", [])
                   if z.get("id_rischio") == rid}
@@ -216,7 +304,7 @@ def controlla(payload, baseline):
 
         # ---------------- C9 KRI
         kri = x.get("kri_proposti", [])
-        if sorted(k.get("tipo") or "" for k in kri) != TIPI_KRI:
+        if kri and sorted(k.get("tipo") or "" for k in kri) != TIPI_KRI:
             r.append(_rilievo("C9", rid, M, f"{len(kri)} KRI proposti ({', '.join(k.get('tipo') or 'senza tipo' for k in kri)}): "
                                             "servono due KRI, uno di Esposizione e uno di Evoluzione."))
         for k in kri:
@@ -264,8 +352,28 @@ def controlla(payload, baseline):
         r.append(_rilievo("C7", None, B, f"KRI {kid} riletto ma non in vigore nella baseline."))
     for kid in sorted({k for k in riletti if riletti.count(k) > 1}):
         r.append(_rilievo("C7", None, B, f"KRI {kid} riletto piu' di una volta."))
+    if baseline.get("straordinario"):
+        # D-77: nello straordinario A8 rilegge ogni KRI in vigore dei rischi rivalutati che ripropone; un valore che
+        # manca lascia il KRI Non rilevato e toglie al livello di allerta l'aggravante proprio quando il rischio sale.
+        # Da motivare, non Bloccante: il dato puo' non essere nei documenti e il validatore lo scrive nella griglia.
+        for x in rischi:
+            if x["id_rischio"] not in base:
+                continue
+            mancanti = sorted({k.get("kri_id") for k in x.get("kri_proposti", [])}
+                              & {kid for kid, k in kri_base.items() if k.get("id_rischio") == x["id_rischio"]}
+                              - set(riletti))
+            if mancanti:
+                r.append(_rilievo("C7", x["id_rischio"], M, f"Ciclo straordinario: KRI in vigore non riletti "
+                                                            f"({', '.join(mancanti)}): restano Non rilevati. Rileggerli, o "
+                                                            "scrivere il valore nella griglia di validazione."))
 
-    r.extend(controlla_osservazione(payload, baseline))
+    # ---------------- D-79 Al massimo 20 rischi in osservazione (Parametri, capienzaOsservazione)
+    if previsti is not None:
+        quanti = sum(1 for s in previsti.values() if s["stato"] == radar.OSSERVAZIONE)
+        massimo = baseline["regola_radar"].get("max_osservazione", radar.REGOLA_DEFAULT["max_osservazione"])
+        if quanti > massimo:
+            r.append(_rilievo("C1", None, B, f"{quanti} rischi in osservazione dopo il ciclo, oltre il massimo di {massimo}: "
+                                             "lasciare fuori i meno rilevanti (fra i fenomeni non censiti, troppo_lontano)."))
 
     bloccanti = sum(1 for x in r if x["gravita"] == B)
     da_motivare = sum(1 for x in r if x["gravita"] == M)
@@ -278,60 +386,6 @@ def controlla(payload, baseline):
                     "identificativi dei KRI); C3, date di C5, coppia e soglie dei KRI da motivare; C5 (rilevanza), C6 e "
                     "C8 come Osservazioni; C4 non coperto: resta al giudizio di A5, se usato."),
     }
-
-
-def controlla_osservazione(payload, baseline):
-    """Lista di osservazione (D-73): A1 scrive solo le voci nuove e quelle con evidenza nuova. Rilievi sul ciclo
-    (id_rischio None, il codice della voce nel testo): C1 Bloccante per codici e promozioni, Osservazione per il resto."""
-    r = []
-    voci = payload.get("osservazione") or []
-    in_base = {v["oss_id"]: v for v in baseline.get("osservazione", [])}
-    nuovi_rischi = {x["id_rischio"] for x in payload.get("rischi", [])} - {x["id_rischio"] for x in baseline.get("rischi", [])}
-    noti = {x["id_rischio"] for x in payload.get("rischi", [])} | {x["id_rischio"] for x in baseline.get("rischi", [])}
-    d_prec = baseline.get("data_riferimento_precedente") or "0000-00-00"
-    d_rif = payload.get("data_riferimento", "")
-    ids = [v.get("oss_id") for v in voci if v.get("oss_id")]
-    for oid in sorted({i for i in ids if ids.count(i) > 1}):
-        r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {oid} ripetuta nel payload."))
-    for v in voci:
-        oid, esito = v.get("oss_id"), v.get("esito")
-        chi = oid or f"voce nuova '{v.get('nome', '')[:50]}'"
-        if esito == "nuova" and oid:
-            r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {oid} ha esito nuova ma ha gia' un codice: una voce "
-                                                     "nuova ha oss_id null (lo assegna lo script)."))
-        elif esito != "nuova" and not oid:
-            r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {chi} ha esito {esito} senza oss_id: una voce gia' "
-                                                     "in osservazione si indica con il suo codice della baseline."))
-        elif esito != "nuova" and oid not in in_base:
-            r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {oid} non e' fra le voci in osservazione della baseline."))
-        if esito == "promossa" and v.get("promosso_a") not in nuovi_rischi:
-            r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {chi} promossa a {v.get('promosso_a')}, che non e' un "
-                                                     "rischio nuovo di questo ciclo: censire il rischio in rischi e indicarne "
-                                                     "l'id in promosso_a (un fenomeno assorbito da un rischio esistente si archivia)."))
-        elif esito != "promossa" and v.get("promosso_a"):
-            r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {chi} ha promosso_a {v['promosso_a']} con esito {esito}: "
-                                                     "promosso_a solo con esito promossa."))
-        ignoti = sorted(set(v.get("rischi_toccati") or []) - noti)
-        if ignoti:
-            r.append(_rilievo("C1", None, OSSERVAZIONE, f"Osservazione: {chi} tocca rischi che non sono nel registro: "
-                                                        f"{', '.join(ignoti)}."))
-        for f in v.get("fonti") or []:
-            if f["data"] > d_rif:
-                r.append(_rilievo("C5", None, OSSERVAZIONE, f"Osservazione: {chi}, fonte '{f['riferimento'][:60]}' datata "
-                                                            f"{f['data']}, dopo la data di riferimento {d_rif}."))
-        if esito != "nuova" and oid in in_base and not any(d_prec < f["data"] for f in v.get("fonti") or []):
-            r.append(_rilievo("C5", None, OSSERVAZIONE, f"Osservazione: {oid} aggiornata ({esito}) senza una fonte dopo "
-                                                        f"{d_prec}: una voce senza evidenza nuova non si riscrive."))
-        if esito == "nuova" and v.get("orizzonte_anni", 99) <= 2 and v.get("plausibilita") == "in crescita":
-            r.append(_rilievo("C1", None, OSSERVAZIONE, f"Osservazione: {chi} in crescita entro {v['orizzonte_anni']} anni: "
-                                                        "verificare se e' gia' un rischio del registro (Prossimita 1-2)."))
-    usciti = {v.get("oss_id") for v in voci if v.get("esito") in ("promossa", "archiviata")}
-    attive = (set(in_base) - usciti) | {v.get("oss_id") for v in voci if v.get("oss_id") and v.get("esito") not in ("promossa", "archiviata")}
-    totale = len(attive) + sum(1 for v in voci if v.get("esito") == "nuova" and not v.get("oss_id"))
-    if totale > MAX_OSSERVAZIONE:
-        r.append(_rilievo("C1", None, BLOCCANTE, f"Osservazione: {totale} voci in osservazione dopo il ciclo, oltre le "
-                                                 f"{MAX_OSSERVAZIONE}: archiviare le meno rilevanti."))
-    return r
 
 
 def combina(meccanico, agente=None):

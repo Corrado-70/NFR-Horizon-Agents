@@ -1,6 +1,34 @@
 {
   "ciclo": "2026Q4-S1",
   "data_riferimento": "2027-01-20",
+  "analisi_evento": {
+    "evento": "Il 12/01/2027 un cliente corporate della Banca ha disposto un bonifico istantaneo su richiesta telefonica della voce clonata del suo direttore finanziario; il beneficiario non era fra quelli abituali e il blocco non e' scattato (segnalazione interna del 12/01/2027). E' il primo caso documentato presso la Banca.",
+    "catena_causale": "Causa: strumenti di clonazione vocale pronti all'uso (kit in vendita segnalati dal CERT finanziario) e bonifici istantanei irrevocabili. Evento: il cliente autorizza il pagamento credendo di parlare con un dirigente. Danno per la Banca: rimborso del cliente (obbligatorio per le frodi autorizzate dal 2027), reclami e attenzione dell'autorita'. Fatto: il caso del 12/01. Mia lettura: altri clienti corporate con pagamenti disposti per telefono sono esposti allo stesso schema.",
+    "rischi_toccati": [
+      {
+        "id_rischio": "NFR-01",
+        "effetto": "Probabilita da 4 a 5: il fenomeno e' ora osservato presso la Banca (descrittore 5)."
+      },
+      {
+        "id_rischio": "NFR-07",
+        "effetto": "Possibile effetto sui reclami e sulla condotta verso i clienti corporate se i rimborsi tardano: da verificare al trimestre, nessun dato oggi."
+      }
+    ],
+    "rischi_non_toccati": "NFR-02 (fornitore cloud) e NFR-11 (sistemi di pagamento legacy): il caso non nasce da un guasto ne' da una vulnerabilita' dei sistemi, ma dall'inganno del cliente.",
+    "documenti": [
+      {
+        "riferimento": "Segnalazione interna: bonifico istantaneo disposto con la voce clonata del direttore finanziario di un cliente corporate",
+        "data": "2027-01-12",
+        "uso": "il fatto e la sua data; base della Probabilita 5"
+      },
+      {
+        "riferimento": "Incident report: frodi con voce sintetica su clienti corporate",
+        "data": "2026-11-20",
+        "uso": "tentativi precedenti non andati a buon fine: lo schema era gia' in corso"
+      }
+    ],
+    "limiti": "Non si sa ancora se il cliente sara' rimborsato ne' l'importo recuperato; servono i dati dei bonifici corporate disposti per telefono nell'ultimo anno per misurare l'esposizione."
+  },
   "rischi": [
     {
       "id_rischio": "NFR-01",
@@ -100,7 +128,19 @@
       ]
     }
   ],
-  "ricalcolo_kri_ciclo_precedente": [],
-  "sintesi": "MESSAGGIO: ciclo straordinario deciso dopo il primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027). Si rivaluta solo NFR-01: la Probabilita sale da 4 a 5 per il caso documentato; gli altri rischi restano quelli validati nel 2026Q4. DECISIONI: approvare il blocco temporaneo dei bonifici istantanei corporate disposti per telefono fino all'attivazione della verifica fuori banda.",
-  "osservazione": []
+  "ricalcolo_kri_ciclo_precedente": [
+    {
+      "kri_id": "NFR-01-K1",
+      "valore": 7.2,
+      "fonte": "Report mensile antifrode di gennaio 2027 (dato al 15/01/2027)",
+      "commento": "Riletto nello straordinario: i tentativi crescono dopo la diffusione dei kit di clonazione vocale."
+    },
+    {
+      "kri_id": "NFR-01-K3",
+      "valore": 5.0,
+      "fonte": "Log del sistema di pagamento, estrazione del 18/01/2027",
+      "commento": "Riletto nello straordinario: il caso del 12/01 ha richiesto piu' tempo per bloccare il beneficiario."
+    }
+  ],
+  "sintesi": "MESSAGGIO: ciclo straordinario deciso dopo il primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027). Si rivaluta solo NFR-01: la Probabilita sale da 4 a 5 per il caso documentato; gli altri rischi restano quelli validati nel 2026Q4. DECISIONI: approvare il blocco temporaneo dei bonifici istantanei corporate disposti per telefono fino all'attivazione della verifica fuori banda."
 }

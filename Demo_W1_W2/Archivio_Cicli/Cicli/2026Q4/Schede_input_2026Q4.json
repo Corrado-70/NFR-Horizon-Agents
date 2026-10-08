@@ -12,8 +12,8 @@
     {
       "id_rischio": "NFR-01",
       "nome": "Frodi su pagamenti istantanei abilitate da AI generativa",
-      "event_type": "L1-02",
-      "event_type_nome": "Frode esterna",
+      "event_type": "9.7",
+      "event_type_nome": "Sicurezza informatica",
       "driver": "DRV-AI, DRV-CYB",
       "owner": "Funzione Antifrode",
       "attenzione_supervisore": true,
@@ -213,10 +213,201 @@
       "posizione_in_classifica": 1
     },
     {
+      "id_rischio": "NFR-02",
+      "nome": "Concentrazione su un fornitore cloud critico",
+      "event_type": "9.9",
+      "event_type_nome": "Terze parti",
+      "driver": "DRV-TPR, DRV-CYB",
+      "owner": "Funzione ICT & Security Risk",
+      "attenzione_supervisore": true,
+      "anni_adeguamento": null,
+      "esito": "Variato",
+      "presidio_controlli": "Non verificato",
+      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.",
+      "razionale_rischio": "Molti servizi critici della Banca girano presso un solo fornitore cloud (causa); un'interruzione prolungata del fornitore li rende indisponibili insieme (evento); senza un'alternativa attivabile nei tempi di ripristino la Banca non eroga funzioni essenziali, con danno ai clienti e sanzioni (danno). Nel trimestre nessun incidente e nessun nuovo test: valori confermati con le fonti del ciclo precedente.",
+      "motivazioni": {
+        "impatto": "Grave. Il Registro delle informazioni DORA classifica critici i servizi ospitati dal fornitore: un'interruzione ferma una funzione essenziale.",
+        "probabilita": "Improbabile. Nessuna interruzione grave del fornitore e' documentata e il Report del test completo di exit strategy mostra un'uscita praticabile, con soli rilievi minori.",
+        "prossimita": "Da uno a due anni. Nessun segnale di degrado del fornitore nelle fonti; il Contratto e piano di uscita resta valido.",
+        "velocity": "Da uno a tre mesi. E' il tempo che l'Esito del test di exit strategy stima per riattivare i servizi critici su un'alternativa: in quel periodo il danno cresce fino al pieno impatto.",
+        "adeguamento": null
+      },
+      "valori": {
+        "impatto": 4,
+        "probabilita": 4,
+        "prossimita": 3,
+        "velocity": 4
+      },
+      "score": 3.8,
+      "score_ciclo_precedente": 3.3,
+      "urgenza": {
+        "esito": "Margine 1 anno",
+        "x": 0.25,
+        "y": 0.25,
+        "z": 1.5,
+        "margine": 1
+      },
+      "livello_allerta": {
+        "livello": "Attenzione",
+        "motivo": "KRI in rosso"
+      },
+      "segnali_netti_4_settimane": -1,
+      "variazioni": [
+        {
+          "dimensione": "probabilita",
+          "da": 2,
+          "a": 4,
+          "evidenza": "Rettifica del validatore: Secondo incidente del fornitore cloud in un mese, con ripristino oltre i tempi contrattuali.",
+          "data_evidenza": "2026-10-08"
+        }
+      ],
+      "fonti": [
+        {
+          "riferimento": "Contratto e piano di uscita del fornitore cloud",
+          "data": "2025-09-30",
+          "tipo": "Interna",
+          "rilevanza": 3
+        },
+        {
+          "riferimento": "Registro delle informazioni DORA — servizi ICT critici",
+          "data": "2026-03-20",
+          "tipo": "Interna",
+          "rilevanza": 3
+        },
+        {
+          "riferimento": "Esito del test di exit strategy sul fornitore cloud",
+          "data": "2026-05-12",
+          "tipo": "Interna",
+          "rilevanza": 3
+        },
+        {
+          "riferimento": "Report del test completo di exit strategy sui servizi critici",
+          "data": "2026-08-28",
+          "tipo": "Interna",
+          "rilevanza": 3
+        }
+      ],
+      "azioni": [
+        {
+          "id_azione": "2026Q2-NFR-02-A1",
+          "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
+          "owner": "Funzione ICT & Security Risk",
+          "orizzonte": "12 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q2",
+          "razionale": "Finche' la exit strategy non e' testata su tutti i servizi critici, un guasto del fornitore non ha alternativa.",
+          "effetto_atteso": null
+        },
+        {
+          "id_azione": "2026Q3-NFR-02-A1",
+          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy entro il prossimo trimestre.",
+          "owner": "Funzione ICT & Security Risk",
+          "orizzonte": "3 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q3",
+          "razionale": "Porta il lacuna di controllo verso il descrittore 2.",
+          "effetto_atteso": null
+        },
+        {
+          "id_azione": "2026Q3-NFR-02-A2",
+          "descrizione": "Valutare lo spostamento di un servizio critico sulla nuova region nazionale del fornitore.",
+          "owner": "Direzione Sistemi Informativi",
+          "orizzonte": "12 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q3",
+          "razionale": "Riduce la severity di un'interruzione di una singola region.",
+          "effetto_atteso": null
+        },
+        {
+          "id_azione": "2026Q4-NFR-02-A1",
+          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy.",
+          "owner": "Funzione ICT & Security Risk",
+          "orizzonte": "3 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q4",
+          "razionale": "I rilievi minori del Report del test completo di exit strategy sono l'ultimo ostacolo a un'uscita nei tempi di ripristino.",
+          "effetto_atteso": "Un piano di uscita senza rilievi aperti, che mantiene bassa la Probabilita' di un'interruzione senza alternativa; la quota di servizi sul fornitore (NFR-02-K1) non cambia, cambia la capacita' di spostarli."
+        }
+      ],
+      "kri": [
+        {
+          "kri_id": "NFR-02-K1",
+          "tipo": "Esposizione",
+          "nome": "Quota di servizi critici sul fornitore cloud principale",
+          "unita": "%",
+          "razionale": "Misura la concentrazione, cioe' quanta parte della Banca dipende dal fornitore: piu' la quota e' alta, piu' grave sarebbe un'interruzione.",
+          "effetto_atteso": "Deve restare sotto la soglia di allerta; un aumento senza un piano di uscita aggiornato riapre la valutazione dell'Impatto.",
+          "valore": 78,
+          "valore_ciclo_precedente": 72,
+          "soglia_attenzione": 60,
+          "soglia_allerta": 75,
+          "stato": "Rosso",
+          "fonte_dati": "Registro delle informazioni DORA"
+        },
+        {
+          "kri_id": "NFR-02-K3",
+          "tipo": "Evoluzione",
+          "nome": "Interruzioni di servizi critici presso il fornitore cloud principale nel trimestre",
+          "unita": "n",
+          "razionale": "Conta le interruzioni dei servizi critici presso il fornitore principale, che sono il meccanismo di perdita del rischio.",
+          "effetto_atteso": "Atteso a zero; una sola interruzione porta il KRI in ambra e chiede di rivedere Probabilita' e Prossimita' al ciclo successivo.",
+          "valore": 0,
+          "valore_ciclo_precedente": null,
+          "soglia_attenzione": 1,
+          "soglia_allerta": 3,
+          "stato": "Verde",
+          "fonte_dati": "Incident management ICT e comunicazioni del fornitore"
+        }
+      ],
+      "storia": [
+        {
+          "ciclo": "2025Q4",
+          "impatto": 4,
+          "probabilita": 2,
+          "prossimita": 3,
+          "velocity": 4,
+          "score": 3.3
+        },
+        {
+          "ciclo": "2026Q1",
+          "impatto": 4,
+          "probabilita": 2,
+          "prossimita": 3,
+          "velocity": 4,
+          "score": 3.3
+        },
+        {
+          "ciclo": "2026Q2",
+          "impatto": 4,
+          "probabilita": 2,
+          "prossimita": 3,
+          "velocity": 4,
+          "score": 3.3
+        },
+        {
+          "ciclo": "2026Q3",
+          "impatto": 4,
+          "probabilita": 2,
+          "prossimita": 3,
+          "velocity": 4,
+          "score": 3.3
+        },
+        {
+          "ciclo": "2026Q4",
+          "impatto": 4,
+          "probabilita": 4,
+          "prossimita": 3,
+          "velocity": 4,
+          "score": 3.8
+        }
+      ],
+      "posizione_in_classifica": 2
+    },
+    {
       "id_rischio": "NFR-07",
       "nome": "Ransomware presso un fornitore di servizi di pagamento",
-      "event_type": "L1-06",
-      "event_type_nome": "Interruzione dell'operativita' e disfunzione dei sistemi",
+      "event_type": "9.9",
+      "event_type_nome": "Terze parti",
       "driver": "DRV-CYB, DRV-TPR",
       "owner": "Funzione ICT & Security Risk",
       "attenzione_supervisore": true,
@@ -371,13 +562,13 @@
           "score": 3.75
         }
       ],
-      "posizione_in_classifica": 2
+      "posizione_in_classifica": 3
     },
     {
       "id_rischio": "NFR-12",
       "nome": "Errori operativi nei pagamenti istantanei obbligatori",
-      "event_type": "L1-07",
-      "event_type_nome": "Esecuzione, consegna e gestione dei processi",
+      "event_type": "9.13",
+      "event_type_nome": "Processo",
       "driver": "DRV-TEC",
       "owner": "Funzione Operations",
       "attenzione_supervisore": false,
@@ -532,196 +723,13 @@
           "score": 3.65
         }
       ],
-      "posizione_in_classifica": 3
-    },
-    {
-      "id_rischio": "NFR-02",
-      "nome": "Concentrazione su un fornitore cloud critico",
-      "event_type": "L1-06",
-      "event_type_nome": "Interruzione dell'operativita' e disfunzione dei sistemi",
-      "driver": "DRV-TPR, DRV-CYB",
-      "owner": "Funzione ICT & Security Risk",
-      "attenzione_supervisore": true,
-      "anni_adeguamento": null,
-      "esito": "Confermato",
-      "presidio_controlli": "Non verificato",
-      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.",
-      "razionale_rischio": "Molti servizi critici della Banca girano presso un solo fornitore cloud (causa); un'interruzione prolungata del fornitore li rende indisponibili insieme (evento); senza un'alternativa attivabile nei tempi di ripristino la Banca non eroga funzioni essenziali, con danno ai clienti e sanzioni (danno). Nel trimestre nessun incidente e nessun nuovo test: valori confermati con le fonti del ciclo precedente.",
-      "motivazioni": {
-        "impatto": "Grave. Il Registro delle informazioni DORA classifica critici i servizi ospitati dal fornitore: un'interruzione ferma una funzione essenziale.",
-        "probabilita": "Improbabile. Nessuna interruzione grave del fornitore e' documentata e il Report del test completo di exit strategy mostra un'uscita praticabile, con soli rilievi minori.",
-        "prossimita": "Da uno a due anni. Nessun segnale di degrado del fornitore nelle fonti; il Contratto e piano di uscita resta valido.",
-        "velocity": "Da uno a tre mesi. E' il tempo che l'Esito del test di exit strategy stima per riattivare i servizi critici su un'alternativa: in quel periodo il danno cresce fino al pieno impatto.",
-        "adeguamento": null
-      },
-      "valori": {
-        "impatto": 4,
-        "probabilita": 2,
-        "prossimita": 3,
-        "velocity": 4
-      },
-      "score": 3.3,
-      "score_ciclo_precedente": 3.3,
-      "urgenza": {
-        "esito": "Margine 1 anno",
-        "x": 0.25,
-        "y": 0.25,
-        "z": 1.5,
-        "margine": 1
-      },
-      "livello_allerta": {
-        "livello": "Monitoraggio",
-        "motivo": "nessun segnale forte"
-      },
-      "segnali_netti_4_settimane": -1,
-      "variazioni": [],
-      "fonti": [
-        {
-          "riferimento": "Contratto e piano di uscita del fornitore cloud",
-          "data": "2025-09-30",
-          "tipo": "Interna",
-          "rilevanza": 3
-        },
-        {
-          "riferimento": "Registro delle informazioni DORA — servizi ICT critici",
-          "data": "2026-03-20",
-          "tipo": "Interna",
-          "rilevanza": 3
-        },
-        {
-          "riferimento": "Esito del test di exit strategy sul fornitore cloud",
-          "data": "2026-05-12",
-          "tipo": "Interna",
-          "rilevanza": 3
-        },
-        {
-          "riferimento": "Report del test completo di exit strategy sui servizi critici",
-          "data": "2026-08-28",
-          "tipo": "Interna",
-          "rilevanza": 3
-        }
-      ],
-      "azioni": [
-        {
-          "id_azione": "2026Q2-NFR-02-A1",
-          "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
-          "owner": "Funzione ICT & Security Risk",
-          "orizzonte": "12 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q2",
-          "razionale": "Finche' la exit strategy non e' testata su tutti i servizi critici, un guasto del fornitore non ha alternativa.",
-          "effetto_atteso": null
-        },
-        {
-          "id_azione": "2026Q3-NFR-02-A1",
-          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy entro il prossimo trimestre.",
-          "owner": "Funzione ICT & Security Risk",
-          "orizzonte": "3 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q3",
-          "razionale": "Porta il lacuna di controllo verso il descrittore 2.",
-          "effetto_atteso": null
-        },
-        {
-          "id_azione": "2026Q3-NFR-02-A2",
-          "descrizione": "Valutare lo spostamento di un servizio critico sulla nuova region nazionale del fornitore.",
-          "owner": "Direzione Sistemi Informativi",
-          "orizzonte": "12 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q3",
-          "razionale": "Riduce la severity di un'interruzione di una singola region.",
-          "effetto_atteso": null
-        },
-        {
-          "id_azione": "2026Q4-NFR-02-A1",
-          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy.",
-          "owner": "Funzione ICT & Security Risk",
-          "orizzonte": "3 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q4",
-          "razionale": "I rilievi minori del Report del test completo di exit strategy sono l'ultimo ostacolo a un'uscita nei tempi di ripristino.",
-          "effetto_atteso": "Un piano di uscita senza rilievi aperti, che mantiene bassa la Probabilita' di un'interruzione senza alternativa; la quota di servizi sul fornitore (NFR-02-K1) non cambia, cambia la capacita' di spostarli."
-        }
-      ],
-      "kri": [
-        {
-          "kri_id": "NFR-02-K1",
-          "tipo": "Esposizione",
-          "nome": "Quota di servizi critici sul fornitore cloud principale",
-          "unita": "%",
-          "razionale": "Misura la concentrazione, cioe' quanta parte della Banca dipende dal fornitore: piu' la quota e' alta, piu' grave sarebbe un'interruzione.",
-          "effetto_atteso": "Deve restare sotto la soglia di allerta; un aumento senza un piano di uscita aggiornato riapre la valutazione dell'Impatto.",
-          "valore": 70,
-          "valore_ciclo_precedente": 72,
-          "soglia_attenzione": 60,
-          "soglia_allerta": 75,
-          "stato": "Ambra",
-          "fonte_dati": "Registro delle informazioni DORA"
-        },
-        {
-          "kri_id": "NFR-02-K3",
-          "tipo": "Evoluzione",
-          "nome": "Interruzioni di servizi critici presso il fornitore cloud principale nel trimestre",
-          "unita": "n",
-          "razionale": "Conta le interruzioni dei servizi critici presso il fornitore principale, che sono il meccanismo di perdita del rischio.",
-          "effetto_atteso": "Atteso a zero; una sola interruzione porta il KRI in ambra e chiede di rivedere Probabilita' e Prossimita' al ciclo successivo.",
-          "valore": 0,
-          "valore_ciclo_precedente": null,
-          "soglia_attenzione": 1,
-          "soglia_allerta": 3,
-          "stato": "Verde",
-          "fonte_dati": "Incident management ICT e comunicazioni del fornitore"
-        }
-      ],
-      "storia": [
-        {
-          "ciclo": "2025Q4",
-          "impatto": 4,
-          "probabilita": 2,
-          "prossimita": 3,
-          "velocity": 4,
-          "score": 3.3
-        },
-        {
-          "ciclo": "2026Q1",
-          "impatto": 4,
-          "probabilita": 2,
-          "prossimita": 3,
-          "velocity": 4,
-          "score": 3.3
-        },
-        {
-          "ciclo": "2026Q2",
-          "impatto": 4,
-          "probabilita": 2,
-          "prossimita": 3,
-          "velocity": 4,
-          "score": 3.3
-        },
-        {
-          "ciclo": "2026Q3",
-          "impatto": 4,
-          "probabilita": 2,
-          "prossimita": 3,
-          "velocity": 4,
-          "score": 3.3
-        },
-        {
-          "ciclo": "2026Q4",
-          "impatto": 4,
-          "probabilita": 2,
-          "prossimita": 3,
-          "velocity": 4,
-          "score": 3.3
-        }
-      ],
       "posizione_in_classifica": 4
     },
     {
       "id_rischio": "NFR-03",
       "nome": "Greenwashing nella commercializzazione di prodotti ESG",
-      "event_type": "L1-04",
-      "event_type_nome": "Clientela, prodotti e prassi professionali",
+      "event_type": "9.1",
+      "event_type_nome": "Condotta",
       "driver": "DRV-CON, DRV-CLI",
       "owner": "Funzione Compliance",
       "attenzione_supervisore": false,
@@ -887,8 +895,8 @@
     {
       "id_rischio": "NFR-05",
       "nome": "Errori di processo nella migrazione del core banking",
-      "event_type": "L1-07",
-      "event_type_nome": "Esecuzione, consegna e gestione dei processi",
+      "event_type": "9.13",
+      "event_type_nome": "Processo",
       "driver": "DRV-TEC",
       "owner": "Funzione Operations",
       "attenzione_supervisore": false,
@@ -1044,8 +1052,8 @@
     {
       "id_rischio": "NFR-06",
       "nome": "Esfiltrazione di dati tramite strumenti di AI non autorizzati",
-      "event_type": "L1-01",
-      "event_type_nome": "Frode interna",
+      "event_type": "9.7",
+      "event_type_nome": "Sicurezza informatica",
       "driver": "DRV-AI, DRV-HUM",
       "owner": "Funzione Sicurezza delle Informazioni",
       "attenzione_supervisore": false,
@@ -1213,8 +1221,8 @@
     {
       "id_rischio": "NFR-10",
       "nome": "Informazioni errate ai clienti da assistenti di AI generativa",
-      "event_type": "L1-04",
-      "event_type_nome": "Clientela, prodotti e prassi professionali",
+      "event_type": "9.1",
+      "event_type_nome": "Condotta",
       "driver": "DRV-AI, DRV-CON",
       "owner": "Funzione Customer Experience",
       "attenzione_supervisore": false,
@@ -1364,129 +1372,10 @@
       "posizione_in_classifica": 8
     },
     {
-      "id_rischio": "NFR-13",
-      "nome": "Vertenze e carenza di competenze in funzioni IT critiche",
-      "event_type": "L1-03",
-      "event_type_nome": "Rapporti di impiego e sicurezza sul lavoro",
-      "driver": "DRV-HUM",
-      "owner": "Da assegnare",
-      "attenzione_supervisore": false,
-      "anni_adeguamento": null,
-      "esito": "Nuovo",
-      "presidio_controlli": "Non verificato",
-      "descrizione": "Scioperi di settore e uscite di personale tecnico non rimpiazzabile che lasciano scoperti ruoli IT critici, con violazioni di obblighi di lavoro e sicurezza nei turni di copertura.",
-      "razionale_rischio": "La vertenza nazionale del settore e le uscite di tecnici difficili da sostituire (causa) lasciano scoperti ruoli IT critici durante scioperi o dimissioni, con turni di copertura che violano obblighi di lavoro e sicurezza (evento); processi critici si degradano e la Banca rischia vertenze e sanzioni (danno). Rischio nuovo: nessun rischio del registro copriva i rapporti di impiego (L1-03).",
-      "motivazioni": {
-        "impatto": "Rilevante. Durante le astensioni si degradano processi critici che dipendono da pochi tecnici (Piano di successione dei ruoli IT critici, Direzione Risorse Umane).",
-        "probabilita": "Possibile. Lo sciopero nazionale del personale bancario e la carenza di tecnici IT sono in corso nel settore; la Banca e' esposta perche' il Piano di successione copre solo una parte dei ruoli.",
-        "prossimita": "Da uno a due anni. La vertenza e' in corso nel settore, senza astensioni annunciate presso la Banca.",
-        "velocity": "Da tre a sei mesi. Le uscite di personale e i periodi di vertenza si sviluppano in alcuni mesi (Sciopero nazionale del personale bancario).",
-        "adeguamento": null
-      },
-      "valori": {
-        "impatto": 3,
-        "probabilita": 3,
-        "prossimita": 3,
-        "velocity": 3
-      },
-      "score": 3,
-      "score_ciclo_precedente": null,
-      "urgenza": {
-        "esito": "Agire entro l'anno",
-        "x": 0.25,
-        "y": 0.5,
-        "z": 1.5,
-        "margine": 0.75
-      },
-      "livello_allerta": {
-        "livello": "Monitoraggio",
-        "motivo": "nessun segnale forte"
-      },
-      "segnali_netti_4_settimane": 0,
-      "variazioni": [],
-      "fonti": [
-        {
-          "riferimento": "Sciopero nazionale del personale bancario e carenza di tecnici IT",
-          "data": "2026-10-06",
-          "tipo": "Esterna",
-          "rilevanza": 2
-        },
-        {
-          "riferimento": "Piano di successione dei ruoli IT critici — Direzione Risorse Umane",
-          "data": "2026-11-15",
-          "tipo": "Interna",
-          "rilevanza": 3
-        }
-      ],
-      "azioni": [
-        {
-          "id_azione": "2026Q4-NFR-13-A1",
-          "descrizione": "Estendere il piano di successione a tutti i ruoli IT critici, con backup formati.",
-          "owner": "Direzione Risorse Umane",
-          "orizzonte": "6 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q4",
-          "razionale": "Oggi il Piano di successione copre circa meta' dei ruoli critici: e' la lacuna principale del rischio.",
-          "effetto_atteso": "Ogni ruolo critico con un sostituto formato; i ruoli senza sostituto (KRI di esposizione) devono scendere sotto la soglia di attenzione."
-        },
-        {
-          "id_azione": "2026Q4-NFR-13-A2",
-          "descrizione": "Definire i servizi minimi IT garantiti in caso di sciopero, d'intesa con le rappresentanze.",
-          "owner": "Direzione Sistemi Informativi",
-          "orizzonte": "3 mesi",
-          "stato": "Approvata",
-          "ciclo": "2026Q4",
-          "razionale": "Senza servizi minimi concordati un'astensione puo' fermare processi critici o imporre turni non conformi.",
-          "effetto_atteso": "Un danno minore in caso di sciopero (Impatto) e turni di copertura conformi agli obblighi di lavoro."
-        }
-      ],
-      "kri": [
-        {
-          "kri_id": "NFR-13-K1",
-          "tipo": "Esposizione",
-          "nome": "Ruoli IT critici senza sostituto formato",
-          "unita": "n",
-          "razionale": "Misura quanto la Banca e' esposta: ogni ruolo critico senza sostituto e' un punto di blocco.",
-          "effetto_atteso": "In calo con l'estensione del piano di successione, fino a zero.",
-          "valore": null,
-          "valore_ciclo_precedente": null,
-          "soglia_attenzione": 3,
-          "soglia_allerta": 6,
-          "stato": "Non rilevato",
-          "fonte_dati": "Piano di successione — Direzione Risorse Umane"
-        },
-        {
-          "kri_id": "NFR-13-K2",
-          "tipo": "Evoluzione",
-          "nome": "Turnover volontario annualizzato del personale IT",
-          "unita": "%",
-          "razionale": "Misura quanto cresce la perdita di competenze tecniche.",
-          "effetto_atteso": "Stabile sotto la soglia di attenzione; oltre la soglia di allerta il rischio si avvicina e la Prossimita' va rivista.",
-          "valore": null,
-          "valore_ciclo_precedente": null,
-          "soglia_attenzione": 8,
-          "soglia_allerta": 12,
-          "stato": "Non rilevato",
-          "fonte_dati": "Sistema HR di gestione del personale"
-        }
-      ],
-      "storia": [
-        {
-          "ciclo": "2026Q4",
-          "impatto": 3,
-          "probabilita": 3,
-          "prossimita": 3,
-          "velocity": 3,
-          "score": 3
-        }
-      ],
-      "posizione_in_classifica": 9
-    },
-    {
       "id_rischio": "NFR-09",
       "nome": "Violazione di sanzioni internazionali tramite triangolazioni",
-      "event_type": "L1-04",
-      "event_type_nome": "Clientela, prodotti e prassi professionali",
+      "event_type": "9.4",
+      "event_type_nome": "Legale",
       "driver": "DRV-GEO",
       "owner": "Funzione Compliance",
       "attenzione_supervisore": true,
@@ -1633,13 +1522,13 @@
           "score": 2.9
         }
       ],
-      "posizione_in_classifica": 10
+      "posizione_in_classifica": 9
     },
     {
       "id_rischio": "NFR-04",
       "nome": "Eventi climatici estremi su sedi e data center",
-      "event_type": "L1-05",
-      "event_type_nome": "Danni a beni materiali",
+      "event_type": "9.8",
+      "event_type_nome": "Sicurezza fisica",
       "driver": "DRV-CLI",
       "owner": "Funzione Business Continuity",
       "attenzione_supervisore": false,
@@ -1794,13 +1683,13 @@
           "score": 2.8
         }
       ],
-      "posizione_in_classifica": 11
+      "posizione_in_classifica": 10
     },
     {
       "id_rischio": "NFR-11",
       "nome": "Fine del supporto dei sistemi di pagamento legacy",
-      "event_type": "L1-06",
-      "event_type_nome": "Interruzione dell'operativita' e disfunzione dei sistemi",
+      "event_type": "9.6",
+      "event_type_nome": "Tecnologico",
       "driver": "DRV-TEC",
       "owner": "Funzione IT Operations",
       "attenzione_supervisore": false,
@@ -1955,13 +1844,162 @@
           "score": 2.8
         }
       ],
+      "posizione_in_classifica": 11
+    },
+    {
+      "id_rischio": "NFR-16",
+      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "event_type": "9.11",
+      "event_type_nome": "Employer",
+      "driver": "DRV-HUM, DRV-TEC",
+      "owner": "Da assegnare",
+      "attenzione_supervisore": false,
+      "anni_adeguamento": null,
+      "esito": "Variato",
+      "presidio_controlli": "Non verificato",
+      "descrizione": "Scioperi di settore e uscite di personale tecnico non rimpiazzabile che lasciano scoperti ruoli IT critici, con violazioni di obblighi di lavoro e sicurezza nei turni di copertura.",
+      "razionale_rischio": "La vertenza nazionale del settore e le uscite di tecnici difficili da sostituire (causa) lasciano scoperti ruoli IT critici durante scioperi o dimissioni, con turni di copertura che violano obblighi di lavoro e sicurezza (evento); processi critici si degradano e la Banca rischia vertenze e sanzioni (danno). Era in osservazione dal 2026Q3: il segnale di avvicinamento si e' verificato e il rischio entra nel radar.",
+      "motivazioni": {
+        "impatto": "Rilevante. Durante le astensioni si degradano processi critici che dipendono da pochi tecnici (Piano di successione dei ruoli IT critici, Direzione Risorse Umane).",
+        "probabilita": "Possibile. Lo sciopero nazionale del personale bancario e la carenza di tecnici IT sono in corso nel settore; la Banca e' esposta perche' il Piano di successione copre solo una parte dei ruoli.",
+        "prossimita": "Da due a tre anni. La vertenza e' in corso nel settore, senza astensioni annunciate presso la Banca.",
+        "velocity": "Da tre a sei mesi. Le uscite di personale e i periodi di vertenza si sviluppano in alcuni mesi (Sciopero nazionale del personale bancario).",
+        "adeguamento": null
+      },
+      "valori": {
+        "impatto": 3,
+        "probabilita": 3,
+        "prossimita": 2,
+        "velocity": 3
+      },
+      "score": 2.8,
+      "score_ciclo_precedente": 2.19,
+      "urgenza": {
+        "esito": "Margine 1,8 anni",
+        "x": 0.25,
+        "y": 0.5,
+        "z": 2.5,
+        "margine": 1.75
+      },
+      "livello_allerta": {
+        "livello": "Monitoraggio",
+        "motivo": "nessun segnale forte"
+      },
+      "segnali_netti_4_settimane": 1,
+      "variazioni": [
+        {
+          "dimensione": "probabilita",
+          "da": 2,
+          "a": 3,
+          "evidenza": "Lo sciopero nazionale del personale bancario di ottobre ha coinvolto i tecnici IT e il piano di successione della Banca copre solo meta' dei ruoli critici: la Banca e' esposta.",
+          "data_evidenza": "2026-11-15"
+        },
+        {
+          "dimensione": "prossimita",
+          "da": 1,
+          "a": 2,
+          "evidenza": "La vertenza nazionale e' in corso nel settore dal 6 ottobre 2026, con due giornate di sciopero proclamate: il fenomeno puo' toccare la Banca entro tre anni.",
+          "data_evidenza": "2026-10-06"
+        },
+        {
+          "dimensione": "velocity",
+          "da": null,
+          "a": 3,
+          "evidenza": "Lo sciopero nazionale del personale bancario documenta che uscite di personale e periodi di vertenza si sviluppano in alcuni mesi: velocity valutata per la prima volta.",
+          "data_evidenza": "2026-10-06"
+        }
+      ],
+      "fonti": [
+        {
+          "riferimento": "Sciopero nazionale del personale bancario e carenza di tecnici IT",
+          "data": "2026-10-06",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        },
+        {
+          "riferimento": "Piano di successione dei ruoli IT critici — Direzione Risorse Umane",
+          "data": "2026-11-15",
+          "tipo": "Interna",
+          "rilevanza": 3
+        }
+      ],
+      "azioni": [
+        {
+          "id_azione": "2026Q4-NFR-16-A1",
+          "descrizione": "Estendere il piano di successione a tutti i ruoli IT critici, con backup formati.",
+          "owner": "Direzione Risorse Umane",
+          "orizzonte": "6 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q4",
+          "razionale": "Oggi il Piano di successione copre circa meta' dei ruoli critici: e' la lacuna principale del rischio.",
+          "effetto_atteso": "Ogni ruolo critico con un sostituto formato; i ruoli senza sostituto (KRI di esposizione) devono scendere sotto la soglia di attenzione."
+        },
+        {
+          "id_azione": "2026Q4-NFR-16-A2",
+          "descrizione": "Definire i servizi minimi IT garantiti in caso di sciopero, d'intesa con le rappresentanze.",
+          "owner": "Direzione Sistemi Informativi",
+          "orizzonte": "3 mesi",
+          "stato": "Approvata",
+          "ciclo": "2026Q4",
+          "razionale": "Senza servizi minimi concordati un'astensione puo' fermare processi critici o imporre turni non conformi.",
+          "effetto_atteso": "Un danno minore in caso di sciopero (Impatto) e turni di copertura conformi agli obblighi di lavoro."
+        }
+      ],
+      "kri": [
+        {
+          "kri_id": "NFR-16-K1",
+          "tipo": "Esposizione",
+          "nome": "Ruoli IT critici senza sostituto formato",
+          "unita": "n",
+          "razionale": "Misura quanto la Banca e' esposta: ogni ruolo critico senza sostituto e' un punto di blocco.",
+          "effetto_atteso": "In calo con l'estensione del piano di successione, fino a zero.",
+          "valore": null,
+          "valore_ciclo_precedente": null,
+          "soglia_attenzione": 3,
+          "soglia_allerta": 6,
+          "stato": "Non rilevato",
+          "fonte_dati": "Piano di successione — Direzione Risorse Umane"
+        },
+        {
+          "kri_id": "NFR-16-K2",
+          "tipo": "Evoluzione",
+          "nome": "Turnover volontario annualizzato del personale IT",
+          "unita": "%",
+          "razionale": "Misura quanto cresce la perdita di competenze tecniche.",
+          "effetto_atteso": "Stabile sotto la soglia di attenzione; oltre la soglia di allerta il rischio si avvicina e la Prossimita' va rivista.",
+          "valore": null,
+          "valore_ciclo_precedente": null,
+          "soglia_attenzione": 8,
+          "soglia_allerta": 12,
+          "stato": "Non rilevato",
+          "fonte_dati": "Sistema HR di gestione del personale"
+        }
+      ],
+      "storia": [
+        {
+          "ciclo": "2026Q3",
+          "impatto": 3,
+          "probabilita": 2,
+          "prossimita": 1,
+          "velocity": null,
+          "score": 2.19
+        },
+        {
+          "ciclo": "2026Q4",
+          "impatto": 3,
+          "probabilita": 3,
+          "prossimita": 2,
+          "velocity": 3,
+          "score": 2.8
+        }
+      ],
       "posizione_in_classifica": 12
     },
     {
       "id_rischio": "NFR-08",
       "nome": "Accessi impropri di dipendenti ai dati dei clienti",
-      "event_type": "L1-01",
-      "event_type_nome": "Frode interna",
+      "event_type": "9.7",
+      "event_type_nome": "Sicurezza informatica",
       "driver": "DRV-HUM, DRV-CON",
       "owner": "Funzione Sicurezza delle Informazioni",
       "attenzione_supervisore": false,

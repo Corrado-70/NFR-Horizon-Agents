@@ -1,12 +1,12 @@
 # Fonti esterne e interne — elenco validato
 
-> **Stato al 24/09/2026** (`08_Deploy/DECISIONI.md`): **tutte approvate**
+> **Stato al 24/09/2026** (`04_Riferimenti/DECISIONI.md`): **tutte approvate**
 > tranne FNT-19. D-15: RSS istituzionali e i quattro siti della knowledge web.
 > D-27: fonti a licenza e di stampa, dopo la verifica di Legal. D-29: CERTFin,
 > ENISA e fonti interne. **FNT-19 e' esclusa** (D-28): il monitoraggio dei
 > fornitori ICT critici e' gia' fatto in altre sedi. Ogni cambio di `stato`
 > (`approvata` / `esclusa`) si registra in DECISIONI.md. Revisione almeno
-> annuale (`06_Governance`, sezione 4).
+> annuale (`04_Riferimenti/controlli_e_model_risk.md`, sezione 4).
 >
 > Questo file e' l'UNICA fonte dell'elenco. Lo leggono:
 > - `02_Agenti/componi_prompt.py`: l'elenco compatto (codice, nome, canale)

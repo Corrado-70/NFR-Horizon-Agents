@@ -10,7 +10,7 @@ Si misura su **A1**, il compito piu' pesante:
 Si prova anche il **precontrollo** eseguito dentro l'agente. Se funziona, A1 consegna un output gia'
 controllato e sparisce l'andata e ritorno con il PC.
 
-Si usa lo stesso input della prova senza Copilot Studio (`08_Deploy/Prova_senza_Copilot_Studio.md`,
+Si usa lo stesso input della prova senza Copilot Studio (`04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md`,
 parte 2): `C:\NFR_Prova\Archivio\Input_A1_2026Q4.txt`. Cosi' i risultati si confrontano con A1 in Agent
 Builder, a parita' di tutto. Copilot Studio in questa prova produce solo file: nel registro scrive solo
 lo script, dopo i controlli (D-10).

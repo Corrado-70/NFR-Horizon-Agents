@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-08 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-08 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-08 Accessi impropri di dipendenti ai dati dei clienti
-Event type: L1-01 Frode interna; driver: DRV-HUM, DRV-CON; owner: Funzione Sicurezza delle Informazioni.
+Categoria: 9.7 Sicurezza informatica; driver: DRV-HUM, DRV-CON; owner: Funzione Sicurezza delle Informazioni.
 Esito nel ciclo: Confermato. Posizione in classifica per score: 13 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 2: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
 
 DESCRIZIONE
@@ -38,8 +39,8 @@ AZIONI
 - 2026Q4-NFR-08-A1 [Approvata, 3 mesi, Funzione Sicurezza delle Informazioni]: Estendere il blocco automatico degli accessi senza pratica alle applicazioni di filiale e al call center. Perche': Il blocco (2026Q3-NFR-08-A1) copre oggi solo l'applicazione centrale: gli accessi da filiale e call center restano fuori. Effetto atteso: Abusi fermati su tutti i canali; gli accessi senza pratica (NFR-08-K1) scendono sotto la soglia di attenzione.
 
 KRI IN VIGORE
-- NFR-08-K1 (Evoluzione) Accessi ai dati clienti senza pratica associata [n/mese]: valore 19 (prima 22), soglie 20 / 50, stato Verde; fonte dati Log applicativi e SOC. Perche': Misura il comportamento che precede l'abuso: consultazioni senza una pratica che le giustifichi.
-- NFR-08-K2 (Esposizione) Utenze con profili di accesso non rivisti nell'anno [%]: valore 4 (prima 5), soglie 5 / 15, stato Verde; fonte dati Sistema IAM. Perche': Misura quante utenze hanno piu' accessi del necessario: e' l'esposizione della Banca.
+- NFR-08-K1 (Evoluzione) Accessi ai dati clienti senza pratica associata [n/mese]: valore 19 (prima 19), soglie 20 / 50, stato Verde; fonte dati Log applicativi e SOC. Perche': Misura il comportamento che precede l'abuso: consultazioni senza una pratica che le giustifichi.
+- NFR-08-K2 (Esposizione) Utenze con profili di accesso non rivisti nell'anno [%]: valore 4 (prima 4), soglie 5 / 15, stato Verde; fonte dati Sistema IAM. Perche': Misura quante utenze hanno piu' accessi del necessario: e' l'esposizione della Banca.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 3, Probabilita 2, Prossimita 3, Velocity 3, score 2,75
@@ -47,6 +48,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 3, Probabilita 2, Prossimita 3, Velocity 3, score 2,75
 - 2026Q3: Impatto 3, Probabilita 2, Prossimita 3, Velocity 3, score 2,75
 - 2026Q4: Impatto 3, Probabilita 2, Prossimita 3, Velocity 3, score 2,75
+- 2026Q4-S1: Impatto 3, Probabilita 2, Prossimita 3, Velocity 3, score 2,75
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

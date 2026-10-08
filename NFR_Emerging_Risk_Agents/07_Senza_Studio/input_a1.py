@@ -53,9 +53,12 @@ def componi(baseline, kernel, oggi):
              "", INIZIO_BASELINE, json.dumps(baseline, ensure_ascii=False, indent=2)]
     s = baseline.get("straordinario")
     if s:                                            # D-75: in testa, perche' cambia che cosa A1 deve scrivere
+        cosa = (f"Valuta SOLO questi rischi: {', '.join(s['rischi_da_rivalutare'])} (e un rischio nuovo solo se l'evento "
+                "lo crea)" if s["rischi_da_rivalutare"] else
+                "Nessun rischio da rivalutare: censisci SOLO i rischi nuovi che l'evento crea (almeno uno)")
         parti[2:2] = ["", f"CICLO STRAORDINARIO {ciclo}, deciso da {s['decisore']} il {s['data_decisione']}: {s['motivo']}",
-                      f"Valuta SOLO questi rischi: {', '.join(s['rischi_da_rivalutare'])} (e un rischio nuovo solo se l'evento "
-                      "lo crea); gli altri restano com'erano. Regole nella guida di scrittura, sezione \"Ciclo straordinario\"."]
+                      f"{cosa}; gli altri restano com'erano. Scrivi anche analisi_evento. Regole nella guida di scrittura, "
+                      "sezione \"Ciclo straordinario\"."]
     if FILE_CONTROLLI not in mancanti:
         parti += ["", "=== 2. CONTROLLI ===",
                   "Prima di rispondere verifica ogni rischio con questi controlli e correggi. Li applicano lo script e, se "

@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-07 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-07 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-07 Ransomware presso un fornitore di servizi di pagamento
-Event type: L1-06 Interruzione dell'operativita' e disfunzione dei sistemi; driver: DRV-CYB, DRV-TPR; owner: Funzione ICT & Security Risk.
-Esito nel ciclo: Confermato. Posizione in classifica per score: 2 su 13.
+Categoria: 9.9 Terze parti; driver: DRV-CYB, DRV-TPR; owner: Funzione ICT & Security Risk.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 3 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 3: sopra la soglia; posto garantito: tema del supervisore.
 Attenzione del supervisore: si. Presidio dei controlli (giudizio della Banca, fuori dallo score): Parziale.
 
 DESCRIZIONE
@@ -40,7 +41,7 @@ AZIONI
 
 KRI IN VIGORE
 - NFR-07-K1 (Esposizione) Fornitori di pagamento critici senza test di ripristino da ransomware [n]: valore 1 (prima 1), soglie 1 / 2, stato Ambra; fonte dati Registro delle informazioni DORA. Perche': Misura quanto la Banca e' esposta: un fornitore critico mai provato nel ripristino e' un blocco di durata sconosciuta.
-- NFR-07-K2 (Evoluzione) Ore di indisponibilita' del gateway di pagamento nel trimestre [ore]: valore 0,50 (prima 2,50), soglie 4 / 12, stato Verde; fonte dati Incident management ICT. Perche': Misura le interruzioni reali del gateway, il canale attraverso cui il rischio colpisce.
+- NFR-07-K2 (Evoluzione) Ore di indisponibilita' del gateway di pagamento nel trimestre [ore]: valore 0,50 (prima 0,50), soglie 4 / 12, stato Verde; fonte dati Incident management ICT. Perche': Misura le interruzioni reali del gateway, il canale attraverso cui il rischio colpisce.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 4, Probabilita 3, Prossimita 3, Velocity 5, score 3,75
@@ -48,6 +49,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 4, Probabilita 3, Prossimita 3, Velocity 5, score 3,75
 - 2026Q3: Impatto 4, Probabilita 3, Prossimita 3, Velocity 5, score 3,75
 - 2026Q4: Impatto 4, Probabilita 3, Prossimita 3, Velocity 5, score 3,75
+- 2026Q4-S1: Impatto 4, Probabilita 3, Prossimita 3, Velocity 5, score 3,75
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

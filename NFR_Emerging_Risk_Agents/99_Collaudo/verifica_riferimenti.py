@@ -72,7 +72,7 @@ def verifica_controlli(e):
         "kernel (controlli_A5.md, testo unico, D-69)": re.findall(r"^- (C\d) ", testo(KERNEL / "controlli_A5.md"), re.M),
         "prompt A5 composto": re.findall(r"^- (C\d) ", testo(AGENTI / "A5_Challenger.md"), re.M),
         "A3_A4_A5_DOCUMENTATO": re.findall(r"^### (C\d) ", testo(AGENTI / "COMMENTATI" / "A3_A4_A5_DOCUMENTATO.md"), re.M),
-        "governance": re.findall(r"^\| (C\d) ", testo(RADICE / "06_Governance" / "controlli_e_model_risk.md"), re.M),
+        "governance": re.findall(r"^\| (C\d) ", testo(RADICE / "04_Riferimenti" / "controlli_e_model_risk.md"), re.M),
     }
     for nome, trovati in fonti.items():
         e.verifica(trovati == attesi, f"3. controlli C1-C9 in {nome}", str(trovati))
@@ -109,7 +109,7 @@ def verifica_passi(e):
 def verifica_derivati(e):
     sys.path.insert(0, str(CAMPO))
     import esegui_ciclo_locale as campo
-    doc = testo(RADICE / "05_Workflow" / "workflow.md").split("## Campi derivati", 1)[1].split("\n## ", 1)[0]
+    doc = testo(RADICE / "04_Riferimenti" / "workflow.md").split("## Campi derivati", 1)[1].split("\n## ", 1)[0]
     documentati = sorted(re.findall(r"^\| `(\w+)` \|", doc, re.M))
     e.verifica(documentati == sorted(campo.DERIVATI), "5. campi derivati documentati = implementati",
                f"doc {documentati}\ncodice {sorted(campo.DERIVATI)}")
@@ -178,7 +178,11 @@ def verifica_guida(e):
                         opzioni.update(o for a in sub._actions for o in a.option_strings)
     finally:
         argparse.ArgumentParser.parse_args = orig
-    for doc in (RADICE / "00_GUIDA_PASSO_PASSO.md", CAMPO / "README_variante_locale.md", RADICE / "05_Workflow" / "workflow.md"):
+    # Le opzioni del collaudo (M1) sono nella riga d'uso della docstring, senza argparse: si leggono dal testo.
+    for script in ("esegui_collaudo.py", "run_catena.py"):
+        uso = testo(RADICE / "99_Collaudo" / script).split('"""')[1]
+        opzioni.update(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", uso))
+    for doc in (RADICE / "00_GUIDA_PASSO_PASSO.md", CAMPO / "README_variante_locale.md", RADICE / "04_Riferimenti" / "workflow.md"):
         t = testo(doc)
         # Il nome del comando, anche dopo le opzioni comuni (--workbook "..." --cartella-uscita ...); anche aggiorna-registro.
         citati = set(re.findall(r'esegui_ciclo_locale\.py (?:--[\w-]+ (?:"[^"]*"|\S+) )*([\w-]+)', t))

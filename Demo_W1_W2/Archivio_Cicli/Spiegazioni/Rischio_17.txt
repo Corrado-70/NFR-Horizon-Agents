@@ -1,2 +1,2 @@
-SPIEGAZIONI DEL REGISTRO NFR — Rischio 17 — ciclo 2026Q4: POSTO LIBERO, nessun rischio in questo posto dell'anagrafica.
-Scritto da esegui_ciclo_locale.py il 2026-10-07.
+SPIEGAZIONI DEL REGISTRO NFR — Rischio 17 — ciclo 2026Q4-S1: POSTO LIBERO, nessun rischio in questo posto dell'anagrafica.
+Scritto da esegui_ciclo_locale.py il 2026-10-08.

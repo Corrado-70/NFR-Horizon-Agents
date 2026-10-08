@@ -33,14 +33,15 @@ aperta A-15.
 | Precontrollo | trimestrale, dopo A1 e prima di A5 | **non e' un agente**: schema, controlli meccanizzati e parti del razionale sull'output di A1, con il messaggio di correzione per A1 (D-69); senza Excel | no |
 | A5 Challenger | trimestrale, dopo A1, **facoltativo** (D-71) | nove controlli (C1-C9) su input ristretto; i suoi rilievi vanno in validazione (colonna Segnalazioni), un Bloccante chiede la Motivazione | no |
 | A2 Scrittura | dopo A5 | **non e' un agente**: codice che valida, controlla, scrive e verifica | scrive cio' che A1 propone e A5 approva |
-| A3 Interim Update | settimanale | integra le notizie, impatto sulle nove categorie di rischio, flag proposti, segnali sulla lista di osservazione, proposta di ciclo straordinario | no |
+| A3 Interim Update | settimanale | integra le notizie, impatto sulle nove categorie di rischio, flag proposti (anche sui rischi in osservazione), proposta di ciclo straordinario | no |
 | A4 News Assessor | su richiesta | parere su una notizia, ancorato alla valutazione deliberata | no |
-| Lista di osservazione | trimestrale, con A1 | fenomeni con un meccanismo di perdita ma lontani o solo teorici: voci `OSS-nn` con impatto potenziale, orizzonte, plausibilita' e segnale di avvicinamento, senza score, fuori da radar e classifica; A1 propone solo le voci nuove o con evidenza nuova, lo script riporta le altre e le controlla, il validatore decide (D-73) | no: osserva |
-| Validazione umana | dopo ogni trimestre (e, se si vuole, ogni settimana) | nel foglio Validazione, una riga per rischio, KRI, azione, voce in osservazione e notizia (D-67): accetta (non tocca), rettifica (cambia la cella gialla) o respinge; il comando `valida` la applica e la registra campo per campo nel foglio Storico_Validazioni; senza, il trimestre dopo non parte | decide |
+| Registro unico: radar e osservazione | a ogni scrittura e validazione | un solo registro di rischi con la stessa scala; lo script mette nel radar di Mosca quelli con Prossimita e Probabilita alle soglie, fino alla capienza (15, fino a 20), piu' AGIRE ORA, temi del supervisore e decisioni del validatore; gli altri sono in osservazione (niente KRI ne' azioni, con orizzonte e segnale di avvicinamento); chi scende resta un ciclo "in uscita" (D-79, `07_Senza_Studio/radar.py`) | no: calcola |
+| Validazione umana | dopo ogni trimestre (e, se si vuole, ogni settimana) | nel foglio Validazione, una riga per rischio (con la decisione sullo stato, D-79), KRI, azione e notizia (D-67): accetta (non tocca), rettifica (cambia la cella gialla) o respinge; il comando `valida` la applica e la registra campo per campo nel foglio Storico_Validazioni; senza, il trimestre dopo non parte | decide |
 | A6 Schede dei rischi | trimestrale, dopo la validazione | testi estesi delle schede (il fenomeno in termini di rischio, perche' di ogni punteggio con i documenti, a cosa serve ogni fonte) sui dati validati, a partire dal razionale in parti di A1 (D-68); lo script li controlla (stessi rischi, stesse fonti, nessun numero nuovo) e produce `Schede_<ciclo>.xlsx` (D-40), con azioni e KRI accompagnati da perche' ed effetto atteso scritti da A1 | no: spiega |
-| A7 Assistente del registro | su richiesta, in chat | risponde sul perche' delle valutazioni del registro e del radar (valori, urgenza, livello, cosa e' cambiato, fenomeni non censiti, voci in osservazione), distinguendo registrato, calcolato e sua lettura; legge la cartella `Spiegazioni` della library Kernel, riscritta dallo script; su richiesta una sintesi per le Note dell'analista del Quadro (D-72) | no: spiega |
+| A7 Assistente del registro | su richiesta, in chat | risponde sul perche' delle valutazioni del registro e del radar (valori, urgenza, livello, cosa e' cambiato, fenomeni non censiti, rischi in osservazione), distinguendo registrato, calcolato e sua lettura; legge la cartella `Spiegazioni` della library Kernel, riscritta dallo script; su richiesta una sintesi per le Note dell'analista del Quadro (D-72) | no: spiega |
+| A8 Evento critico | nel ciclo straordinario, deciso dalla funzione di rischio | analisi approfondita dell'evento sui documenti indicati (fatto, catena causale, rischi toccati e non toccati, documenti, limiti: campo `analisi_evento`), rivaluta i rischi indicati e censisce i nuovi che l'evento crea; stesso allegato e stesso formato di A1, quindi stessi `precontrollo`, `trimestrale` e validazione (D-77) | propone |
 | Radar_Mosca | automatico | urgenza (disuguaglianza di Mosca X + Y > Z) e magnitudo (Probabilita x Impatto) di ogni rischio | no: calcola |
-| Report al comitato | ogni trimestre, dopo la validazione | PDF dei fogli Quadro (il quadro d'insieme, con il commento di A1 e i rischi segnalati), Classifica e lente di Mosca, Radar_Mosca, Matrice, Delta, Fenomeni (la lista di osservazione, D-73), Metodologia dell'Excel validato (D-32, D-39), piu' il file delle schede | no: legge |
+| Report al comitato | ogni trimestre, dopo la validazione | PDF dei fogli Quadro (il quadro d'insieme, con il commento di A1 e i rischi segnalati), Classifica e lente di Mosca, Radar_Mosca, Matrice, Delta, Fenomeni (i rischi in osservazione, D-79), Metodologia dell'Excel validato (D-32, D-39), piu' il file delle schede | no: legge |
 
 Principi, non negoziabili:
 1. **LLM per il giudizio, codice per calcolo, versioning e disegno.** Gli agenti
@@ -54,8 +55,9 @@ Principi, non negoziabili:
    SharePoint. Ogni ciclo e ogni settimana lasciano inoltre un Excel congelato.
 3. **Solo un ciclo di valutazione modifica uno score**: il trimestrale o, per
    un evento critico, il ciclo straordinario `AAAAQn-Sk` (D-41, D-75), deciso
-   dalla funzione di rischio, che rivaluta solo i rischi indicati con la stessa
-   catena di controlli e validazione. A3 e A4 possono proporlo, non deciderlo.
+   dalla funzione di rischio, che rivaluta solo i rischi indicati (o censisce
+   solo rischi nuovi) con A8 e la stessa catena di controlli e validazione
+   (D-77). A3 e A4 possono proporlo, non deciderlo.
 4. **Ogni controllo di giudizio ha una controparte deterministica** dove il
    vincolo e' esprimibile, e ogni controllo e' a sua volta collaudato.
 5. **Coerenza fra componenti come requisito di progetto**: la mappa
@@ -70,7 +72,7 @@ Principi, non negoziabili:
 ```text
 00_LEGGIMI.md                                          questo file
 00_GUIDA_PASSO_PASSO.md                                la guida per chi usa il sistema: cicli standard in breve, settimana, trimestre, validazione, errori, agenti e messaggi (sez. 8), comandi Python (sez. 9)
-TODO_possibili_sviluppi.md                             piano unico del lavoro da fare, con l'ordine di lavoro in testa: automazione del processo (AU1-AU6, dal piano Analisi_Architettura/Archivio/10; scelta fra strada A e Copilot Studio: A-15), processi (P1-P7: segnali qualitativi per dimensione sul radar, scia, segnale critico e ciclo straordinario, rapporti di scenario, rischi collegati, schede per driver, riepilogo mensile; decisioni D-41 e D-42), quantificazione (Q1), grafici (G1-G5), in riserva (piano 07, variante CS-2)
+TODO_possibili_sviluppi.md                             piano unico del lavoro da fare, con l'ordine di lavoro in testa: passi sul PC della Banca (B1-B7), processi (P1, P2, P4-P7, P9: segnali qualitativi per dimensione sul radar, scia, rapporti di scenario, rischi collegati, schede per driver, riepilogo mensile, temi da verificare), automazione del processo (AU1-AU6; scelta fra strada A e Copilot Studio: A-15), quantificazione (Q1), grafici (G1-G6), pulizia, questioni aperte; in fondo il fatto, una riga per voce, e le voci in riserva
 01_Kernel/tassonomia_nfr.md                            9 categorie di rischio in perimetro della tassonomia interna (D-74) + 8 driver emergenti
 01_Kernel/Tassonomia dei Rischi.csv                     tassonomia interna dei rischi della Banca (famiglie e categorie; SI = in perimetro dell'agente NFR), fornita dall'utente il 07/10: fonte delle nove categorie di tassonomia_nfr.md (D-74); non la legge nessun componente
 01_Kernel/fonti.md                                     elenco commentato delle fonti (rss, siti, share), DA VALIDARE
@@ -89,6 +91,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 02_Agenti/A5_Challenger.md                             prompt operativo (generato)
 02_Agenti/A6_Schede.md                                 prompt operativo (generato)
 02_Agenti/A7_Assistente_registro.md                    prompt operativo (generato)
+02_Agenti/A8_Evento_critico.md                         prompt operativo (generato)
 02_Agenti/componi_prompt.py                            compone i prompt da modelli + kernel, controlla il limite di 8.000 caratteri
 02_Agenti/modelli/A1.md                                modello del prompt A1 (qui si modificano le istruzioni)
 02_Agenti/modelli/A3.md                                modello del prompt A3
@@ -96,29 +99,31 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 02_Agenti/modelli/A5.md                                modello del prompt A5
 02_Agenti/modelli/A6.md                                modello del prompt A6
 02_Agenti/modelli/A7.md                                modello del prompt A7 Assistente del registro (spiegazioni in chat, D-72)
+02_Agenti/modelli/A8.md                                modello del prompt A8 Evento critico (ciclo straordinario: analisi dell'evento, rivalutazione e censimento, D-77)
 02_Agenti/COMMENTATI/A1_Horizon_Scanner_DOCUMENTATO.md  il perche' di ogni passo di A1
-02_Agenti/COMMENTATI/A3_A4_A5_DOCUMENTATO.md           il perche' di ogni passo di A3, A4, A5, A6
+02_Agenti/COMMENTATI/A3_A4_A5_DOCUMENTATO.md           il perche' di ogni passo di A3, A4, A5, A6, A7, A8
 03_Excel/genera_dashboard.py                           genera il template (colonne dalla mappa, scale e limiti dal kernel e dalla governance, dati di esempio); VERSIONE_TEMPLATE
 03_Excel/NFR_Dashboard_Template.xlsx                   versione 2026-10-07 (Note dell'analista nel Quadro; validazione una riga per oggetto con la colonna Segnalazioni dei controlli, livello di allerta nel radar, tipo dei KRI, sintesi settimanale di A3): 22 fogli in quattro gruppi (Guida; report Quadro..Metodologia; lavoro Registro..Dizionario, con la griglia Validazione; dati, con Storico_Validazioni), ognuno con fascia del titolo e guida in testa; 7 tabelle dall'intestazione in riga 5 (sopra, gruppi e significato delle colonne); 9 grafici; 12 rischi di esempio grigi, capienza 20
 03_Excel/costruzione_manuale_template.md               come rifare il template a mano, senza Python
-04_SharePoint/struttura_e_liste.md                     7 library, 3 liste storiche
-05_Workflow/workflow.md                                W0-W3, passi [Piattaforma]/[Umano], campi derivati, test in ambiente
-06_Governance/controlli_e_model_risk.md                controlli e controparti, evidenze per ciclo, model risk, limiti
+04_Riferimenti/DECISIONI.md                            registro delle decisioni: prese (con data, chi, perche', stato), aperte (con responsabile), cancelli G0-G4
+04_Riferimenti/struttura_e_liste.md                    SharePoint: 7 library, 3 liste storiche
+04_Riferimenti/workflow.md                             W0-W3, passi [Piattaforma]/[Umano], campi derivati, test in ambiente
+04_Riferimenti/controlli_e_model_risk.md               governance: controlli e controparti, evidenze per ciclo, model risk, limiti
+04_Riferimenti/Prove/Prova_A7.md                       copione di prova di A7 Assistente del registro: undici domande con i fatti attesi, confronto con e senza il registro Excel come knowledge, tabella dei risultati (D-72)
+04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md     prova sul PC della Banca della versione del 05/10: installazione sul registro vero, poi un ciclo completo su un registro di prova separato, con la tabella dei risultati
 07_Senza_Studio/README_variante_locale.md              variante Agent Builder + script locale
-07_Senza_Studio/esegui_ciclo_locale.py                 A2 e controlli di A5: trimestrale, settimanale, baseline (con l'allegato di A1), precontrollo (facoltativo: output di A1 controllato senza scrivere, messaggio di correzione), valida (dalla griglia del foglio Validazione), griglia (la ricostruisce), inizializza (registro vuoto), dismetti, aggiorna-registro (template nuovo), schede-input e schede (file delle schede con A6), report (PDF del report al comitato, rigenerabile dopo modifiche manuali); archivio con Excel di output
+07_Senza_Studio/esegui_ciclo_locale.py                 A2 e controlli di A5: trimestrale, settimanale, baseline (con l'allegato di A1), precontrollo (facoltativo: output di A1 controllato senza scrivere, messaggio di correzione), valida (dalla griglia del foglio Validazione), griglia (la ricostruisce), riapri (riapre la validazione di un ciclo gia' validato per cambiare valori, D-76), inizializza (registro vuoto), dismetti, aggiorna-registro (template nuovo), schede-input e schede (file delle schede con A6), report (PDF del report al comitato, rigenerabile dopo modifiche manuali); archivio con Excel di output
 07_Senza_Studio/schede.py                              schede dei rischi: input di A6 dal registro validato, controlli sull'output di A6, file Schede_<ciclo>.xlsx
 07_Senza_Studio/spiegazioni.py                         knowledge di A7: Ciclo.txt e un file per posto dell'anagrafica (Rischio_01..20.txt, nomi fissi) nella cartella Spiegazioni della library Kernel, riscritti da trimestrale, valida e dismetti (D-72)
 07_Senza_Studio/raccogli_notizie.py                    W0 locale: scarica i feed dell'elenco fonti e scrive la raccolta settimanale in News_Inbox
 07_Senza_Studio/fonti.py                               unico lettore di 01_Kernel/fonti.md (script, prompt, collaudo)
 07_Senza_Studio/input_a1.py                            allegato di A1 Input_A1_<ciclo>.txt (baseline, controlli, guida) e unico lettore di controlli_A5.md (D-69); legge la baseline dall'allegato (skill, D-70)
 07_Senza_Studio/precontrollo.py                        regole del precontrollo dell'output di A1 (schema, controlli meccanizzati, parti del razionale, messaggio di correzione, impronta), senza Excel: le usano il comando precontrollo e la skill di Copilot Studio (D-69, D-70)
+07_Senza_Studio/radar.py                               regola del registro unico (D-79): chi sta nel radar di Mosca e chi in osservazione (soglie, eccezioni, capienza, uscita in due cicli); la usano script, controlli, precontrollo e kit di Copilot Studio
 07_Senza_Studio/excel_com.py                           accesso al workbook tramite Excel desktop (COM)
 07_Senza_Studio/controlli_a5.py                        controlli meccanizzati C1-C9 (C4 escluso, per disegno)
 07_Senza_Studio/valida_output.py                       validatore JSON Schema generico, solo libreria standard
 07_Senza_Studio/configurazione_esempio.json            percorsi da copiare in configurazione.json
-08_Deploy/DECISIONI.md                                 registro delle decisioni: prese (con data, chi, perche', stato), aperte (con responsabile), cancelli G0-G4
-08_Deploy/Prova_A7.md                                  copione di prova di A7 Assistente del registro: undici domande con i fatti attesi, confronto con e senza il registro Excel come knowledge, tabella dei risultati (D-72)
-08_Deploy/Prova_senza_Copilot_Studio.md                prova sul PC della Banca della versione del 05/10: installazione sul registro vero, poi un ciclo completo su un registro di prova separato, con la tabella dei risultati
 09_Copilot_Studio/Prova_con_Copilot_Studio.md          prova K0 di Copilot Studio (D-70): A1 e il precontrollo con il Code interpreter dell'esperienza standard (opzione 1) e con una skill nel sandbox della nuova esperienza (opzione 2); Teams e agent flow facoltativi; tabella dei risultati
 09_Copilot_Studio/prepara_kit.py                       per chi mantiene il pacchetto: compone lo script della skill dai moduli del pacchetto e i file da caricare
 09_Copilot_Studio/precontrollo-nfr/SKILL.md            istruzioni della skill precontrollo-nfr (scritte a mano)
@@ -128,19 +133,19 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 09_Copilot_Studio/Da_caricare/precontrollo_nfr.txt     lo script della skill in .txt, da allegare in chat con il Code interpreter (opzione 1; generato)
 09_Copilot_Studio/Da_caricare/Messaggi_da_incollare.txt  i messaggi di ogni test della prova di Copilot Studio
 99_Collaudo/LEGGIMI_collaudo.md                        cosa verifica la suite e con quali dati
-99_Collaudo/esegui_collaudo.py                         lancia tutta la suite
+99_Collaudo/esegui_collaudo.py                         lancia tutta la suite (catena in tre processi; --mirato la salta se non e' cambiato niente che la riguardi)
 99_Collaudo/comune.py                                  percorsi e utilita' della suite
 99_Collaudo/test_mappatura.py                          mappa in entrambe le direzioni
 99_Collaudo/test_controlli.py                          validatore, controlli A5, dati di esempio, consistenza, precontrollo e kit di Copilot Studio, controlli sull'output di A6 e file delle schede
 99_Collaudo/test_fonti.py                              elenco fonti, limiti di Agent Builder, raccolta con feed finti
 99_Collaudo/verifica_riferimenti.py                    riferimenti incrociati fra file
-99_Collaudo/run_catena.py                              due cicli e due settimane con lo strumento vero ed Excel; primo uso e dismissione; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c; A5 facoltativo e segnalazioni in validazione (D-71); comando report; report al comitato contro calcoli indipendenti; schede dei rischi con A6
+99_Collaudo/run_catena.py                              dieci gruppi indipendenti (--parallelo, --passo): due cicli e due settimane con lo strumento vero ed Excel; primo uso e dismissione; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c; A5 facoltativo e segnalazioni in validazione (D-71); comando report; report al comitato contro calcoli indipendenti; schede dei rischi con A6
 99_Collaudo/confronta.py                               confronto fra due run di A1 (anche per il doppio run in tenant)
 99_Collaudo/dati/baseline_2026Q3.json                  baseline estratta dal template
 99_Collaudo/dati/run1_A1_2026Q3.json                   output A1 di prova, ciclo 2026Q3
 99_Collaudo/dati/run2_A1_2026Q3.json                   secondo run sullo stesso input
 99_Collaudo/dati/run_A5_2026Q3.json                    esito A5 di prova, 2026Q3
-99_Collaudo/dati/run_A3_2026-10-12.json                output A3 di prova, con un'area non presidiata e una notizia sulla voce OSS-04 (segnale verificato)
+99_Collaudo/dati/run_A3_2026-10-12.json                output A3 di prova, con una notizia e un flag sul rischio in osservazione NFR-16 (il suo segnale si verifica)
 99_Collaudo/dati/baseline_2026Q4.json                  baseline dopo il 2026Q3
 99_Collaudo/dati/run3_A1_2026Q4.json                   output A1 di prova, ciclo 2026Q4, rischio nuovo
 99_Collaudo/dati/run_A5_2026Q4.json                    esito A5 di prova, 2026Q4
@@ -150,6 +155,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 99_Collaudo/dati/registro_template_2026-09-23.xlsx     registro nato dal template del 23/09 (una settimana e il primo ciclo, validati): prova di aggiorna-registro
 99_Collaudo/dati/baseline_registro_template_2026-09-23.json  baseline di quel registro: deve restare identica dopo l'aggiornamento
 99_Collaudo/dati/registro_template_2026-09-25c.xlsx    registro nato dal template 2026-09-25c (un ciclo validato, con Gap_Controlli e Dimensione): prova delle colonne dismesse
+99_Collaudo/dati/registro_template_2026-10-08b.xlsx    template di esempio del 07/10 con la lista di osservazione (D-73): prova della conversione al registro unico (D-79)
 99_Collaudo/dati/baseline_registro_template_2026-09-25c.json  baseline attesa di quel registro dopo aggiorna-registro (senza Gap_Controlli, presidio "Non verificato")
 ```
 
@@ -165,7 +171,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 | Attenzione del supervisore su un rischio | anagrafica in `Parametri`, colonna N, input del validatore (D-35) | ◆ nel Radar_Mosca, in Registro, Matrice, Quadro, schede |
 | Significato di ogni colonna delle tabelle dati | `mappatura_campi.json`, chiave `significato` | riga 4 dei fogli dati e foglio Dizionario (generatore) |
 | Guida in testa ai fogli, chi aggiorna cosa, dizionario dei dati | dizionari `GUIDE`, `CHI_AGGIORNA`, `COME`, `CALCOLATI` di `genera_dashboard.py` (D-38, D-39) | riga 2 di ogni foglio, Guida, Dizionario |
-| Limiti della valutazione da dichiarare al comitato | `06_Governance/controlli_e_model_risk.md`, sezione 5 | foglio Quadro (letto dal generatore) |
+| Limiti della valutazione da dichiarare al comitato | `04_Riferimenti/controlli_e_model_risk.md`, sezione 5 | foglio Quadro (letto dal generatore) |
 | Cosa A6 puo' scrivere nelle schede | `02_Agenti/modelli/A6.md` (regole) e `07_Senza_Studio/schede.py` (`controlla_a6`: stessi rischi, quattro dimensioni, stesse fonti, nessun numero fuori dai dati) | comando schede, collaudo |
 | Parti del razionale di A1 (RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO; EFFETTO per azioni e KRI) | scheletro di `02_Agenti/modelli/A1.md` (formato chiesto) e `schede.py` (`parti_razionale`, `parti_effetto`: come si leggono) (D-68) | input di A6, file delle schede, avviso di `trimestrale` |
 | Versione della struttura del workbook | `VERSIONE_TEMPLATE` in `genera_dashboard.py` = in `esegui_ciclo_locale.py` = `versione_template` della mappa (verificato dal collaudo) | script di campo: si ferma su un registro o una mappa di un'altra versione |
@@ -213,7 +219,7 @@ Dopo ogni adattamento del kernel: procedura "Se cambia il kernel" qui sotto.
 4. Se cambiano campi o codici, allineare anche documentazione e dati di prova:
    il collaudo dice cosa manca.
 5. `python 99_Collaudo/esegui_collaudo.py` — deve finire con tutto OK.
-6. Ricaricare i prompt negli agenti e archiviarne il testo (`06_Governance`).
+6. Ricaricare i prompt negli agenti e archiviarne il testo (`04_Riferimenti/controlli_e_model_risk.md`).
 
 ## Requisiti
 

@@ -15,6 +15,7 @@
       "owner": "Funzione Antifrode",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 4,
@@ -47,6 +48,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -75,6 +78,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 4,
       "prossimita": 3,
@@ -101,6 +105,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -129,6 +135,7 @@
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -149,6 +156,8 @@
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -176,6 +185,7 @@
       "owner": "Funzione Business Continuity",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -196,6 +206,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -223,6 +235,7 @@
       "owner": "Funzione Operations",
       "presidio_controlli": "Adeguato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -249,6 +262,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -277,6 +292,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Assente",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -297,6 +313,8 @@
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -318,6 +336,7 @@
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 3,
@@ -338,6 +357,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -366,6 +387,7 @@
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -386,6 +408,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -413,6 +437,7 @@
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 3,
       "prossimita": 2,
@@ -433,6 +458,8 @@
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -454,6 +481,7 @@
       "owner": "Funzione Customer Experience",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": null,
       "prossimita": 3,
@@ -474,6 +502,8 @@
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -494,6 +524,7 @@
       "owner": "Funzione IT Operations",
       "presidio_controlli": "Assente",
       "anni_adeguamento": 3.0,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -514,6 +545,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -541,6 +574,7 @@
       "owner": "Funzione Operations",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 4,
       "prossimita": 4,
@@ -561,6 +595,8 @@
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -577,6 +613,123 @@
           "probabilita": 4
         }
       ]
+    }
+  ],
+  "rischi_in_osservazione": [
+    {
+      "id_rischio": "NFR-13",
+      "nome": "Rottura della crittografia dei pagamenti con il calcolo quantistico",
+      "event_type": "9.7",
+      "driver": [
+        "DRV-TEC",
+        "DRV-CYB"
+      ],
+      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia.",
+      "anni_adeguamento": null,
+      "impatto": 5,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 1,
+      "orizzonte_anni": 10,
+      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento.",
+      "esito_precedente": "Confermato",
+      "razionale": "Impatto 5 perche' toccherebbe tutti i canali; Probabilita 1 e Prossimita 1: nessun calcolatore oggi ha la capacita' necessaria e nessun caso e' documentato; velocity non valutata: nessuna fonte sui tempi.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza",
+          "data": "2026-02-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2; Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q1",
+          "impatto": 5,
+          "velocity": null,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-14",
+      "nome": "Interruzione di cavi sottomarini per una crisi geopolitica",
+      "event_type": "9.6",
+      "driver": [
+        "DRV-GEO",
+        "DRV-TPR"
+      ],
+      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
+      "anni_adeguamento": null,
+      "impatto": 4,
+      "velocity": 4,
+      "prossimita": 1,
+      "probabilita": 2,
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
+      "esito_precedente": "Variato",
+      "razionale": "Impatto 4 per servizi e pagamenti esteri fermi per giorni; velocity 4 perche' il taglio e' immediato; Probabilita 2 dopo i danneggiamenti nel Mar Baltico e nel Mar Rosso; Prossimita 1: nessun caso sulle rotte italiane.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla resilienza delle infrastrutture critiche sottomarine",
+          "data": "2026-05-20",
+          "tipo": "Esterna",
+          "rilevanza": 3
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q1",
+          "impatto": 4,
+          "velocity": 4,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-15",
+      "nome": "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti",
+      "event_type": "9.4",
+      "driver": [
+        "DRV-AI",
+        "DRV-CON"
+      ],
+      "descrizione": "Agenti di IA che agiscono per conto dei clienti (pagamenti, investimenti) potrebbero eseguire operazioni non volute; la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi e contenzioso.",
+      "anni_adeguamento": null,
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 2,
+      "probabilita": 1,
+      "orizzonte_anni": 4,
+      "segnale_avvicinamento": "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
+      "esito_precedente": "Nuovo",
+      "razionale": "Impatto 3 per rimborsi e contenzioso; Prossimita 2 per sperimentazioni presso grandi piattaforme di pagamento; Probabilita 1: nessun caso in banca; velocity non valutata.",
+      "fonti": [
+        {
+          "riferimento": "Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA",
+          "data": "2026-06-03",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [],
+      "notizie_a3": [],
+      "flag_a3": []
     }
   ],
   "kri_in_vigore": [
@@ -875,160 +1028,122 @@
       "id_rischio": "NFR-01",
       "descrizione": "Introdurre la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Estendere il DLP a tutti i servizi di AI generativa e bloccare quelli non autorizzati.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Test congiunto di ripristino da ransomware con il fornitore del gateway di pagamento.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-08-A1",
       "id_rischio": "NFR-08",
       "descrizione": "Revisione trimestrale automatica degli accessi ai dati clienti senza pratica associata.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Estendere lo screening sanzioni alle controparti indirette dei pagamenti verso paesi di transito.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Campionamento settimanale delle risposte del chatbot con verifica umana.",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Piano di sostituzione delle componenti fuori supporto del sistema di pagamento.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Controllo giornaliero automatico delle differenze di riconciliazione sui bonifici istantanei.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     }
   ],
-  "osservazione": [
-    {
-      "oss_id": "OSS-01",
-      "nome": "Rottura della crittografia dei pagamenti con il calcolo quantistico",
-      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia.",
-      "driver": [
-        "DRV-TEC",
-        "DRV-CYB"
-      ],
-      "event_type": "9.7",
-      "rischi_toccati": [
-        "NFR-11"
-      ],
-      "impatto_potenziale": 5,
-      "orizzonte_anni": 10,
-      "plausibilita": "teorica",
-      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento.",
-      "motivazione": "Nessun calcolatore oggi ha la capacita' necessaria; se accadesse toccherebbe tutti i canali: impatto critico.",
-      "fonti": [
-        {
-          "riferimento": "Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza",
-          "data": "2026-02-10"
-        }
-      ],
-      "prima_osservazione": "2026Q1",
-      "notizie_a3": [],
-      "segnali_a3": []
+  "regola_radar": {
+    "capienza": 15,
+    "soglia_prossimita": 2,
+    "soglia_probabilita": 2,
+    "cicli_uscita": 2,
+    "max_radar": 20,
+    "max_osservazione": 20,
+    "pesi": {
+      "impatto": 0.35,
+      "probabilita": 0.25,
+      "prossimita": 0.2,
+      "velocity": 0.2
     },
-    {
-      "oss_id": "OSS-02",
-      "nome": "Interruzione di cavi sottomarini per una crisi geopolitica",
-      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
-      "driver": [
-        "DRV-GEO",
-        "DRV-TPR"
-      ],
-      "event_type": "9.6",
-      "rischi_toccati": [
-        "NFR-02"
-      ],
-      "impatto_potenziale": 4,
-      "orizzonte_anni": 5,
-      "plausibilita": "possibile",
-      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
-      "motivazione": "Danneggiamenti di cavi nel Mar Baltico e nel Mar Rosso nel 2025-2026: plausibile, non ancora sulle rotte italiane.",
-      "fonti": [
-        {
-          "riferimento": "Rapporto sulla resilienza delle infrastrutture critiche sottomarine",
-          "data": "2026-05-20"
-        }
-      ],
-      "prima_osservazione": "2026Q1",
-      "notizie_a3": [],
-      "segnali_a3": []
-    },
-    {
-      "oss_id": "OSS-03",
-      "nome": "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti",
-      "descrizione": "Agenti di IA che agiscono per conto dei clienti (pagamenti, investimenti) potrebbero eseguire operazioni non volute; la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi e contenzioso.",
-      "driver": [
-        "DRV-AI",
-        "DRV-CON"
-      ],
-      "event_type": "9.4",
-      "rischi_toccati": [
-        "NFR-10"
-      ],
-      "impatto_potenziale": 3,
-      "orizzonte_anni": 4,
-      "plausibilita": "in crescita",
-      "segnale_avvicinamento": "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
-      "motivazione": "Sperimentazioni di pagamenti disposti da agenti di IA presso grandi piattaforme; nessun caso in banca.",
-      "fonti": [
-        {
-          "riferimento": "Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA",
-          "data": "2026-06-03"
-        }
-      ],
-      "prima_osservazione": "2026Q2",
-      "notizie_a3": [],
-      "segnali_a3": []
-    }
-  ]
+    "anni_prossimita": [
+      3.5,
+      2.5,
+      1.5,
+      0.5,
+      0.0
+    ],
+    "mosca_x": 0.25,
+    "mosca_y_riserva": 1.0
+  }
 }

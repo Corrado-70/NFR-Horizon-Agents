@@ -11,8 +11,9 @@ file unico enorme; il codice del rischio sta in testa al file.
 Contenuto, tutto dal registro e dall'archivio, nessuna stima: valori, motivazioni di A1 per dimensione,
 urgenza, livello di allerta, variazioni, fonti, azioni, KRI e storia (le stesse di `schede.input_schede`), piu'
 le decisioni del validatore, le segnalazioni dei controlli, il commento di A1, i parametri del radar, i
-fenomeni che A1 ha considerato e non censito, la lista di osservazione (D-73), i rischi dismessi e le Note
-dell'analista.
+fenomeni che A1 ha considerato e non censito, i rischi in osservazione con il motivo dello stato e gli entrati e
+usciti dal radar (registro unico, D-79), i rischi dismessi e le Note dell'analista. I file Rischio_nn.txt sono i posti
+dell'anagrafica, cioe' del radar; i rischi in osservazione stanno in Ciclo.txt.
 Testo semplice e non JSON: e' cio' che la knowledge di Agent Builder legge meglio.
 """
 
@@ -30,7 +31,7 @@ PARAMETRI = [("moscaX", "X di Mosca, anni per decidere e avviare"), ("moscaYDefa
 MOTIVI_SCARTO = {"nessun_meccanismo": "nessun meccanismo di perdita per la Banca",
                  "fonte_non_specifica": "fonte non specifica o fuori dalla finestra del ciclo",
                  "gia_coperto": "gia' coperto da un rischio del registro",
-                 "troppo_lontano": "troppo lontano (lista di osservazione piena)",
+                 "troppo_lontano": "troppo lontano (gia' 20 rischi in osservazione)",
                  "fuori_perimetro": "fuori dal perimetro della tassonomia (lo seguono altre funzioni)",
                  "altro": "altro"}
 RISCHIO_IN_ID = re.compile(r"NFR-\d{2}")
@@ -55,16 +56,16 @@ def _it(v, decimali=2):
     return str(v)
 
 
-def segnali_a3(scr, oss_id, dopo):
-    """Notizie e segnali settimanali di A3 su una voce in osservazione, datati dopo 'dopo' (la data di riferimento
-    del ciclo): li legge A1 nella baseline (D-73). Le notizie respinte in validazione (Non rilevante) non contano."""
+def notizie_a3(scr, rid, dopo):
+    """Notizie e flag settimanali di A3 su un rischio (D-79: anche in osservazione), datati dopo 'dopo' (la data di
+    riferimento del ciclo): A1 li legge nella baseline. Le notizie respinte in validazione (Non rilevante) non contano."""
     notizie = [{"id_notizia": n["ID_Notizia"], "data": str(n["Data"]), "titolo": n["Titolo"], "segnale": n["Segnale"]}
-               for n in scr.righe("tblNews") if n.get("Voce_Osservazione") == oss_id and n.get("Segnale") != "Non rilevante"
+               for n in scr.righe("tblNews") if n.get("Rischio_ID") == rid and n.get("Segnale") != "Non rilevante"
                and (dopo is None or str(n["Data"]) > str(dopo))]
-    segnali = [{"settimana": str(w["Settimana"]), "segnale": riga.split(" · ", 1)[1]}
-               for w in scr.righe("tblSettimane") if dopo is None or str(w["Settimana"]) > str(dopo)
-               for riga in str(w.get("Segnali_Osservazione") or "").split("\n") if riga.startswith(f"{oss_id} · ")]
-    return {"notizie_a3": notizie, "segnali_a3": segnali}
+    flag = [{"settimana": str(w["Settimana"]), "flag": riga.split(" · ", 1)[1]}
+            for w in scr.righe("tblSettimane") if dopo is None or str(w["Settimana"]) > str(dopo)
+            for riga in str(w.get("Flag_Proposti") or "").split("\n") if riga.startswith(f"{rid} · ")]
+    return {"notizie_a3": notizie, "flag_a3": flag}
 
 
 def raccogli(scr, sessione, cartella_uscita, ciclo, ciclo_prec, data_rif, validato, nota_quadro=None):
@@ -72,7 +73,8 @@ def raccogli(scr, sessione, cartella_uscita, ciclo, ciclo_prec, data_rif, valida
     dati = schede.input_schede(scr, sessione, ciclo, ciclo_prec, data_rif)
     decisioni = {}
     for r in scr.righe("tblValidazione"):
-        if str(r.get("Periodo")) != str(ciclo) or r.get("Decisione") not in ("Rettificato", "Respinto"):
+        # Anche le decisioni di una riapertura della validazione (D-76): "Rettificato (riapertura)", "Respinto (riapertura)".
+        if str(r.get("Periodo")) != str(ciclo) or not str(r.get("Decisione") or "").startswith(("Rettificato", "Respinto")):
             continue
         m = RISCHIO_IN_ID.search(str(r.get("ID") or ""))
         if m and r.get("Oggetto") != "Notizia":
@@ -84,35 +86,35 @@ def raccogli(scr, sessione, cartella_uscita, ciclo, ciclo_prec, data_rif, valida
     z = _valore(sessione, "anniProssimita")
     z = [r[0] for r in z] if isinstance(z, tuple) else []
     cartella_uscita = Path(cartella_uscita)
-    scartati = []
+    archiviato = {}                                  # output di A1 (o di A8 per uno straordinario) del ciclo
     archivio_a1 = cartella_uscita / "Cicli" / str(ciclo) / f"A1_{ciclo}.json"
     if archivio_a1.exists():
         try:
-            scartati = json.loads(archivio_a1.read_text(encoding="utf-8-sig")).get("fenomeni_non_censiti") or []
+            archiviato = json.loads(archivio_a1.read_text(encoding="utf-8-sig"))
         except (ValueError, OSError):
-            scartati = []
+            archiviato = {}
+    scartati = archiviato.get("fenomeni_non_censiti") or []
     dismessi = []
     for f in sorted((cartella_uscita / "Dismissioni").glob("NFR-*.json")):
         try:
             dismessi.append(json.loads(f.read_text(encoding="utf-8")))
         except (ValueError, OSError):
             continue
-    try:
-        osservazione = [r for r in scr.righe("tblOsservazione") if str(r["Ciclo"]) == str(ciclo)]
-    except KeyError:
-        osservazione = []                           # registro precedente al 2026-10-07b
-    a3_oss = {v["OSS_ID"]: segnali_a3(scr, v["OSS_ID"], data_rif) for v in osservazione}
-    decisioni_oss = {}
-    for r in scr.righe("tblValidazione"):
-        if r.get("Oggetto") == "Osservazione" and str(r.get("Periodo")) == str(ciclo) and                 r.get("Decisione") in ("Rettificato", "Respinto"):
-            decisioni_oss.setdefault(str(r.get("ID")), []).append(r)
+    # D-79: i rischi in osservazione del ciclo (fuori dall'anagrafica, che e' il radar) e chi e' entrato o uscito.
+    righe_ciclo = [r for r in scr.righe("tblRegister") if str(r["Ciclo"]) == str(ciclo)]
+    osservazione = sorted((r for r in righe_ciclo if r.get("Stato") == "Osservazione"),
+                          key=lambda r: -(r.get("Score_Composito") or 0) if isinstance(r.get("Score_Composito"), (int, float)) else 0)
+    movimenti = [r for r in righe_ciclo if r.get("Movimento")]
+    a3_oss = {r["ID_Rischio"]: notizie_a3(scr, r["ID_Rischio"], data_rif) for r in osservazione}
     rng_anag, _ = scr.leggi_anagrafica()
     return {"ciclo": ciclo, "ciclo_precedente": ciclo_prec, "data_riferimento": data_rif, "validato": validato,
             "posti": rng_anag.Rows.Count,
             "rischi": dati["rischi"], "pesi": dati["pesi"], "decisioni": decisioni, "rilievi": rilievi,
             "sintesi": sintesi, "parametri": parametri, "z_prossimita": z, "scartati": scartati,
             "dismessi": dismessi, "nota_quadro": nota_quadro, "note_passate": note_passate,
-            "osservazione": osservazione, "decisioni_osservazione": decisioni_oss, "a3_osservazione": a3_oss}
+            "osservazione": osservazione, "movimenti": movimenti, "a3_osservazione": a3_oss,
+            "stati": {r["ID_Rischio"]: (r.get("Stato"), r.get("Motivo_Stato")) for r in righe_ciclo},
+            "analisi_evento": archiviato.get("analisi_evento")}
 
 
 def _stato(dati):
@@ -129,6 +131,8 @@ def testo_rischio(r, dati, oggi):
              f"{rid} {r['nome']}",
              f"Categoria: {r['event_type']} {r.get('event_type_nome') or ('fuori perimetro' if r['event_type'] == 'FP' else '')}; driver: {r.get('driver') or '—'}; owner: {r.get('owner') or '—'}.",
              f"Esito nel ciclo: {r['esito']}. Posizione in classifica per score: {r.get('posizione_in_classifica')} su {len(dati['rischi'])}.",
+             "Stato nel registro unico (D-79, CALCOLATO dalla regola): "
+             + " — ".join(str(x) for x in (dati.get("stati") or {}).get(rid, ("Radar", None)) if x) + ".",
              f"Attenzione del supervisore: {'si' if r.get('attenzione_supervisore') else 'no'}. Presidio dei controlli "
              f"(giudizio della Banca, fuori dallo score): {r.get('presidio_controlli')}.", "",
              "DESCRIZIONE", str(r.get("descrizione") or "—"), "",
@@ -174,7 +178,8 @@ def testo_rischio(r, dati, oggi):
     decisioni = dati["decisioni"].get(rid) or []
     if decisioni:
         for d in decisioni:
-            righe.append(f"- {d.get('Oggetto')} {d.get('ID')} {d.get('Campo')}: {d.get('Decisione')} (proposta "
+            prima = "valore validato prima" if "riapertura" in str(d.get("Decisione")) else "proposta"   # D-76
+            righe.append(f"- {d.get('Oggetto')} {d.get('ID')} {d.get('Campo')}: {d.get('Decisione')} ({prima} "
                          f"{d.get('Proposta_Agente')!s}, deciso {d.get('Valore_Validato')!s}) da {d.get('Validato_Da')}: "
                          f"{d.get('Motivazione') or '—'}")
     else:
@@ -182,6 +187,19 @@ def testo_rischio(r, dati, oggi):
                      if dati["validato"] else "Ciclo non ancora validato.")
     righe += ["", "SEGNALAZIONI DEI CONTROLLI E DI A5", str(dati["rilievi"].get(rid) or "Nessuna."), ""]
     return "\n".join(righe) + "\n"
+
+
+def testo_analisi_evento(analisi):
+    """L'analisi dell'evento scritta da A8 nello straordinario (D-77), come A8 l'ha scritta: non e' validata."""
+    if not analisi:
+        return ["Analisi dell'evento di A8: non presente (ciclo fatto senza A8): il perche' sta nei razionali dei rischi."]
+    righe = ["ANALISI DELL'EVENTO DI A8 (testo dell'agente, non validato; i valori validati sono nei file dei rischi)",
+             f"Evento: {analisi.get('evento')}", f"Catena causale: {analisi.get('catena_causale')}", "Rischi toccati:"]
+    righe += [f"- {t.get('id_rischio')}: {t.get('effetto')}" for t in analisi.get("rischi_toccati") or []]
+    righe += [f"Rischi vicini non toccati: {analisi.get('rischi_non_toccati') or '—'}", "Documenti letti:"]
+    righe += [f"- {d.get('riferimento')} ({d.get('data')}): {d.get('uso')}" for d in analisi.get("documenti") or []]
+    righe.append(f"Limiti dell'analisi: {analisi.get('limiti')}")
+    return righe
 
 
 def testo_ciclo(dati, oggi):
@@ -194,7 +212,11 @@ def testo_ciclo(dati, oggi):
                      f"{(r.get('urgenza') or {}).get('esito') or '—'}, livello {(r.get('livello_allerta') or {}).get('livello') or '—'}, "
                      f"esito {r['esito']}")
     s = dati["sintesi"]
-    righe += ["", "COMMENTO DI A1 PER IL COMITATO", str(s.get("Sintesi_A1") or "—"), "",
+    if s.get("Straordinario"):
+        righe += ["", "CICLO STRAORDINARIO (deciso dalla funzione di rischio per un evento critico, D-75)", str(s["Straordinario"])]
+        righe += testo_analisi_evento(dati.get("analisi_evento"))
+    autore = "A8" if s.get("Straordinario") else "A1"                       # D-77: lo straordinario lo scrive A8
+    righe += ["", f"COMMENTO DI {autore} PER IL COMITATO", str(s.get("Sintesi_A1") or "—"), "",
               "CONTROLLI", f"Sintesi di A5: {s.get('Sintesi_A5') or '—'}",
               f"Segnalazioni sul ciclo: {s.get('Rilievi_Ciclo') or 'nessuna'}",
               f"Segnalazioni da motivare: {s.get('Rilievi_Superati') or 'nessuna'}", "",
@@ -215,34 +237,40 @@ def testo_ciclo(dati, oggi):
     else:
         righe.append("A1 non ne ha registrati in questo ciclo: per un fenomeno dei documenti assente dal registro, il "
                      "motivo va cercato nei documenti con i criteri della rubrica, dichiarando che e' una lettura nuova.")
-    righe += ["", "LISTA DI OSSERVAZIONE (fenomeni con un meccanismo di perdita, oggi troppo lontani o poco plausibili per "
-                  "essere rischi: valutazione preliminare, niente KRI, azioni ne' score; fuori da radar e classifica)"]
+    righe += ["", "RISCHI IN OSSERVAZIONE (registro unico, D-79: stessa scala e stesso score del radar, niente KRI ne' azioni; "
+                  "fuori da radar, classifica e urgenza finche' la regola non li porta nel radar)"]
     voci = dati.get("osservazione") or []
     if voci:
         for v in voci:
             fonti = "; ".join(f"{x.get('riferimento')} ({x.get('data')})" for x in json.loads(v.get("Fonti") or "[]"))
-            stato = v.get("Stato") or "—"
-            if v.get("Promosso_A"):
-                stato += f" a {v['Promosso_A']}"
-            righe.append(f"- {v['OSS_ID']} {v.get('Nome')} [{v.get('Event_Type') or '—'}; driver {v.get('Driver') or '—'}; "
-                         f"rischi toccati {v.get('Rischi_Toccati') or 'nessuno'}]: stato {stato}, esito del ciclo "
-                         f"{v.get('Esito')}, in osservazione dal {v.get('Prima_Osservazione') or '—'}. Impatto potenziale "
-                         f"{v.get('Impatto_Potenziale')} ({IMPATTO.get(v.get('Impatto_Potenziale'), '—')}), "
-                         f"orizzonte {v.get('Orizzonte_Anni')} anni, plausibilita' {v.get('Plausibilita')}. "
-                         f"Meccanismo: {v.get('Descrizione')} Segnale che lo farebbe diventare un rischio: "
-                         f"{v.get('Segnale_Avvicinamento')} Motivazione di A1 (REGISTRATO): {v.get('Motivazione')} "
-                         f"Fonti: {fonti or '—'}. Validazione: {v.get('Validazione') or "invariata, gia' validata"}.")
-            a3 = (dati.get("a3_osservazione") or {}).get(str(v["OSS_ID"])) or {}
+            vel = v.get("Velocity")
+            righe.append(f"- {v['ID_Rischio']} {v.get('Nome')} [{v.get('Event_Type') or '—'}; driver {v.get('Driver') or '—'}]: "
+                         f"Impatto {_it(v.get('Impatto'), 0)} ({IMPATTO.get(v.get('Impatto'), '—')}), Probabilita "
+                         f"{_it(v.get('Probabilita'), 0)}, Prossimita {_it(v.get('Prossimita'), 0)}, Velocity "
+                         f"{_it(vel, 0) if vel is not None else 'non valutata'}; score {_it(v.get('Score_Composito'))}. "
+                         f"Perche' in osservazione (CALCOLATO dalla regola): {v.get('Motivo_Stato') or '—'}. Decisione del "
+                         f"validatore sullo stato: {v.get('Decisione_Stato') or 'Automatico'}. Orizzonte stimato da A1: "
+                         f"{_it(v.get('Orizzonte_Anni'), 0)} anni. Segnale che lo farebbe salire nel radar: "
+                         f"{v.get('Segnale_Avvicinamento') or '—'} Meccanismo: {v.get('Descrizione')} Razionale di A1 "
+                         f"(REGISTRATO): {v.get('Razionale')} Fonti: {fonti or '—'}. Valutato nel periodo "
+                         f"{v.get('Periodo_Valutazione') or v.get('Ciclo')}; validazione: {v.get('Validazione') or '—'}.")
+            a3 = (dati.get("a3_osservazione") or {}).get(str(v["ID_Rischio"])) or {}
             for n in a3.get("notizie_a3") or []:
                 righe.append(f"  notizia collegata da A3 dopo il ciclo: {n['id_notizia']} {n['titolo']} ({n['data']}, {n['segnale']})")
-            for x in a3.get("segnali_a3") or []:
-                righe.append(f"  segnale di A3 della settimana del {x['settimana']}: {x['segnale']}")
-            for d in (dati.get("decisioni_osservazione") or {}).get(str(v["OSS_ID"]), []):
+            for x in a3.get("flag_a3") or []:
+                righe.append(f"  flag di A3 della settimana del {x['settimana']}: {x['flag']}")
+            for d in (dati.get("decisioni") or {}).get(str(v["ID_Rischio"]), []):
                 righe.append(f"  decisione del validatore su {d.get('Campo')}: {d.get('Decisione')}, proposta di A1 "
                              f"{d.get('Proposta_Agente')}, valore deciso {d.get('Valore_Validato') if d.get('Valore_Validato') is not None else '—'}; "
                              f"motivazione: {d.get('Motivazione') or '—'}")
     else:
-        righe.append("Nessuna voce in questo ciclo.")
+        righe.append("Nessun rischio in osservazione in questo ciclo.")
+    righe += ["", "ENTRATI E USCITI DAL RADAR NEL CICLO (D-79)"]
+    if dati.get("movimenti"):
+        for m in dati["movimenti"]:
+            righe.append(f"- {m['ID_Rischio']} {m.get('Nome')}: {m['Movimento']} ({m.get('Stato')}). {m.get('Motivo_Stato') or ''}")
+    else:
+        righe.append("Nessuno: i rischi del radar e quelli in osservazione sono gli stessi del ciclo prima.")
     righe += ["", "RISCHI DISMESSI (usciti dal registro)"]
     if dati["dismessi"]:
         for d in dati["dismessi"]:

@@ -3,7 +3,7 @@
 > **Superato il 07/10/2026 (D-74).** Su indicazione dell'utente la classificazione usa la
 > tassonomia interna della Banca (`NFR_Emerging_Risk_Agents/01_Kernel/Tassonomia dei Rischi.csv`,
 > solo le nove categorie marcate SI), che sostituisce del tutto gli event type di Basilea:
-> vedi `01_Kernel/tassonomia_nfr.md` e `08_Deploy/DECISIONI.md`, D-74. Questo file resta
+> vedi `01_Kernel/tassonomia_nfr.md` e `04_Riferimenti/DECISIONI.md`, D-74. Questo file resta
 > come traccia della bozza.
 
 > Fonte unica degli event type di secondo livello (D-74, 07/10/2026): ogni

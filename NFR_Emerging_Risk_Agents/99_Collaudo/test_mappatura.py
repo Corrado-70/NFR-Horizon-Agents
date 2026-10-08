@@ -156,8 +156,8 @@ def main():
         e.verifica(False, "il template esiste (generarlo con 03_Excel/genera_dashboard.py)")
 
     # La documentazione delle liste cita ogni colonna.
-    doc_sp = RADICE / "04_SharePoint" / "struttura_e_liste.md"
-    if e.verifica(doc_sp.exists(), "esiste 04_SharePoint/struttura_e_liste.md"):
+    doc_sp = RADICE / "04_Riferimenti" / "struttura_e_liste.md"
+    if e.verifica(doc_sp.exists(), "esiste 04_Riferimenti/struttura_e_liste.md"):
         testo = doc_sp.read_text(encoding="utf-8")
         for lista, spec in mappa["liste_sharepoint"].items():
             if lista.startswith("_"):
@@ -168,7 +168,7 @@ def main():
             sezione = testo.split(f"### {lista}", 1)[-1].split("\n### ", 1)[0]
             mancanti = [c for c in attese if not re.search(rf"`{c}`", sezione)]
             e.verifica(f"### {lista}" in testo and not mancanti,
-                       f"04_SharePoint documenta tutte le colonne di {lista}", ", ".join(mancanti))
+                       f"04_Riferimenti/struttura_e_liste.md documenta tutte le colonne di {lista}", ", ".join(mancanti))
 
     return 0 if e.stampa() else 1
 

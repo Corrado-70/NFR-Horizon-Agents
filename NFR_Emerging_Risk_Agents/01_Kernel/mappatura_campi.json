@@ -6,7 +6,7 @@
     "rigenerare il workbook: nessun altro file contiene l'elenco delle colonne.",
     "Sintassi delle sorgenti:",
     "  payload:<percorso>[|trasformazione]  campo del payload; '[]' indica un elemento di array",
-    "  derivato:<nome>                       calcolato dalla scrittura (vedi 05_Workflow/workflow.md, 'Campi derivati')",
+    "  derivato:<nome>                       calcolato dalla scrittura (vedi 04_Riferimenti/workflow.md, 'Campi derivati')",
     "  formula:<modello>                     formula del foglio; {Colonna} = cella della stessa riga, i nomi sono nomi definiti",
     "Trasformazioni: json (serializza), lista (unisce con ', '), non_presidiato (null -> 'NON PRESIDIATO'),",
     "  intensita:L1-0x (sceglie l'impatto dell'event type indicato)",
@@ -18,7 +18,7 @@
     "colonne_rinominate: colonne che hanno cambiato nome (D-57: Severity -> Impatto): aggiorna-registro copia i valori della",
     "  colonna vecchia in quella nuova."
   ],
-  "versione_template": "2026-10-08b",
+  "versione_template": "2026-10-09",
   "tabelle": {
     "tblRegister": {
       "foglio": "RiskRegister",
@@ -50,7 +50,14 @@
         {"nome": "Approvato_Da", "sorgente": "derivato:vuoto", "significato": "Chi ha validato il ciclo."},
         {"nome": "Validazione", "sorgente": "derivato:da_validare", "significato": "Da validare, poi Accettato o Rettificato."},
         {"nome": "Data_Validazione", "sorgente": "derivato:vuoto", "formato": "data", "significato": "Giorno della validazione."},
-        {"nome": "Periodo_Valutazione", "sorgente": "derivato:periodo_valutazione", "significato": "Periodo in cui il rischio e' stato valutato: il Ciclo stesso o, per un rischio non rivalutato in un ciclo straordinario, il periodo da cui la riga e' riportata (D-75). Il Radar_Mosca ne prende le azioni (Y)."}
+        {"nome": "Periodo_Valutazione", "sorgente": "derivato:periodo_valutazione", "significato": "Periodo in cui il rischio e' stato valutato: il Ciclo stesso o, per un rischio non rivalutato in un ciclo straordinario, il periodo da cui la riga e' riportata (D-75). Il Radar_Mosca ne prende le azioni (Y)."},
+        {"nome": "Stato", "sorgente": "derivato:stato_radar", "significato": "Registro unico (D-79): Radar (gestione completa: KRI, azioni, urgenza, report), Radar, in uscita (sotto la regola per il primo ciclo) o Osservazione (stessa scala, niente KRI ne' azioni). Lo calcola lo script con la regola di Parametri; Dismesso dopo il comando dismetti."},
+        {"nome": "Motivo_Stato", "sorgente": "derivato:motivo_stato", "larghezza": 45, "significato": "Perche' il rischio ha quello stato: soglie di Prossimita e Probabilita, eccezione (AGIRE ORA, supervisore, validatore), capienza del radar."},
+        {"nome": "Movimento", "sorgente": "derivato:movimento", "significato": "Entrato (dall'osservazione al radar) o Uscito (dal radar all'osservazione) in questo ciclo; vuoto se lo stato non cambia."},
+        {"nome": "Decisione_Stato", "sorgente": "derivato:decisione_stato", "significato": "Decisione del validatore sullo stato: Automatico (vale la regola), Radar o Osservazione, con la Motivazione nella griglia. Resta da un ciclo all'altro finche' non la cambia."},
+        {"nome": "Orizzonte_Anni", "sorgente": "payload:rischi[].orizzonte_anni", "significato": "Per un rischio in osservazione: anni stimati prima che possa manifestarsi (la Prossimita non distingue oltre i 3 anni). Nota di A1, fuori dallo score."},
+        {"nome": "Segnale_Avvicinamento", "sorgente": "payload:rischi[].segnale_avvicinamento", "larghezza": 45, "significato": "Per un rischio in osservazione: il fatto osservabile che lo farebbe salire nel radar. Nota di A1."},
+        {"nome": "Ordine_Osservazione", "sorgente": "formula:=IF(AND({Ciclo}=cicloCorrente,{Stato}=\"Osservazione\"),N({Score_Composito})*100000+1-ROW()/1000000,\"\")", "significato": "Ordine dei rischi in osservazione del ciclo corrente nelle viste (fogli Osservazione e Fenomeni): per score composito."}
       ]
     },
     "tblAzioni": {
@@ -122,36 +129,6 @@
         {"nome": "Straordinario", "sorgente": "derivato:straordinario", "larghezza": 60, "significato": "Solo per un ciclo straordinario (AAAAQn-Sk, D-75): chi l'ha deciso, quando, perche' e quali rischi sono stati rivalutati; vuota per un ciclo trimestrale."}
       ]
     },
-    "tblOsservazione": {
-      "_nota": "Lista di osservazione (D-73, 07/10/2026): fenomeni lontani o poco plausibili oggi, con una valutazione preliminare e senza KRI ne' azioni; fuori da radar, classifica e urgenza. STORICA: ogni ciclo trimestrale scrive tutte le voci in osservazione, quelle aggiornate da A1 (solo con evidenza nuova) e quelle riportate invariate dal ciclo prima (Esito Invariata), piu' le voci promosse o archiviate nel ciclo. Si validano solo le voci con un esito di A1 (sezione Osservazione del foglio Validazione).",
-      "foglio": "Lista_Osservazione",
-      "payload": "A1",
-      "righe_da": "osservazione[]",
-      "modo": "storico",
-      "chiave": "Ciclo+OSS_ID",
-      "colonne": [
-        {"nome": "Ciclo", "sorgente": "payload:ciclo", "significato": "Ciclo della fotografia: ogni ciclo riscrive tutte le voci in osservazione."},
-        {"nome": "OSS_ID", "sorgente": "derivato:oss_id", "usa": ["osservazione[].oss_id"], "significato": "Codice stabile OSS-nn: lo assegna lo script a una voce nuova (primo progressivo libero, mai riusato)."},
-        {"nome": "Nome", "sorgente": "payload:osservazione[].nome", "larghezza": 40, "significato": "Il fenomeno, con il meccanismo di perdita in breve."},
-        {"nome": "Esito", "sorgente": "derivato:esito_osservazione", "usa": ["osservazione[].esito"], "significato": "Nel ciclo: Nuova, Confermata, Avvicinata, Promossa, Archiviata (proposte di A1) o Invariata (A1 non l'ha toccata: nessuna evidenza nuova)."},
-        {"nome": "Stato", "sorgente": "derivato:stato_osservazione", "significato": "In osservazione; Promossa (e' diventata il rischio di Promosso_A); Archiviata; Respinta (voce nuova respinta in validazione)."},
-        {"nome": "Descrizione", "sorgente": "payload:osservazione[].descrizione", "larghezza": 50, "significato": "Il meccanismo di perdita per la Banca, anche lontano: causa, evento, danno."},
-        {"nome": "Driver", "sorgente": "payload:osservazione[].driver|lista", "significato": "Driver della tassonomia: perche' emerge (fino a tre)."},
-        {"nome": "Event_Type", "sorgente": "payload:osservazione[].event_type", "significato": "Categoria di rischio (tassonomia interna, D-74) in cui ricadrebbe la perdita."},
-        {"nome": "Rischi_Toccati", "sorgente": "payload:osservazione[].rischi_toccati|lista", "significato": "Rischi del registro che toccherebbe se si avvicina (anche nessuno)."},
-        {"nome": "Impatto_Potenziale", "sorgente": "payload:osservazione[].impatto_potenziale", "significato": "Impatto 1-5 con i descrittori della rubrica, se il fenomeno si manifestasse."},
-        {"nome": "Orizzonte_Anni", "sorgente": "payload:osservazione[].orizzonte_anni", "significato": "Anni stimati prima che possa manifestarsi (la Prossimita non distingue oltre i 3 anni)."},
-        {"nome": "Plausibilita", "sorgente": "payload:osservazione[].plausibilita", "significato": "teorica, possibile, in crescita."},
-        {"nome": "Segnale_Avvicinamento", "sorgente": "payload:osservazione[].segnale_avvicinamento", "larghezza": 45, "significato": "Il fatto osservabile che lo farebbe diventare un rischio del registro."},
-        {"nome": "Motivazione", "sorgente": "payload:osservazione[].motivazione", "larghezza": 50, "significato": "Perche' questa valutazione e questo esito, con l'evidenza nuova del ciclo."},
-        {"nome": "Fonti", "sorgente": "payload:osservazione[].fonti|json", "larghezza": 40, "significato": "Fino a tre fonti: riferimento e data."},
-        {"nome": "Promosso_A", "sorgente": "payload:osservazione[].promosso_a", "significato": "Rischio nuovo del ciclo in cui la voce e' stata promossa (solo con Esito Promossa)."},
-        {"nome": "Prima_Osservazione", "sorgente": "derivato:prima_osservazione", "significato": "Ciclo in cui la voce e' entrata nella lista."},
-        {"nome": "Ordine", "sorgente": "formula:=IF(AND({Ciclo}=cicloCorrente,{Stato}=\"In osservazione\"),N({Impatto_Potenziale})*100000+(100-MIN(99,N({Orizzonte_Anni})))*1000+1-ROW()/1000000,\"\")", "significato": "Ordine delle viste (fogli Osservazione e Fenomeni): voci in osservazione del ciclo corrente, prima l'impatto piu' alto, poi l'orizzonte piu' vicino."},
-        {"nome": "Validazione", "sorgente": "derivato:validazione_osservazione", "significato": "Da validare per le voci con un esito di A1, poi Accettato, Rettificato o Respinto; per le voci invariate, quella del ciclo prima."},
-        {"nome": "Data_Scrittura", "sorgente": "derivato:data_scrittura", "formato": "data", "significato": "Giorno in cui lo script ha scritto la riga."}
-      ]
-    },
     "tblSettimane": {
       "_nota": "Una riga per settimana: la sintesi di A3 e i flag proposti (D-66, 01/10/2026). Il foglio Notizie mostra quella della settimana corrente. Rilanciare la stessa settimana aggiorna la riga, non la duplica.",
       "foglio": "Sintesi_Settimane",
@@ -162,7 +139,6 @@
         {"nome": "Settimana", "sorgente": "payload:settimana", "formato": "data", "significato": "Lunedi' della settimana valutata da A3."},
         {"nome": "Notizie", "sorgente": "derivato:numero_notizie", "significato": "Notizie valutate da A3 nella settimana."},
         {"nome": "Sintesi_A3", "sorgente": "payload:sintesi", "larghezza": 80, "significato": "Sintesi della settimana scritta da A3: temi, rischi toccati, aree non presidiate. Scritta prima della validazione delle notizie."},
-        {"nome": "Segnali_Osservazione", "sorgente": "derivato:segnali_osservazione", "larghezza": 60, "significato": "Segnali di A3 sulle voci della lista di osservazione, uno per riga: voce, direzione (Avvicina, Segnale verificato, Allontana), motivazione. Proposte per il prossimo ciclo: A1 le trova nella baseline (D-73)."},
         {"nome": "Proposta_Straordinario", "sorgente": "derivato:proposta_straordinario", "larghezza": 50, "significato": "Proposta di A3 di un ciclo straordinario (segnale critico, rubrica sezione 6): rischi e motivo. Decide la funzione di rischio (D-75)."},
         {"nome": "Flag_Proposti", "sorgente": "derivato:flag_proposti", "larghezza": 70, "significato": "Flag proposti da A3, uno per riga: rischio, direzione, motivazione. Non cambiano score: si portano al prossimo ciclo trimestrale (o, se critici, a un ciclo straordinario, D-41)."},
         {"nome": "Data_Scrittura", "sorgente": "derivato:data_scrittura", "formato": "data", "significato": "Giorno in cui lo script ha scritto la riga."}
@@ -193,7 +169,6 @@
         {"nome": "Imp_9_11", "sorgente": "payload:notizie[].impatti[].intensita|intensita:9.11", "significato": "Intensita' 0-3 sulla categoria 9.11 (0 = nessun nesso, 3 = diretto e immediato)."},
         {"nome": "Imp_9_13", "sorgente": "payload:notizie[].impatti[].intensita|intensita:9.13", "significato": "Intensita' 0-3 sulla categoria 9.13 (0 = nessun nesso, 3 = diretto e immediato)."},
         {"nome": "Sintesi", "sorgente": "payload:notizie[].sintesi", "larghezza": 60, "significato": "Che cosa dice la notizia, in breve."},
-        {"nome": "Voce_Osservazione", "sorgente": "payload:notizie[].voce_osservazione", "significato": "Voce della lista di osservazione (OSS-nn) che la notizia tocca, indicata da A3; vuota se nessuna (D-73)."},
         {"nome": "Validazione", "sorgente": "derivato:da_validare", "significato": "Da validare, poi Accettato, Rettificato o Respinto."}
       ]
     }
@@ -201,7 +176,7 @@
   "validazione": {
     "_nota": [
       "Validazione umana di cio' che gli agenti hanno proposto (D-67, 01/10/2026). Due parti:",
-      "1) foglio Validazione = griglia di lavoro, UNA RIGA PER OGGETTO (rischio, KRI, azione, voce della lista di osservazione, notizia), solo per i periodi non ancora validati: accanto a",
+      "1) foglio Validazione = griglia di lavoro, UNA RIGA PER OGGETTO (rischio, nel radar o in osservazione, KRI, azione, notizia), solo per i periodi non ancora validati: accanto a",
       "   ogni proposta (grigia) il valore giallo, gia' compilato con la proposta; il validatore cambia i valori gialli, scrive la Motivazione, Respingi = Si'.",
       "   La scrivono lo script (trimestrale, settimanale, valida, griglia, aggiorna-registro: conserva cio' che il validatore ha gia' scritto) e il",
       "   validatore; si legge e si scrive solo con i nomi definiti VG_<oggetto>_<campo> (valore), VG_<oggetto>_<campo>_P (proposta), VG_<oggetto>_ID,",
@@ -219,21 +194,20 @@
       {"nome": "ID", "significato": "Codice dell'oggetto."},
       {"nome": "Nome", "larghezza": 44, "significato": "Nome dell'oggetto, per riconoscerlo."},
       {"nome": "Campo", "significato": "Valore proposto su cui si e' deciso."},
-      {"nome": "Proposta_Agente", "significato": "Valore proposto dall'agente. Non si cancella mai."},
-      {"nome": "Decisione", "significato": "Dal comando valida: Accettato (valore giallo uguale alla proposta), Rettificato (cambiato) o Respinto (Respingi = Si')."},
+      {"nome": "Proposta_Agente", "significato": "Valore proposto dall'agente; in una riapertura (D-76) il valore validato prima. Non si cancella mai."},
+      {"nome": "Decisione", "significato": "Dal comando valida: Accettato (valore giallo uguale alla proposta), Rettificato (cambiato) o Respinto (Respingi = Si'); in una riapertura del ciclo (comando riapri, D-76) le stesse con il suffisso (riapertura), e Invariato al posto di Accettato."},
       {"nome": "Valore_Validato", "significato": "Valore deciso dal validatore nella griglia del foglio Validazione (vuoto se Respinto)."},
       {"nome": "Motivazione", "larghezza": 50, "significato": "Motivazione della riga della griglia: obbligatoria (almeno 10 caratteri) se un valore cambia, se si respinge o con un rilievo di A5 superato."},
       {"nome": "Validato_Da", "larghezza": 20, "significato": "Chi ha validato."},
       {"nome": "Data_Validazione", "formato": "data", "significato": "Giorno della validazione."},
       {"nome": "Stato", "significato": "Da decidere, poi Applicata."}
     ],
-    "decisioni": ["Accettato", "Rettificato", "Respinto"],
+    "decisioni": ["Accettato", "Rettificato", "Respinto", "Invariato (riapertura)", "Rettificato (riapertura)", "Respinto (riapertura)"],
     "oggetti": {
-      "Rischio": {"tabella": "tblRegister", "id": "ID_Rischio", "periodo": "Ciclo", "nome": "Nome", "respingibile": false, "campi": ["Impatto", "Velocity", "Prossimita", "Probabilita", "Anni_Adeguamento"]},
+      "Rischio": {"tabella": "tblRegister", "id": "ID_Rischio", "periodo": "Ciclo", "nome": "Nome", "respingibile": false, "campi": ["Impatto", "Velocity", "Prossimita", "Probabilita", "Anni_Adeguamento", "Decisione_Stato"]},
       "KRI": {"tabella": "tblKRI", "id": "KRI_ID", "periodo": "Ciclo", "nome": "Nome", "respingibile": true, "campi": ["Valore_Corrente", "Soglia_Attenzione", "Soglia_Allerta"]},
       "Azione": {"tabella": "tblAzioni", "id": "ID_Azione", "periodo": "Ciclo", "nome": "Descrizione", "respingibile": true, "campi": ["Owner", "Orizzonte"]},
-      "Osservazione": {"tabella": "tblOsservazione", "id": "OSS_ID", "periodo": "Ciclo", "nome": "Nome", "respingibile": true, "campi": ["Impatto_Potenziale", "Orizzonte_Anni", "Plausibilita"]},
-      "Notizia": {"tabella": "tblNews", "id": "ID_Notizia", "periodo": null, "nome": "Titolo", "respingibile": true, "campi": ["Rischio_ID", "Segnale", "Voce_Osservazione"]}
+      "Notizia": {"tabella": "tblNews", "id": "ID_Notizia", "periodo": null, "nome": "Titolo", "respingibile": true, "campi": ["Rischio_ID", "Segnale"]}
     }
   },
   "anagrafica": {
@@ -252,13 +226,13 @@
     ]
   },
   "parametri": {"cicloCorrente": "payload:ciclo", "settimanaCorrente": "payload:settimana"},
-  "non_nel_workbook": {"_nota": "Campi degli schemi che NON finiscono in una colonna del workbook, con la loro destinazione.", "sintesi": "A3: testo del report settimanale (Report_Settimanali), non una colonna. Quella di A1 va in tblSintesi.Sintesi_A1 (foglio Sintesi_Cicli, letta dal Quadro).", "rischi[].kri_proposti[].kri_id": "Riuso di un KRI in vigore (stessa serie storica): diventa KRI_ID (vedi colonna KRI_ID, derivato:kri_id).", "ricalcolo_kri_ciclo_precedente[].kri_id": "KRI a cui vanno Valore_Corrente, Fonte_Rilevazione, Nota_Rilevazione nella riga del ciclo.", "notizie[].impatti[].event_type": "Chiave che sceglie la colonna Imp_ della categoria (D-74).", "notizie[].impatti[].direzione": "Report settimanale: sul radar l'intensita' e' senza segno; la direzione per rischio e' in Segnale.", "flag_proposti[].id_rischio": "Report settimanale: proposta non vincolante per il prossimo ciclo A1.", "flag_proposti[].direzione": "Report settimanale.", "flag_proposti[].motivazione": "Report settimanale.", "proposta_straordinario": "Colonna Proposta_Straordinario di Sintesi_Settimane (testo, derivato:proposta_straordinario), riquadro del foglio Notizie e messaggio del comando settimanale (D-75).", "segnali_osservazione[].oss_id": "Colonna Segnali_Osservazione di Sintesi_Settimane (testo, derivato:segnali_osservazione) e baseline del ciclo dopo (voci in osservazione, segnali_a3).", "segnali_osservazione[].direzione": "Come segnali_osservazione[].oss_id.", "segnali_osservazione[].motivazione": "Come segnali_osservazione[].oss_id.", "rischi[].variazioni[].dimensione": "Serializzata nella colonna Variazioni; 'da' e 'a' li aggiunge lo script dal confronto con la baseline (D-51).", "fenomeni_non_censiti": "Fenomeni considerati da A1 e non censiti, con il motivo (D-72): restano nell'output archiviato Cicli/<ciclo>/A1_<ciclo>.json e vanno nella knowledge di A7 (cartella Spiegazioni, Ciclo.txt), non in una colonna."},
+  "non_nel_workbook": {"_nota": "Campi degli schemi che NON finiscono in una colonna del workbook, con la loro destinazione.", "sintesi": "A3: testo del report settimanale (Report_Settimanali), non una colonna. Quella di A1 va in tblSintesi.Sintesi_A1 (foglio Sintesi_Cicli, letta dal Quadro).", "rischi[].kri_proposti[].kri_id": "Riuso di un KRI in vigore (stessa serie storica): diventa KRI_ID (vedi colonna KRI_ID, derivato:kri_id).", "ricalcolo_kri_ciclo_precedente[].kri_id": "KRI a cui vanno Valore_Corrente, Fonte_Rilevazione, Nota_Rilevazione nella riga del ciclo.", "notizie[].impatti[].event_type": "Chiave che sceglie la colonna Imp_ della categoria (D-74).", "notizie[].impatti[].direzione": "Report settimanale: sul radar l'intensita' e' senza segno; la direzione per rischio e' in Segnale.", "flag_proposti[].id_rischio": "Report settimanale: proposta non vincolante per il prossimo ciclo A1.", "flag_proposti[].direzione": "Report settimanale.", "flag_proposti[].motivazione": "Report settimanale.", "proposta_straordinario": "Colonna Proposta_Straordinario di Sintesi_Settimane (testo, derivato:proposta_straordinario), riquadro del foglio Notizie e messaggio del comando settimanale (D-75).", "rischi[].variazioni[].dimensione": "Serializzata nella colonna Variazioni; 'da' e 'a' li aggiunge lo script dal confronto con la baseline (D-51).", "fenomeni_non_censiti": "Fenomeni considerati da A1 e non censiti, con il motivo (D-72): restano nell'output archiviato Cicli/<ciclo>/A1_<ciclo>.json e vanno nella knowledge di A7 (cartella Spiegazioni, Ciclo.txt), non in una colonna.", "analisi_evento": "Analisi dell'evento scritta da A8 nel ciclo straordinario (D-77): resta nell'output archiviato Cicli/<ciclo>/A1_<ciclo>.json e va nella knowledge di A7 (Ciclo.txt); il solo campo evento entra nella colonna Straordinario di Sintesi_Cicli (derivato:straordinario)."},
   "liste_sharepoint": {
     "_nota": "Le liste sono una copia delle tabelle dati (gia' storiche nel workbook), senza le colonne formula. Le righe di un ciclo le produce esegui_ciclo_locale.py (Righe_liste_<ciclo>.json), con i campi derivati gia' calcolati.",
-    "RiskRegister_Storico": {"da_tabella": "tblRegister", "colonne_escluse": ["Score_Composito", "Chiave"], "colonne_aggiunte": []},
+    "RiskRegister_Storico": {"da_tabella": "tblRegister", "colonne_escluse": ["Score_Composito", "Chiave", "Ordine_Osservazione"], "colonne_aggiunte": []},
     "Azioni_Storico": {"da_tabella": "tblAzioni", "colonne_escluse": ["Mesi_Orizzonte"], "colonne_aggiunte": []},
     "KRI_Storico": {"da_tabella": "tblKRI", "colonne_escluse": ["Stato", "Chiave"], "colonne_aggiunte": []}
   },
-  "colonne_dismesse": {"_nota": "Colonne di template precedenti tolte dal modello: aggiorna-registro non le copia (il registro vecchio resta in Backup).", "tblRegister": ["Gap_Controlli", "Confidence"], "tblAzioni": ["Dimensione"], "tblNews": ["Imp_L1_01", "Imp_L1_02", "Imp_L1_03", "Imp_L1_04", "Imp_L1_05", "Imp_L1_06", "Imp_L1_07"]},
+  "colonne_dismesse": {"_nota": "Colonne di template precedenti tolte dal modello: aggiorna-registro non le copia (il registro vecchio resta in Backup). La tabella tblOsservazione (lista di osservazione, D-73) non c'e' piu' dalla 2026-10-09 (D-79): aggiorna-registro converte le voci in osservazione in rischi in osservazione.", "tblRegister": ["Gap_Controlli", "Confidence"], "tblAzioni": ["Dimensione"], "tblNews": ["Imp_L1_01", "Imp_L1_02", "Imp_L1_03", "Imp_L1_04", "Imp_L1_05", "Imp_L1_06", "Imp_L1_07", "Voce_Osservazione"], "tblSettimane": ["Segnali_Osservazione"]},
   "colonne_rinominate": {"_nota": "Colonne di template precedenti che hanno cambiato nome: aggiorna-registro copia i valori della vecchia nella nuova (D-57).", "tblRegister": {"Severity": "Impatto"}}
 }

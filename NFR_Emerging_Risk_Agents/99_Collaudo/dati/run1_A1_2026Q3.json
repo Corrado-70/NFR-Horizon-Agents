@@ -1,7 +1,7 @@
 {
   "ciclo": "2026Q3",
   "data_riferimento": "2026-09-30",
-  "sintesi": "MESSAGGIO: nel terzo trimestre 2026 il profilo complessivo resta stabile. Peggiora la prossimita' del rischio di greenwashing (NFR-03) dopo la sanzione a una banca comparabile. Su due rischi l'evidenza e' piu' solida: la exit strategy dal fornitore cloud critico e' ora testata su tutti i servizi (NFR-02) e il DLP copre tutti i servizi di AI generativa (NFR-06); i valori non cambiano. Gli altri nove rischi sono confermati con le fonti del ciclo precedente, integrate dai dati del trimestre. Categorie senza rischi: 9.5 Fiscale e 9.11 Employer. DECISIONI: aggiornare il presidio dei controlli di NFR-02 e NFR-06 e chiedere alla Funzione Compliance la revisione dei claim ESG (NFR-03).",
+  "sintesi": "MESSAGGIO: nel terzo trimestre 2026 il profilo complessivo resta stabile. Peggiora la prossimita' del rischio di greenwashing (NFR-03) dopo la sanzione a una banca comparabile. Su due rischi l'evidenza e' piu' solida: la exit strategy dal fornitore cloud critico e' ora testata su tutti i servizi (NFR-02) e il DLP copre tutti i servizi di AI generativa (NFR-06); i valori non cambiano. Gli altri nove rischi sono confermati con le fonti del ciclo precedente, integrate dai dati del trimestre. Categorie senza rischi: 9.5 Fiscale e 9.11 Employer. DECISIONI: aggiornare il presidio dei controlli di NFR-02 e NFR-06 e chiedere alla Funzione Compliance la revisione dei claim ESG (NFR-03). Entra nel registro, in osservazione, un rischio nuovo sui rapporti di impiego (NFR-16): oggi lontano, con il segnale che lo porterebbe nel radar.",
   "rischi": [
     {
       "id_rischio": "NFR-01",
@@ -801,6 +801,35 @@
           "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
         }
       ]
+    },
+    {
+      "id_rischio": "NFR-16",
+      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "event_type": "9.11",
+      "driver": [
+        "DRV-HUM",
+        "DRV-TEC"
+      ],
+      "descrizione": "Uscite di personale tecnico difficile da sostituire e possibili vertenze di settore lascerebbero scoperti ruoli IT critici, con turni di copertura che violano obblighi di lavoro e sicurezza. Il danno: interruzioni dei servizi e contenzioso con il personale.",
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 2,
+      "anni_adeguamento": null,
+      "variazioni": [],
+      "fonti": [
+        {
+          "riferimento": "Rapporto sul mercato del lavoro ICT in Italia, carenza di competenze sui sistemi legacy",
+          "data": "2026-09-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "razionale": "Rischio nuovo, in osservazione: nessun rischio del registro copre i rapporti di impiego (categoria 9.11). Impatto 3: durante un'astensione si degraderebbero processi critici che dipendono da pochi tecnici. Probabilita 2: il rapporto sul mercato del lavoro ICT segnala una carenza crescente di tecnici sui sistemi legacy, ma nessuna vertenza e' aperta nel settore. Prossimita 1: oltre tre anni, nessun segnale presso la Banca. Velocity non valutata: nessuna fonte sui tempi.",
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Uno sciopero di settore che coinvolga il personale IT, o l'uscita non rimpiazzata di tecnici in ruoli critici della Banca.",
+      "azioni_mitigazione": [],
+      "kri_proposti": []
     }
   ],
   "ricalcolo_kri_ciclo_precedente": [
@@ -947,60 +976,6 @@
       "valore": 4.5,
       "fonte": "Workflow delle eccezioni",
       "commento": "Rilevazione di fine trimestre dal sistema indicato."
-    }
-  ],
-  "osservazione": [
-    {
-      "oss_id": null,
-      "esito": "nuova",
-      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
-      "descrizione": "Uscite di personale tecnico difficile da sostituire e possibili vertenze di settore lascerebbero scoperti ruoli IT critici, con turni di copertura che violano obblighi di lavoro e sicurezza. Il danno: interruzioni dei servizi e contenzioso con il personale.",
-      "driver": [
-        "DRV-HUM",
-        "DRV-TEC"
-      ],
-      "event_type": "9.11",
-      "rischi_toccati": [
-        "NFR-11"
-      ],
-      "impatto_potenziale": 3,
-      "orizzonte_anni": 5,
-      "plausibilita": "possibile",
-      "segnale_avvicinamento": "Uno sciopero di settore che coinvolga il personale IT, o l'uscita non rimpiazzata di tecnici in ruoli critici della Banca.",
-      "motivazione": "Il rapporto sul mercato del lavoro ICT segnala una carenza crescente di tecnici sui sistemi legacy; nessuna vertenza aperta nel settore: oggi lontano.",
-      "fonti": [
-        {
-          "riferimento": "Rapporto sul mercato del lavoro ICT in Italia, carenza di competenze sui sistemi legacy",
-          "data": "2026-09-10"
-        }
-      ],
-      "promosso_a": null
-    },
-    {
-      "oss_id": null,
-      "esito": "nuova",
-      "nome": "Tempeste solari sulla sincronizzazione satellitare dei pagamenti",
-      "descrizione": "Una tempesta geomagnetica estrema potrebbe degradare i segnali satellitari usati per sincronizzare gli orari delle transazioni, con disallineamenti nei sistemi di pagamento e nei data center del fornitore cloud.",
-      "driver": [
-        "DRV-CLI",
-        "DRV-TEC"
-      ],
-      "event_type": "9.6",
-      "rischi_toccati": [
-        "NFR-02"
-      ],
-      "impatto_potenziale": 4,
-      "orizzonte_anni": 8,
-      "plausibilita": "teorica",
-      "segnale_avvicinamento": "Un'allerta di livello estremo dei servizi meteorologici spaziali o un disservizio di sincronizzazione presso un circuito di pagamento europeo.",
-      "motivazione": "Il bollettino sul ciclo solare indica il massimo di attivita' nel 2026-2027; nessun disservizio documentato nei sistemi finanziari.",
-      "fonti": [
-        {
-          "riferimento": "Bollettino sul massimo del ciclo solare 25, servizio europeo di meteorologia spaziale",
-          "data": "2026-08-18"
-        }
-      ],
-      "promosso_a": null
     }
   ]
 }

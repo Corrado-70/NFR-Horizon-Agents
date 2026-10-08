@@ -72,6 +72,23 @@ del foglio Notizie (righe sotto spostate di due), colonne `Imp_9_1` ... `Imp_9_1
 colonne "Categoria" al posto di "Event type" nelle viste; nel foglio Osservazione la
 matrice ha nove colonne (Q-Y, totale in Z) e l'appoggio delle liste passa in AF.
 
+Con la 2026-10-09 (D-79, 08/10): il **registro unico**. Spariscono `tblOsservazione`
+e il foglio dati Lista_Osservazione, la colonna `Voce_Osservazione` di `tblNews`,
+`Segnali_Osservazione` di `tblSettimane` e la sezione Lista di osservazione della
+griglia. In fondo a `tblRegister` sette colonne: `Stato`, `Motivo_Stato`,
+`Movimento`, `Decisione_Stato` (scritte dallo script), `Orizzonte_Anni`,
+`Segnale_Avvicinamento` (di A1) e la formula `Ordine_Osservazione`. I fogli
+Osservazione e Fenomeni leggono i rischi del RiskRegister con Stato
+"Osservazione" (sotto, entrati e usciti dal radar); in Parametri, righe 65-75, la
+regola del radar (`capienzaRadar`, `sogliaProssimitaRadar`,
+`sogliaProbabilitaRadar`, `cicliUscitaRadar`, gialli; `capienzaOsservazione` = 20
+fisso); nella griglia, sezione Rischi, le colonne W (stato calcolato), X/Y
+(decisione sullo stato in vigore e gialla); nel Quadro il riquadro "Variati ·
+nuovi (radar)" con sotto entrati, usciti e in osservazione; nel foglio Notizie lo
+stato "In osservazione" del presidio e, in L15:S19, quante notizie toccano i rischi
+in osservazione. I dati di esempio hanno tre rischi in osservazione (NFR-13, 14,
+15: le tre voci della vecchia lista, rivalutate con la rubrica).
+
 ## 1. Fogli, in quest'ordine
 
 | Gruppo (colore della linguetta) | Fogli |
@@ -79,7 +96,7 @@ matrice ha nove colonne (Q-Y, totale in Z) e l'appoggio delle liste passa in AF.
 | Guida (ocra BF8F00) | Guida |
 | Report al comitato (blu notte 1F3864) | Quadro, Classifica, Radar_Mosca, Matrice, Delta, Fenomeni, Metodologia |
 | Lavoro (blu 2E75B6) | Registro, Storico, Indicatori, Notizie, Piano_azioni, Osservazione, Validazione, Parametri, Dizionario |
-| Dati, li scrive solo lo script (grigio A6A6A6) | RiskRegister, Azioni, KRI, NewsLog, Sintesi_Cicli, Sintesi_Settimane, Lista_Osservazione, Storico_Validazioni |
+| Dati, li scrive solo lo script (grigio A6A6A6) | RiskRegister, Azioni, KRI, NewsLog, Sintesi_Cicli, Sintesi_Settimane, Storico_Validazioni |
 
 I fogli del report stanno di seguito: si selezionano insieme e si salvano in
 PDF. Griglia nascosta in tutti i fogli tranne quelli dei dati. Il foglio attivo
@@ -136,13 +153,12 @@ bloccati.
 
 | Tabella | Foglio | Colonne formula |
 |---|---|---|
-| `tblRegister` | RiskRegister | Score_Composito (J), Chiave (T) |
+| `tblRegister` | RiskRegister | Score_Composito (J), Chiave (T), Ordine_Osservazione (AF, D-79) |
 | `tblAzioni` | Azioni | Mesi_Orizzonte (G) |
 | `tblKRI` | KRI | Stato (M), Chiave (R) |
 | `tblNews` | NewsLog | Settimana (B) |
 | `tblValidazione` | Storico_Validazioni | nessuna (colonne dalla sezione `validazione` della mappa) |
 | `tblSintesi` | Sintesi_Cicli | nessuna (una riga per ciclo: commento di A1, sintesi del challenger se usato, segnalazioni sul ciclo e quante sono da motivare) |
-| `tblOsservazione` | Lista_Osservazione | Ordine (R) |
 
 Formule della prima riga dati, la 6 (Excel le estende alle righe nuove):
 
@@ -156,16 +172,16 @@ Formule della prima riga dati, la 6 (Excel le estende alle righe nuove):
 ```
 
 (nell'ordine: RiskRegister!J6, RiskRegister!T6, KRI!M6, KRI!R6, NewsLog!B6,
-Azioni!G6). Lista_Osservazione!R6 (D-73), chiave d'ordine delle viste della lista
-di osservazione, solo per le voci in osservazione del ciclo corrente (impatto
-piu' alto, poi orizzonte piu' vicino; la riga rende unica la chiave):
+Azioni!G6). RiskRegister!AF6 (`Ordine_Osservazione`, D-79), chiave d'ordine delle
+viste dei rischi in osservazione, solo per le righe del ciclo corrente con Stato
+"Osservazione" (score piu' alto prima; la riga rende unica la chiave):
 
 ```excel
-=IF(AND(A6=cicloCorrente,E6="In osservazione"),N(J6)*100000+(100-MIN(99,N(K6)))*1000+1-ROW()/1000000,"")
+=IF(AND(A6=cicloCorrente,Z6="Osservazione"),N(J6)*100000+1-ROW()/1000000,"")
 ```
 
-Convalide a elenco su Lista_Osservazione: Plausibilita (teorica, possibile,
-in crescita), Event_Type (`=codiciL1`). Lo score (D-50) e' la media pesata delle dimensioni valutate: vuoto
+Convalide a elenco su RiskRegister: Stato (Radar, Radar, in uscita, Osservazione,
+Dismesso), Decisione_Stato (Automatico, Radar, Osservazione). Lo score (D-50) e' la media pesata delle dimensioni valutate: vuoto
 se manca Impatto, Probabilita o Prossimita; se manca la Velocity (non
 valutata) il suo peso esce dal numeratore e dal denominatore. Lo stato del KRI
 controlla per prime le soglie vuote: una soglia vuota varrebbe 0 e darebbe un
@@ -215,16 +231,16 @@ tassonomia interna, D-74: il nome resta quello di prima), `codiciDriver` E15:E22
 A, F, H, I, J, K, L, AA, AB, righe 5-24);
 `presidioCodici` e `presidioStato` (Notizie!A5:A13 e F5:F13); `quadroCommento`
 (Quadro!A41:O45), `quadroSegnalati` (Quadro!A50:O69), `deltaMotivi`
-(Delta!K6:Q25), `fenomeniLista` (Fenomeni!A7:J36), `fenomeniUscite`
-(Fenomeni!A40:J45): righe con testi calcolati, di cui lo script adatta l'altezza
-(`fenomeniUscite` resta all'altezza del template).
+(Delta!K6:Q25), `fenomeniLista` (Fenomeni!A7:K26), `fenomeniUscite`
+(Fenomeni!A30:K35): righe con testi calcolati, di cui lo script adatta l'altezza
+(dal 08/10 anche `fenomeniUscite`: con l'altezza del template, 3 punti, entrati e usciti non si vedevano).
 Nomi dinamici dei grafici: sezione 6.
 
 **Costanti** che lo script legge per non superare le righe delle viste:
 `capienzaKRICorrenti` = `=60` (KRI del ciclo nel foglio Indicatori),
 `capienzaElencoKRI` = `=150` (elenco a discesa degli Indicatori),
 `capienzaPianoAzioni` = `=150` (righe del Piano_azioni), `capienzaOsservazione`
-= `=30` (voci in osservazione, D-73).
+= `=20` (rischi in osservazione al massimo, D-79; anche in Parametri B70).
 
 Stati ammessi per `tblAzioni.Stato` (convalida a elenco): Proposta — da
 valutare, Approvata, Respinta, In corso, Completata, Annullata (azione di un
@@ -273,7 +289,7 @@ B34:B45 vanno da `settimanaCorrente-7*11` a `settimanaCorrente-7*0`.
 copertura del ciclo. COUNTIF con "NFR-*", non COUNTA, che conterebbe altre celle.
 
 ```excel
-=COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"Rischio",VAL_Campo,"Impatto")+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"KRI",VAL_Campo,"Valore_Corrente")+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"Azione",VAL_Campo,"Owner")+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"Osservazione",VAL_Campo,"Impatto_Potenziale")
+=COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"Rischio",VAL_Campo,"Impatto")+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"KRI",VAL_Campo,"Valore_Corrente")+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Da decidere",VAL_Oggetto,"Azione",VAL_Campo,"Owner")
 =COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Decisione,"Rettificato",VAL_Stato,"Applicata")
 =IF(D4>0,"CICLO NON ANCORA VALIDATO — vedi foglio Validazione","Ciclo validato")
 =COUNTIF(ANA_ID,"NFR-*")
@@ -592,7 +608,7 @@ M-O) con didascalia, numero grande e riga sotto:
 ="su "&coperturaAnagrafica&" in anagrafica · "&IF(coperturaValutati=coperturaAnagrafica,"completo","INCOMPLETO")
 =$T$4&" · "&COUNTIF(Radar_Mosca!$AA$5:$AA$24,"Attenzione")
 =IF($T$4=0,"nessun rischio in attivazione","in attivazione: "&TEXTJOIN(", ",TRUE,$T$5:$T$24))&" · in monitoraggio "&COUNTIF(Radar_Mosca!$AA$5:$AA$24,"Monitoraggio")
-=COUNTIFS(RR_Ciclo,cicloCorrente,RR_Esito,"Variato")&" · "&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Esito,"Nuovo")
+=COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Radar*",RR_Esito,"Variato")&" · "&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Radar*",RR_Esito,"Nuovo")
 =COUNTIFS(KRI_Ciclo,cicloCorrente,KRI_In_Vigore,"Sì",KRI_Stato,"Rosso")
 =IF(decisioniDaPrendere>0,decisioniDaPrendere,"✓")
 ```
@@ -651,39 +667,39 @@ rossi, notizie oltre la soglia):
 allerta** come etichetta (INDEX della colonna AA del Radar_Mosca per la
 posizione in anagrafica; colori del radar), E-H perche', I-O cosa e' cambiato (le variazioni leggibili, come nel
 Delta). Bordo solo sulle righe con un rischio (formattazione condizionale).
-Sotto: i limiti (06_Governance, sezione 5) e la legenda delle abbreviazioni.
+Sotto: i limiti (04_Riferimenti/controlli_e_model_risk.md, sezione 5) e la legenda delle abbreviazioni.
 Stampa: A4 orizzontale, scala 74% (dalla 2026-10-07; prima 78%), margini superiore e inferiore 1,27 cm; con molti rischi segnalati lo script (`prepara_report`) riduce la scala, fino al 60%, perche' il Quadro resti in due pagine.
 
-### Fenomeni (lista di osservazione, D-73)
+### Fenomeni (rischi in osservazione, D-79)
 
-Pagina del report fra Delta e Metodologia. A4:J4 unite: il riepilogo della
-lista nel ciclo corrente. Intestazioni in riga 6, una voce per riga in 7-36
-(30, `capienzaOsservazione`); L (nascosta) = riga del foglio Lista_Osservazione
-della k-esima voce per Ordine. Colonne: A numero, B voce, C fenomeno, D event
-type con il nome, E driver con i nomi, F impatto potenziale con il
-descrittore, G orizzonte, H plausibilita' (ambra "in crescita"), I segnale di
-avvicinamento, J rischi toccati; F con fondo C55A11 se 5, F4B183 se 4.
-Righe 38-45: "Uscite dalla lista in questo ciclo" (B voce, C fenomeno, D
-esito, E:J unite la motivazione), L = riga della k-esima voce promossa,
-archiviata o respinta. Legenda in riga 47; stampa A1:J47, A4 orizzontale.
+Pagina del report fra Delta e Metodologia. A4:K4 unite: quanti rischi nel radar
+(con la capienza) e in osservazione, entrati, usciti e in uscita nel ciclo.
+Intestazioni in riga 6, un rischio per riga in 7-26 (20, `capienzaOsservazione`);
+L (nascosta) = riga del RiskRegister del k-esimo rischio in osservazione per
+`Ordine_Osservazione`. Colonne: A numero, B ID, C rischio, D categoria con il
+nome, E "Imp · Prob · Pross · Vel" (— = non valutata), F score, G perche' fuori
+dal radar (Motivo_Stato), H orizzonte in anni, I segnale di avvicinamento, J
+driver con i nomi, K notizie di A3 delle ultime 4 settimane (`NW_Rischio_ID`).
+Righe 28-35: "Entrati e usciti dal radar in questo ciclo" (B ID, C rischio, D
+movimento, E:K unite il motivo), L = riga della k-esima riga del ciclo con un
+Movimento. Legenda in riga 37; stampa A1:K37, A4 orizzontale.
 
 ```excel
-=IFERROR(MATCH(AGGREGATE(14,6,OS_Ordine,1),OS_Ordine,0)+5,"")
-=IF($L7="","",INDEX(Lista_Osservazione!$H:$H,$L7)&" "&IFERROR(INDEX(nomiL1,MATCH(INDEX(Lista_Osservazione!$H:$H,$L7),codiciL1,0)),""))
-=IF($L7="","",INDEX(Lista_Osservazione!$J:$J,$L7)&" "&IFERROR(CHOOSE(INDEX(Lista_Osservazione!$J:$J,$L7),"limitato","contenuto","rilevante","grave","critico"),""))
-=IFERROR(AGGREGATE(15,6,ROW(OS_Ciclo)/((OS_Ciclo=cicloCorrente)*((OS_Stato="Promossa")+(OS_Stato="Archiviata")+(OS_Stato="Respinta"))),1),"")
-=IF($L40="","",INDEX(Lista_Osservazione!$E:$E,$L40)&IF(INDEX(Lista_Osservazione!$P:$P,$L40)="",""," a "&INDEX(Lista_Osservazione!$P:$P,$L40)))
+=IFERROR(MATCH(AGGREGATE(14,6,RR_Ordine_Osservazione,1),RR_Ordine_Osservazione,0)+5,"")
+=IF($L7="","",INDEX(RiskRegister!$E:$E,$L7)&" "&IFERROR(INDEX(nomiL1,MATCH(INDEX(RiskRegister!$E:$E,$L7),codiciL1,0)),""))
+=IF($L7="","",INDEX(RiskRegister!$G:$G,$L7)&" · "&INDEX(RiskRegister!$K:$K,$L7)&" · "&INDEX(RiskRegister!$I:$I,$L7)&" · "&IF(INDEX(RiskRegister!$H:$H,$L7)="","—",INDEX(RiskRegister!$H:$H,$L7)))
+=IFERROR(AGGREGATE(15,6,ROW(RR_Ciclo)/((RR_Ciclo=cicloCorrente)*(RR_Movimento<>"")),1),"")
 ```
 
-(L7 con k = 1..30, D7, F7, L40 con k = 1..6, D40). E7 sostituisce nei codici
-dei driver i nomi: otto SUBSTITUTE annidati, uno per riga di `codiciDriver` /
+(L7 con k = 1..20, D7, E7, L30 con k = 1..6). J7 sostituisce nei codici dei
+driver i nomi: otto SUBSTITUTE annidati, uno per riga di `codiciDriver` /
 `nomiDriver`. Le altre colonne leggono la tabella come il Piano_azioni.
 
 ### Metodologia
 
 Testo in sezioni (chi produce i numeri, schede e A6 compresi; fonti ed
 evidenze; analisi per dimensioni; score composito; scale; regole di
-variazione; urgenza; KRI; lista di osservazione; come si leggono i grafici; validazione); pesi e
+variazione; urgenza; KRI; registro unico, radar e osservazione, con la regola dai nomi di Parametri; come si leggono i grafici; validazione); pesi e
 parametri come riferimenti ai nomi di Parametri; scale e regole di variazione
 copiate dalla rubrica.
 
@@ -750,7 +766,7 @@ ambra e rossa) in M22, asse verticale con minimo 0 e massimo automatico.
 =MAXIFS(NW_Imp_9_1,NW_Settimana,">="&inizioFinestra4,NW_Settimana,"<="&settimanaCorrente)
 =COUNTIFS(NW_Imp_9_1,">=2",NW_Settimana,">="&inizioFinestra4,NW_Settimana,"<="&settimanaCorrente)
 =COUNTIF(ANA_Event_Type,A5)
-=IF(AND(D5>0,E5=0),"AREA NON PRESIDIATA",IF(E5=0,"Nessun rischio censito","Presidiata"))
+=IF(E5>0,"Presidiata",IF(COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",RR_Event_Type,A5)>0,"In osservazione",IF(D5>0,"AREA NON PRESIDIATA","Nessun rischio censito")))
 =COUNTIFS(NW_Imp_9_1,1,NW_Settimana,">="&inizioFinestra4,NW_Settimana,"<="&settimanaCorrente)
 =IF(F5="AREA NON PRESIDIATA","NON PRESIDIATA ► ","")&A5&" "&B5
 ```
@@ -781,26 +797,27 @@ fascia "La proposta (A1)" su A-F e "La decisione (validazione) e
 l'avanzamento" su G-I. Nessuna colonna "Riduce": dal 30/09 l'azione non dichiara
 la dimensione che riduce (D-54).
 
-**Osservazione** (D-73): a sinistra le voci in osservazione del ciclo corrente
-(intestazione in riga 5, righe 6-35, AF nascosta = stessa formula di
-Fenomeni!L7): A voce, B fenomeno, C esito nel ciclo (colorato: Nuova azzurro,
-Avvicinata ambra), D categoria, E driver, F rischi toccati, G impatto
-potenziale (scala dei colori delle dimensioni), H orizzonte, I plausibilita',
-J segnale, K descrizione, L motivazione di A1, M primo ciclo, N validazione;
-righe 37-48 le uscite del ciclo (AF = stessa formula di Fenomeni!L40). A destra,
-da P4, la concentrazione: driver (righe, `=INDEX(nomiDriver,1)` ...) per
-categoria (colonne Q-Y, codici in riga 5) con il totale in Z, prima le voci in
-osservazione, poi (da P16) i rischi dell'anagrafica con lo stesso incrocio;
-fondo FCE4D6 da 1, F8CBAD da 2, F4B183 da 3.
+**Osservazione** (D-79): a sinistra i rischi in osservazione del ciclo corrente
+(intestazione in riga 5, righe 6-25, AF nascosta = stessa formula di
+Fenomeni!L7): A ID, B rischio, C categoria, D driver, E-H Impatto, Probabilita,
+Prossimita, Velocity (scala dei colori delle dimensioni), I score, J perche' fuori
+dal radar, K orizzonte, L segnale di avvicinamento, M descrizione, N validazione,
+O notizie di A3 delle ultime 4 settimane; righe 27-38 entrati e usciti dal radar
+(AF = stessa formula di Fenomeni!L30: A ID, B rischio, C movimento, D stato ora,
+E-I dimensioni e score, J:N unite il motivo). A destra, da P4, la concentrazione:
+driver (righe, `=INDEX(nomiDriver,1)` ...) per categoria (colonne Q-Y, codici in
+riga 5) con il totale in Z, prima i rischi in osservazione, poi (da P16) i rischi
+del radar (anagrafica) con lo stesso incrocio; fondo FCE4D6 da 1, F8CBAD da 2,
+F4B183 da 3.
 
 ```excel
-=IF(COUNTIFS(OS_Ciclo,cicloCorrente,OS_Stato,"In osservazione",OS_Event_Type,Q$5,OS_Driver,"*"&INDEX(codiciDriver,1)&"*")=0,"",COUNTIFS(OS_Ciclo,cicloCorrente,OS_Stato,"In osservazione",OS_Event_Type,Q$5,OS_Driver,"*"&INDEX(codiciDriver,1)&"*"))
+=IF(COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",RR_Event_Type,Q$5,RR_Driver,"*"&INDEX(codiciDriver,1)&"*")=0,"",COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",RR_Event_Type,Q$5,RR_Driver,"*"&INDEX(codiciDriver,1)&"*"))
 =IF(COUNTIFS(ANA_Event_Type,Q$17,ANA_Driver,"*"&INDEX(codiciDriver,1)&"*")=0,"",COUNTIFS(ANA_Event_Type,Q$17,ANA_Driver,"*"&INDEX(codiciDriver,1)&"*"))
 ```
 
 (Q6 e Q18). Riquadri bloccati in C6.
 
-**Validazione** (griglia di lavoro del validatore, D-67): cinque sezioni una
+**Validazione** (griglia di lavoro del validatore, D-67): quattro sezioni una
 sotto l'altra, a capienza fissa, con le righe libere **nascoste** (nel template
 tutto e' validato, quindi sono nascoste tutte); le scrive lo script, che le
 legge e le riscrive solo tramite i nomi `VG_...`. Riga 3 (A3:O3 unite, nome
@@ -809,20 +826,21 @@ legge e le riscrive solo tramite i nomi `VG_...`. Riga 3 (A3:O3 unite, nome
 
 | Sezione | Titolo | Righe | Colonne |
 |---|---|---|---|
-| Rischio | A5 | 7-26 (20) | A ID, B rischio, C/D Impatto proposto/giallo, E/F Probabilita, G/H Prossimita, I/J Velocity, K/L anni di adeguamento, M Motivazione, N Score composito, O Margine di Mosca, P Segnalazioni dei controlli (larga 60, a capo; fondo FCE4D6 se contiene DA MOTIVARE; P5 = segnalazioni sul ciclo) |
+| Rischio | A5 | 7-26 (20) | A ID, B rischio, C/D Impatto proposto/giallo, E/F Probabilita, G/H Prossimita, I/J Velocity, K/L anni di adeguamento, M Motivazione, N Score composito, O Margine di Mosca, P Segnalazioni dei controlli (larga 60, a capo; fondo FCE4D6 se contiene DA MOTIVARE; P5 = segnalazioni sul ciclo); dopo le colonne nascoste (D-79) W stato calcolato con il motivo (larga 36, a capo; lilla se Osservazione, ambra se in uscita), X/Y decisione sullo stato in vigore e gialla (elenco Automatico, Radar, Osservazione) |
 | KRI | A28 | 30-109 (80) | A KRI, B indicatore, C tipo, D/E valore, F/G soglia di attenzione, H/I soglia di allerta, J Respingi, M Motivazione |
 | Azione | A111 | 113-212 (100) | A azione, B descrizione, C:D owner proposto e E:F owner giallo (celle unite), G/H orizzonte, I Respingi, M Motivazione |
-| Osservazione | A214 | 216-245 (30) | A voce, B fenomeno, C esito di A1, D/E impatto potenziale, F/G orizzonte in anni, H/I plausibilita', J Respingi, M Motivazione (D-73) |
-| Notizia | A247 | 249-448 (200) | A notizia, B titolo, C:D rischio proposto e E:F rischio giallo (unite), G/H segnale, I Respingi, J settimana, K/L voce della lista di osservazione (D-73), M Motivazione |
+| Notizia | A214 | 216-415 (200) | A notizia, B titolo, C:D rischio proposto e E:F rischio giallo (unite), G/H segnale, I Respingi, J settimana, M Motivazione |
 
 Colonne nascoste: Q periodo, R appoggio (rischio: 1 = segnalazione da motivare;
 azione: il suo rischio), S-V calcoli. Proposte su fondo F2F2F2 con
 testo grigio, valori e Motivazione su fondo giallo FFF2CC. Nomi definiti, per
 ogni sezione: `VG_<oggetto>_ID`, `_Nome`, `_Motivazione`, `_Periodo`,
 `_Appoggio`, `_<campo>` (cella gialla) e `_<campo>_P` (proposta) per ogni campo
-della sezione `validazione` della mappa, `_Respingi` (KRI, azioni, voci in
-osservazione, notizie), `_Tipo` (KRI), `_Esito` (voci in osservazione), `_Settimana` (notizie), `_righe` (A:V della sezione); per i
-rischi `VG_Rischio_Segnalazioni` (P) e `VG_Rischio_SegnalazioniCiclo` (P5); inoltre
+della sezione `validazione` della mappa, `_Respingi` (KRI, azioni, notizie),
+`_Tipo` (KRI), `_Settimana` (notizie), `_righe` (A:V della sezione); per i
+rischi `VG_Rischio_Segnalazioni` (P), `VG_Rischio_SegnalazioniCiclo` (P5),
+`VG_Rischio_Stato` (W), `VG_Rischio_Decisione_Stato_P` (X) e
+`VG_Rischio_Decisione_Stato` (Y); inoltre
 `VG_Rischio_Score`, `VG_Rischio_Margine`, `VG_Rischio_ScoreNum` (U),
 `VG_Rischio_MargineNum` (S), `VG_Azione_Mesi` (S). Formule della prima riga
 (si ripetono in tutte le righe della sezione):
@@ -848,10 +866,9 @@ cambio, un Respingi o l'appoggio 1 e meno di 10 caratteri; Respingi = Sì
 F8CBAD; O come le etichette dell'urgenza; N arancio se contiene "(era".
 Convalide: interi 1-5 sulle dimensioni gialle (vuoto ammesso), decimale 0-30
 sugli anni, elenco "Sì" su Respingi, "3 mesi,6 mesi,12 mesi" sull'orizzonte,
-i quattro segnali sul segnale; per le voci in osservazione interi 1-5
-sull'impatto, 1-20 sull'orizzonte, le tre plausibilita'. In fondo (riga 450) la
-nota sullo storico. Stampa A1:O450, A4 orizzontale, una pagina in larghezza (le righe nascoste non
-si stampano).
+i quattro segnali sul segnale, le tre decisioni sullo stato. In fondo (riga 417)
+la nota sullo storico. Stampa A1:O417, A4 orizzontale, una pagina in larghezza (le
+righe nascoste non si stampano).
 
 **Dizionario**: una riga per ogni colonna di ogni tabella dati (dalla mappa),
 per i valori calcolati nelle viste e per parametri e anagrafica: dato, dove,

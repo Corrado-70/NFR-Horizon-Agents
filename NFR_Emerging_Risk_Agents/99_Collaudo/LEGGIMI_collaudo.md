@@ -1,16 +1,28 @@
 # Collaudo a secco
 
 Verifica gli artefatti prima del deploy, senza tenant. Non sostituisce il test
-in ambiente (`05_Workflow`, "Test in ambiente"): non include il retrieval dalle
+in ambiente (`04_Riferimenti/workflow.md`, "Test in ambiente"): non include il retrieval dalle
 knowledge source ne' la variabilita' dell'agente Copilot reale.
 
 ## Come si esegue
 
 ```
-python 99_Collaudo/esegui_collaudo.py              # tutto (serve Excel desktop)
-python 99_Collaudo/esegui_collaudo.py --senza-excel # tutto tranne la catena
-python 99_Collaudo/esegui_collaudo.py -v           # mostra anche le verifiche superate
+python 99_Collaudo/esegui_collaudo.py               # tutto (serve Excel desktop): catena in 3 processi, circa 40 minuti
+python 99_Collaudo/esegui_collaudo.py --mirato      # la catena solo se e' cambiato un file che la riguarda
+python 99_Collaudo/esegui_collaudo.py --senza-excel # tutto tranne la catena (pochi secondi)
+python 99_Collaudo/esegui_collaudo.py --in-sequenza # la catena con i gruppi uno dopo l'altro (circa 50 minuti)
+python 99_Collaudo/esegui_collaudo.py -v            # mostra anche le verifiche superate
+python 99_Collaudo/run_catena.py --passo riapertura # un gruppo della catena solo (nomi: run_catena.py, in testa)
 ```
+
+**Collaudo mirato** (M1, 08/10/2026). Dopo un collaudo completo e verde, `esegui_collaudo.py` scrive le impronte dei
+file che la catena mette alla prova:
+- script di campo, generatore e template;
+- kernel;
+- codice e dati del collaudo.
+
+Le impronte stanno in `%LOCALAPPDATA%\NFR_collaudo`, fuori dal pacchetto. `--mirato` lancia la catena solo se uno di
+quei file e' cambiato. Per prompt, guida e documenti bastano le suite veloci, che girano comunque.
 
 Da lanciare dopo **ogni** modifica a kernel, schemi, mappa, prompt, generatore
 o script di campo. Requisiti: Python 3.10+, `openpyxl` (per leggere il
@@ -23,10 +35,10 @@ template costruito a mano: variabile d'ambiente `NFR_TEMPLATE=<percorso>`.
 |---|---|---|
 | `02_Agenti/componi_prompt.py --verifica` | prompt allineati al kernel e sotto gli 8.000 caratteri | no |
 | `test_mappatura.py` | ogni campo degli schemi ha una destinazione, ogni colonna una sorgente e un significato; tabelle del template = mappa; nomi `VG_...` della griglia del foglio Validazione per ogni campo validabile; liste documentate | no |
-| `test_controlli.py` | validatore su payload conformi e difettosi (anche i campi tolti il 30/09: gap_controlli, esito, da/a, dimensione); controlli di A5 su un ciclo pulito e su un difetto per controllo, piu' cio' che non deve fermare (Velocity da non valutata a un valore, KRI non riletto); A5 facoltativo e Bloccanti di A5 "Da motivare" in `combina`, C3, date di C5 e soglie di C9 che non fermano (D-71); D-72: `fenomeni_non_censiti` nello schema di A1 (facoltativo, motivo fuori elenco rifiutato), testi della knowledge di A7 (file del rischio e `Ciclo.txt`), file dei rischi tolti, cartella nella library Kernel o in quella di uscita; D-73: lista di osservazione (schema delle voci, controlli dello script con un difetto per regola, 30 voci esatte ammesse, rettifiche di impatto, orizzonte e plausibilita', voci e decisioni del validatore in `Ciclo.txt`); dati di esempio conformi alla rubrica, con l'esito calcolato dallo script; regole delle rettifiche umane; consistenza fra due run; una mappa delle colonne di un'altra versione ferma lo script; output di A6 (schema e controlli, un difetto per controllo) e file delle schede, compreso il razionale in parti (D-68: lettura delle etichette, perche' accanto a ogni valore, Razionale con il fenomeno, azioni e KRI con perche' ed effetto atteso; un razionale scritto prima resta intero); D-69: C8 su un'azione uguale a un'azione aperta (e nessuna nei cicli di prova), `precontrollo` (schema, controlli, forma del razionale, messaggio di correzione, codici di uscita, comando senza registro e senza baseline), allegato di A1 (baseline identica, controlli = testo del prompt di A5, guida senza note, sostituzione del file del ciclo prima, kernel senza i file nuovi); D-70: impronta dell'output nel comando `precontrollo`, lettura della baseline dall'allegato, kit della prova di Copilot Studio (lo script della skill contiene esattamente i moduli e lo schema del pacchetto, gli zip contengono `SKILL.md` e lo script attuali, `name` e `description` della skill nel formato richiesto; lo script eseguito come processo a parte da' la stessa prima riga, la stessa impronta e lo stesso messaggio del comando, legge anche una risposta con i recinti o `Baseline_corrente.json`, codice 2 su file illeggibili) | no |
+| `test_controlli.py` | validatore su payload conformi e difettosi (anche i campi tolti il 30/09: gap_controlli, esito, da/a, dimensione); controlli di A5 su un ciclo pulito e su un difetto per controllo, piu' cio' che non deve fermare (Velocity da non valutata a un valore, KRI non riletto); A5 facoltativo e Bloccanti di A5 "Da motivare" in `combina`, C3, date di C5 e soglie di C9 che non fermano (D-71); D-72: `fenomeni_non_censiti` nello schema di A1 (facoltativo, motivo fuori elenco rifiutato), testi della knowledge di A7 (file del rischio e `Ciclo.txt`), file dei rischi tolti, cartella nella library Kernel o in quella di uscita; D-79: registro unico (la regola di `radar.py`: soglie, eccezioni, capienza, uscita in due cicli, massimo delle viste; lo stato previsto dai controlli sui dati di prova; un difetto per regola sui rischi in osservazione e su chi entra; 21 rischi in osservazione fermano, 20 no; decisione sullo stato nelle rettifiche; rischi in osservazione ed entrati/usciti in `Ciclo.txt`); dati di esempio conformi alla rubrica, con l'esito calcolato dallo script; regole delle rettifiche umane; consistenza fra due run; una mappa delle colonne di un'altra versione ferma lo script; output di A6 (schema e controlli, un difetto per controllo) e file delle schede, compreso il razionale in parti (D-68: lettura delle etichette, perche' accanto a ogni valore, Razionale con il fenomeno, azioni e KRI con perche' ed effetto atteso; un razionale scritto prima resta intero); D-69: C8 su un'azione uguale a un'azione aperta (e nessuna nei cicli di prova), `precontrollo` (schema, controlli, forma del razionale, messaggio di correzione, codici di uscita, comando senza registro e senza baseline), allegato di A1 (baseline identica, controlli = testo del prompt di A5, guida senza note, sostituzione del file del ciclo prima, kernel senza i file nuovi); D-70: impronta dell'output nel comando `precontrollo`, lettura della baseline dall'allegato, kit della prova di Copilot Studio (lo script della skill contiene esattamente i moduli e lo schema del pacchetto, gli zip contengono `SKILL.md` e lo script attuali, `name` e `description` della skill nel formato richiesto; lo script eseguito come processo a parte da' la stessa prima riga, la stessa impronta e lo stesso messaggio del comando, legge anche una risposta con i recinti o `Baseline_corrente.json`, codice 2 su file illeggibili) | no |
 | `test_fonti.py` | `fonti.md` leggibile, codici unici e conformi allo schema A3, al massimo 4 siti per l'agente con URL validi per Agent Builder, codici dei dati di esempio nell'elenco, elenco nel prompt di A3; raccolta notizie con feed finti (RSS, Atom, voci senza data, finestra, esclusioni, doppioni, fonte giu'), senza rete | no |
 | `verifica_riferimenti.py` | tassonomia, controlli C1-C9 (anche nel testo unico `01_Kernel/controlli_A5.md` e senza copie nel modello di A5, D-69), numeri di passo, campi derivati, formule e nomi del manuale, indice di 00_LEGGIMI, comandi e opzioni citati nella guida e nei README (anche con il trattino, come `aggiorna-registro`), versione della struttura uguale in generatore, script, mappa e template | no |
-| `run_catena.py` | due cicli trimestrali e due settimane con lo strumento di campo vero, su una copia del template, verificati aprendo il workbook in Excel; validazione nella griglia del foglio Validazione, come la fa il validatore (D-67); primo uso (`inizializza`) e dismissione di un rischio; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c (colonne dismesse); A5 facoltativo e segnalazioni in validazione (D-71); knowledge di A7 dopo trimestrale, valida e dismetti e Note dell'analista archiviate al ciclo dopo (D-72); lista di osservazione (D-73): due voci nuove nel 2026Q3 con le tre del template riportate invariate, una rettificata e una respinta in validazione, pagina Fenomeni ordinata per impatto e orizzonte, promozione a NFR-13 nel 2026Q4; report al comitato confrontato con calcoli indipendenti; schede dei rischi con A6 (controlli sull'output, file) | **si'** |
+| `run_catena.py` | due cicli trimestrali e due settimane con lo strumento di campo vero, su una copia del template, verificati aprendo il workbook in Excel; validazione nella griglia del foglio Validazione, come la fa il validatore (D-67); primo uso (`inizializza`) e dismissione di un rischio; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c (colonne dismesse); A5 facoltativo e segnalazioni in validazione (D-71); knowledge di A7 dopo trimestrale, valida e dismetti e Note dell'analista archiviate al ciclo dopo (D-72); registro unico (D-79): NFR-16 nuovo in osservazione nel 2026Q3 con i tre del template riportati, pagina Fenomeni per score con il perche', NFR-16 che entra nel radar nel 2026Q4 con KRI e azioni; passo 14 con uscita in due cicli, decisioni del validatore sullo stato, capienza ridotta e dismissione di un rischio in osservazione; passo 11c con la conversione della lista di un registro 2026-10-08b; report al comitato confrontato con calcoli indipendenti; schede dei rischi con A6 (controlli sull'output, file) | **si'** |
 | `confronta.py` | strumento: confronta due output di A1 (usato dai test e, in tenant, per il doppio run); `--primo-ciclo` abbina i rischi per event type e nome quando, da registro vuoto, A1 li numera da se' | no |
 | `comune.py` | percorsi e utilita' condivise | — |
 
@@ -38,18 +50,20 @@ Cosi' collauda esattamente il codice che gira in esercizio.
 
 | File | Cos'e' |
 |---|---|
-| `baseline_2026Q3.json` | baseline estratta dal template (ciclo precedente 2026Q2) |
-| `run1_A1_2026Q3.json` | output A1 per il 2026Q3 nel formato del 30/09 sera (impatto, niente confidence, rilevanza sulle fonti, anni_adeguamento; senza gap_controlli, esito, da/a, dimensione delle azioni): conferme, un aumento su evidenza esterna (NFR-03), NFR-11 con 3 anni di adeguamento, NFR-10 con Velocity non valutata, NFR-10-K1 senza soglie, NFR-03-K1 riproposto senza soglie, un KRI sostituito (NFR-02-K2 esce, il nuovo diventa NFR-02-K3); dal 01/10 due KRI per rischio con il `tipo` (Esposizione, Evoluzione: D-64) |
+| `baseline_2026Q3.json` | baseline estratta dal template (ciclo precedente 2026Q2): 12 rischi nel radar, 3 in osservazione (NFR-13, 14, 15) e la regola del radar |
+| `run1_A1_2026Q3.json` | output A1 per il 2026Q3 nel formato del 30/09 sera (impatto, niente confidence, rilevanza sulle fonti, anni_adeguamento; senza gap_controlli, esito, da/a, dimensione delle azioni): conferme, un aumento su evidenza esterna (NFR-03), NFR-11 con 3 anni di adeguamento, NFR-10 con Velocity non valutata, NFR-10-K1 senza soglie, NFR-03-K1 riproposto senza soglie, un KRI sostituito (NFR-02-K2 esce, il nuovo diventa NFR-02-K3); dal 01/10 due KRI per rischio con il `tipo` (Esposizione, Evoluzione: D-64); dall'08/10 (D-79) NFR-16, rischio nuovo sui rapporti di impiego, in osservazione (Prossimita 1, orizzonte e segnale, niente KRI ne' azioni) |
 | `run2_A1_2026Q3.json` | secondo run sullo stesso input: stessi giudizi, prosa diversa |
 | `run_A5_2026Q3.json` | esito di A5 per il 2026Q3 (approvato, un'osservazione C5 su NFR-06) |
-| `run_A3_2026-10-12.json` | settimana con tre segnali concordanti su NFR-01 e una notizia sui rapporti di impiego senza rischio censito; ogni notizia ha un codice fonte dell'elenco |
+| `run_A3_2026-10-12.json` | settimana con tre segnali concordanti su NFR-01 e una notizia sui rapporti di impiego collegata a NFR-16, in osservazione, con un flag (il suo segnale si verifica); ogni notizia ha un codice fonte dell'elenco |
 | `baseline_2026Q4.json` | baseline estratta dopo la scrittura del 2026Q3 |
-| `run3_A1_2026Q4.json` | output A1 per il 2026Q4: rischio nuovo NFR-13 (L1-03), aumento su evidenza interna; dal 02/10 (D-68) razionali nel formato a parti (RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO per NFR-11) e razionali di azioni e KRI con EFFETTO. I dati del 2026Q3 (`run1`, `run2`) restano nel formato di prima: provano la lettura dei razionali senza parti. Dal 02/10 (D-69) nei tre run A1 non ripropone le azioni aperte: dove prima le ripeteva propone il passo successivo (in `run3`, per esempio, NFR-11: sostituzione nel 2026Q2, isolamento nel 2026Q3, supporto esteso nel 2026Q4); `baseline_2026Q4.json` ha le descrizioni nuove delle azioni del 2026Q3 |
+| `run3_A1_2026Q4.json` | output A1 per il 2026Q4: NFR-16 entra nel radar (Probabilita e Prossimita su di un punto, KRI e azioni; D-79), NFR-14 in osservazione aggiornato con evidenza nuova, NFR-13 confermato con una fonte nuova, aumento su evidenza interna; dal 02/10 (D-68) razionali nel formato a parti (RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO per NFR-11) e razionali di azioni e KRI con EFFETTO. I dati del 2026Q3 (`run1`, `run2`) restano nel formato di prima: provano la lettura dei razionali senza parti. Dal 02/10 (D-69) nei tre run A1 non ripropone le azioni aperte: dove prima le ripeteva propone il passo successivo (in `run3`, per esempio, NFR-11: sostituzione nel 2026Q2, isolamento nel 2026Q3, supporto esteso nel 2026Q4); `baseline_2026Q4.json` ha le descrizioni nuove delle azioni del 2026Q3 |
 | `decisioni_validatore_2026Q3.json` | cio' che il validatore scrive nel foglio Validazione per il 2026Q3: anni di adeguamento di NFR-06 (1, vanno nell'anagrafica), Velocity di NFR-10 da non valutata a 3, le due soglie di NFR-10-K1 fissate dalla Banca, un valore di KRI, un'azione respinta |
 | `decisioni_validatore_2026-10-12.json` | una rettifica del segnale di una notizia |
 | `run_A5_2026Q4.json` | esito di A5 per il 2026Q4 |
+| `run4_A1_2026Q4-S1.json` | output di **A8** per lo straordinario 2026Q4-S1 (D-75, D-77): solo NFR-01, Probabilita da 4 a 5, con l'analisi dell'evento (NFR-07 toccato e non indicato: un'osservazione) e i due KRI di NFR-01 riletti |
 | `registro_template_2026-09-23.xlsx`, `baseline_registro_template_2026-09-23.json` | registro nato dal template del 23/09 e la sua baseline attesa dopo `aggiorna-registro` (passo 11) |
 | `registro_template_2026-09-25c.xlsx`, `baseline_registro_template_2026-09-25c.json` | registro nato dal template 2026-09-25c (un ciclo validato, con Gap_Controlli e Dimensione) e la sua baseline attesa dopo `aggiorna-registro` (passo 11b) |
+| `registro_template_2026-10-08b.xlsx` | il template di esempio del 07/10 (lista di osservazione D-73, tre voci in osservazione) per la conversione al registro unico (passo 11c, D-79) |
 
 Le baseline attese (`baseline_*.json`) sono state rigenerate il 30/09 con il
 codice della semplificazione e di nuovo la sera (D-57...D-60): rispetto alle
@@ -73,8 +87,25 @@ difetto alla volta, cosi' ogni caso isola un solo controllo.
 
 ## La catena, in breve
 
-Durata: 40-50 minuti dal 02/10/2026 (Excel si apre e ricalcola a ogni comando).
-Non lanciarne due insieme: usano Excel e si disturbano. Se Excel non
+Durata: circa 40 minuti in parallelo, circa 50 in sequenza (08/10/2026: Excel si apre e ricalcola circa 150 volte).
+La catena e' divisa in **dieci gruppi indipendenti**, ognuno su copie proprie del template:
+- `catena` (passi 0-5, 7, 7b, 8s, 8a);
+- `gate` (6);
+- `errore` (8, 8b);
+- `primo_uso` (9);
+- `produzione` (10);
+- `aggiornamento` (11);
+- `notizie` (3b);
+- `aggiornamento_25c` (11b);
+- `segnalazioni` (12);
+- `riapertura` (13).
+
+Con `--parallelo 3` (il default di `esegui_collaudo.py`) girano in tre processi, ognuno con la sua istanza di Excel:
+`SessioneExcel` usa `DispatchEx` e non condivide l'istanza. La durata e' quella del gruppo `catena`, che resta in
+sequenza perche' ogni passo parte dallo stato del precedente. Prova dell'08/10: 331/331 in 40 minuti.
+
+Non lanciare due collaudi completi insieme: oltre ai tre Excel della catena, la demo o un altro collaudo
+rallentano tutto e possono far scadere i tentativi di avvio di Excel. Se Excel non
 parte al primo colpo, `excel_com.py` riprova fino a cinque volte: prima di
 questa correzione la catena falliva a caso in 2 esecuzioni su 3.
 
@@ -138,14 +169,14 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    senza A6 il file esce con i testi del registro.
 3. Settimana: codice fonte fuori elenco e id ripetuti fermati; titoli che
    iniziano con "=" o sembrano date scritti come testo; segnali netti in
-   peggioramento per NFR-01, L1-03 "AREA NON PRESIDIATA", rilancio senza duplicati;
+   peggioramento per NFR-01, 9.11 "In osservazione" (la notizia va su NFR-16, D-79), rilancio senza duplicati;
    nello storico due righe per notizia, nella griglia una; una riga cancellata a
    mano dalla griglia ferma `valida`, che indica il comando `griglia`; `griglia`
    la ripara conservando cio' che il validatore aveva scritto nelle altre;
    validazione delle notizie senza `--accetta-il-resto`.
 4. Baseline estratta = baseline su cui e' stato scritto run3.
-5. Ciclo 2026Q4: NFR-13 entra in anagrafica, copertura 13/13, KRI NFR-13-K1..K3,
-   **L1-03 ora presidiata**: la catena si chiude. La storia di un KRI
+5. Ciclo 2026Q4: NFR-16 entra nel radar dall'osservazione (Entrato) e in anagrafica, copertura 13/13,
+   KRI NFR-16-K1..K2, **9.11 ora presidiata**: la catena si chiude; NFR-14 resta in osservazione. La storia di un KRI
    (Indicatori) coincide con lo
    storico (5 cicli per NFR-01-K1); un KRI uscito ha la storia che si ferma al
    suo ultimo ciclo; l'elenco a discesa ha i 27 KRI mai definiti (due per rischio, D-64). Radar_Mosca:
@@ -170,6 +201,18 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    e il rilancio della stessa settimana aggiorna la riga senza duplicarla.
 6. Gate: un ciclo scritto a meta' viene fermato prima del salvataggio.
 7. Finestra settimanale: quattro settimane dopo i segnali di NFR-01 tornano stabili.
+7b. Proposta di ciclo straordinario di A3 (D-75): a video e nel riquadro del foglio Notizie.
+8s. Ciclo straordinario 2026Q4-S1 (D-75): parte solo da un ciclo validato; un rischio
+   da rivalutare fuori anagrafica e' un fermo; decisione archiviata, baseline e allegato
+   per il periodo `-S1`; un output che riscrive un rischio non indicato e' fermato (C1);
+   l'output di A8 (`run4`, con l'analisi dell'evento) rivaluta NFR-01 e riporta gli
+   altri 12 rischi gia' validati, con Periodo_Valutazione e margini di Mosca invariati;
+   in validazione solo cio' che e' rivalutato; regola del punto sul 2026Q4; dopo la
+   validazione il ciclo dopo e' il 2027Q1; un secondo straordinario e' il `-S2`.
+8a. Straordinario di solo censimento con A8 (D-77): `baseline --straordinario` senza
+   `--rischi`, allegato che lo dice; precontrollo con i messaggi per A8; NFR-17 scritto
+   come nuovo, nel radar e da validare, gli altri 16 riportati (13 nel radar, 3 in osservazione); Sintesi_Cicli con il rischio nuovo
+   e l'evento; `Ciclo.txt` di A7 con l'analisi dell'evento.
 8. Errore dopo il salvataggio (Excel di output non scrivibile, come quando un
    file dell'archivio e' aperto): il messaggio dice che il registro e' scritto
    e di non rilanciare; la baseline e' gia' aggiornata. Poi la rettifica del
@@ -222,3 +265,26 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    motivazioni, il salto riportato a un punto e le soglie corrette la
    validazione si applica e nella griglia restano solo le notizie della
    settimana. Il primo ciclo del passo 10 si scrive senza A5.
+13. Riapertura della validazione (D-76), sul ciclo 2026Q2 del template, gia'
+   validato: `riapri` rimette nella griglia tutti i rischi (anche in osservazione), i KRI
+   in vigore e le azioni aperte senza cambiare il registro; una seconda
+   `riapri` si ferma; un valore cambiato senza Motivazione ferma `valida` senza
+   scrivere; poi due punti in piu' su NFR-02 e su NFR-05 passano (nessun limite in
+   riapertura), il KRI respinto esce di vigore, con la decisione sullo stato NFR-14 entra
+   nel radar (Entrato) e NFR-12 esce subito (KRI fuori vigore, anagrafica senza buchi),
+   l'azione con l'owner cambiato resta Approvata, le righe non toccate restano
+   identiche; storico con le decisioni "(riapertura)", griglia vuota, integrita' e
+   report. Una seconda riapertura (`--rischi NFR-02`) porta solo quel rischio con
+   i suoi KRI e azioni e, validata senza cambiare niente, lascia il registro
+   com'era.
+14. Registro unico (D-79), sul template: nel 2026Q3 NFR-08 scende sotto la soglia di
+   Probabilita e resta un ciclo "Radar, in uscita" (con KRI e azioni); in validazione
+   una decisione sullo stato senza Motivazione ferma `valida`; poi NFR-12 va in
+   osservazione (esce subito, KRI fuori vigore) e NFR-16 nel radar; nel 2026Q4, con
+   la capienza a 10, NFR-08 esce al secondo ciclo e il piu' basso per score resta un
+   ciclo in uscita per capienza (11 nel radar), NFR-12 resta fuori per decisione;
+   `dismetti` toglie un rischio in osservazione.
+11c. Aggiornamento di un registro del template 2026-10-08b (lista di osservazione,
+   `dati/registro_template_2026-10-08b.xlsx`): le tre voci in osservazione diventano
+   NFR-13, 14, 15 in osservazione (accettate, "Conversione D-79", valori provvisori),
+   le righe del registro restano nel radar, pagina Fenomeni e baseline con i tre.

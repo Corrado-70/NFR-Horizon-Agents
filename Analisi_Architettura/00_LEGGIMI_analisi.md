@@ -13,6 +13,12 @@ Aggiornato il 07/10/2026, su richiesta dell'utente: l'analisi tiene **due sole o
 Comune alle due: kernel, schemi, controlli prima della scrittura, validazione umana, registro Excel, collaudo,
 motore `esegui_ciclo_locale.py` che resta l'unico a scrivere (D-10).
 
+## Altre analisi aperte
+
+| Documento | Tema | Stato |
+|---|---|---|
+| `13_Scala_unica.md` | scala unica per rischi e fenomeni in osservazione (TODO P10): opzione A, la lista sulla scala della rubrica; opzione B, un registro con due stati e una regola calcolata | 08/10/2026: scelta la B dall'utente, anteprima approvata, fatta la sera (D-79, registro unico, struttura 2026-10-09; 13.8) |
+
 ## Archivio
 
 Le analisi dal 23/09 al 06/10 sono in `Archivio/`, come storia delle decisioni: architettura attuale e
@@ -20,5 +26,5 @@ alternative (01-04), piano di rigenerazione (05), agente operativo R2 (06), pian
 con lo Horizon Scanning fatto a mano (08), proposta grafica e anteprime del registro (09), piano di
 automazione con l'opzione Copilot Studio (10), semplificazione dello scoring (11). L'indice di allora, con le
 note datate, e' `Archivio/00_LEGGIMI_analisi_fino_al_2026-10-07.md`. Le decisioni prese su quelle analisi
-restano in `NFR_Emerging_Risk_Agents/08_Deploy/DECISIONI.md`; i riferimenti dei documenti del pacchetto
+restano in `NFR_Emerging_Risk_Agents/04_Riferimenti/DECISIONI.md`; i riferimenti dei documenti del pacchetto
 puntano ai file in `Archivio/`.

@@ -1,0 +1,21 @@
+{
+  "validatore": "Funzione Risk Management",
+  "decisioni": [
+    {
+      "oggetto": "Rischio",
+      "id": "NFR-02",
+      "campo": "Probabilita",
+      "decisione": "Rettificato",
+      "valore": 4,
+      "motivazione": "Secondo incidente del fornitore cloud in un mese, con ripristino oltre i tempi contrattuali."
+    },
+    {
+      "oggetto": "KRI",
+      "id": "NFR-02-K1",
+      "campo": "Valore_Corrente",
+      "decisione": "Rettificato",
+      "valore": 78,
+      "motivazione": "Dato definitivo dell'inventario: tre servizi critici migrati sul cloud principale a novembre."
+    }
+  ]
+}

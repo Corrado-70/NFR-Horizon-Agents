@@ -54,12 +54,18 @@ def ciclo_di(payload, baseline):
     return ciclo if re.fullmatch(r"\d{4}Q[1-4](-S[1-9])?", ciclo) else (baseline.get("ciclo_da_valutare") or "senza_ciclo")
 
 
+def agente(ciclo):
+    """Chi ha scritto l'output: A1 per un trimestre, A8 Evento critico per uno straordinario AAAAQn-Sk (D-77)."""
+    return "A8" if "-S" in str(ciclo) else "A1"
+
+
 def riga_esito(ciclo, esito):
     """Prima riga dell'esito, uguale nel comando sul PC e nella skill di Copilot Studio."""
     da_correggere, da_verificare = conta(esito)
     if not da_correggere and not da_verificare:
-        return f"Precontrollo dell'output di A1 ({ciclo}): nessun rilievo."
-    return f"Precontrollo dell'output di A1 ({ciclo}): {da_correggere} punti da correggere, {da_verificare} da verificare."
+        return f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): nessun rilievo."
+    return (f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): {da_correggere} punti da correggere, {da_verificare} "
+            "da verificare.")
 
 
 def impronta(payload):

@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-09 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-09 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-09 Violazione di sanzioni internazionali tramite triangolazioni
-Event type: L1-04 Clientela, prodotti e prassi professionali; driver: DRV-GEO; owner: Funzione Compliance.
-Esito nel ciclo: Confermato. Posizione in classifica per score: 10 su 13.
+Categoria: 9.4 Legale; driver: DRV-GEO; owner: Funzione Compliance.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 9 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 2 e Probabilita 2: sopra la soglia; posto garantito: tema del supervisore.
 Attenzione del supervisore: si. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
 
 DESCRIZIONE
@@ -39,14 +40,15 @@ AZIONI
 - 2026Q4-NFR-09-A1 [Approvata, 12 mesi, Funzione Compliance]: Chiedere ai corrispondenti esteri il beneficiario finale dei pagamenti verso i paesi di transito segnalati. Perche': Lo screening esteso (2026Q2-NFR-09-A1) e la formazione (2026Q3-NFR-09-A1) dipendono dai dati disponibili: senza il beneficiario finale la triangolazione non si vede. Effetto atteso: Piu' pagamenti sospetti fermati all'origine (NFR-09-K1 puo' salire, ed e' un buon segno) e una Probabilita' che resta bassa anche se i flussi crescono.
 
 KRI IN VIGORE
-- NFR-09-K1 (Evoluzione) Pagamenti bloccati dal filtro sanzioni ogni 10.000 verso paesi di transito [n/10k]: valore 4 (prima 4,20), soglie 2 / 5, stato Ambra; fonte dati Sistema di filtro sanzioni. Perche': Misura la pressione delle triangolazioni sui pagamenti della Banca.
-- NFR-09-K2 (Esposizione) Clienti corporate ad alto rischio senza due diligence rafforzata aggiornata [%]: valore 8 (prima 9), soglie 5 / 15, stato Ambra; fonte dati Anagrafe clienti — Compliance. Perche': Misura l'esposizione: i clienti ad alto rischio con verifiche scadute sono il varco piu' probabile.
+- NFR-09-K1 (Evoluzione) Pagamenti bloccati dal filtro sanzioni ogni 10.000 verso paesi di transito [n/10k]: valore 4 (prima 4), soglie 2 / 5, stato Ambra; fonte dati Sistema di filtro sanzioni. Perche': Misura la pressione delle triangolazioni sui pagamenti della Banca.
+- NFR-09-K2 (Esposizione) Clienti corporate ad alto rischio senza due diligence rafforzata aggiornata [%]: valore 8 (prima 8), soglie 5 / 15, stato Ambra; fonte dati Anagrafe clienti — Compliance. Perche': Misura l'esposizione: i clienti ad alto rischio con verifiche scadute sono il varco piu' probabile.
 
 STORIA (cicli, dal piu' vecchio)
 - 2026Q1: Impatto 4, Probabilita 2, Prossimita 2, Velocity 3, score 2,90
 - 2026Q2: Impatto 4, Probabilita 2, Prossimita 2, Velocity 3, score 2,90
 - 2026Q3: Impatto 4, Probabilita 2, Prossimita 2, Velocity 3, score 2,90
 - 2026Q4: Impatto 4, Probabilita 2, Prossimita 2, Velocity 3, score 2,90
+- 2026Q4-S1: Impatto 4, Probabilita 2, Prossimita 2, Velocity 3, score 2,90
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

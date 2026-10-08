@@ -5,7 +5,26 @@
 > incorporati dal disegno invece che aggiunti dopo.
 >
 > **Versione del 23/09/2026, aggiornata il 24, 25, 29, 30/09, 01, 02, 05, 06 e 07/10**
-> (ultimo aggiornamento, 07/10 notte: **tassonomia interna della Banca** (D-74): le
+> (ultimo aggiornamento, 08/10 sera: **registro unico** (D-79, sostituisce la lista di osservazione della D-73):
+> un solo registro di rischi `NFR-nn` con la stessa rubrica; colonna **Stato** del RiskRegister (Radar, Radar, in
+> uscita, Osservazione, Dismesso) con Motivo_Stato, Movimento (Entrato / Uscito), Decisione_Stato del validatore,
+> Orizzonte_Anni e Segnale_Avvicinamento di A1, formula Ordine_Osservazione; regola in un solo modulo
+> `07_Senza_Studio/radar.py` (Prossimita >= 2 e Probabilita >= 2, capienza 15 fino a 20 per score, eccezioni AGIRE
+> ORA, supervisore, decisione Radar; decisione Osservazione esclude; uscita dopo due cicli "in uscita"; massimo 20
+> in osservazione); anagrafica = il radar; KRI e azioni solo per il radar, A1 li scrive subito per chi entra;
+> `tblOsservazione`, `OSS-nn`, `voce_osservazione` e `segnali_osservazione` spariscono; `riapri` senza `--voci`;
+> `aggiorna-registro` converte le voci in rischi in osservazione; struttura **2026-10-09**; trappole 103-107.
+> Prima, 08/10: **documenti di riferimento in `04_Riferimenti`** (DECISIONI,
+> SharePoint, workflow, governance, `Prove/`; D-78) e **collaudo in parallelo** (dieci gruppi in tre processi,
+> `--mirato`); A8 rilegge i KRI dei rischi che riscrive (D-77, punto 4); analisi della scala unica in
+> `Analisi_Architettura/13_Scala_unica.md` (TODO P10); trappola 102. Prima, 07/10 notte: **A8 Evento critico** (D-77): agente del ciclo
+> straordinario, stesso allegato, formato e comandi di A1; legge per intero i
+> documenti dell'evento, rivaluta i rischi indicati, censisce i nuovi e scrive il
+> campo facoltativo `analisi_evento` (evento, catena causale, rischi toccati e non
+> toccati, documenti, limiti: nella colonna Straordinario di Sintesi_Cicli il fatto,
+> in `Ciclo.txt` di A7 tutto; controlli solo Osservazioni); `baseline --straordinario`
+> senza `--rischi` = solo censimento (C1 Bloccante se nessun rischio nuovo); demo con
+> riapertura e straordinario; trappola 101. Prima, 07/10 notte: **tassonomia interna della Banca** (D-74): le
 > nove categorie in perimetro (9.1 Condotta, 9.4 Legale, 9.5 Fiscale, 9.6 Tecnologico,
 > 9.7 Sicurezza informatica, 9.8 Sicurezza fisica, 9.9 Terze parti, 9.11 Employer,
 > 9.13 Processo, da `01_Kernel/Tassonomia dei Rischi.csv`) sostituiscono i sette
@@ -24,7 +43,7 @@
 > sezione "Avvio del progetto" della guida (`Piano_deploy.md` non c'e' piu').
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
 > app Python unica, Copilot Studio nei vincoli). Trappole 93-98. Prima, 07/10 sera:
-> **lista di osservazione** (D-73): i fenomeni
+> **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
 > impatto potenziale 1-5, orizzonte in anni, plausibilita' teorica / possibile / in
@@ -60,7 +79,7 @@
 > `prepara_kit.py` dai moduli del pacchetto, la **skill** `precontrollo-nfr`
 > (SKILL.md) e il protocollo della prova in due opzioni del codice (Code
 > interpreter dell'esperienza standard, skill nel sandbox della nuova
-> esperienza); `08_Deploy/Prova_senza_Copilot_Studio.md` (installazione e ciclo
+> esperienza); `04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md` (installazione e ciclo
 > su un registro di prova); trappole 81-84. Prima, 02/10 sera: **meno giri fra A1 e A5** (D-69): i nove
 > controlli in un solo file del kernel (`controlli_A5.md`) da cui si compongono
 > le istruzioni di A5 e l'**allegato di A1** `Input_A1_<ciclo>.txt` (baseline,
@@ -175,7 +194,7 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   stesso momento questo PROMPT_MASTER e tutti i documenti che la citano.
   Lo **zip** del pacchetto si crea **solo su richiesta dell'utente** (25/09
   sera), non a ogni modifica.
-- **Registro delle decisioni** `08_Deploy/DECISIONI.md` (24/09, aggiornato il
+- **Registro delle decisioni** `04_Riferimenti/DECISIONI.md` (24/09, aggiornato il
   25/09, 26/09, 28/09, 29/09, 30/09 e 01/10): 66 decisioni prese (D-01..D-66; D-41 e D-42 del 26/09:
   principi confermati con l'eccezione del ciclo straordinario su segnale
   critico, e rischi separati ma collegati, entrambe da implementare; D-43
@@ -185,7 +204,7 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   pavimento di Gap_Controlli (sostituito da D-49), Prossimita 4-5 solo con un
   caso nominato; **D-49..D-56 del 30/09**, la semplificazione dello scoring,
   elencate sotto) e 4 aperte (A-15 strada A o variante
-  CS-1 con Copilot Studio, TODO AU4; A-11 variante 05_Workflow, con A-15; A-12
+  CS-1 con Copilot Studio, TODO AU4; A-11 variante 04_Riferimenti/workflow.md, con A-15; A-12
   revisione dopo il primo ciclo; A-13 revisione annuale delle fonti; A-14
   ridisegno del registro chiusa da D-39 e D-40), con data, chi, perche' e stato; cancelli G0, G1
   (provvisorio) e G2 (con condizione) firmati il 24/09. E' la
@@ -197,7 +216,7 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
     capability spente; D-12 `pypac`;
   - D-13 **una sola persona** e' responsabile, manutentore, analista e
     validatore; D-30 il limite (validazione non indipendente) e' **accettato
-    nel pilota** e va dichiarato nel report e in `06_Governance`;
+    nel pilota** e va dichiarato nel report e in `04_Riferimenti/controlli_e_model_risk.md`;
   - D-14 il registro **affianca** il processo di rischio operativo (pilota);
   - D-23 model risk: **non rilevante**, nessun requisito di convalida
     ulteriore; D-24 parere compliance/DPO positivo (Agent Builder e copie in
@@ -405,7 +424,8 @@ Conseguenze di progetto, obbligatorie:
    leggono, commentano, propongono un flag, senza mai una cifra nuova.
    Confermato dall'utente il 26/09 (D-41) con una sola eccezione, da
    implementare (TODO P3): un segnale critico puo' portare a un ciclo
-   straordinario, con la stessa catena di controlli e validazione. Un evento
+   straordinario, con la stessa catena di controlli e validazione (fatto: D-75,
+   con A8 dal D-77). Un evento
    che tocca piu' rischi = righe di rischio separate, collegate fra loro
    (D-42, collegamento da implementare: TODO P5).
 4. **Ogni controllo di giudizio ha una controparte deterministica** dove il
@@ -435,8 +455,10 @@ Conseguenze di progetto, obbligatorie:
   in parti (D-68): RISCHIO (il fenomeno in termini di rischio), IMPATTO,
   PROBABILITA, PROSSIMITA, VELOCITY (perche' quel valore, con fatto e
   documento), ADEGUAMENTO; azioni e KRI con EFFETTO. Registra i fenomeni
-  esaminati e non censiti (D-72) e propone e aggiorna la **lista di osservazione**
-  (D-73: solo voci nuove o con evidenza nuova). Output JSON.
+  esaminati e non censiti (D-72). **Registro unico** (D-79): rivaluta tutti i rischi
+  del radar e, di quelli in osservazione, solo quelli con evidenza nuova (con
+  orizzonte_anni e segnale_avvicinamento, senza KRI ne' azioni); a chi entra nel
+  radar scrive subito KRI e azioni. Output JSON.
 - **A2 Scrittura** (NON un agente): lo script deterministico, uguale in
   entrambe le varianti (con Power Automate lo lancia un desktop flow).
 - **A3 Interim Update** (settimanale): integra le notizie dei tre canali; per
@@ -460,13 +482,22 @@ Conseguenze di progetto, obbligatorie:
   `Schede_<ciclo>.xlsx`; senza A6 le schede escono con i testi del registro
   (Razionale, perche' di ogni valore, perche' ed effetto di azioni e KRI: di A1).
 - **A7 Assistente del registro** (su richiesta, D-72): spiega in chat il perche'
-  delle valutazioni (anche dei fenomeni non censiti e delle voci in
+  delle valutazioni (anche dei fenomeni non censiti e dei rischi in
   osservazione) distinguendo registrato, calcolato e sua lettura; knowledge
   scritta dallo script (cartella `Spiegazioni`); non propone valori e non scrive.
+- **A8 Evento critico** (nel ciclo straordinario deciso dalla funzione di rischio,
+  D-75, D-77): stesso allegato `Input_A1_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
+  i documenti dell'evento; analizza a fondo l'evento (campo `analisi_evento`),
+  rivaluta TUTTI e SOLO i rischi indicati e censisce i nuovi che l'evento crea
+  (almeno uno se lo straordinario e' di solo censimento); rilegge ogni KRI in
+  vigore dei rischi che riscrive (C7 da motivare se no: un KRI Non rilevato
+  toglierebbe l'aggravante al livello di allerta proprio quando il rischio sale). Nessun comando proprio:
+  `precontrollo`, `trimestrale`, `valida` come per A1. Prompt al limite: il dettaglio
+  di `analisi_evento` sta nella guida di scrittura dell'allegato.
 - **Validazione umana** (dopo ogni trimestre; facoltativa ogni settimana): un
   validatore accetta, rettifica o respinge ogni proposta nella **griglia del
-  foglio Validazione**, una riga per rischio, KRI, azione, voce in osservazione
-  proposta da A1 e notizia (D-67, D-73):
+  foglio Validazione**, una riga per rischio (con la decisione sullo stato:
+  Automatico, Radar, Osservazione; D-79), KRI, azione e notizia (D-67):
   riga non toccata = accettata, cella gialla cambiata = rettifica con
   Motivazione, Respingi = Sì (non per i rischi); il trimestre dopo non parte
   finche' il precedente non e' validato.
@@ -612,13 +643,11 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
 
 ### Schemi e mappa
 
-- `schema_output_A1.json` (dal 07/10 anche i campi facoltativi
-  `fenomeni_non_censiti`, D-72, e `osservazione`, D-73: al massimo 30 voci con
-  oss_id `^OSS-[0-9]{2}$` o null per una voce nuova, esito nuova / confermata /
-  avvicinata / promossa / archiviata, nome, descrizione, driver 1-3, event type
-  L1, rischi_toccati 0-5, impatto_potenziale 1-5, orizzonte_anni intero 1-20,
-  plausibilita teorica / possibile / "in crescita", segnale_avvicinamento,
-  motivazione, fonti 1-3 con riferimento e data, promosso_a NFR-nn o null):
+- `schema_output_A1.json` (dal 07/10 anche il campo facoltativo
+  `fenomeni_non_censiti`, D-72; dall'08/10, D-79, nel rischio i campi facoltativi
+  `orizzonte_anni` intero 1-30 o null e `segnale_avvicinamento` 10-300 caratteri o
+  null, `kri_proposti` al massimo 2 e `azioni_mitigazione` al massimo 5, senza
+  minimo: un rischio in osservazione non ne ha; niente campo `osservazione`):
   `additionalProperties: false` ovunque; ciclo
   `^[0-9]{4}Q[1-4]$`; **impatto**, prossimita, **probabilita** interi 1-5;
   **velocity `["integer","null"]` obbligatoria** (null = non valutata);
@@ -690,9 +719,10 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   `componi_prompt.py` (`{{CONTROLLI}}` nel modello di A5) e `input_a1.py`
   (allegato di A1), tramite `input_a1.testo_controlli`.
 - `guida_scrittura_A1.md` (D-69; dal 07/10 anche le sezioni "Fenomeni
-  considerati e non censiti", D-72, e "Lista di osservazione", D-73: ingresso con
-  un meccanismo e una fonte, valutazione preliminare, esiti, promozione con il
-  rischio nuovo in `rischi`, i fermi dello script): come A1 scrive la descrizione (3-5 frasi:
+  considerati e non censiti", D-72, e "Radar e osservazione", D-79: la regola dalla
+  baseline, `rischi` contro `rischi_in_osservazione`, riscrivere un rischio in
+  osservazione solo con evidenza nuova, orizzonte e segnale, notizie e flag di A3,
+  KRI e azioni per chi entra): come A1 scrive la descrizione (3-5 frasi:
   meccanismo causa-evento-danno, dove tocca la Banca, perche' emergente; niente
   punteggi), il razionale in parti (per ogni valore: descrittore, fatto con
   documento e data, **perche' non il valore vicino**, da/a o fonti ancora
@@ -827,19 +857,18 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
 
 ## IL WORKBOOK (03_Excel/genera_dashboard.py -> NFR_Dashboard_Template.xlsx)
 
-**Colonne dalla mappa, mai elencate nel generatore.** Un solo file, 25 fogli
+**Colonne dalla mappa, mai elencate nel generatore.** Un solo file, 24 fogli
 senza viste doppie (D-39), in quattro gruppi con linguette colorate, in
 quest'ordine: **Guida** (ocra); report al comitato, di seguito per il PDF
 (D-32), blu notte: **Quadro, Classifica, Radar_Mosca, Matrice, Delta,
-Fenomeni** (D-73), **Metodologia**; lavoro, blu: **Registro, Storico, Indicatori,
-Notizie, Piano_azioni, Osservazione** (D-73), **Validazione, Parametri,
+Fenomeni** (D-79: i rischi in osservazione), **Metodologia**; lavoro, blu: **Registro, Storico, Indicatori,
+Notizie, Piano_azioni, Osservazione** (D-79), **Validazione, Parametri,
 Dizionario**; dati, grigio: RiskRegister, Azioni, KRI, NewsLog, Sintesi_Cicli,
-**Sintesi_Settimane** (D-66), **Lista_Osservazione** (D-73),
-**Storico_Validazioni** (D-67). Nomi dei fogli senza spazi ne' apostrofi
+**Sintesi_Settimane** (D-66), **Storico_Validazioni** (D-67). Nomi dei fogli senza spazi ne' apostrofi
 (i riferimenti dei grafici li vorrebbero fra apici). Griglia nascosta tranne
 nei dati; foglio attivo all'apertura: Quadro. Le **schede dei rischi** non
 stanno nel registro: sono un file a parte (D-40, vedi "Lo script di campo").
-**Versione della struttura**: nome definito `versioneTemplate` (="2026-10-07b"),
+**Versione della struttura**: nome definito `versioneTemplate` (="2026-10-09"),
 uguale a `VERSIONE_TEMPLATE` del generatore e dello script e a
 `versione_template` della mappa (il collaudo lo verifica). Va alzata a ogni
 cambio di struttura (fogli, colonne, nomi), non per i soli dati di esempio.
@@ -859,24 +888,32 @@ discesa), **tblSintesi** nel foglio
 Sintesi_Cicli (una riga per ciclo: commento di A1, sintesi di A5,
 osservazioni, **Rilievi_Ciclo** e **Rilievi_Superati**; prefisso SI_),
 **tblSettimane** nel foglio Sintesi_Settimane (una riga per settimana: sintesi
-di A3 e flag proposti; prefisso SE_; D-66), **tblOsservazione** nel foglio
-Lista_Osservazione (D-73, STORICA: una riga per voce per ciclo, prefisso OS_,
-colonna formula **Ordine** = impatto x 100000 + (100 - orizzonte) x 1000 + 1 -
-ROW()/10^6 per le sole voci "In osservazione" del ciclo corrente, chiave unica
-delle viste ordinate).
+di A3 e flag proposti; prefisso SE_; D-66). **Registro unico (D-79)**: in fondo a
+tblRegister le colonne **Stato**, **Motivo_Stato**, **Movimento**,
+**Decisione_Stato** (derivate dallo script), **Orizzonte_Anni**,
+**Segnale_Avvicinamento** (di A1) e la formula **Ordine_Osservazione** = score x
+100000 + 1 - ROW()/10^6 per le sole righe "Osservazione" del ciclo corrente,
+chiave unica delle viste ordinate; convalide a elenco su Stato e Decisione_Stato.
 
-**Lista di osservazione (D-73).** Foglio di lavoro **Osservazione**: righe 6-35 le
-voci in osservazione per Ordine (AGGREGATE(14) + MATCH sulla colonna Ordine) con
-tutti i testi, righe 37-48 le uscite del ciclo (promosse, archiviate, respinte),
-a destra da P4 due matrici driver x event type (voci in osservazione; rischi
-dell'anagrafica con `COUNTIFS(ANA_Event_Type,...,ANA_Driver,"*"&codice&"*")`).
-Pagina **Fenomeni** del report: riepilogo in A4, voci compatte in 7-36 (nome
-`fenomeniLista`, altezze adattate da `prepara_report`), event type e driver con i
-nomi (`nomiL1`, `codiciDriver`, `nomiDriver`), impatto con il descrittore,
-uscite del ciclo in 40-45 (`fenomeniUscite`). Sezione **Lista di osservazione**
-della griglia di validazione fra Azioni e Notizie (A214, righe 216-245: esito di
-A1, impatto, orizzonte, plausibilita', Respingi). Costante `capienzaOsservazione`
-= 30.
+**Rischi in osservazione (D-79).** Foglio di lavoro **Osservazione**: righe 6-25 i
+rischi in osservazione per Ordine_Osservazione (AGGREGATE(14) + MATCH) con
+dimensioni, score, motivo, orizzonte, segnale, descrizione, validazione e notizie
+di A3 (colonna O, `NW_Rischio_ID`); righe 27-38 entrati e usciti dal radar
+(`RR_Movimento`); a destra da P4 due matrici driver x categoria (rischi in
+osservazione con `COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",...)`;
+rischi del radar con `COUNTIFS(ANA_Event_Type,...,ANA_Driver,"*"&codice&"*")`).
+Pagina **Fenomeni** del report: riepilogo in A4 (nel radar con la capienza, in
+osservazione, entrati, usciti, in uscita), rischi compatti in 7-26 (nome
+`fenomeniLista`, altezze adattate da `prepara_report`) con "Imp · Prob · Pross ·
+Vel", score, perche' fuori dal radar, orizzonte, segnale, driver, notizie; entrati
+e usciti in 30-35 (`fenomeniUscite`). Nella griglia, sezione Rischi, colonne W
+(stato con il motivo), X/Y (decisione sullo stato in vigore e gialla). Parametri
+righe 65-75: `capienzaRadar` (15, da 1 a MAX_RISCHI), `sogliaProssimitaRadar`,
+`sogliaProbabilitaRadar`, `cicliUscitaRadar` (gialli), `capienzaOsservazione` = 20
+fisso, il testo della regola. Quadro: "Variati · nuovi (radar)" con sotto
+entrati, usciti e in osservazione; Notizie: presidio "In osservazione" per una
+categoria con soli rischi in osservazione. I dati di esempio hanno NFR-13, 14, 15
+in osservazione (stato calcolato con `radar.py` dal generatore).
 
 **Testata e guida (D-38, D-39).** Riga 1 = **fascia del titolo**: celle unite,
 blu notte, testo bianco, formula `="Horizon Scan NFR — <titolo>   ·   "&etichettaCiclo`;
@@ -1118,7 +1155,7 @@ entro l'anno, grigio margine), `sezione()`.
   supervisore, presidio assente, KRI rossi, notizie oltre la soglia) e cosa e'
   cambiato; bordi
   solo sulle righe piene (formattazione condizionale); limiti letti in
-  generazione da `06_Governance`, sezione 5; legenda. Stampa a scala 78%,
+  generazione da `04_Riferimenti/controlli_e_model_risk.md`, sezione 5; legenda. Stampa a scala 78%,
   margini ridotti: pagina 1 il quadro, pagina 2 commento e segnalati; con
   molti rischi segnalati la scala la riduce `prepara_report` (fino al 60%)
   perche' resti in due pagine.
@@ -1205,7 +1242,22 @@ openpyxl (solo per il file delle schede). Moduli:
   una data, "0012" il numero 12. Verificato su Excel.
 - Un file dell'agente mancante o che non e' JSON e' un **fermo** (codice 1),
   non un errore tecnico.
-- **Lista di osservazione** in `esegui_ciclo_locale.py` (D-73): `voci_osservazione`
+- **Registro unico** in `esegui_ciclo_locale.py` (D-79): in `scrivi_trimestrale`,
+  prima di tutto, `radar.stati` sui rischi di A1 e su quelli che si riportano (in
+  osservazione non toccati; nello straordinario quelli del radar non rivalutati),
+  con `stato_prima_di` e `ingresso_radar`; fermo oltre `max_osservazione`; KRI e
+  azioni solo per `payload_radar`; i KRI di chi esce In_Vigore "No"; anagrafica
+  compattata per chi esce e `upsert_anagrafica` con owner e anni dalla sua ultima
+  riga per chi entra; i riportati ricopiati con il loro Periodo_Valutazione.
+  `applica_validazione` ricalcola con `stati_del_ciclo` e `applica_stati` sui
+  valori validati (anche dopo `riapri`); `controlla_valore` accetta Decisione_Stato
+  Automatico / Radar / Osservazione; `estrai_baseline` aggiunge
+  `rischi_in_osservazione` (con notizie_a3 e flag_a3), lo stato dei rischi e
+  `regola_radar`; `dismetti` vale anche per un rischio in osservazione (riga
+  Dismesso). `aggiorna-registro` converte le voci "In osservazione" di
+  `tblOsservazione` in rischi in osservazione con un codice NFR libero (valori
+  provvisori) e confronta la baseline senza `rischi_in_osservazione` e
+  `regola_radar`. Storia (fino al 2026-10-08b), **lista di osservazione** (D-73): `voci_osservazione`
   (voci di A1 con codice nuovo = primo OSS-nn libero mai usato, Esito, Stato,
   Prima_Osservazione, Validazione "Da validare"; poi le voci "In osservazione" del
   ciclo prima non toccate, riportate con Esito Invariata e Validazione vuota),
@@ -1216,7 +1268,11 @@ openpyxl (solo per il file delle schede). Moduli:
   `osservazione` (voci "In osservazione" del ciclo corrente; [] per un registro
   senza la tabella); `spiegazioni.raccogli` la mette in `Ciclo.txt` con le
   decisioni del validatore.
-- `controlli_a5.py` (dal 07/10 anche `controlla_osservazione`, dentro `controlla`:
+- `controlli_a5.py` (dall'08/10, D-79, `stati_previsti` con la regola della baseline:
+  KRI o azioni su un rischio in osservazione, riscritto senza fonte nuova, senza
+  orizzonte o segnale = Osservazione; rischio che entra senza KRI o azioni = Da
+  motivare; rischio del radar senza = Bloccante; piu' di 20 in osservazione = C1
+  Bloccante; `controlla_osservazione` non c'e' piu'. Storia, dal 07/10 `controlla_osservazione`, dentro `controlla`:
   oss_id coerenti con la baseline e con l'esito, codici ripetuti, promosso_a solo
   con esito promossa e solo verso un rischio nuovo del ciclo, al massimo 30 voci
   dopo il ciclo = **C1 Bloccante**; rischi toccati inesistenti, voce nuova entro 2
@@ -1519,6 +1575,19 @@ openpyxl (solo per il file delle schede). Moduli:
     corrente, azioni aperte "Annullata", baseline aggiornata, atto in
     `Archivio_Cicli/Dismissioni/`. Baseline e fotografia dei KRI considerano
     solo i rischi in anagrafica.
+  - `riapri [--rischi]` (D-76; `--voci` tolto dalla D-79): il ciclo corrente, gia' validato,
+    torna nella griglia (rischi del radar e in osservazione, KRI in vigore, azioni
+    aperte non proposte) con `aggiungi_da_validare`, cioe' con il valore
+    attuale come "proposta"; si ferma se il ciclo ha gia' righe da decidere.
+    Un oggetto e' **riaperto** se il suo dato ha gia' una Validazione diversa
+    da "Da validare" (`oggetti_riaperti`); `valida` lo tratta cosi': riga non
+    toccata = il dato non si tocca; rettifica senza il limite di un punto;
+    Respingi = KRI fuori vigore, azione Annullata, voce Archiviata; un'azione
+    rettificata tiene il suo Stato; gli anni di adeguamento vanno
+    nell'anagrafica solo se cambiati; niente obbligo del ⚑. Nello storico
+    "Invariato / Rettificato / Respinto (riapertura)". Un'azione riaperta di
+    un ciclo prima si trova per ID (`riga_dato`). `baseline` senza `--uscita`
+    riscrive anche la knowledge di A7 (dopo i testi corretti a mano).
 - Codici di uscita: 0 eseguito; 1 fermato (registro intatto); 2 errore tecnico,
   distinguendo **prima** del salvataggio (nulla scritto) da **dopo** (registro
   scritto, baseline gia' aggiornata: "NON rilanciare").
@@ -1538,7 +1607,7 @@ openpyxl (solo per il file delle schede). Moduli:
 
 ## SHAREPOINT, WORKFLOW, GOVERNANCE
 
-- `04_SharePoint/struttura_e_liste.md` (colonna Rilievi in RiskRegister_Storico,
+- `04_Riferimenti/struttura_e_liste.md` (colonna Rilievi in RiskRegister_Storico,
   niente Gap_Controlli ne' Dimensione; Velocity e soglie possono essere vuote): sette library (Kernel con la baseline
   .txt e fonti.md; Analisi_Interne con sottocartelle come negli indirizzi delle
   fonti share, SOLO documenti della Banca su se stessa; **Analisi_Esterne**
@@ -1553,7 +1622,7 @@ openpyxl (solo per il file delle schede). Moduli:
   validazioni (base dati nel workbook + json per periodo). Nella variante
   senza Power Automate le liste si possono non creare: la storia e' nel
   workbook.
-- `05_Workflow/workflow.md`: W0 raccolta (tre canali; lo stesso script anche con
+- `04_Riferimenti/workflow.md`: W0 raccolta (tre canali; lo stesso script anche con
   Power Automate); W1 trimestrale con i passi dello script numerati, passo 8
   validazione umana e passo 9 comando valida, mai auto-approvazione per
   decorrenza dei termini; passo 11 schede dei rischi (`schede-input`, A6,
@@ -1579,7 +1648,7 @@ openpyxl (solo per il file delle schede). Moduli:
   `rilievi_superati`); test in ambiente **da registro vuoto** (nessun
   trimestre gia' valutato a mano) con doppio run e `confronta.py --primo-ciclo`,
   poi lettura dell'analisi e validazione.
-- `06_Governance/controlli_e_model_risk.md`: qualificazione model-risk prima del
+- `04_Riferimenti/controlli_e_model_risk.md`: qualificazione model-risk prima del
   deploy; tabella dei controlli con controparte deterministica (schema, esito
   e "da/a" calcolati, C1-C9 nella versione del 30/09, soglie invertite o vuote,
   **rilievi di A5 superati** (D-56), colonne tolte dal modello, codici dello
@@ -1708,18 +1777,21 @@ openpyxl (solo per il file delle schede). Moduli:
 - `TODO_possibili_sviluppi.md`: **il piano unico** del lavoro da fare (dal
   28/09), proposte non fatte, ciascuna con perche', cosa fare, quando e'
   fatta, impegno.
-  - In testa l'**ordine di lavoro** unico:
-    1. AU1-AU3, la parte comune;
-    2. in parallelo, facoltativi, la prova K0 e G1/G3/G2;
-    3. AU4, la decisione A-15;
-    4. AU5 oppure AU6;
-    5. P3, P1, P4, P8 (dal 02/10: lista di osservazione dei fenomeni oltre
-       l'orizzonte del registro, con valutazione preliminare e collocazione
-       per driver ed event type), P5, P2, P7, P6;
-    6. Q1.
+  - Dall'08/10 sera il file e' riordinato: voci aperte in sezioni (ordine di
+    lavoro; passi sul PC della Banca B1-B7; processi; automazione; Q1; grafici;
+    pulizia; questioni aperte), il fatto in fondo, una riga per voce. In testa
+    l'**ordine di lavoro** unico:
+    0. passi sul PC della Banca (pacchetto, `aggiorna-registro`, agenti, prove);
+    1. P4 e P9, piccole e utili subito al trimestrale;
+    2. AU1, solo la scrittura robusta (registro protetto prima del primo ciclo);
+    3. P1; 4. P5;
+    5. AU1-AU3, la parte comune; 6. AU4 (A-15), poi AU5 oppure AU6;
+    7. P2, P7, P6; in parallelo Q1, G1/G3/G2, G6.
 
-    Con il vincolo di calendario del primo ciclo 2026Q4 e la regola "P e Q
-    dopo il passo 3; gli schemi JSON si possono anticipare".
+    I processi vengono prima dell'automazione: la regola del 28/09 ("P dopo
+    AU3") valeva per P3, che toccava la coda delle richieste, ed e' fatta
+    (D-75, D-77); le P rimaste cambiano schemi, prompt e viste, validi in
+    tutte le strade.
   - Sezione **automazione del processo**, dal piano
     `Analisi_Architettura/Archivio/10`, al posto di AR1 chiusa da D-43:
     - AU1 automatismi del motore (baseline in kernel, prompt archiviati,
@@ -1764,7 +1836,12 @@ openpyxl (solo per il file delle schede). Moduli:
 Nessuna copia del codice di campo: importa `07_Senza_Studio/` e lancia
 `esegui_ciclo_locale.py` come un analista. `esegui_collaudo.py` lancia tutto
 (`--senza-excel` salta la catena; `-v` mostra anche i successi; di default
-stampa solo i fallimenti).
+stampa solo i fallimenti). Dall'08/10 (M1, D-78):
+- la catena e' in **dieci gruppi indipendenti**, ognuno su copie proprie;
+- `esegui_collaudo.py` li lancia con `run_catena.py --parallelo 3`, un'istanza di Excel per processo (`DispatchEx`);
+- `--passo <nome>` lancia un gruppo solo;
+- `--mirato` salta la catena se nessun file che la riguarda e' cambiato dalle impronte dell'ultimo collaudo
+  completo e verde (in `%LOCALAPPDATA%\NFR_collaudo`, fuori dal pacchetto).
 1. `componi_prompt.py --verifica`.
 2. `test_mappatura.py`: ogni campo degli schemi ha una destinazione, ogni
    colonna una sorgente valida (payload esistente, derivato implementato,
@@ -1988,12 +2065,16 @@ Il collaudo a componenti isolati NON basta: le incoerenze stanno nelle cuciture.
 `esegui_demo.py`: controlla prima che nessun file della demo precedente sia
 aperto; raccolta W0 **reale**; W1 con un A1 difettoso (fermato) e corretto;
 tentativo del ciclo dopo prima della validazione (fermato); validazione;
-settimana con validazione; ciclo dopo con validazione; schede del ciclo
+settimana con validazione; ciclo dopo con validazione e **riapertura della
+validazione** di un rischio (`riapri --rischi`, poi `valida`: D-76); schede del ciclo
 (`schede-input` e `schede` senza A6: gli output di A6 non si simulano nella
 demo) e PDF del report al comitato (fogli da Quadro a Metodologia dell'Excel
 validato); esporta le immagini dei grafici (Quadro, Classifica, lente,
 Radar_Mosca, Delta, Storico, Notizie anche nella settimana con l'area
-scoperta, storia di due KRI).
+scoperta, storia di due KRI); poi una settimana in cui A3 propone un **ciclo
+straordinario**, la decisione (`baseline --straordinario`), lo straordinario
+`AAAAQn-S1` su un rischio, scritto e validato (D-75), con Radar_Mosca e Storico
+esportati di nuovo.
 `REPORT_demo.md`: cosa produce ogni agente e cosa decide il validatore, con
 tabelle e immagini, dichiarando cosa e' simulato e cosa e' eseguito davvero.
 
@@ -2627,6 +2708,78 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     piano era gia' rimasto indietro ("5 agenti", collaudo "15 minuti"). Ora la
     guida ha l'avvio del progetto (decisioni, collaudo sul primo ciclo, cancelli)
     e rimanda alla sezione 0 per ogni passo tecnico.
+99. **Un valore atteso su una finestra mobile si ricalcola sulla stessa finestra**
+    (07/10). Il collaudo confrontava l'intensita' di una categoria del foglio
+    Notizie dopo la validazione con quella di prima della settimana; ma la finestra
+    di 4 settimane finisce con la settimana corrente, che la scrittura di A3 sposta:
+    notizie vecchie escono e il "prima" non e' piu' un riferimento. L'atteso si
+    calcola dal NewsLog con le stesse date del foglio (`massimo_finestra` in
+    `run_catena.py`). Stesso giorno: un payload di prova costruito da un registro
+    vecchio deve fare cio' che farebbe A1, cioe' riclassificare i codici di
+    Basilea (D-74), non ricopiarli.
+100. **Prima di un meccanismo nuovo, chiedersi se uno esistente basta** (07/10,
+    D-76). Per le modifiche fra un ciclo e l'altro era pronto un foglio
+    Manutenzione con il suo comando e un modo manutenzione di A7 (circa 600
+    righe fra script e mappa); l'utente ha proposto di riusare la validazione,
+    rieseguibile quante volte serve. La riapertura copre quasi tutto con circa
+    150 righe, nessuna struttura nuova e un solo gesto gia' noto. Nel riuso
+    attenzione a cio' che la validazione dava per scontato: "proposta" =
+    valore validato, "accettata" = non toccare il dato (altrimenti Validazione
+    e Stato delle azioni tornano a "Accettato"/"Approvata"), limite di un
+    punto, ⚑ obbligatorio, decisioni nello storico da distinguere da quelle
+    sulle proposte degli agenti. Stesso giorno: nello straordinario la
+    Data_Rilevazione di un KRI riportato tornava da COM come testo ISO e veniva
+    riscritta come testo: le date copiate da una riga letta vanno riconvertite
+    con `a_data`.
+101. **Un agente nuovo non e' per forza un formato nuovo** (07/10, D-77). Il piano
+    prevedeva per A8 un comando `straordinario --payload A8.json`; scrivendo A8
+    nello schema di A1 (con un solo campo facoltativo in piu') valgono gia'
+    allegato, precontrollo, controlli, scrittura e validazione. Il prompt di un
+    agente "come A1 ma diverso" sfora subito gli 8.000 caratteri (prima stesura
+    8.284): le istruzioni di dettaglio vanno nella guida di scrittura
+    dell'allegato, nel prompt solo procedura e scheletro. Un campo nuovo dello
+    schema va anche in `mappatura_campi.json` (`non_nel_workbook`, altrimenti
+    `test_mappatura` e' KO), nel kit di Copilot Studio (`prepara_kit.py`) e nei dati
+    di prova: un controllo nuovo puo' far fallire un test vecchio che chiedeva
+    "nessun rilievo" (ora "nessun Bloccante").
+102. **Il parallelo accorcia solo cio' che e' indipendente** (08/10, M1). Dividere la catena in dieci gruppi e
+    lanciarli in tre processi, un Excel ciascuno, porta il collaudo da circa 50 a 40 minuti, non a 20-25 come
+    stimato: il gruppo `catena` (passi 0-5, 7, 8s, 8a) e' una sequenza di stati e da solo dura quasi tutto. Per
+    scendere ancora servono meno aperture di Excel dentro quel gruppo (`leggi()` apre e ricalcola a ogni
+    chiamata). Altre due cose:
+    - uno stato del PC (le impronte di `--mirato`) va fuori dal pacchetto, altrimenti finisce nello zip e
+      l'indice del 00_LEGGIMI lo segnala;
+    - spostare una cartella di documenti e' una sostituzione di testo; spostare una cartella di codice installata
+      in Banca e' una reinstallazione: si fa con l'installatore (AU3).
+
+103. **Un rischio nuovo non "entra" nel radar** (08/10, D-79). Movimento confronta lo stato con il ciclo prima:
+    Entrato solo per chi era in osservazione, Uscito solo per chi era nel radar. Un rischio nuovo che va subito nel
+    radar e' Nuovo, senza Movimento (lo dice anche il riepilogo di `valida`, che elenca chi entra nell'anagrafica):
+    un test che si aspetta "Entrato" per un rischio nato nel ciclo sbaglia. Per provare l'ingresso dall'osservazione
+    serve un rischio che c'era gia' (nei dati di esempio NFR-13 e NFR-14 dal 2026Q1).
+104. **Un rischio fuori dal radar sta ancora nel registro** (08/10, D-79). Ogni vista o verifica che contava le
+    righe del ciclo nel RiskRegister ora conta anche quelle in osservazione: il report e il Radar_Mosca leggono
+    l'anagrafica (= il radar), le liste e lo score tutte le righe. Nel collaudo `verifica_report` e
+    `mosca_attesa` filtrano sull'anagrafica; nel foglio Notizie una categoria senza rischi del radar ma con uno in
+    osservazione e' "In osservazione", non "AREA NON PRESIDIATA". Nell'aggiornamento di un registro la baseline
+    di prima e di dopo si confronta senza `regola_radar`: pesi e soglie sono del template nuovo.
+105. **ROUND di Excel non e' Decimal(repr(x))** (08/10). Lo score 1,7/0,8 = 2,125 in Python e' 2,12499999...: un
+    arrotondamento a meta' in su sul repr da' 2,12, Excel (15 cifre significative) da' 2,13. Il calcolo
+    indipendente del collaudo arrotonda prima a 10 decimali. Il caso e' nato con un rischio in osservazione dei dati
+    di esempio (Impatto 3, Probabilita 1, Prossimita 2, Velocity non valutata).
+
+106. **Chi non ha uno stato non esce dal radar** (08/10, D-79, trovata dal gate di copertura). La scrittura
+    toglieva dall'anagrafica ogni rischio "non nel radar", compreso uno del radar che A1 aveva dimenticato: il
+    rischio spariva in silenzio e il ciclo risultava completo (11 su 11). Escono solo i rischi a cui la regola ha
+    dato uno stato fuori dal radar (`fuori`); uno assente resta in anagrafica e il controllo di copertura ferma il
+    ciclo (C1 lo ferma gia' prima: il gate e' la seconda difesa). Ogni insieme calcolato per complemento ("tutti
+    tranne quelli dentro") va riletto cosi'.
+
+107. **Una vista giusta puo' essere invisibile** (08/10, demo D-79). La sezione "Entrati e usciti dal radar" della
+    pagina Fenomeni aveva il dato giusto (NFR-16, Entrato) ma righe alte 3 punti, come nel template, e nel PDF non si
+    vedeva niente; il collaudo leggeva il valore delle celle e passava. Ogni intervallo con testi calcolati che il
+    template crea basso va passato da `adatta_altezze` in `prepara_report` (ora anche `fenomeniUscite`); il controllo
+    vero e' guardare il foglio esportato.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -2637,17 +2790,17 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
             schema_output_A1_DOCUMENTATO.md  controlli_A5.md  guida_scrittura_A1.md
             mappatura_campi.json
 02_Agenti/  A1_Horizon_Scanner.md  A3_Interim_Update.md  A4_News_Assessor.md  A5_Challenger.md
-            A6_Schede.md (generati)  componi_prompt.py  modelli/A1.md A3.md A4.md A5.md A6.md
+            A6_Schede.md  A7_Assistente_registro.md  A8_Evento_critico.md (generati)  componi_prompt.py
+            modelli/A1.md A3.md A4.md A5.md A6.md A7.md A8.md
             COMMENTATI/A1_Horizon_Scanner_DOCUMENTATO.md  COMMENTATI/A3_A4_A5_DOCUMENTATO.md
 03_Excel/   genera_dashboard.py  NFR_Dashboard_Template.xlsx  costruzione_manuale_template.md
-04_SharePoint/  struttura_e_liste.md
-05_Workflow/    workflow.md
-06_Governance/  controlli_e_model_risk.md
+04_Riferimenti/  DECISIONI.md (registro delle decisioni della Banca: si conserva, non si rigenera)
+                struttura_e_liste.md  workflow.md  controlli_e_model_risk.md
+                Prove/ Prova_senza_Copilot_Studio.md (installazione e ciclo su un registro di prova)
+                       Prova_A7.md (copione di prova di A7)
 07_Senza_Studio/  README_variante_locale.md  esegui_ciclo_locale.py  raccogli_notizie.py  fonti.py
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  configurazione_esempio.json
-08_Deploy/        DECISIONI.md (registro delle decisioni della Banca: si conserva, non si rigenera)
-                  Prova_senza_Copilot_Studio.md (installazione e ciclo su un registro di prova)
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
                     Da_caricare/ precontrollo-nfr.zip  precontrollo-nfr_senza_cartella.zip

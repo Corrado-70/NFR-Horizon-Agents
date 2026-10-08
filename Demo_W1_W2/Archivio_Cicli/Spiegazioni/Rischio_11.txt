@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-11 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-11 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-11 Fine del supporto dei sistemi di pagamento legacy
-Event type: L1-06 Interruzione dell'operativita' e disfunzione dei sistemi; driver: DRV-TEC; owner: Funzione IT Operations.
-Esito nel ciclo: Confermato. Posizione in classifica per score: 12 su 13.
+Categoria: 9.6 Tecnologico; driver: DRV-TEC; owner: Funzione IT Operations.
+Esito nel ciclo: Confermato. Posizione in classifica per score: 11 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 3: sopra la soglia; posto garantito: AGIRE ORA (radar di Mosca).
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Assente.
 
 DESCRIZIONE
@@ -41,7 +42,7 @@ AZIONI
 
 KRI IN VIGORE
 - NFR-11-K1 (Esposizione) Componenti del sistema di pagamento fuori supporto [n]: valore 6 (prima 6), soglie 3 / 8, stato Ambra; fonte dati Inventario IT. Perche': Misura quanta parte del sistema di pagamento e' senza supporto: e' l'esposizione della Banca.
-- NFR-11-K2 (Evoluzione) Vulnerabilita' senza patch disponibile sui sistemi legacy [n]: valore 6 (prima 5), soglie 2 / 6, stato Rosso; fonte dati Vulnerability management. Perche': Misura quanto cresce la minaccia sulle componenti senza supporto.
+- NFR-11-K2 (Evoluzione) Vulnerabilita' senza patch disponibile sui sistemi legacy [n]: valore 6 (prima 6), soglie 2 / 6, stato Rosso; fonte dati Vulnerability management. Perche': Misura quanto cresce la minaccia sulle componenti senza supporto.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
@@ -49,6 +50,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
 - 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
 - 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
+- 2026Q4-S1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

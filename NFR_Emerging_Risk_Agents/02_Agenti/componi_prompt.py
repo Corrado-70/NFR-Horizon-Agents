@@ -1,7 +1,7 @@
 """Compone i prompt operativi degli agenti dai modelli e dal kernel.
 
 Uso:
-    python componi_prompt.py            rigenera A1/A3/A4/A5/A6 in 02_Agenti/
+    python componi_prompt.py            rigenera A1/A3/A4/A5/A6/A7/A8 in 02_Agenti/
     python componi_prompt.py --verifica  non scrive; esce con 1 se un prompt e'
                                          fuori data rispetto al kernel o supera
                                          il limite di caratteri
@@ -45,6 +45,7 @@ AGENTI = {
     "A5.md": "A5_Challenger.md",
     "A6.md": "A6_Schede.md",
     "A7.md": "A7_Assistente_registro.md",
+    "A8.md": "A8_Evento_critico.md",
 }
 
 

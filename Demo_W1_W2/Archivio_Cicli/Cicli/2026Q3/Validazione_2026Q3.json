@@ -1,12 +1,12 @@
 {
   "periodo": "2026Q3",
   "esiti": {
-    "Accettato": 158,
+    "Accettato": 176,
     "Rettificato": 5,
     "Respinto": 2
   },
   "esiti_righe": {
-    "Accettato": 47,
+    "Accettato": 48,
     "Rettificato": 4,
     "Respinto": 1
   },
@@ -22,7 +22,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -36,7 +36,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -50,7 +50,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -64,7 +64,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -78,7 +78,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-01",
+      "Nome": "Frodi su pagamenti istantanei abilitate da AI generativa",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -92,7 +106,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -106,7 +120,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -120,7 +134,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -134,7 +148,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -148,7 +162,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-02",
+      "Nome": "Concentrazione su un fornitore cloud critico",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -162,7 +190,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -176,7 +204,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -190,7 +218,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -204,7 +232,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -218,7 +246,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-03",
+      "Nome": "Greenwashing nella commercializzazione di prodotti ESG",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -232,7 +274,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -246,7 +288,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -260,7 +302,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -274,7 +316,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -288,7 +330,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-04",
+      "Nome": "Eventi climatici estremi su sedi e data center",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -302,7 +358,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -316,7 +372,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -330,7 +386,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -344,7 +400,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -358,7 +414,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-05",
+      "Nome": "Errori di processo nella migrazione del core banking",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -372,7 +442,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -386,7 +456,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -400,7 +470,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -414,7 +484,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -428,7 +498,21 @@
       "Valore_Validato": 1,
       "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-06",
+      "Nome": "Esfiltrazione di dati tramite strumenti di AI non autorizzati",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": "Estendere il DLP e rivedere i profili di accesso ai servizi di AI richiede circa un anno di lavori.",
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -442,7 +526,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -456,7 +540,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -470,7 +554,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -484,7 +568,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -498,7 +582,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-07",
+      "Nome": "Ransomware presso un fornitore di servizi di pagamento",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -512,7 +610,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -526,7 +624,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -540,7 +638,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -554,7 +652,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -568,7 +666,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-08",
+      "Nome": "Accessi impropri di dipendenti ai dati dei clienti",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -582,7 +694,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -596,7 +708,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -610,7 +722,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -624,7 +736,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -638,7 +750,21 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-09",
+      "Nome": "Violazione di sanzioni internazionali tramite triangolazioni",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -652,7 +778,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -666,7 +792,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -680,7 +806,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -694,7 +820,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -708,7 +834,21 @@
       "Valore_Validato": null,
       "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-10",
+      "Nome": "Informazioni errate ai clienti da assistenti di AI generativa",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": "Il registro reclami del trimestre mostra che le risposte errate dell'assistente arrivano ai clienti in giorni: velocity 3.",
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -722,7 +862,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -736,7 +876,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -750,7 +890,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -764,7 +904,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -778,7 +918,21 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-11",
+      "Nome": "Fine del supporto dei sistemi di pagamento legacy",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -792,7 +946,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -806,7 +960,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -820,7 +974,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -834,7 +988,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -848,7 +1002,105 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-12",
+      "Nome": "Errori operativi nei pagamenti istantanei obbligatori",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Impatto",
+      "Proposta_Agente": 3,
+      "Decisione": "Accettato",
+      "Valore_Validato": 3,
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Velocity",
+      "Proposta_Agente": null,
+      "Decisione": "Accettato",
+      "Valore_Validato": null,
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Prossimita",
+      "Proposta_Agente": 1,
+      "Decisione": "Accettato",
+      "Valore_Validato": 1,
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Probabilita",
+      "Proposta_Agente": 2,
+      "Decisione": "Accettato",
+      "Valore_Validato": 2,
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Anni_Adeguamento",
+      "Proposta_Agente": null,
+      "Decisione": "Accettato",
+      "Valore_Validato": null,
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
+      "Stato": "Applicata"
+    },
+    {
+      "Periodo": "2026Q3",
+      "Oggetto": "Rischio",
+      "ID": "NFR-16",
+      "Nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "Campo": "Decisione_Stato",
+      "Proposta_Agente": "Automatico",
+      "Decisione": "Accettato",
+      "Valore_Validato": "Automatico",
+      "Motivazione": null,
+      "Validato_Da": "Comitato Rischi",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -862,7 +1114,7 @@
       "Valore_Validato": 5.3,
       "Motivazione": "Dato definitivo del report antifrode di ottobre: 5,3 (il 5,1 era la stima provvisoria).",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -876,7 +1128,7 @@
       "Valore_Validato": 3,
       "Motivazione": "Dato definitivo del report antifrode di ottobre: 5,3 (il 5,1 era la stima provvisoria).",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -890,7 +1142,7 @@
       "Valore_Validato": 6,
       "Motivazione": "Dato definitivo del report antifrode di ottobre: 5,3 (il 5,1 era la stima provvisoria).",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -904,7 +1156,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -918,7 +1170,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -932,7 +1184,7 @@
       "Valore_Validato": 12,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -946,7 +1198,7 @@
       "Valore_Validato": 72,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -960,7 +1212,7 @@
       "Valore_Validato": 60,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -974,7 +1226,7 @@
       "Valore_Validato": 75,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -988,7 +1240,7 @@
       "Valore_Validato": 0,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1002,7 +1254,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1016,7 +1268,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1030,7 +1282,7 @@
       "Valore_Validato": 1.9,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1044,7 +1296,7 @@
       "Valore_Validato": 1.5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1058,7 +1310,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1072,7 +1324,7 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1086,7 +1338,7 @@
       "Valore_Validato": 20,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1100,7 +1352,7 @@
       "Valore_Validato": 40,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1114,7 +1366,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1128,7 +1380,7 @@
       "Valore_Validato": 1,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1142,7 +1394,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1156,7 +1408,7 @@
       "Valore_Validato": 0,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1170,7 +1422,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1184,7 +1436,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1198,7 +1450,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1212,7 +1464,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1226,7 +1478,7 @@
       "Valore_Validato": 6,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1240,7 +1492,7 @@
       "Valore_Validato": 18,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1254,7 +1506,7 @@
       "Valore_Validato": 30,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1268,7 +1520,7 @@
       "Valore_Validato": 60,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1282,7 +1534,7 @@
       "Valore_Validato": 6,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1296,7 +1548,7 @@
       "Valore_Validato": 10,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1310,7 +1562,7 @@
       "Valore_Validato": 30,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1324,7 +1576,7 @@
       "Valore_Validato": 22,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1338,7 +1590,7 @@
       "Valore_Validato": 20,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1352,7 +1604,7 @@
       "Valore_Validato": 40,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1366,7 +1618,7 @@
       "Valore_Validato": 1,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1380,7 +1632,7 @@
       "Valore_Validato": 1,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1394,7 +1646,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1408,7 +1660,7 @@
       "Valore_Validato": 2.5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1422,7 +1674,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1436,7 +1688,7 @@
       "Valore_Validato": 12,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1450,7 +1702,7 @@
       "Valore_Validato": 22,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1464,7 +1716,7 @@
       "Valore_Validato": 20,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1478,7 +1730,7 @@
       "Valore_Validato": 50,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1492,7 +1744,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1506,7 +1758,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1520,7 +1772,7 @@
       "Valore_Validato": 15,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1534,7 +1786,7 @@
       "Valore_Validato": 4.2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1548,7 +1800,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1562,7 +1814,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1576,7 +1828,7 @@
       "Valore_Validato": 9,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1590,7 +1842,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1604,7 +1856,7 @@
       "Valore_Validato": 15,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1618,7 +1870,7 @@
       "Valore_Validato": 1.9,
       "Motivazione": "Soglie fissate dalla funzione di rischio sulla base dello storico reclami del 2025.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1632,7 +1884,7 @@
       "Valore_Validato": 2,
       "Motivazione": "Soglie fissate dalla funzione di rischio sulla base dello storico reclami del 2025.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1646,7 +1898,7 @@
       "Valore_Validato": 5,
       "Motivazione": "Soglie fissate dalla funzione di rischio sulla base dello storico reclami del 2025.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1660,7 +1912,7 @@
       "Valore_Validato": 45,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1674,7 +1926,7 @@
       "Valore_Validato": 20,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1688,7 +1940,7 @@
       "Valore_Validato": 50,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1702,7 +1954,7 @@
       "Valore_Validato": 6,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1716,7 +1968,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1730,7 +1982,7 @@
       "Valore_Validato": 8,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1744,7 +1996,7 @@
       "Valore_Validato": 5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1758,7 +2010,7 @@
       "Valore_Validato": 2,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1772,7 +2024,7 @@
       "Valore_Validato": 6,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1786,7 +2038,7 @@
       "Valore_Validato": 12,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1800,7 +2052,7 @@
       "Valore_Validato": 10,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1814,7 +2066,7 @@
       "Valore_Validato": 30,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1828,7 +2080,7 @@
       "Valore_Validato": 4.5,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1842,7 +2094,7 @@
       "Valore_Validato": 4,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1856,7 +2108,7 @@
       "Valore_Validato": 12,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1870,7 +2122,7 @@
       "Valore_Validato": null,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1884,7 +2136,7 @@
       "Valore_Validato": 1,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1898,7 +2150,7 @@
       "Valore_Validato": 3,
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1912,7 +2164,7 @@
       "Valore_Validato": "Funzione Antifrode",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1926,7 +2178,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1940,7 +2192,7 @@
       "Valore_Validato": "Direzione Marketing e Comunicazione",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1954,7 +2206,7 @@
       "Valore_Validato": "6 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1968,7 +2220,7 @@
       "Valore_Validato": "Funzione ICT & Security Risk",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1982,7 +2234,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -1996,7 +2248,7 @@
       "Valore_Validato": "Direzione Sistemi Informativi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2010,7 +2262,7 @@
       "Valore_Validato": "12 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2024,7 +2276,7 @@
       "Valore_Validato": "Funzione Compliance",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2038,7 +2290,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2052,7 +2304,7 @@
       "Valore_Validato": "Funzione Business Continuity",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2066,7 +2318,7 @@
       "Valore_Validato": "6 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2080,7 +2332,7 @@
       "Valore_Validato": "Funzione Operations",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2094,7 +2346,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2108,7 +2360,7 @@
       "Valore_Validato": "Direzione Risorse Umane",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2122,7 +2374,7 @@
       "Valore_Validato": "6 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2136,7 +2388,7 @@
       "Valore_Validato": "Funzione Sicurezza delle Informazioni",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2150,7 +2402,7 @@
       "Valore_Validato": "6 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2164,7 +2416,7 @@
       "Valore_Validato": "Funzione ICT & Security Risk",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2178,7 +2430,7 @@
       "Valore_Validato": "6 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2192,7 +2444,7 @@
       "Valore_Validato": null,
       "Motivazione": "Gia' prevista dal piano IAM approvato a luglio: azione duplicata.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2206,7 +2458,7 @@
       "Valore_Validato": null,
       "Motivazione": "Gia' prevista dal piano IAM approvato a luglio: azione duplicata.",
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2220,7 +2472,7 @@
       "Valore_Validato": "Funzione Compliance",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2234,7 +2486,7 @@
       "Valore_Validato": "12 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2248,7 +2500,7 @@
       "Valore_Validato": "Funzione Customer Experience",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2262,7 +2514,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2276,7 +2528,7 @@
       "Valore_Validato": "Funzione IT Operations",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2290,7 +2542,7 @@
       "Valore_Validato": "12 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2304,7 +2556,7 @@
       "Valore_Validato": "Funzione Operations",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     },
     {
@@ -2318,7 +2570,7 @@
       "Valore_Validato": "3 mesi",
       "Motivazione": null,
       "Validato_Da": "Comitato Rischi",
-      "Data_Validazione": "2026-10-07",
+      "Data_Validazione": "2026-10-08",
       "Stato": "Applicata"
     }
   ]

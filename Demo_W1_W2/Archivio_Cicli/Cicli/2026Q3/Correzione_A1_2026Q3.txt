@@ -16,3 +16,4 @@ Forma dei testi (serve alle schede dei rischi):
 10. NFR-10 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
 11. NFR-11 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:, ADEGUAMENTO:; EFFETTO: mancante nel razionale di azione 1; KRI di Esposizione e di Evoluzione (parte 3 dell'allegato).
 12. NFR-12 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY:; EFFETTO: mancante nel razionale di azione 1; KRI di Evoluzione e di Esposizione (parte 3 dell'allegato).
+13. NFR-16 · razionale senza le parti RISCHIO:, IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (parte 3 dell'allegato).

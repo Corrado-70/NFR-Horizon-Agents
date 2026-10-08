@@ -33,10 +33,10 @@ Sequenza:
      presidiata 9.11, nessun duplicato al rilancio; una riga cancellata a mano dalla
      griglia ferma valida, il comando griglia la ripara conservando cio' che e' scritto
   4. la baseline dopo il 2026Q3 e' quella su cui e' stato scritto run3
-  5. ciclo 2026Q4: rischio nuovo NFR-13, anagrafica, KRI nuovi, 9.11 ora
-     presidiata; la storia di un KRI (Indicatori) coincide con lo storico, anche
+  5. ciclo 2026Q4: NFR-16 entra nel radar dall'osservazione (D-79), anagrafica, KRI nuovi,
+     9.11 ora presidiata; la storia di un KRI (Indicatori) coincide con lo storico, anche
      per un KRI uscito; Radar_Mosca = calcolo indipendente; Registro con una riga
-     per rischio
+     per rischio del radar
   6. gate di copertura: un ciclo scritto a meta' viene fermato prima del salvataggio
   7. scorrimento della finestra settimanale
   8. errore dopo il salvataggio: messaggio veritiero, baseline gia' aggiornata;
@@ -67,6 +67,12 @@ Sequenza:
      motivazioni e non accetta il salto ne' le soglie invertite; --procedi-con-rilievi
      accettata ma inutile; un settimanale scritto durante la validazione conserva cio'
      che e' gia' scritto nella griglia e non si ferma per un valore sbagliato li'
+  11c. aggiornamento di un registro del template 2026-10-08b (lista di osservazione, D-73): le voci in
+     osservazione diventano rischi in osservazione NFR-nn (D-79)
+  13. riapertura della validazione (D-76), con le decisioni sullo stato (un rischio entra, uno esce)
+  14. registro unico (D-79): un rischio sotto la soglia resta un ciclo "in uscita" ed esce al secondo; decisioni
+     del validatore sullo stato (motivazione obbligatoria); capienza del radar ridotta; dismissione di un rischio
+     in osservazione
 Report al comitato (passi 2, 2b, 5, 11): score composito = formula D-50
 calcolata a parte; Classifica ordinata come un ordinamento indipendente;
 grafici della Classifica con un punto per rischio; Quadro con il commento di
@@ -74,11 +80,22 @@ A1 diviso in messaggio e decisioni, l'avviso dopo le rettifiche e i rischi
 segnalati uguali a una selezione calcolata a parte (primi tre, AGIRE ORA,
 variati, nuovi); Delta con un motivo per rischio.
 
-Requisiti: Windows, Excel desktop, pywin32, openpyxl. Durata: 20-25 minuti (Excel si apre
-e ricalcola a ogni passo).
+Requisiti: Windows, Excel desktop, pywin32, openpyxl. Durata in sequenza: circa 50 minuti (Excel si apre e ricalcola
+a ogni passo, circa 150 volte).
+
+Uso (M1, 08/10/2026):
+  python run_catena.py                  tutti i gruppi in sequenza
+  python run_catena.py --parallelo [N]  tutti i gruppi in N processi (default 3), una istanza di Excel ciascuno
+  python run_catena.py --passo <nome>   un gruppo solo (catena, gate, errore, primo_uso, produzione,
+                                        aggiornamento, notizie, aggiornamento_25c, segnalazioni, riapertura,
+                                        registro_unico, aggiornamento_08b)
+  NFR_RIGENERA_ATTESI=1                 riscrive i file attesi di dati/ (baseline) con quelli prodotti: solo dopo
+                                        una modifica voluta del formato, poi si guarda il diff
+  -v                                    stampa anche le verifiche superate
 """
 
 import copy
+import datetime
 import hashlib
 import json
 import os
@@ -95,6 +112,17 @@ import esegui_ciclo_locale as campo
 from excel_com import SessioneExcel
 
 MAPPA = carica(KERNEL / "mappatura_campi.json")
+RR_TEMPLATE = 38                 # righe del RiskRegister del template: 33 del radar + 5 dei 3 rischi in osservazione (D-79)
+PRESIDIO_911_Q3 = "In osservazione"   # 9.11 nel 2026Q3: nessun rischio nel radar, NFR-16 in osservazione (D-79)
+
+
+def uguale_ai_dati(nome, prodotto):
+    """Il file prodotto e' uguale (come JSON) al file atteso dati/<nome>. Con NFR_RIGENERA_ATTESI=1 lo copia al posto
+    dell'atteso e risponde si': solo dopo una modifica voluta del formato, poi si guarda il diff."""
+    if os.environ.get("NFR_RIGENERA_ATTESI") == "1":
+        shutil.copyfile(prodotto, DATI / nome)
+        return True
+    return carica(prodotto) == carica(DATI / nome)
 
 
 def sha(percorso):
@@ -151,6 +179,8 @@ class Banco:
                 "griglia_segnalazioni": {i: n for i, n in zip(campo.colonna_nome(s, "VG_Rischio_ID"),
                                                                campo._colonna_o_niente(s, "VG_Rischio_Segnalazioni") or []) if i},
                 "griglia_segnalazioni_ciclo": (campo._colonna_o_niente(s, "VG_Rischio_SegnalazioniCiclo") or [None])[0],
+                "griglia_stati": {i: n for i, n in zip(campo.colonna_nome(s, "VG_Rischio_ID"),
+                                                       campo._colonna_o_niente(s, "VG_Rischio_Stato") or []) if i},
                 # Score e margine calcolati dalla griglia con i valori gialli: {ID: (score, margine)}.
                 "griglia_rischi": {i: (sc, mg) for i, sc, mg in zip(campo.colonna_nome(s, "VG_Rischio_ID"),
                                                                     campo.colonna_nome(s, "VG_Rischio_ScoreNum"),
@@ -183,8 +213,8 @@ class Banco:
                             for m in [s.foglio("Radar_Mosca")] for r in range(5, 5 + s.intervallo_nome("anagrafica").Rows.Count)
                             if m.Range(f"A{r}").Value},
                 "delta_spazio": spazio_delta(s),
-                "osservazione": scr.righe("tblOsservazione"),
-                "fenomeni": [(c.Value, c.GetOffset(0, 3).Value, c.GetOffset(0, 4).Value)
+                # Pagina Fenomeni (D-79): (ID, score, perche' fuori dal radar) dei rischi in osservazione.
+                "fenomeni": [(c.Value, c.GetOffset(0, 4).Value, c.GetOffset(0, 5).Value)
                              for c in s.intervallo_nome("fenomeniLista").Columns(2).Cells if c.Value],
                 "fenomeni_uscite": [(c.Value, c.GetOffset(0, 2).Value) for c in s.intervallo_nome("fenomeniUscite").Columns(2).Cells
                                     if c.Value],
@@ -279,8 +309,8 @@ def mosca_attesa(stato, azioni):
     anni = {5: 0, 4: 0.5, 3: 1.5, 2: 2.5, 1: 3.5}      # D-59: meta' della fascia della Prossimita
     adeguamento = {a["ID"]: a.get("Anni_Adeguamento") or 0 for a in stato["anagrafica"]}
     attesi = {}
-    for r in (x for x in stato["register"] if x["Ciclo"] == stato["ciclo"]):
-        mesi = [int(a["Orizzonte"].split()[0]) for a in azioni
+    for r in (x for x in stato["register"] if x["Ciclo"] == stato["ciclo"] and x["ID_Rischio"] in adeguamento):   # il radar
+        mesi =[int(a["Orizzonte"].split()[0]) for a in azioni
                 if a["ID_Rischio"] == r["ID_Rischio"] and a["Ciclo"] == stato["ciclo"] and a["Stato"] != "Respinta"]
         y = max(max(mesi) / 12 if mesi else 1, adeguamento.get(r["ID_Rischio"], 0))
         attesi[r["ID_Rischio"]] = (r["Impatto"] * r["Probabilita"], round(anni[r["Prossimita"]] - (0.25 + y), 6))
@@ -315,21 +345,26 @@ PESI_D50 = {"Impatto": 0.35, "Probabilita": 0.25, "Prossimita": 0.20, "Velocity"
 
 def score_d50(r):
     """Score composito calcolato a parte (D-50): media pesata delle dimensioni valutate (una
-    Velocity vuota esce da numeratore e denominatore); ROUND di Excel = arrotondamento a meta' in su."""
+    Velocity vuota esce da numeratore e denominatore); ROUND di Excel = arrotondamento a meta' in su, sul valore con
+    le cifre significative di Excel (2,1249999... in Python e' 2,125 in Excel: 2,13)."""
     from decimal import Decimal, ROUND_HALF_UP
     presenti = {d: p for d, p in PESI_D50.items() if r.get(d) is not None}
     valore = sum(p * r[d] for d, p in presenti.items()) / sum(presenti.values())
-    return float(Decimal(repr(valore)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+    return float(Decimal(repr(round(valore, 10))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def verifica_report(e, stato, etichetta, commento=None):
     """Report al comitato sul ciclo corrente, confrontato con calcoli indipendenti."""
     ciclo = stato["ciclo"]
-    righe = [r for r in stato["register"] if r["Ciclo"] == ciclo]
-    attesi = {r["ID_Rischio"]: score_d50(r) for r in righe}
-    trovati = {r["ID_Rischio"]: round(r["Score_Composito"], 2) for r in righe}
-    e.verifica(trovati == attesi, f"{etichetta}: score composito = formula D-50 calcolata a parte ({len(righe)} rischi)",
-               f"foglio {trovati}\natteso {attesi}")
+    tutte = [r for r in stato["register"] if r["Ciclo"] == ciclo]
+    attesi = {r["ID_Rischio"]: score_d50(r) for r in tutte}
+    trovati = {r["ID_Rischio"]: round(r["Score_Composito"], 2) for r in tutte}
+    e.verifica(trovati == attesi, f"{etichetta}: score composito = formula D-50 calcolata a parte ({len(tutte)} rischi, "
+               "anche quelli in osservazione)", f"foglio {trovati}\natteso {attesi}")
+    # Il report e' sui rischi del radar (l'anagrafica, D-79): quelli in osservazione stanno nella pagina Fenomeni.
+    nel_radar = {a["ID"] for a in stato["anagrafica"]}
+    righe = [r for r in tutte if r["ID_Rischio"] in nel_radar]
+    attesi = {i: v for i, v in attesi.items() if i in nel_radar}
     posizione = {r["ID"]: i for i, r in enumerate(stato["anagrafica"])}
     ordine = sorted(attesi, key=lambda rid: (-attesi[rid], posizione[rid]))
     e.verifica([x[0] for x in stato["classifica"]] == ordine,
@@ -456,19 +491,83 @@ def verifica_integrita(e, stato, etichetta):
                f"vista {stato['kri_correnti']}\nstorico {correnti}")
 
 
-def main():
-    e = Esito("Catena a due cicli con lo strumento di campo (Excel)")
-    for passo, nome in ((catena, "la catena"), (produzione, "il registro di produzione (passo 10)"),
-                        (aggiornamento, "l'aggiornamento del registro (passo 11)"),
-                        (notizie_validate, "le notizie validate nelle viste (passo 3b)"),
-                        (aggiornamento_25c, "l'aggiornamento dal template 2026-09-25c (passo 11b)"),
-                        (segnalazioni_in_validazione, "A5 facoltativo e segnalazioni in validazione (passo 12)")):
+def passi():
+    """{nome: (funzione, descrizione)}: gruppi indipendenti, ognuno su copie proprie del template (M1, 08/10/2026).
+    La catena principale e' il gruppo piu' lungo: in parallelo la durata e' circa la sua."""
+    return {"catena": (catena, "la catena (passi 0-5, 7, 7b, 8s, 8a)"),
+            "gate": (gate_copertura, "il gate di copertura (passo 6)"),
+            "errore": (errore_dopo_salvataggio, "l'errore dopo il salvataggio (passi 8 e 8b)"),
+            "primo_uso": (primo_uso, "il primo uso e la dismissione (passo 9)"),
+            "produzione": (produzione, "il registro di produzione (passo 10)"),
+            "aggiornamento": (aggiornamento, "l'aggiornamento del registro (passo 11)"),
+            "notizie": (notizie_validate, "le notizie validate nelle viste (passo 3b)"),
+            "aggiornamento_25c": (aggiornamento_25c, "l'aggiornamento dal template 2026-09-25c (passo 11b)"),
+            "segnalazioni": (segnalazioni_in_validazione, "A5 facoltativo e segnalazioni in validazione (passo 12)"),
+            "riapertura": (riapertura, "la riapertura della validazione (passo 13)"),
+            "registro_unico": (registro_unico, "il registro unico: radar e osservazione (passo 14, D-79)"),
+            "aggiornamento_08b": (aggiornamento_08b, "l'aggiornamento dal template 2026-10-08b, lista di osservazione (passo 11c)")}
+
+
+def esegui_passi(nomi, titolo):
+    e = Esito(titolo)
+    for nome in nomi:
+        funzione, descrizione = passi()[nome]
         try:
-            passo(e)
+            funzione(e)
         except Exception:                            # un passo rotto non deve nascondere i KO gia' trovati
             import traceback
-            e.verifica(False, f"{nome} arriva in fondo senza eccezioni", traceback.format_exc(limit=3))
+            e.verifica(False, f"{descrizione} arriva in fondo senza eccezioni", traceback.format_exc(limit=3))
     return 0 if e.stampa() else 1
+
+
+def in_parallelo(processi):
+    """Ogni gruppo in un processo suo, con la sua istanza di Excel (SessioneExcel usa DispatchEx); stampa le uscite
+    nell'ordine dei gruppi e il totale delle verifiche."""
+    import re
+    import time
+    from concurrent.futures import ThreadPoolExecutor
+    inizio = time.time()
+
+    def lancia(nome):
+        r = subprocess.run([sys.executable, str(Path(__file__)), "--passo", nome, *(["-v"] if "-v" in sys.argv else [])],
+                           capture_output=True, text=True, encoding="utf-8", errors="replace",
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+        return r.returncode, r.stdout + r.stderr
+
+    nomi = list(passi())                             # la catena per prima: e' la piu' lunga
+    with ThreadPoolExecutor(max_workers=processi) as pool:
+        esiti = dict(zip(nomi, pool.map(lancia, nomi)))
+    superate = totali = 0
+    for nome in nomi:
+        codice, uscita = esiti[nome]
+        print(uscita.rstrip())
+        conti = re.findall(r"-> (\d+)/(\d+) verifiche superate", uscita)
+        if conti:
+            superate += int(conti[-1][0])
+            totali += int(conti[-1][1])
+        else:
+            print(f"  [KO ] il gruppo {nome} non ha stampato l'esito (codice {codice})")
+            totali += 1
+    ko = [n for n in nomi if esiti[n][0] != 0]
+    print(f"\n=== Catena in parallelo ({processi} processi, {round((time.time() - inizio) / 60)} minuti) ===\n"
+          f"  -> {superate}/{totali} verifiche superate" + (f"; gruppi con KO: {', '.join(ko)}" if ko else ""))
+    return 1 if ko or superate != totali else 0
+
+
+def main():
+    """Senza opzioni: tutti i gruppi in sequenza. --passo <nome>: un gruppo solo. --parallelo [N]: tutti i gruppi in N
+    processi (default 3), ognuno con la sua istanza di Excel."""
+    argomenti = sys.argv[1:]
+    if "--passo" in argomenti:
+        nome = argomenti[argomenti.index("--passo") + 1]
+        if nome not in passi():
+            sys.exit(f"Passo sconosciuto: {nome}. Passi: {', '.join(passi())}")
+        return esegui_passi([nome], f"Catena, {passi()[nome][1]}")
+    if "--parallelo" in argomenti:
+        i = argomenti.index("--parallelo")
+        n = int(argomenti[i + 1]) if i + 1 < len(argomenti) and argomenti[i + 1].isdigit() else 3
+        return in_parallelo(n)
+    return esegui_passi(list(passi()), "Catena a due cicli con lo strumento di campo (Excel)")
 
 
 def aggiornamento(e):
@@ -498,7 +597,7 @@ def aggiornamento(e):
                    "11. il registro vecchio e' conservato in Backup")
         codice, out = b.esegui("baseline", "--uscita", b.cartella / "base.json")
         base = carica(b.cartella / "base.json")
-        e.verifica(codice == 0 and base == carica(DATI / "baseline_registro_template_2026-09-23.json"),
+        e.verifica(codice == 0 and uguale_ai_dati("baseline_registro_template_2026-09-23.json", b.cartella / "base.json"),
                    "11. la baseline del registro aggiornato e' identica a quella del registro vecchio", out)
         verifica_report(e, s, "11. report sul registro aggiornato (pesi D-50 su un ciclo scritto con i pesi vecchi)")
         codice, out = b.esegui("aggiorna-registro")
@@ -514,7 +613,9 @@ def aggiornamento(e):
         for r in base["rischi"]:
             origine = run1[r["id_rischio"]]
             rischi.append({
-                "id_rischio": r["id_rischio"], "nome": r["nome"], "event_type": r["event_type"], "driver": r["driver"],
+                # Il registro di prima ha i codici di Basilea: A1 riclassifica nella tassonomia interna (D-74),
+                # qui con la categoria dei dati di prova convertiti.
+                "id_rischio": r["id_rischio"], "nome": r["nome"], "event_type": origine["event_type"], "driver": r["driver"],
                 "descrizione": origine["descrizione"], **{k: r[k] for k in ("impatto", "velocity", "prossimita",
                                                                              "probabilita", "anni_adeguamento")},
                 # Le fonti di un registro vecchio non hanno la rilevanza (D-58): A1 la darebbe; qui 2.
@@ -626,7 +727,7 @@ def aggiornamento_25c(e):
         e.verifica(any((b.uscita / "Backup").glob("NFR_workbook_prima_di_aggiorna-registro_*.xlsx")),
                    "11b. il registro vecchio (con le colonne dismesse) e' conservato in Backup")
         codice, out = b.esegui("baseline", "--uscita", b.cartella / "base.json")
-        e.verifica(codice == 0 and carica(b.cartella / "base.json") == carica(DATI / "baseline_registro_template_2026-09-25c.json"),
+        e.verifica(codice == 0 and uguale_ai_dati("baseline_registro_template_2026-09-25c.json", b.cartella / "base.json"),
                    "11b. baseline del registro aggiornato = quella attesa (senza Gap_Controlli, con il presidio)", out)
         verifica_report(e, s, "11b. report sul registro aggiornato dal 2026-09-25c")
 
@@ -706,7 +807,7 @@ def segnalazioni_in_validazione(e):
         codice, out = b.esegui("settimanale", "--payload", DATI / "run_A3_2026-10-12.json")
         s = b.leggi()
         g = s["griglia"]
-        e.verifica(codice == 0 and not s["errori"] and len(g) == 54 + 5
+        e.verifica(codice == 0 and not s["errori"] and len(g) == 53 + 5
                    and g[("Rischio", "2026Q3", "NFR-12")]["motivazione"] == motivo12
                    and g[("Rischio", "2026Q3", "NFR-05")]["valori"]["Prossimita"] == 9
                    and campo.DA_MOTIVARE in str(s["griglia_segnalazioni"].get("NFR-12")),
@@ -753,15 +854,13 @@ def produzione(e, template=TEMPLATE, etichetta="10"):
         # Settimane prima del primo ciclo: A3 non ha rischi a cui collegare le notizie.
         sett = copy.deepcopy(a3)
         sett["flag_proposti"] = []
-        sett["segnali_osservazione"] = []                    # D-73: un registro vuoto non ha voci in osservazione
         for n in sett["notizie"]:
             n["rischio_collegato"] = None
-            n["voce_osservazione"] = None
         collegata = copy.deepcopy(sett)
         collegata["notizie"][0]["rischio_collegato"] = "NFR-02"
         prima = sha(b.wb)
         codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_collegata.json", collegata))
-        e.verifica(codice == 1 and "non in anagrafica" in out and sha(b.wb) == prima,
+        e.verifica(codice == 1 and "non sono nel registro" in out and sha(b.wb) == prima,
                    f"{etichetta}. registro vuoto: una notizia collegata a un rischio inesistente e' fermata, niente scritto", out)
         codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_vuoto.json", sett))
         s = b.leggi()
@@ -788,11 +887,14 @@ def produzione(e, template=TEMPLATE, etichetta="10"):
         # D-71: A5 facoltativo; qui il primo ciclo si scrive senza il suo esito.
         codice, out = b.esegui("trimestrale", "--payload", b.scrivi_json("primo.json", primo))
         s = b.leggi()
-        e.verifica(codice == 0 and len(s["register"]) == len(primo["rischi"]) and len(s["anagrafica"]) == len(primo["rischi"])
+        # D-79: NFR-16 (Prossimita 1) nasce in osservazione: nel registro, non nell'anagrafica (= il radar).
+        nel_radar = [r for r in primo["rischi"] if r["kri_proposti"]]
+        e.verifica(codice == 0 and len(s["register"]) == len(primo["rischi"]) and len(s["anagrafica"]) == len(nel_radar)
+                   and [r["ID_Rischio"] for r in s["register"] if r["Stato"] == "Osservazione"] == ["NFR-16"]
                    and all(r["Esito"] == "Nuovo" for r in s["register"]) and len(s["news"]) == len(sett["notizie"])
                    and "A5: non usato (facoltativo)" in out,
                    f"{etichetta}. primo ciclo sul registro di produzione, senza A5 (D-71): {len(primo['rischi'])} rischi nuovi, "
-                   "notizie delle settimane intatte", out)
+                   f"{len(nel_radar)} nel radar e NFR-16 in osservazione; notizie delle settimane intatte", out)
         sintesi_a5 = next((r["Sintesi_A5"] for r in s["sintesi_cicli"]), "")
         e.verifica(str(sintesi_a5).startswith("A5 non usato in questo ciclo"),
                    f"{etichetta}. senza A5 Sintesi_Cicli (e il Quadro) lo dice", str(sintesi_a5))
@@ -818,10 +920,11 @@ def produzione(e, template=TEMPLATE, etichetta="10"):
         codice, out = b.esegui("baseline", "--uscita", b.cartella / "base_secondo.json")
         base = carica(b.cartella / "base_secondo.json")
         e.verifica(codice == 0 and base["ciclo_precedente"] == "2026Q3" and base["ciclo_da_valutare"] == "2026Q4"
-                   and len(base["rischi"]) == len(primo["rischi"]) and all(r["esito_precedente"] == "Nuovo" for r in base["rischi"])
-                   and len(base["kri_in_vigore"]) == 2 * len(primo["rischi"]),
-                   f"{etichetta}. baseline del secondo ciclo: {len(primo['rischi'])} rischi validati e "
-                   f"{2 * len(primo['rischi'])} KRI in vigore (due per rischio, D-64)", out)
+                   and len(base["rischi"]) == len(nel_radar) and all(r["esito_precedente"] == "Nuovo" for r in base["rischi"])
+                   and [r["id_rischio"] for r in base["rischi_in_osservazione"]] == ["NFR-16"]
+                   and len(base["kri_in_vigore"]) == 2 * len(nel_radar),
+                   f"{etichetta}. baseline del secondo ciclo: {len(nel_radar)} rischi validati nel radar, NFR-16 in "
+                   f"osservazione e {2 * len(nel_radar)} KRI in vigore (due per rischio del radar, D-64)", out)
 
 
 def _notizia(nid, data, rischio, segnale, impatti, titolo):
@@ -839,6 +942,22 @@ def notizie_vista(banco):
         s.ricalcola()
         ws = s.foglio("Notizie")
         return {ws.Range(f"A{r}").Value: (ws.Range(f"C{r}").Value, ws.Range(f"F{r}").Value) for r in range(5, 5 + len(controlli_a5.CATEGORIE))}
+
+
+def massimo_finestra(stato, codice):
+    """Intensita' massima di una categoria nel NewsLog, nella finestra di 4 settimane che chiude con la settimana
+    corrente: lo stesso calcolo della colonna C del foglio Notizie. La finestra si sposta quando arriva una
+    settimana nuova, quindi il valore di prima non e' un riferimento."""
+    def iso(v):
+        if hasattr(v, "year"):
+            return f"{v.year:04d}-{v.month:02d}-{v.day:02d}"
+        if isinstance(v, (int, float)):
+            return (datetime.date(1899, 12, 30) + datetime.timedelta(days=int(v))).isoformat()
+        return str(v)[:10]
+    fine = datetime.date.fromisoformat(iso(stato["settimana"]))
+    inizio = (fine - datetime.timedelta(days=21)).isoformat()
+    colonna = "Imp_" + codice.replace(".", "_")
+    return max((n.get(colonna) or 0 for n in stato["news"] if inizio <= iso(n["Settimana"]) <= fine.isoformat()), default=0)
 
 
 def notizie_validate(e):
@@ -911,11 +1030,264 @@ def notizie_validate(e):
                    and "notizie in peggioramento" not in str(s2["livello"]["NFR-08"][1]),
                    "3b. il livello di allerta di NFR-08 torna quello di prima: il segnale forte F3 cade con la notizia respinta",
                    f"prima {s0['livello']['NFR-08']}\nsettimana {s1['livello']['NFR-08']}\nvalidato {s2['livello']['NFR-08']}")
-        e.verifica(v2["9.11"] == v0["9.11"] and v2["9.7"][0] == max(v0["9.7"][0] or 0, 1),
+        e.verifica(v2["9.11"] == v0["9.11"] and v1["9.7"][0] == massimo_finestra(s1, "9.7") == 3
+                   and v2["9.7"][0] == massimo_finestra(s2, "9.7") < 3,
                    "3b. foglio Notizie: la notizia respinta esce dai conteggi (9.11 come prima della settimana; "
-                   "9.7 = il massimo fra le notizie di prima e quella rimasta, intensita' 1)",
-                   f"prima {v0}\nsettimana {v1}\nvalidato {v2}")
+                   "9.7 = il massimo delle notizie rimaste nella finestra di 4 settimane, sotto il 3 della respinta)",
+                   f"prima {v0}\nsettimana {v1}\nvalidato {v2}\n"
+                   f"NewsLog: settimana {massimo_finestra(s1, '9.7')}, validato {massimo_finestra(s2, '9.7')}")
         verifica_report(e, s2, "3b. dopo la validazione della settimana")
+
+
+def riapertura(e):
+    """Passo 13 (D-76): il ciclo corrente del template (2026Q2, validato) si riapre e si valida di nuovo, quante volte
+    serve. Riga non toccata = niente cambia; valore cambiato = rettifica senza il limite di un punto, con la Motivazione;
+    Respingi = Sì toglie un KRI; un'azione rettificata resta approvata. Decisione sullo stato (D-79): un rischio in
+    osservazione entra nel radar, uno del radar esce."""
+    validatore = "Funzione Risk Management"
+    with tempfile.TemporaryDirectory() as tmp:
+        b = Banco(tmp)
+        s0 = b.leggi()
+        ciclo = s0["ciclo"]
+        rr = lambda s: {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == ciclo}
+        per_oggetto = lambda s: {o: sum(1 for k in s["griglia"] if k[0] == o) for o in ("Rischio", "KRI", "Azione")}
+        attesi = {"Rischio": len(rr(s0)), "KRI": sum(1 for k in s0["kri"] if k["Ciclo"] == ciclo and k["In_Vigore"] == "Sì"),
+                  "Azione": len(carica_tabella(b, "tblAzioni")) - sum(1 for a in carica_tabella(b, "tblAzioni")
+                                                                       if a["Stato"] in ("Respinta", "Completata", "Annullata"))}
+        n_storico = len(s0["validazione"])
+        codice, out = b.esegui("riapri")
+        s1 = b.leggi()
+        e.verifica(codice == 0 and per_oggetto(s1) == attesi and rr(s1) == rr(s0),
+                   "13. riapri: rischi (15: 12 del radar e 3 in osservazione), KRI in vigore e azioni aperte tornano nella "
+                   "griglia; il registro non cambia", f"{out}\ngriglia {per_oggetto(s1)}\natteso {attesi}")
+        e.verifica("RIAPERTURA" in str(s1["griglia_stato"]) or "Da validare" in str(s1["griglia_stato"]),
+                   "13. il foglio Validazione dice che c'e' da validare", str(s1["griglia_stato"]))
+        prima = sha(b.wb)
+        codice, out = b.esegui("riapri")
+        e.verifica(codice == 1 and "gia'" in out and sha(b.wb) == prima,
+                   "13. riaprire un ciclo gia' riaperto: fermato, niente scritto", out)
+        p_nfr02 = rr(s0)["NFR-02"]["Probabilita"]
+        decisioni = [
+            {"oggetto": "Rischio", "id": "NFR-02", "campo": "Probabilita", "decisione": "Rettificato", "valore": p_nfr02 + 2,
+             "motivazione": "Secondo incidente del fornitore cloud con ripristino oltre i tempi contrattuali."},
+            {"oggetto": "Rischio", "id": "NFR-05", "campo": "Impatto", "decisione": "Rettificato", "valore": 5},
+            {"oggetto": "KRI", "id": "NFR-01-K1", "campo": "Valore_Corrente", "decisione": "Respinto",
+             "motivazione": "Indicatore sostituito dal nuovo cruscotto antifrode."},
+            {"oggetto": "Azione", "id": "2026Q2-NFR-04-A1", "campo": "Owner", "decisione": "Rettificato",
+             "valore": "Funzione Continuita' Operativa", "motivazione": "Passaggio di responsabilita' deciso dal comitato IT."},
+            {"oggetto": "Rischio", "id": "NFR-14", "campo": "Decisione_Stato", "decisione": "Rettificato", "valore": "Radar",
+             "motivazione": "Il comitato vuole KRI e azioni sui cavi sottomarini dopo l'esercitazione delle autorita'."},
+            {"oggetto": "Rischio", "id": "NFR-12", "campo": "Decisione_Stato", "decisione": "Rettificato",
+             "valore": "Osservazione", "motivazione": "Adeguamento ai bonifici istantanei concluso: basta osservarlo."}]
+        scrivi_decisioni(b.wb, ciclo, decisioni)
+        prima = sha(b.wb)
+        codice, out = b.esegui("valida", "--periodo", ciclo, "--validatore", validatore)
+        e.verifica(codice == 1 and "NFR-05" in out and "Motivazione" in out and sha(b.wb) == prima,
+                   "13. un valore cambiato senza Motivazione ferma la validazione riaperta: niente applicato", out)
+        scrivi_decisioni(b.wb, ciclo, [dict(decisioni[1], motivazione="Perdita rilevante segnalata dalla funzione Operations.")])
+        codice, out = b.esegui("valida", "--periodo", ciclo, "--validatore", validatore)
+        s2 = b.leggi()
+        r2 = rr(s2)
+        e.verifica(codice == 0 and r2["NFR-02"]["Probabilita"] == p_nfr02 + 2 and r2["NFR-05"]["Impatto"] == 5
+                   and r2["NFR-02"]["Validazione"] == "Rettificato" and r2["NFR-02"]["Approvato_Da"] == validatore,
+                   "13. valida dopo riapri: due punti in piu' accettati (nessun limite in riapertura), con chi ha deciso",
+                   f"{out}\nNFR-02 {r2['NFR-02']['Probabilita']} NFR-05 {r2['NFR-05']['Impatto']}")
+        e.verifica(all(r2[i] == r for i, r in rr(s0).items() if i not in ("NFR-02", "NFR-05", "NFR-12", "NFR-14")),
+                   "13. le righe non toccate restano identiche (valori, validazione, chi e quando)")
+        anag = {a["ID"]: a for a in s2["anagrafica"]}
+        kri_12 = [k for k in s2["kri"] if k["Ciclo"] == ciclo and k["ID_Rischio"] == "NFR-12"]
+        e.verifica((r2["NFR-14"]["Stato"], r2["NFR-14"]["Movimento"], r2["NFR-14"]["Decisione_Stato"]) == ("Radar", "Entrato", "Radar")
+                   and "nel radar per eccezione: decisione del validatore" in r2["NFR-14"]["Motivo_Stato"]
+                   and (r2["NFR-12"]["Stato"], r2["NFR-12"]["Movimento"], r2["NFR-12"]["Decisione_Stato"])
+                   == ("Osservazione", "Uscito", "Osservazione")
+                   and "NFR-14" in anag and anag["NFR-14"]["Owner"] == "Funzione ICT & Security Risk" and "NFR-12" not in anag
+                   and kri_12 and all(k["In_Vigore"] == "No" for k in kri_12) and len(s2["anagrafica"]) == 12
+                   and s2["copertura_foglio"] == (12, 12),
+                   "13. decisione sullo stato (D-79): NFR-14, in osservazione dal 2026Q1, entra nel radar per decisione del validatore (anagrafica con "
+                   "l'owner della sua riga), NFR-12 esce subito (niente 'in uscita' per decisione): KRI fuori vigore, "
+                   "anagrafica senza buchi",
+                   str({i: (r2[i]["Stato"], r2[i]["Movimento"], r2[i]["Motivo_Stato"]) for i in ("NFR-12", "NFR-14")})
+                   + " " + str(sorted(anag)) + " " + str([(k["KRI_ID"], k["In_Vigore"]) for k in kri_12]))
+        kri = next(k for k in s2["kri"] if k["Ciclo"] == ciclo and k["KRI_ID"] == "NFR-01-K1")
+        azione = next(a for a in carica_tabella(b, "tblAzioni") if a["ID_Azione"] == "2026Q2-NFR-04-A1")
+        e.verifica(kri["In_Vigore"] == "No" and azione["Owner"] == "Funzione Continuita' Operativa"
+                   and azione["Stato"] == "Approvata",
+                   "13. Respingi toglie il KRI; l'azione rettificata resta Approvata",
+                   f"KRI {kri['In_Vigore']}, azione {azione['Owner']} {azione['Stato']}")
+        nuove = s2["validazione"][n_storico:]
+        conta = {d: sum(1 for r in nuove if r["Decisione"] == d) for d in
+                 ("Invariato (riapertura)", "Rettificato (riapertura)", "Respinto (riapertura)")}
+        e.verifica(len(nuove) > 0 and sum(conta.values()) == len(nuove) and conta["Rettificato (riapertura)"] == 5
+                   and conta["Respinto (riapertura)"] == 3 and all(r["Stato"] == "Applicata" for r in nuove),
+                   "13. storico: decisioni con il suffisso (riapertura), distinte dalle proposte degli agenti", str(conta))
+        e.verifica(not s2["griglia"], "13. dopo valida la griglia e' vuota", str(list(s2["griglia"])[:5]))
+        verifica_integrita(e, s2, "13. dopo la validazione riaperta")
+        verifica_report(e, s2, "13. dopo la validazione riaperta")
+
+        # Seconda riapertura, solo NFR-02, chiusa senza cambiare niente.
+        codice, out = b.esegui("riapri", "--rischi", "NFR-02")
+        s3 = b.leggi()
+        e.verifica(codice == 0 and per_oggetto(s3)["Rischio"] == 1
+                   and per_oggetto(s3)["KRI"] == sum(1 for k in s2["kri"] if k["Ciclo"] == ciclo and k["ID_Rischio"] == "NFR-02"
+                                                     and k["In_Vigore"] == "Sì"),
+                   "13. riapri --rischi NFR-02: solo il rischio, i suoi KRI e le sue azioni", f"{out}\n{per_oggetto(s3)}")
+        codice, out = b.esegui("valida", "--periodo", ciclo, "--validatore", validatore)
+        s4 = b.leggi()
+        e.verifica(codice == 0 and rr(s4) == rr(s2) and all(r["Decisione"] == "Invariato (riapertura)"
+                                                             for r in s4["validazione"][len(s2["validazione"]):]),
+                   "13. riaprire e validare senza toccare niente: il registro resta com'era", out)
+
+
+def registro_unico(e):
+    """Passo 14 (D-79): la regola del radar sul registro vero. 2026Q3: NFR-08 scende sotto la soglia (Radar, in uscita);
+    il validatore mette NFR-12 in osservazione e NFR-16 nel radar (lo stato si ricalcola con valida). 2026Q4 con la
+    capienza a 10: NFR-08 esce al secondo ciclo, il piu' basso per score fuori per capienza resta un ciclo in uscita,
+    NFR-12 resta fuori per decisione. Poi la dismissione di un rischio in osservazione."""
+    run1 = carica(DATI / "run1_A1_2026Q3.json")
+    with tempfile.TemporaryDirectory() as tmp:
+        b = Banco(tmp)
+        n08 = next(x for x in run1["rischi"] if x["id_rischio"] == "NFR-08")
+        n08["probabilita"] = 1
+        n08["variazioni"] = [{"dimensione": "probabilita", "data_evidenza": "2026-09-15",
+                              "evidenza": "Il SOC documenta la revisione completa delle utenze: nessun accesso senza pratica "
+                                          "nel trimestre, il fenomeno resta solo teorico per la Banca."}]
+        codice, out = b.esegui("trimestrale", "--payload", b.scrivi_json("q3.json", run1))
+        s = b.leggi()
+        q3 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q3"}
+        e.verifica(codice == 0 and q3["NFR-08"]["Stato"] == "Radar, in uscita"
+                   and q3["NFR-08"]["Motivo_Stato"] == ("Probabilita 1 sotto la soglia 2 (primo ciclo: esce se lo e' anche "
+                                                         "al ciclo dopo)")
+                   and "NFR-08" in {a["ID"] for a in s["anagrafica"]}
+                   and {k["KRI_ID"] for k in s["kri"] if k["Ciclo"] == "2026Q3" and k["ID_Rischio"] == "NFR-08"
+                        and k["In_Vigore"] == "Sì"} and "(in uscita: NFR-08)" in out,
+                   "14. NFR-08 scende sotto la soglia di Probabilita: Radar, in uscita (resta nel radar con KRI e azioni "
+                   "per un ciclo)", out[-700:] + str(q3["NFR-08"].get("Motivo_Stato")))
+        e.verifica(s["griglia_stati"].get("NFR-08", "").startswith("Radar, in uscita: Probabilita 1"),
+                   "14. griglia: la colonna Stato dice al validatore che NFR-08 e' in uscita e perche'", str(s["griglia_stati"]))
+        scrivi_decisioni(b.wb, "2026Q3", [
+            {"oggetto": "Rischio", "id": "NFR-12", "campo": "Decisione_Stato", "decisione": "Rettificato", "valore": "Osservazione"},
+            {"oggetto": "Rischio", "id": "NFR-16", "campo": "Decisione_Stato", "decisione": "Rettificato", "valore": "Radar",
+             "motivazione": "Il comitato vuole seguire da subito le vertenze con KRI e azioni."}])
+        prima = sha(b.wb)
+        codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", "Comitato Rischi")
+        e.verifica(codice == 1 and "NFR-12" in out and "Motivazione" in out and sha(b.wb) == prima,
+                   "14. una decisione sullo stato senza Motivazione ferma valida, niente applicato", out)
+        scrivi_decisioni(b.wb, "2026Q3", [
+            {"oggetto": "Rischio", "id": "NFR-12", "campo": "Decisione_Stato", "decisione": "Rettificato", "valore": "osservazione",
+             "motivazione": "Adeguamento ai bonifici istantanei concluso: basta osservarlo."}])
+        codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", "Comitato Rischi")
+        s = b.leggi()
+        q3 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q3"}
+        anag = {a["ID"]: a for a in s["anagrafica"]}
+        kri12 = [k for k in s["kri"] if k["Ciclo"] == "2026Q3" and k["ID_Rischio"] == "NFR-12"]
+        e.verifica(codice == 0
+                   and (q3["NFR-12"]["Stato"], q3["NFR-12"]["Movimento"], q3["NFR-12"]["Decisione_Stato"])
+                   == ("Osservazione", "Uscito", "Osservazione")
+                   and q3["NFR-12"]["Motivo_Stato"] == "in osservazione per decisione del validatore"
+                   and (q3["NFR-16"]["Stato"], q3["NFR-16"]["Movimento"], q3["NFR-16"]["Decisione_Stato"]) == ("Radar", None, "Radar")
+                   and "entrato in validazione: KRI e azioni da definire al ciclo dopo" in q3["NFR-16"]["Motivo_Stato"]
+                   and "NFR-12" not in anag and anag.get("NFR-16", {}).get("Owner") == "Da assegnare"
+                   and kri12 and all(k["In_Vigore"] == "No" for k in kri12) and s["copertura_foglio"] == (12, 12)
+                   and "NFR-16" in out and "NFR-12" in out,
+                   "14. valida applica le decisioni sullo stato: NFR-12 esce subito (KRI fuori vigore, anagrafica senza buchi), "
+                   "NFR-16, nuovo, va nel radar senza 'Entrato' (non era in osservazione prima: e' Nuovo; anagrafica, KRI e "
+                   "azioni al ciclo dopo); copertura 12/12",
+                   out[-800:] + str({i: (q3[i]["Stato"], q3[i]["Movimento"], q3[i]["Motivo_Stato"]) for i in ("NFR-12", "NFR-16")}))
+        verifica_integrita(e, s, "14. dopo la validazione del 2026Q3")
+        base = carica(b.uscita / "Baseline_corrente.json")
+        e.verifica("NFR-16" in {x["id_rischio"] for x in base["rischi"]}
+                   and next(x for x in base["rischi_in_osservazione"] if x["id_rischio"] == "NFR-12")["decisione_stato"] == "Osservazione"
+                   and next(x for x in base["rischi"] if x["id_rischio"] == "NFR-08")["stato"] == "Radar, in uscita",
+                   "14. baseline del 2026Q4: NFR-16 nel radar, NFR-12 in osservazione con la decisione, NFR-08 in uscita")
+
+        # 2026Q4 con la capienza a 10 (cella gialla di Parametri).
+        with SessioneExcel(b.wb) as sx:
+            sx.intervallo_nome("capienzaRadar").Value = 10
+            sx.salva()
+        run3 = carica(DATI / "run3_A1_2026Q4.json")
+        run3["rischi"] = [x for x in run3["rischi"] if x["id_rischio"] != "NFR-12"]
+        # I KRI di NFR-12 sono usciti di vigore con la decisione del validatore: non si rileggono.
+        run3["ricalcolo_kri_ciclo_precedente"] = [z for z in run3["ricalcolo_kri_ciclo_precedente"]
+                                                  if not z["kri_id"].startswith("NFR-12-")]
+        n08 = next(x for x in run3["rischi"] if x["id_rischio"] == "NFR-08")
+        n08["probabilita"] = 1
+        # run3 parte dalla Velocity di NFR-10 rettificata a 3 nella catena principale; qui il 2026Q3 non l'ha cambiata.
+        next(x for x in run3["rischi"] if x["id_rischio"] == "NFR-10")["velocity"] = None
+        n08["variazioni"] = [v for v in n08["variazioni"] if v["dimensione"] != "probabilita"]
+        codice, out = b.esegui("trimestrale", "--payload", b.scrivi_json("q4.json", run3))
+        s = b.leggi()
+        q4 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q4"}
+        capienza = [i for i, r in q4.items() if str(r["Motivo_Stato"]).startswith("fuori per capienza")]
+        nel = [i for i, r in q4.items() if r["Stato"] in ("Radar", "Radar, in uscita")]
+        kri08 = [k for k in s["kri"] if k["Ciclo"] == "2026Q4" and k["ID_Rischio"] == "NFR-08"]
+        e.verifica(codice == 0 and (q4["NFR-08"]["Stato"], q4["NFR-08"]["Movimento"]) == ("Osservazione", "Uscito")
+                   and kri08 and all(k["In_Vigore"] == "No" for k in kri08) and "NFR-08" not in {a["ID"] for a in s["anagrafica"]}
+                   and len(capienza) == 1 and q4[capienza[0]]["Stato"] == "Radar, in uscita"
+                   and len(nel) == 11 and len(s["anagrafica"]) == 11 and s["copertura_foglio"] == (11, 11)
+                   and (q4["NFR-12"]["Stato"], q4["NFR-12"]["Decisione_Stato"], q4["NFR-12"]["Validazione"])
+                   == ("Osservazione", "Osservazione", "Rettificato")
+                   and f"(in uscita: {capienza[0] if capienza else '?'})" in out and "usciti NFR-08" in out,
+                   "14. 2026Q4 con capienza 10: NFR-08 esce al secondo ciclo sotto la soglia (KRI fuori vigore, fuori "
+                   "dall'anagrafica); il piu' basso per score resta un ciclo 'in uscita' per capienza; 11 nel radar (10 + 1 in "
+                   "uscita); NFR-12 riportato in osservazione con la decisione del validatore",
+                   out[-800:] + str({i: (r["Stato"], r["Movimento"], r["Motivo_Stato"]) for i, r in q4.items()}))
+        verifica_integrita(e, s, "14. 2026Q4 con la capienza a 10")
+        verifica_report(e, s, "14. report 2026Q4 con il radar ridotto", commento=run3["sintesi"])
+
+        # Dismissione di un rischio in osservazione: la riga del ciclo dice Dismesso, il ciclo dopo non lo riporta.
+        codice, out = b.esegui("valida", "--periodo", "2026Q4", "--validatore", "Comitato Rischi")
+        codice, out = b.esegui("dismetti", "--rischio", "NFR-15", "--motivazione",
+                               "Pagamenti delegati ad agenti di IA esclusi dall'offerta della Banca.", "--decisore", "Comitato Rischi")
+        s = b.leggi()
+        r15 = next(r for r in s["register"] if r["Ciclo"] == "2026Q4" and r["ID_Rischio"] == "NFR-15")
+        base = carica(b.uscita / "Baseline_corrente.json")
+        e.verifica(codice == 0 and r15["Stato"] == "Dismesso" and "Comitato Rischi" in str(r15["Motivo_Stato"])
+                   and "NFR-15" not in {x["id_rischio"] for x in base["rischi_in_osservazione"]}
+                   and "NFR-15" not in [f[0] for f in s["fenomeni"]],
+                   "14. dismetti su un rischio in osservazione: riga Dismesso con il motivo, fuori dalla baseline e dalla pagina "
+                   "Fenomeni", out + str(r15.get("Stato")))
+
+
+def aggiornamento_08b(e):
+    """Passo 11c (D-79): un registro del template 2026-10-08b (lista di osservazione D-73, dati/registro_template_
+    2026-10-08b.xlsx = il template di esempio di allora) si aggiorna al registro unico: le voci in osservazione
+    diventano rischi in osservazione con un codice NFR-nn libero, le righe del registro restano nel radar."""
+    vecchio = DATI / "registro_template_2026-10-08b.xlsx"
+    with SessioneExcel(vecchio, sola_lettura=True) as sess:
+        righe_prima = {n: sess.tabella(n).ListRows.Count for n in ("tblRegister", "tblKRI", "tblNews", "tblValidazione")}
+        voci = [r for r in campo.Scrittore(sess, MAPPA).righe("tblOsservazione") if r["Ciclo"] == "2026Q2"
+                and r["Stato"] == "In osservazione"]
+    with tempfile.TemporaryDirectory() as tmp:
+        b = Banco(tmp, vecchio)
+        codice, out = b.esegui("baseline", "--uscita", b.cartella / "x.json")
+        e.verifica(codice == 1 and "aggiorna-registro" in out, "11c. registro del template 2026-10-08b: fermo, va aggiornato", out)
+        codice, out = b.esegui("aggiorna-registro")
+        s = b.leggi()
+        q2 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q2"}
+        nuovi = {i: r for i, r in q2.items() if r["Stato"] == "Osservazione"}
+        e.verifica(codice == 0 and s["versione"] == campo.VERSIONE_TEMPLATE and not s["errori"]
+                   and len(s["register"]) == righe_prima["tblRegister"] + len(voci) and len(voci) == 3
+                   and sorted(nuovi) == ["NFR-13", "NFR-14", "NFR-15"]
+                   and all(r["Validazione"] == "Accettato" and r["Approvato_Da"] == "Conversione D-79" for r in nuovi.values())
+                   and all(r["Stato"] == "Radar" for i, r in q2.items() if i not in nuovi)
+                   and "OSS-01 -> NFR-13" in out and len(s["anagrafica"]) == 12 and s["copertura_foglio"] == (12, 12),
+                   "11c. aggiorna-registro: le 3 voci in osservazione diventano NFR-13, 14, 15 in osservazione (accettate, "
+                   "'Conversione D-79'); le righe del registro restano nel radar; anagrafica e copertura invariate",
+                   out + str({i: (r["Stato"], r["Impatto"], r["Probabilita"], r["Prossimita"]) for i, r in nuovi.items()}))
+        oss1 = next((v for v in voci if v["OSS_ID"] == "OSS-01"), {})
+        n13 = nuovi.get("NFR-13", {})
+        e.verifica((n13.get("Impatto"), n13.get("Probabilita"), n13.get("Prossimita"), n13.get("Orizzonte_Anni"))
+                   == (oss1.get("Impatto_Potenziale"), 1, 1, oss1.get("Orizzonte_Anni"))
+                   and n13.get("Segnale_Avvicinamento") == oss1.get("Segnale_Avvicinamento")
+                   and [f[0] for f in s["fenomeni"]] and set(f[0] for f in s["fenomeni"]) == set(nuovi),
+                   "11c. valori convertiti in via provvisoria (Impatto = impatto potenziale, Probabilita dalla plausibilita' "
+                   "teorica = 1, Prossimita dall'orizzonte oltre 3 anni = 1), orizzonte e segnale conservati; pagina Fenomeni",
+                   f"{n13} {oss1}")
+        codice, out = b.esegui("baseline", "--uscita", b.cartella / "base.json")
+        base = carica(b.cartella / "base.json")
+        e.verifica(codice == 0 and sorted(x["id_rischio"] for x in base["rischi_in_osservazione"]) == ["NFR-13", "NFR-14", "NFR-15"]
+                   and len(base["rischi"]) == 12,
+                   "11c. la baseline del registro aggiornato porta ad A1 i 12 rischi del radar e i 3 in osservazione", out)
 
 
 def parametri_ciclo(banco):
@@ -976,13 +1348,14 @@ def straordinario(e, b):
     par = parametri_ciclo(b)
     s1 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q4-S1"}
     q4 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q4"}
-    e.verifica(codice == 0 and "CICLO STRAORDINARIO 2026Q4-S1" in out and len(s1) == 13 and s["copertura_foglio"] == (13, 13)
+    e.verifica(codice == 0 and "CICLO STRAORDINARIO 2026Q4-S1" in out and len(s1) == 16 and s["copertura_foglio"] == (13, 13)
                and s1["NFR-01"]["Probabilita"] == 5 and s1["NFR-01"]["Esito"] == "Variato"
                and s1["NFR-01"]["Validazione"] == "Da validare" and s1["NFR-01"]["Periodo_Valutazione"] == "2026Q4-S1"
-               and all(s1[i]["Validazione"] == q4[i]["Validazione"] and s1[i]["Periodo_Valutazione"] == "2026Q4"
-                       and s1[i]["Impatto"] == q4[i]["Impatto"] for i in s1 if i != "NFR-01"),
-               "8s. ciclo straordinario scritto: NFR-01 rivalutato (Probabilita da 4 a 5), gli altri 12 rischi riportati dal "
-               "2026Q4, validati come allora, con il periodo di valutazione 2026Q4", out + str({i: (r["Validazione"], r.get(
+               and all(s1[i]["Validazione"] == q4[i]["Validazione"] and s1[i]["Periodo_Valutazione"] == q4[i]["Periodo_Valutazione"]
+                       and s1[i]["Impatto"] == q4[i]["Impatto"] and s1[i]["Stato"] == q4[i]["Stato"] for i in s1 if i != "NFR-01"),
+               "8s. ciclo straordinario scritto: NFR-01 rivalutato (Probabilita da 4 a 5), gli altri 12 rischi del radar e i 3 "
+               "in osservazione riportati dal 2026Q4, validati come allora, con il loro periodo di valutazione e lo stesso "
+               "stato", out + str({i: (r["Validazione"], r.get(
                    "Periodo_Valutazione")) for i, r in s1.items()}))
     righe_s1 = [r for r in s["validazione"] if r["Periodo"] == "2026Q4-S1"]
     e.verifica({r["Oggetto"] for r in righe_s1} == {"Rischio", "KRI", "Azione"}
@@ -1021,6 +1394,62 @@ def straordinario(e, b):
                            "--data", "2027-02-10")
     e.verifica(codice == 0 and carica(b.uscita / "Baseline_corrente.json")["ciclo_da_valutare"] == "2026Q4-S2",
                "8s. un secondo straordinario nello stesso trimestre e' il 2026Q4-S2", out)
+    censimento_a8(e, b)
+
+
+def censimento_a8(e, b):
+    """8a. A8 Evento critico (D-77): straordinario di solo censimento (nessun --rischi), un rischio nuovo creato
+    dall'evento, l'analisi dell'evento in Sintesi_Cicli e nella knowledge di A7."""
+    codice, out = b.esegui("baseline", "--straordinario", "--motivo",
+                           "Attacco a un fornitore di servizi di firma digitale usato da molte banche italiane.",
+                           "--decisore", "Comitato Rischi", "--data", "2027-02-10")
+    base = carica(b.uscita / "Baseline_corrente.json")
+    allegato = (b.uscita / "Input_A1_2026Q4-S2.txt").read_text(encoding="utf-8")
+    e.verifica(codice == 0 and base["straordinario"]["rischi_da_rivalutare"] == [] and "solo censimento" in out
+               and "censisci SOLO i rischi nuovi" in allegato and "A8 Evento critico" in out,
+               "8a. baseline --straordinario senza --rischi: censimento, allegato che lo dice in testa, prossimo passo A8", out)
+    nuovo = json.loads(json.dumps(next(x for x in carica(DATI / "run3_A1_2026Q4.json")["rischi"] if x["id_rischio"] == "NFR-16")))
+    nuovo.update(id_rischio="NFR-17", nome="Indisponibilita' del servizio di firma digitale di un fornitore unico",
+                 event_type="9.9", driver=["DRV-TPR", "DRV-CYB"], variazioni=[],
+                 fonti=[{"riferimento": "Comunicato del fornitore di firma digitale sull'attacco del 05/02/2027",
+                         "data": "2027-02-05", "tipo": "Esterna", "rilevanza": 3}])
+    for k in nuovo["kri_proposti"]:
+        k["kri_id"] = None
+    a8 = {"ciclo": "2026Q4-S2", "data_riferimento": "2027-02-10",
+          "sintesi": "MESSAGGIO: l'attacco del 05/02/2027 al fornitore di firma digitale usato dalla Banca mostra un "
+                     "meccanismo di perdita non coperto: censito NFR-17. DECISIONI: approvare il piano di uscita.",
+          "analisi_evento": {
+              "evento": "Il 05/02/2027 un attacco ha reso indisponibile per tre giorni il servizio di firma digitale di un "
+                        "fornitore usato da molte banche italiane, Banca compresa (comunicato del fornitore).",
+              "catena_causale": "Fornitore unico senza alternativa (causa), indisponibilita' del servizio (evento), contratti "
+                                "e mutui non firmabili per giorni (danno per la Banca).",
+              "rischi_toccati": [{"id_rischio": "NFR-17", "effetto": "Rischio nuovo: nessun rischio del registro copre il fornitore."}],
+              "rischi_non_toccati": "NFR-02: riguarda il fornitore cloud, non questo servizio.",
+              "documenti": [{"riferimento": "Comunicato del fornitore di firma digitale sull'attacco del 05/02/2027",
+                             "data": "2027-02-05", "uso": "il fatto e la durata dell'indisponibilita'"}],
+              "limiti": "Non si conosce ancora la causa tecnica dell'attacco."},
+          "rischi": [nuovo], "ricalcolo_kri_ciclo_precedente": []}
+    payload = b.scrivi_json("A8_2026Q4-S2.json", a8)
+    codice, out = b.esegui("precontrollo", "--payload", payload)
+    e.verifica("Messaggio per A1" not in out and "Precontrollo" in out,
+               "8a. precontrollo dell'output di A8: nessun punto indirizzato ad A1", out)
+    codice, out = b.esegui("trimestrale", "--payload", payload)
+    s = b.leggi()
+    s2 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q4-S2"}
+    e.verifica(codice == 0 and len(s2) == 17 and s2["NFR-17"]["Esito"] == "Nuovo" and s2["NFR-17"]["Validazione"] == "Da validare"
+               and s2["NFR-17"]["Stato"] == "Radar" and s2["NFR-17"]["Movimento"] is None
+               and all(r["Validazione"] != "Da validare" for i, r in s2.items() if i != "NFR-17"),
+               "8a. censimento scritto: NFR-17 nuovo nel radar (sopra le soglie), da validare; i 16 rischi riportati gia' "
+               "validati", out)
+    righe = {(r["Oggetto"], r["ID"]) for r in s["validazione"] if r["Periodo"] == "2026Q4-S2" and r["Oggetto"] == "Rischio"}
+    sint = next(r for r in s["sintesi_cicli"] if r["Ciclo"] == "2026Q4-S2")
+    e.verifica(righe == {("Rischio", "NFR-17")} and "nuovi: NFR-17" in str(sint.get("Straordinario"))
+               and "Evento (analisi di A8)" in str(sint.get("Straordinario")),
+               "8a. in validazione solo il rischio nuovo; Sintesi_Cicli con il rischio nuovo e l'evento",
+               f"{righe}\n{sint.get('Straordinario')}")
+    ciclo_txt = (b.uscita / "Spiegazioni" / "Ciclo.txt").read_text(encoding="utf-8")
+    e.verifica("ANALISI DELL'EVENTO DI A8" in ciclo_txt and "Fornitore unico senza alternativa" in ciclo_txt,
+               "8a. knowledge di A7: Ciclo.txt con l'analisi dell'evento", ciclo_txt[:1500])
 
 
 def catena(e):
@@ -1030,8 +1459,14 @@ def catena(e):
 
         # 0. Baseline di partenza
         codice, out = b.esegui("baseline", "--uscita", b.cartella / "base_q3.json")
-        e.verifica(codice == 0 and carica(b.cartella / "base_q3.json") == carica(DATI / "baseline_2026Q3.json"),
+        e.verifica(codice == 0 and uguale_ai_dati("baseline_2026Q3.json", b.cartella / "base_q3.json"),
                    "0. la baseline estratta dal template e' quella usata per run1", out)
+        base_q3 = carica(b.cartella / "base_q3.json")
+        e.verifica([x["id_rischio"] for x in base_q3["rischi_in_osservazione"]] == ["NFR-13", "NFR-14", "NFR-15"]
+                   and base_q3["regola_radar"]["capienza"] == 15 and len(base_q3["rischi"]) == 12
+                   and all(x["stato"] == "Radar" for x in base_q3["rischi"]),
+                   "0. registro unico (D-79): la baseline ha i 12 rischi del radar, i 3 in osservazione e la regola di Parametri",
+                   str(base_q3.get("regola_radar")))
 
         # 1. Payload difettosi: fermo e zero byte scritti
         prima = sha(b.wb)
@@ -1091,8 +1526,9 @@ def catena(e):
                    "liberi), valori dichiarati proposti",
                    out[-400:] + ciclo_txt[:300])
         e.verifica(s["copertura_foglio"] == (12, 12) and s["f10"] == "Ciclo completo", "2. controllo di copertura: 12/12, ciclo completo")
-        e.verifica(s["ciclo"] == "2026Q3" and s["register"][-1]["Ciclo"] == "2026Q3" and len(s["register"]) == 33 + 12,
-                   "2. RiskRegister: 12 righe in coda alla tabella, ciclo corrente 2026Q3")
+        e.verifica(s["ciclo"] == "2026Q3" and s["register"][-1]["Ciclo"] == "2026Q3" and len(s["register"]) == RR_TEMPLATE + 16,
+                   "2. RiskRegister: 16 righe in coda alla tabella (12 del radar, NFR-16 nuovo, 3 in osservazione riportati), "
+                   "ciclo corrente 2026Q3", str(len(s["register"])))
         righe_kri_template = 66     # due KRI per rischio (D-64): 18 nel 2025Q4 + 24 nel 2026Q1 + 24 nel 2026Q2
         kri = {k["KRI_ID"]: k for k in s["kri"] if k["Ciclo"] == "2026Q3"}
         e.verifica(len(s["kri"]) == righe_kri_template + 25 and len(kri) == 25,
@@ -1123,20 +1559,29 @@ def catena(e):
         e.verifica(q3["NFR-10"]["Velocity"] is None and q3["NFR-10"]["Esito"] == "Confermato",
                    "2. Velocity non valutata resta vuota (non zero); rimasta non valutata = Confermato", str(q3["NFR-10"]))
         verifica_report(e, s, "2. report 2026Q3", commento=run1["sintesi"])
-        oss_q3 = {r["OSS_ID"]: r for r in s["osservazione"] if r["Ciclo"] == "2026Q3"}
-        e.verifica(sorted(oss_q3) == ["OSS-01", "OSS-02", "OSS-03", "OSS-04", "OSS-05"]
-                   and [oss_q3[i]["Esito"] for i in ("OSS-04", "OSS-05")] == ["Nuova", "Nuova"]
-                   and all(oss_q3[i]["Esito"] == "Invariata" and oss_q3[i]["Validazione"] is None for i in ("OSS-01", "OSS-02", "OSS-03"))
-                   and oss_q3["OSS-04"]["Event_Type"] == "9.11" and oss_q3["OSS-04"]["Driver"] == "DRV-HUM, DRV-TEC"
-                   and oss_q3["OSS-04"]["Prima_Osservazione"] == "2026Q3" and oss_q3["OSS-01"]["Prima_Osservazione"] == "2026Q1"
-                   and "Lista di osservazione: 5 voci in osservazione; proposte di A1 da validare: 2 (OSS-04 nuova, OSS-05 nuova)" in out,
-                   "2. lista di osservazione (D-73): due voci nuove di A1 (OSS-04, OSS-05, primo codice libero) collocate per "
-                   "driver ed event type; le tre del template riportate invariate, senza validazione",
-                   str({i: (r["Esito"], r["Stato"], r["Validazione"]) for i, r in oss_q3.items()}) + out[-600:])
-        e.verifica([f[0] for f in s["fenomeni"]] == ["OSS-01", "OSS-02", "OSS-05", "OSS-03", "OSS-04"]
-                   and s["fenomeni"][0][2] == "5 critico" and len(s["register"]) == 33 + 12 and s["copertura_foglio"] == (12, 12),
-                   "2. pagina Fenomeni: voci dall'impatto piu' alto (a parita' l'orizzonte piu' vicino); registro, radar e "
-                   "copertura non contano le voci in osservazione", str(s["fenomeni"]))
+        q3 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q3"}
+        stati = {i: (r["Stato"], r["Esito"], r["Validazione"], r["Periodo_Valutazione"]) for i, r in q3.items()}
+        e.verifica(all(stati[i][0] == "Radar" for i in s["registro"]) and len(s["registro"]) == 12
+                   and stati["NFR-16"] == ("Osservazione", "Nuovo", "Da validare", "2026Q3")
+                   and q3["NFR-16"]["Motivo_Stato"] == "Prossimita 1 sotto la soglia 2" and q3["NFR-16"]["Orizzonte_Anni"] == 5
+                   and stati["NFR-13"] == ("Osservazione", "Confermato", "Accettato", "2026Q1")
+                   and stati["NFR-14"] == ("Osservazione", "Confermato", "Accettato", "2026Q2")
+                   and stati["NFR-15"] == ("Osservazione", "Confermato", "Accettato", "2026Q2")
+                   and not any(r["Movimento"] for r in q3.values())
+                   and "nel radar 12 rischi su 15 posti; in osservazione 4; entrati nel radar nessuno; usciti nessuno" in out,
+                   "2. registro unico (D-79): NFR-16 nuovo resta in osservazione (Prossimita 1 sotto la soglia), da validare; "
+                   "i tre in osservazione non toccati da A1 riportati com'erano, gia' validati, con il loro periodo di "
+                   "valutazione; i 12 del radar restano nel radar", str(stati) + out[-600:])
+        e.verifica(not [k for k in s["kri"] if k["ID_Rischio"] in ("NFR-13", "NFR-14", "NFR-15", "NFR-16")]
+                   and not [a for a in carica_tabella(b, "tblAzioni") if a["ID_Rischio"] in ("NFR-13", "NFR-14", "NFR-15", "NFR-16")]
+                   and "NFR-16" not in {a["ID"] for a in s["anagrafica"]},
+                   "2. un rischio in osservazione non ha KRI ne' azioni e non e' nell'anagrafica (= il radar)")
+        e.verifica([f[0] for f in s["fenomeni"]] == ["NFR-14", "NFR-13", "NFR-16", "NFR-15"]
+                   and [round(f[1], 2) for f in s["fenomeni"]] == [2.9, 2.75, 2.19, 2.13]
+                   and s["fenomeni"][1][2] == "Prossimita 1 sotto la soglia 2; Probabilita 1 sotto la soglia 2"
+                   and s["copertura_foglio"] == (12, 12) and not s["fenomeni_uscite"],
+                   "2. pagina Fenomeni: i 4 rischi in osservazione dallo score piu' alto, con il perche' (soglie); radar e "
+                   "copertura contano solo i 12 del radar; nessun movimento", str(s["fenomeni"]))
         a5_q3 = carica(DATI / "run_A5_2026Q3.json")
         riga_q3 = next(r for r in s["sintesi_cicli"] if r["Ciclo"] == "2026Q3")
         e.verifica(riga_q3["Sintesi_A5"] == a5_q3["sintesi"] and isinstance(riga_q3["Osservazioni_Controlli"], int)
@@ -1171,32 +1616,39 @@ def catena(e):
         e.verifica(all(list(liste[n][0]) == attese[n] for n in attese),
                    "2. righe per le liste SharePoint: colonne esattamente come da mappa", str({n: list(liste[n][0]) for n in attese}))
         kri_lista = {r["KRI_ID"]: r for r in liste["KRI_Storico"]}
-        e.verifica(len(liste["RiskRegister_Storico"]) == 12 and len(liste["Azioni_Storico"]) == 15 and len(kri_lista) == 25
+        e.verifica(len(liste["RiskRegister_Storico"]) == 16 and len(liste["Azioni_Storico"]) == 15 and len(kri_lista) == 25
                    and kri_lista["NFR-02-K2"]["In_Vigore"] == "No" and kri_lista["NFR-02-K3"]["Valore_Corrente"] is None,
-                   "2. liste: 12 rischi, 15 azioni, 25 KRI (incluso quello uscito); il KRI nuovo non eredita valori",
+                   "2. liste: 16 rischi (radar e osservazione), 15 azioni, 25 KRI (incluso quello uscito); il KRI nuovo non "
+                   "eredita valori",
                    f"{len(liste['RiskRegister_Storico'])} {len(liste['Azioni_Storico'])} {len(kri_lista)}")
 
         # 2b. Validazione umana del 2026Q3 nella griglia del foglio Validazione (D-67)
         s = b.leggi()
         val_q3 = [r for r in s["validazione"] if r["Periodo"] == "2026Q3"]
-        e.verifica(len(val_q3) == 12 * 5 + 25 * 3 + 15 * 2 + 2 * 3 and all(r["Stato"] == "Da decidere" for r in val_q3),
-                   "2b. lo storico ha una riga 'Da decidere' per ogni campo proposto (12 rischi x 5, 25 KRI x 3, 15 azioni x 2, "
-                   "2 voci in osservazione x 3)",
+        e.verifica(len(val_q3) == 13 * 6 + 25 * 3 + 15 * 2 and all(r["Stato"] == "Da decidere" for r in val_q3),
+                   "2b. lo storico ha una riga 'Da decidere' per ogni campo proposto (13 rischi x 6 con la decisione sullo "
+                   "stato, 25 KRI x 3, 15 azioni x 2); i 3 rischi in osservazione riportati non si rivalutano",
                    str(len(val_q3)))
-        e.verifica(len(s["griglia"]) == 12 + 25 + 15 + 2 and griglia_uguale_alle_proposte(s, "2026Q3")
-                   and righe_visibili(b) == {"Rischio": 12, "KRI": 25, "Azione": 15, "Osservazione": 2, "Notizia": 0}
-                   and str(s["griglia_stato"]).startswith("Da validare: ciclo 2026Q3 (54 righe)"),
-                   "2b. griglia: una riga per rischio, KRI, azione e voce in osservazione proposta da A1 (54, le altre "
-                   "nascoste), celle gialle uguali alle proposte",
-                   f"{len(s['griglia'])} {s['griglia_stato']!r}")
+        e.verifica(len(s["griglia"]) == 13 + 25 + 15 and griglia_uguale_alle_proposte(s, "2026Q3")
+                   and righe_visibili(b) == {"Rischio": 13, "KRI": 25, "Azione": 15, "Notizia": 0}
+                   and str(s["griglia_stato"]).startswith("Da validare: ciclo 2026Q3 (53 righe)")
+                   and s["griglia_stati"]["NFR-16"] == "Osservazione: Prossimita 1 sotto la soglia 2"
+                   and s["griglia_stati"]["NFR-01"].startswith("Radar: Prossimita 4 e Probabilita 4: sopra la soglia")
+                   and all(g["valori"]["Decisione_Stato"] == "Automatico" for k, g in s["griglia"].items() if k[0] == "Rischio"),
+                   "2b. griglia: una riga per rischio (anche NFR-16 in osservazione), KRI e azione proposti da A1 (53, le "
+                   "altre nascoste), celle gialle uguali alle proposte; colonna Stato con il motivo, decisione sullo stato "
+                   "Automatico",
+                   f"{len(s['griglia'])} {s['griglia_stato']!r} {s['griglia_stati']}")
         q3 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q3"}
         radar = {m[0]: round(m[2], 6) for m in s["mosca"]}
-        e.verifica({i: (round(v[0], 2), round(v[1], 6)) for i, v in s["griglia_rischi"].items()}
-                   == {i: (score_d50(q3[i]), radar[i]) for i in q3},
+        e.verifica(set(s["griglia_rischi"]) == set(radar) | {"NFR-16"}
+                   and {i: (round(v[0], 2), round(v[1], 6)) for i, v in s["griglia_rischi"].items() if i in radar}
+                   == {i: (score_d50(q3[i]), radar[i]) for i in radar},
                    "2b. griglia: Score composito e Margine di Mosca delle proposte = quelli del Registro e del Radar_Mosca",
-                   f"griglia {s['griglia_rischi']}\nregistro {[(i, score_d50(q3[i]), radar[i]) for i in q3]}")
+                   f"griglia {s['griglia_rischi']}\nregistro {[(i, score_d50(q3[i]), radar[i]) for i in radar]}")
         e.verifica(s["f8"].startswith("CICLO NON ANCORA VALIDATO") and
-                   all(r["Validazione"] == "Da validare" for r in s["register"] if r["Ciclo"] == "2026Q3"),
+                   all(r["Validazione"] == "Da validare" for r in s["register"] if r["Ciclo"] == "2026Q3"
+                       and r["Periodo_Valutazione"] == "2026Q3"),   # i riportati (D-79) sono gia' validati
                    "2b. Registro e RiskRegister dicono che il ciclo non e' validato", s["f8"])
         codice, out = b.esegui("schede-input")
         e.verifica(codice == 1 and "righe da validare" in out and not (b.uscita / "Cicli" / "2026Q3" / "Schede_input_2026Q3.json").exists(),
@@ -1206,7 +1658,7 @@ def catena(e):
                    "2b. il report non si rigenera su un ciclo non validato (report fermo)", out)
         prima = sha(b.wb)
         codice, out = b.esegui("trimestrale", "--payload", DATI / "run3_A1_2026Q4.json", "--challenger", DATI / "run_A5_2026Q4.json")
-        e.verifica(codice == 1 and "non e' ancora validato" in out and "54 righe" in out and sha(b.wb) == prima,
+        e.verifica(codice == 1 and "non e' ancora validato" in out and "53 righe" in out and sha(b.wb) == prima,
                    "2b. il ciclo dopo non parte finche' il 2026Q3 non e' validato (fermo, workbook intatto)", out)
         dec = carica(DATI / "decisioni_validatore_2026Q3.json")
         codice, out = b.esegui("valida", "--periodo", "2026Q2", "--validatore", dec["validatore"])
@@ -1236,9 +1688,8 @@ def catena(e):
                    "2b. griglia: il margine si ricalcola mentre si scrive (NFR-06 con un anno di adeguamento, NFR-08 senza "
                    "l'azione respinta: da 0,75 e 1,00 a 0,25)", str(s_prima["griglia_rischi"]))
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", dec["validatore"])
-        e.verifica(codice == 0 and "54 righe" in out and "rettificate 5 (6 valori cambiati), respinte 2" in out,
-                   "2b. validazione del 2026Q3 applicata: 5 righe rettificate (6 valori), 2 respinte (un'azione e una voce "
-                   "in osservazione)", out)
+        e.verifica(codice == 0 and "53 righe" in out and "rettificate 4 (5 valori cambiati), respinte 1" in out,
+                   "2b. validazione del 2026Q3 applicata: 4 righe rettificate (5 valori), 1 respinta (un'azione)", out)
         nfr10 = file_rischio(b.uscita / "Spiegazioni", "NFR-10") or ""
         nfr08 = file_rischio(b.uscita / "Spiegazioni", "NFR-08") or ""
         e.verifica("VALIDATI" in (b.uscita / "Spiegazioni" / "Ciclo.txt").read_text(encoding="utf-8")
@@ -1248,29 +1699,27 @@ def catena(e):
         s = b.leggi()
         q3 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q3"}
         radar = {m[0]: round(m[2], 6) for m in s["mosca"]}
-        e.verifica({i: (round(v[0], 2), round(v[1], 6)) for i, v in s_prima["griglia_rischi"].items()}
-                   == {i: (score_d50(q3[i]), radar[i]) for i in q3},
+        e.verifica({i: (round(v[0], 2), round(v[1], 6)) for i, v in s_prima["griglia_rischi"].items() if i in radar}
+                   == {i: (score_d50(q3[i]), radar[i]) for i in radar},
                    "2b. Score e Margine calcolati dalla griglia PRIMA di valida = quelli del Registro e del Radar_Mosca DOPO",
-                   f"griglia {s_prima['griglia_rischi']}\nregistro {[(i, score_d50(q3[i]), radar[i]) for i in q3]}")
+                   f"griglia {s_prima['griglia_rischi']}\nregistro {[(i, score_d50(q3[i]), radar[i]) for i in radar]}")
         e.verifica(not s["griglia"] and str(s["griglia_stato"]).startswith("Niente da validare")
-                   and righe_visibili(b) == {"Rischio": 0, "KRI": 0, "Azione": 0, "Osservazione": 0, "Notizia": 0},
+                   and righe_visibili(b) == {"Rischio": 0, "KRI": 0, "Azione": 0, "Notizia": 0},
                    "2b. dopo valida il ciclo esce dalla griglia (niente da validare, righe nascoste)", str(s["griglia_stato"]))
         respinta = [r for r in s["validazione"] if r["ID"] == "2026Q3-NFR-08-A1"]
         e.verifica(len(respinta) == 2 and all(r["Decisione"] == "Respinto" and r["Valore_Validato"] is None
                                               and len(str(r["Motivazione"])) > 10 for r in respinta),
                    "2b. storico: Respingi vale per tutti i campi dell'azione, con la motivazione della riga", str(respinta))
-        oss_q3 = {r["OSS_ID"]: r for r in s["osservazione"] if r["Ciclo"] == "2026Q3"}
-        e.verifica((oss_q3["OSS-04"]["Orizzonte_Anni"], oss_q3["OSS-04"]["Validazione"], oss_q3["OSS-04"]["Stato"])
-                   == (3, "Rettificato", "In osservazione")
-                   and (oss_q3["OSS-05"]["Stato"], oss_q3["OSS-05"]["Validazione"]) == ("Respinta", "Respinto")
-                   and [f[0] for f in s["fenomeni"]] == ["OSS-01", "OSS-02", "OSS-04", "OSS-03"]
-                   and s["fenomeni_uscite"] == [("OSS-05", "Respinta")]
-                   and [v["oss_id"] for v in carica(b.uscita / "Baseline_corrente.json")["osservazione"]]
-                   == ["OSS-04", "OSS-01", "OSS-02", "OSS-03"],
-                   "2b. lista di osservazione validata: OSS-04 accettata con l'orizzonte rettificato, OSS-05 respinta (esce "
-                   "dalla lista, fra le uscite del ciclo); la baseline del ciclo dopo ha le 4 voci in osservazione",
-                   f"{ {i: (r['Orizzonte_Anni'], r['Stato'], r['Validazione']) for i, r in oss_q3.items()} } {s['fenomeni']} "
-                   f"{s['fenomeni_uscite']}")
+        base_dopo = carica(b.uscita / "Baseline_corrente.json")
+        n16 = next((x for x in base_dopo["rischi_in_osservazione"] if x["id_rischio"] == "NFR-16"), {})
+        e.verifica(sorted(x["id_rischio"] for x in base_dopo["rischi_in_osservazione"]) == ["NFR-13", "NFR-14", "NFR-15", "NFR-16"]
+                   and next(r for r in s["register"] if r["Ciclo"] == "2026Q3" and r["ID_Rischio"] == "NFR-16")["Stato"] == "Osservazione"
+                   and (n16.get("orizzonte_anni"), n16.get("stato"), n16.get("decisione_stato")) == (5, "Osservazione", "Automatico")
+                   and str(n16.get("segnale_avvicinamento")).startswith("Uno sciopero di settore")
+                   and "Radar di Mosca dopo la validazione" not in out,      # nessun movimento: valida non ne parla
+                   "2b. dopo valida lo stato si ricalcola sui valori validati: NFR-16 resta in osservazione; la baseline del "
+                   "ciclo dopo ha i 4 rischi in osservazione con orizzonte, segnale e decisione",
+                   str(base_dopo["rischi_in_osservazione"])[:800] + out[-400:])
         nfr06 = next(r for r in s["register"] if r["Ciclo"] == "2026Q3" and r["ID_Rischio"] == "NFR-06")
         e.verifica(nfr06["Anni_Adeguamento"] == 1 and nfr06["Validazione"] == "Rettificato" and nfr06["Approvato_Da"] == dec["validatore"]
                    and nfr06["Esito"] == "Confermato" and nfr06["Data_Validazione"] and json.loads(nfr06["Variazioni"]) == [],
@@ -1302,9 +1751,8 @@ def catena(e):
                    "2b. la proposta dell'agente resta accanto al valore deciso e al motivo (base per l'apprendimento)", str(riga))
         e.verifica(all(r["Stato"] == "Applicata" for r in s["validazione"] if r["Periodo"] == "2026Q3") and s["f8"] == "Ciclo validato",
                    "2b. tutte le righe del ciclo applicate; Registro: ciclo validato", s["f8"])
-        e.verifica(str(s["avviso"]).startswith("Il validatore ha applicato 8 ") and not s["rilievi_superati"],
-                   "2b. Quadro: avviso che il commento di A1 precede 8 rettifiche o respingimenti (2 sulla lista di "
-                   "osservazione); nessun rilievo superato",
+        e.verifica(str(s["avviso"]).startswith("Il validatore ha applicato 6 ") and not s["rilievi_superati"],
+                   "2b. Quadro: avviso che il commento di A1 precede 6 rettifiche o respingimenti; nessun rilievo superato",
                    f"{s['avviso']!r} {s['rilievi_superati']!r}")
         verifica_report(e, s, "2b. report dopo la validazione")
         e.verifica((archivio_q3 / "Validazione_2026Q3.json").exists() and (archivio_q3 / "NFR_workbook_2026Q3_validato.xlsx").exists()
@@ -1333,11 +1781,11 @@ def catena(e):
         codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_fonte.json", fuori_elenco))
         e.verifica(codice == 1 and "FNT-99" in out and sha(b.wb) == prima,
                    "3. notizia con un codice fonte fuori elenco: fermo, workbook intatto", out)
-        fuori_lista = carica(DATI / "run_A3_2026-10-12.json")
-        fuori_lista["notizie"][1]["voce_osservazione"] = "OSS-05"            # respinta in validazione: non e' in osservazione
-        codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_oss.json", fuori_lista))
-        e.verifica(codice == 1 and "OSS-05" in out and "lista di osservazione" in out and sha(b.wb) == prima,
-                   "3. notizia collegata a una voce che non e' in osservazione (OSS-05, respinta): fermo, workbook intatto", out)
+        fuori_registro = carica(DATI / "run_A3_2026-10-12.json")
+        fuori_registro["notizie"][1]["rischio_collegato"] = "NFR-19"          # non e' nel registro (ne' radar ne' osservazione)
+        codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_fuori.json", fuori_registro))
+        e.verifica(codice == 1 and "NFR-19" in out and sha(b.wb) == prima,
+                   "3. notizia collegata a un rischio che non e' nel registro (NFR-19): fermo, workbook intatto", out)
         doppia = carica(DATI / "run_A3_2026-10-12.json")
         doppia["notizie"].append(dict(doppia["notizie"][0]))
         codice, out = b.esegui("settimanale", "--payload", b.scrivi_json("a3_doppia.json", doppia))
@@ -1358,17 +1806,16 @@ def catena(e):
                    "3. un titolo che inizia con '=' o che sembra una data resta testo, identico",
                    str({i: scritti.get(i) for i in titoli}))
         e.verifica(s["settimana"] == "2026-10-12", "3. la settimana corrente e' scorsa al 12/10/2026")
-        voce = {n["ID_Notizia"]: n.get("Voce_Osservazione") for n in s["news"]}
-        segnali = next((r.get("Segnali_Osservazione") for r in s["settimane"] if r["Settimana"] == "2026-10-12"), "")
-        e.verifica(voce.get("N-20261006-01") == "OSS-04" and voce.get("N-20261007-01") is None
-                   and str(segnali).startswith("OSS-04 · Segnale verificato: ") and "OSS-04 · Segnale verificato" in out,
-                   "3. A3 collega la notizia dello sciopero alla voce OSS-04 e propone 'Segnale verificato' (D-73): colonna "
-                   "Voce_Osservazione di NewsLog, Segnali_Osservazione di Sintesi_Settimane, a video",
-                   f"{voce} {segnali!r}")
+        collegata = {n["ID_Notizia"]: n.get("Rischio_ID") for n in s["news"]}
+        flag = next((r.get("Flag_Proposti") for r in s["settimane"] if r["Settimana"] == "2026-10-12"), "")
+        e.verifica(collegata.get("N-20261006-01") == "NFR-16" and "NFR-16 · Peggiorativo: " in str(flag),
+                   "3. A3 collega la notizia dello sciopero al rischio in osservazione NFR-16 e propone un flag (D-79: "
+                   "stesso meccanismo dei rischi del radar)", f"{collegata} {flag!r}")
         e.verifica((b.uscita / "Settimane" / "2026-10-12" / "NFR_workbook_2026-10-12.xlsx").exists()
                    and (b.uscita / "Settimane" / "2026-10-12" / "A3_2026-10-12.json").exists(),
                    "3. archivio della settimana: Excel di output con la data + output di A3")
-        e.verifica(s["presidio"]["9.11"] == "AREA NON PRESIDIATA", "3. 9.11 Employer segnalata come area non presidiata", str(s["presidio"]))
+        e.verifica(s["presidio"]["9.11"] == PRESIDIO_911_Q3, "3. 9.11 Employer: nessun rischio del radar, la notizia va "
+                   "sul rischio in osservazione NFR-16", str(s["presidio"]))
         e.verifica(str(s["badge"]["NFR-01"]).startswith("▲"), "3. tre segnali peggiorativi: badge NFR-01 in peggioramento", str(s["badge"]))
         riga = [r for r in s["settimane"] if r["Settimana"] == "2026-10-12"]
         e.verifica(len(riga) == 1 and riga[0]["Sintesi_A3"] == a3["sintesi"] and riga[0]["Notizie"] == len(a3["notizie"])
@@ -1386,11 +1833,10 @@ def catena(e):
 
         dec_w = carica(DATI / "decisioni_validatore_2026-10-12.json")
         s = b.leggi()
-        e.verifica(sum(1 for r in s["validazione"] if r["Periodo"] == "2026-10-12" and r["Stato"] == "Da decidere") == 15
+        e.verifica(sum(1 for r in s["validazione"] if r["Periodo"] == "2026-10-12" and r["Stato"] == "Da decidere") == 10
                    and len(s["griglia"]) == 5 and griglia_uguale_alle_proposte(s, "2026-10-12")
                    and "settimana del 12/10/2026 (5 notizie)" in str(s["griglia_stato"]),
-                   "3. la settimana: nello storico 3 righe per notizia (Rischio_ID, Segnale, Voce_Osservazione), nella griglia "
-                   "una per notizia",
+                   "3. la settimana: nello storico 2 righe per notizia (Rischio_ID, Segnale), nella griglia una per notizia",
                    str(s["griglia_stato"]))
         scrivi_decisioni(b.wb, dec_w["periodo"], dec_w["decisioni"])
         # Una riga cancellata a mano dalla griglia: valida si ferma e indica il comando griglia, che la ripara
@@ -1415,13 +1861,13 @@ def catena(e):
         # 4. Baseline per il ciclo N+1
         codice, out = b.esegui("baseline", "--uscita", b.cartella / "base_q4.json")
         base_q4 = carica(b.cartella / "base_q4.json")
-        e.verifica(codice == 0 and base_q4 == carica(DATI / "baseline_2026Q4.json"),
+        e.verifica(codice == 0 and uguale_ai_dati("baseline_2026Q4.json", b.cartella / "base_q4.json"),
                    "4. la baseline dopo il 2026Q3 e' quella usata per run3", out)
-        oss04 = next((v for v in base_q4["osservazione"] if v["oss_id"] == "OSS-04"), {})
-        e.verifica([n["id_notizia"] for n in oss04.get("notizie_a3", [])] == ["N-20261006-01"]
-                   and [x["segnale"].split(":")[0] for x in oss04.get("segnali_a3", [])] == ["Segnale verificato"],
-                   "4. la baseline porta ad A1 la notizia e il segnale di A3 su OSS-04 (D-73), che run3 promuove a NFR-13",
-                   str(oss04)[:600])
+        n16 = next((v for v in base_q4["rischi_in_osservazione"] if v["id_rischio"] == "NFR-16"), {})
+        e.verifica([n["id_notizia"] for n in n16.get("notizie_a3", [])] == ["N-20261006-01"]
+                   and any("NFR-16" in str(x) or "Peggiorativo" in str(x) for x in n16.get("flag_a3", [])),
+                   "4. la baseline porta ad A1 la notizia e il flag di A3 su NFR-16 (in osservazione), che run3 porta nel radar",
+                   str(n16)[:900])
 
         # 5. Ciclo 2026Q4 sulla baseline del 2026Q3; prima l'analista scrive le Note del Quadro del 2026Q3 (D-72).
         nota = "Discusse con A7 le valutazioni di NFR-01 e NFR-10: confermate dalle fonti citate."
@@ -1440,38 +1886,46 @@ def catena(e):
                    and f"note del ciclo 2026Q3: {nota}" in ciclo_q4,
                    "5. Note dell'analista: archiviate nella riga del 2026Q3 di Sintesi_Cicli, cella del Quadro svuotata, "
                    "riportate nella knowledge di A7", f"{sint_q3.get('Note_Analista')!r} {nota_dopo!r}")
-        e.verifica(all(f["fenomeno"] in ciclo_q4 for f in scartati) and file_rischio(b.uscita / "Spiegazioni", "NFR-13")
+        e.verifica(all(f["fenomeno"] in ciclo_q4 for f in scartati) and file_rischio(b.uscita / "Spiegazioni", "NFR-16")
                    and rischi_nei_posti(b.uscita / "Spiegazioni") == (20, 13)
                    and "gia' coperto da un rischio del registro" in ciclo_q4,
                    "5. knowledge di A7: i fenomeni considerati e non censiti da A1 con il motivo, il file del rischio nuovo",
                    ciclo_q4[-900:])
-        e.verifica("LISTA DI OSSERVAZIONE" in ciclo_q4 and "OSS-04 Vertenze e carenza di tecnici" in ciclo_q4
-                   and "Promossa a NFR-13" in ciclo_q4 and "Crittografia dei pagamenti" not in ciclo_q4.split("LISTA DI")[0],
-                   "5. knowledge di A7: la lista di osservazione del ciclo con la promozione di OSS-04 a NFR-13",
-                   ciclo_q4.split("LISTA DI OSSERVAZIONE")[-1][:900])
+        oss_txt = ciclo_q4.split("RISCHI IN OSSERVAZIONE")[-1]
+        e.verifica("RISCHI IN OSSERVAZIONE" in ciclo_q4 and "- NFR-14 Interruzione di cavi sottomarini" in oss_txt
+                   and "ENTRATI E USCITI DAL RADAR NEL CICLO" in ciclo_q4 and "- NFR-16 " in oss_txt.split("ENTRATI E USCITI")[-1]
+                   and "Entrato" in oss_txt.split("ENTRATI E USCITI")[-1] and "- NFR-16 " not in oss_txt.split("ENTRATI E USCITI")[0],
+                   "5. knowledge di A7: i rischi in osservazione del ciclo (NFR-14 con il perche') e NFR-16 entrato nel radar",
+                   oss_txt[:1200])
         e.verifica(sha(excel_q3) == firma_q3 and (b.uscita / "Cicli" / "2026Q4" / "NFR_workbook_2026Q4.xlsx").exists(),
                    "5. l'Excel di output del 2026Q3 resta immutato; il 2026Q4 ha il suo")
         s = b.leggi()
         verifica_integrita(e, s, "5. 2026Q4")
         anag = {r["ID"]: r for r in s["anagrafica"]}
-        e.verifica("NFR-13" in anag and anag["NFR-13"]["Owner"] == "Da assegnare" and anag["NFR-13"]["Event_Type"] == "9.11",
-                   "5. rischio nuovo NFR-13 in anagrafica, owner da assegnare")
-        e.verifica(s["copertura_foglio"] == (13, 13), "5. copertura 13/13: il rischio nuovo e' contato", str(s["copertura_foglio"]))
-        oss_q4 = {r["OSS_ID"]: r for r in s["osservazione"] if r["Ciclo"] == "2026Q4"}
-        e.verifica(sorted(oss_q4) == ["OSS-01", "OSS-02", "OSS-03", "OSS-04"]
-                   and (oss_q4["OSS-04"]["Esito"], oss_q4["OSS-04"]["Stato"], oss_q4["OSS-04"]["Promosso_A"]) == ("Promossa", "Promossa", "NFR-13")
-                   and (oss_q4["OSS-02"]["Esito"], oss_q4["OSS-02"]["Orizzonte_Anni"]) == ("Avvicinata", 3)
-                   and oss_q4["OSS-03"]["Esito"] == "Invariata" and "OSS-05" not in oss_q4
-                   and [f[0] for f in s["fenomeni"]] == ["OSS-01", "OSS-02", "OSS-03"]
-                   and s["fenomeni_uscite"] == [("OSS-04", "Promossa a NFR-13")]
-                   and sum(1 for r in s["validazione"] if r["Periodo"] == "2026Q4" and r["Oggetto"] == "Osservazione") == 3 * 3,
-                   "5. lista di osservazione: il segnale di OSS-04 si e' verificato e diventa il rischio NFR-13 (promossa, fuori "
-                   "dalla lista); OSS-02 avvicinata, OSS-01 confermata, OSS-03 invariata; la respinta non torna; in validazione "
-                   "le tre voci toccate da A1",
-                   str({i: (r["Esito"], r["Stato"], r["Promosso_A"]) for i, r in oss_q4.items()}) + f" {s['fenomeni']} {s['fenomeni_uscite']}")
+        e.verifica("NFR-16" in anag and anag["NFR-16"]["Owner"] == "Da assegnare" and anag["NFR-16"]["Event_Type"] == "9.11",
+                   "5. NFR-16 entra nel radar: in anagrafica, owner da assegnare")
+        e.verifica(s["copertura_foglio"] == (13, 13), "5. copertura 13/13: il rischio entrato e' contato", str(s["copertura_foglio"]))
+        q4 = {r["ID_Rischio"]: r for r in s["register"] if r["Ciclo"] == "2026Q4"}
+        stati = {i: (r["Stato"], r["Movimento"], r["Esito"], r["Validazione"]) for i, r in q4.items()}
+        e.verifica(stati["NFR-16"] == ("Radar", "Entrato", "Variato", "Da validare")
+                   and q4["NFR-16"]["Motivo_Stato"] == "Prossimita 2 e Probabilita 3: sopra la soglia"
+                   and stati["NFR-14"] == ("Osservazione", None, "Variato", "Da validare") and q4["NFR-14"]["Orizzonte_Anni"] == 4
+                   and stati["NFR-13"] == ("Osservazione", None, "Confermato", "Da validare")
+                   and stati["NFR-15"] == ("Osservazione", None, "Confermato", "Accettato")
+                   and q4["NFR-15"]["Periodo_Valutazione"] == "2026Q2"
+                   and [f[0] for f in s["fenomeni"]] == ["NFR-14", "NFR-13", "NFR-15"]
+                   and s["fenomeni_uscite"] == [("NFR-16", "Entrato")]
+                   and sum(1 for r in s["validazione"] if r["Periodo"] == "2026Q4" and r["Oggetto"] == "Rischio") == 15 * 6
+                   and "entrati nel radar NFR-16" in out,
+                   "5. registro unico: il segnale di NFR-16 si e' verificato, Probabilita e Prossimita salgono di un punto ed "
+                   "entra nel radar (Entrato, con KRI e azioni); NFR-14 aggiornato con evidenza nuova resta in osservazione "
+                   "(Prossimita 1), NFR-13 confermato, NFR-15 riportato; in validazione i 15 rischi scritti da A1",
+                   str(stati) + f" {s['fenomeni']} {s['fenomeni_uscite']}" + out[-500:])
         kri = {k["KRI_ID"]: k for k in s["kri"] if k["Ciclo"] == "2026Q4"}
-        e.verifica({"NFR-13-K1", "NFR-13-K2"} <= set(kri) and len({k["KRI_ID"] for k in s["kri"]}) == 27,
-                   "5. due KRI nuovi per NFR-13 (K1-K2, D-64), 27 indicatori distinti nello storico", str(sorted(kri)))
+        e.verifica({"NFR-16-K1", "NFR-16-K2"} <= set(kri) and len({k["KRI_ID"] for k in s["kri"]}) == 27
+                   and not [k for k in kri if k.startswith(("NFR-13", "NFR-14", "NFR-15"))],
+                   "5. due KRI nuovi per NFR-16 entrato nel radar (K1-K2, D-64), nessuno per chi resta in osservazione; 27 "
+                   "indicatori distinti nello storico", str(sorted(kri)))
         e.verifica("NFR-02-K2" not in kri, "5. il KRI uscito nel 2026Q3 non ha righe nei cicli dopo")
         e.verifica(kri["NFR-02-K3"]["Valore_Corrente"] == 0 and kri["NFR-02-K3"]["Ciclo_Definizione"] == "2026Q3",
                    "5. il KRI nato nel 2026Q3 viene riletto nel 2026Q4 senza cambiare data di nascita")
@@ -1483,12 +1937,12 @@ def catena(e):
         valori_k2, _ = b.andamento("NFR-02-K2")
         e.verifica(max(valori_k2) == "2026Q3" and "2026Q4" not in valori_k2,
                    "5. Indicatori, storia di un KRI uscito: la storia si ferma al ciclo in cui e' uscito", str(valori_k2))
-        e.verifica(len(elenco) == 27 and len(set(elenco)) == 27 and {"NFR-02-K2", "NFR-02-K3", "NFR-13-K1"} <= set(elenco),
+        e.verifica(len(elenco) == 27 and len(set(elenco)) == 27 and {"NFR-02-K2", "NFR-02-K3", "NFR-16-K1"} <= set(elenco),
                    "5. elenco a discesa degli Indicatori: i 27 KRI mai definiti, anche usciti, senza doppioni", str(elenco))
-        e.verifica(s["presidio"]["9.11"] == "Presidiata", "5. la catena si chiude: 9.11 Employer ora presidiata da NFR-13", str(s["presidio"]))
+        e.verifica(s["presidio"]["9.11"] == "Presidiata", "5. la catena si chiude: 9.11 Employer ora presidiata da NFR-16", str(s["presidio"]))
         verifica_report(e, s, "5. report 2026Q4", commento=carica(DATI / "run3_A1_2026Q4.json")["sintesi"])
-        e.verifica(next(r for r in s["register"] if r["ID_Rischio"] == "NFR-13")["Owner"] == "Da assegnare",
-                   "5. RiskRegister: owner derivato dall'anagrafica anche per il rischio nuovo")
+        e.verifica(q4["NFR-16"]["Owner"] == "Da assegnare",
+                   "5. RiskRegister: owner derivato dall'anagrafica anche per il rischio entrato nel radar")
 
         # 5b. Radar di Mosca: il foglio calcola lo stesso margine di un calcolo indipendente in Python.
         attesi = mosca_attesa(s, carica_tabella(b, "tblAzioni"))
@@ -1518,7 +1972,10 @@ def catena(e):
                    "7. la finestra scorre: i segnali di ottobre escono, badge NFR-01 torna stabile", out + str(s["badge"]))
         straordinario(e, b)
 
-    # 6. Gate di copertura: si scrive un ciclo senza NFR-04 aggirando i controlli.
+
+def gate_copertura(e):
+    """6. Gate di copertura: si scrive un ciclo senza NFR-04 aggirando i controlli."""
+    run1 = carica(DATI / "run1_A1_2026Q3.json")
     with tempfile.TemporaryDirectory() as tmp:
         b = Banco(tmp)
         prima = sha(b.wb)
@@ -1537,10 +1994,11 @@ def catena(e):
         e.verifica(copertura[0] == copertura[1] == (12, 11), "6. gate: Python e foglio concordano sul ciclo incompleto (11 su 12)", str(copertura))
         e.verifica(sha(b.wb) == prima, "6. gate: il file non e' stato salvato")
 
-    # 8. Errore DOPO il salvataggio: l'Excel di output non si puo' scrivere (un
-    #    file aperto da qualcuno nell'archivio; qui un file in sola lettura).
-    #    Il messaggio non deve dire "non salvato", e la baseline deve essere
-    #    gia' aggiornata, altrimenti il run dopo partirebbe da una baseline vecchia.
+
+def errore_dopo_salvataggio(e):
+    """8. Errore DOPO il salvataggio: l'Excel di output non si puo' scrivere (un file aperto da qualcuno
+    nell'archivio; qui un file in sola lettura). Il messaggio non deve dire "non salvato", e la baseline deve essere
+    gia' aggiornata, altrimenti il run dopo partirebbe da una baseline vecchia. Poi 8b."""
     with tempfile.TemporaryDirectory() as tmp:
         b = Banco(tmp)
         prima = sha(b.wb)
@@ -1570,7 +2028,10 @@ def catena(e):
                    "8b. rettifica del valore di un KRI mai rilevato: data (fine trimestre) e fonte della rilevazione compilate",
                    out + str(k4))
 
-    # 9. Primo uso reale e dismissione di un rischio.
+
+def primo_uso(e):
+    """9. Primo uso reale e dismissione di un rischio."""
+    run1 = carica(DATI / "run1_A1_2026Q3.json")
     with tempfile.TemporaryDirectory() as tmp:
         b = Banco(tmp)
         b.wb.unlink()                                  # inizializza crea il registro: il file non deve esistere

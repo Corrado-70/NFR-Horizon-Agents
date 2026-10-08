@@ -59,6 +59,9 @@ from openpyxl.worksheet.pagebreak import Break
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 QUI = Path(__file__).resolve().parent
+sys.path.insert(0, str(QUI.parent / "07_Senza_Studio"))
+import radar  # noqa: E402  regola del registro unico (D-79): la stessa dello script
+
 MAPPA = json.loads((QUI.parent / "01_Kernel" / "mappatura_campi.json").read_text(encoding="utf-8"))
 
 # Capacita' fissate dal disegno. Se si superano, lo scrittore si ferma con un
@@ -72,7 +75,6 @@ MAX_ELENCO_KRI = 150    # KRI distinti mai definiti, nell'elenco a discesa del f
 
 # Prefisso dei nomi definiti per colonna: RR_Impatto, KRI_Stato, NW_Segnale...
 PREFISSI = {"tblRegister": "RR", "tblAzioni": "AZ", "tblKRI": "KRI", "tblNews": "NW", "tblValidazione": "VAL",
-            "tblOsservazione": "OS",
             "tblSintesi": "SI", "tblSettimane": "SE"}
 
 # Versione della STRUTTURA del workbook (fogli, colonne, nomi). Scritta come nome
@@ -80,7 +82,7 @@ PREFISSI = {"tblRegister": "RR", "tblAzioni": "AZ", "tblKRI": "KRI", "tblNews": 
 # con un template piu' vecchio e indica il comando aggiorna-registro. Va alzata a
 # ogni modifica di struttura (non per un cambio di soli dati di esempio), insieme a
 # VERSIONE_TEMPLATE in 07_Senza_Studio/esegui_ciclo_locale.py.
-VERSIONE_TEMPLATE = "2026-10-08b"
+VERSIONE_TEMPLATE = "2026-10-09"
 # Tabelle dati: riga 1 titolo, riga 2 guida, riga 3 gruppi di colonne per chi le
 # scrive, riga 4 significato delle colonne, riga 5 intestazione, dati dalla riga 6
 # (i nomi definiti delle colonne partono da qui).
@@ -110,8 +112,10 @@ DRIVER = [
     ("DRV-TEC", "Debito tecnologico"), ("DRV-HUM", "Capitale umano"),
 ]
 SEGNALI = ["Peggiorativo", "Migliorativo", "Neutro", "Non rilevante"]
-PLAUSIBILITA = ["teorica", "possibile", "in crescita"]          # lista di osservazione (D-73)
-MAX_OSSERVAZIONE = 30                                         # voci in osservazione al massimo (D-73)
+MAX_OSSERVAZIONE = 20                                         # rischi in osservazione al massimo (D-79)
+CAPIENZA_RADAR = 15                                           # rischi nel radar all'inizio (D-79), fino a MAX_RISCHI
+STATI_REGISTRO = ["Radar", "Radar, in uscita", "Osservazione", "Dismesso"]   # colonna Stato del RiskRegister (D-79)
+DECISIONI_STATO = ["Automatico", "Radar", "Osservazione"]     # decisione del validatore sullo stato (D-79)
 STATI_AZIONE = ["Proposta — da valutare", "Approvata", "Respinta", "In corso", "Completata", "Annullata"]
 
 # ---------------------------------------------------------------- stili
@@ -146,13 +150,14 @@ ETICHETTA_CHI = {"A1": ("trimestrale", "A1"), "A5": ("trimestrale", "A5"), "A3":
                  "validazione": ("validazione", "Validazione"), "validatore": ("validazione", "Validatore")}
 # Colonne che registrano l'esito della validazione (le scrive il comando valida, o a mano lo Stato delle azioni).
 COLONNE_VALIDAZIONE = {
-    "tblRegister": {"Approvato_Da", "Validazione", "Data_Validazione"},
+    "tblRegister": {"Approvato_Da", "Validazione", "Data_Validazione", "Decisione_Stato"},
     "tblAzioni": {"Stato", "Data_Decisione", "Decisa_Da", "Validazione"},
-    "tblKRI": {"Validazione"}, "tblNews": {"Validazione"}, "tblOsservazione": {"Validazione"},
+    "tblKRI": {"Validazione"}, "tblNews": {"Validazione"},
 }
 LEGENDA_COLORI = ("Colore delle intestazioni = chi scrive la colonna: azzurro l'agente del ciclo trimestrale (A1, A5), "
                   "verde l'agente settimanale (A3), giallo la validazione, grigio lo script o una formula.")
-NON_A_MANO = "Si scrive solo con lo script: non modificare a mano (le viste e la baseline leggono queste righe)."
+NON_A_MANO = ("Si scrive con lo script (le viste e la baseline leggono queste righe): a mano solo i testi elencati nel foglio "
+              "Guida, DOVE SI SCRIVE A MANO; mai ID, numeri, date o righe intere (D-76).")
 # Fascia dei gruppi di colonne delle tabelle dati (riga 3): chi scrive, quando.
 GRUPPO_CHI = {"A1": "ciclo trimestrale, poi validato", "A5": "ciclo trimestrale", "A3": "ciclo settimanale",
               "script": "alla scrittura", "formula": "calcolata dal foglio", "validazione": "comando valida",
@@ -195,12 +200,12 @@ GUIDE = {
         "quanto vale un punto di ogni dimensione e il dettaglio per dimensione (la Nota segnala una violazione della "
         "regola del punto). Velocity n.v. = non valutata in uno dei due cicli."]),
     "Fenomeni": ("trimestrale", [
-        "CICLO TRIMESTRALE — A1 propone le voci nuove e aggiorna quelle con evidenza nuova, il validatore decide; le altre "
-        "restano com'erano.",
-        "Fenomeni con un meccanismo di perdita per la Banca, oggi troppo lontani o poco plausibili per essere rischi del "
-        "registro: una valutazione preliminare (impatto se si manifestasse, orizzonte in anni, plausibilita') e il segnale "
-        "che li farebbe diventare un rischio. Niente KRI, azioni ne' score; fuori da radar, classifica e urgenza (D-73). "
-        "Dalla voce con l'impatto piu' alto, poi la piu' vicina; in fondo le voci uscite dalla lista nel ciclo."]),
+        "CICLO TRIMESTRALE — A1 valuta i rischi in osservazione quando trova evidenza nuova, il validatore decide; lo stato "
+        "(radar o osservazione) lo calcola lo script con la regola di Parametri (D-79).",
+        "I rischi del registro rimasti fuori dal radar: stessa scala e stesso score dei rischi del radar, niente KRI ne' "
+        "azioni. Per ognuno: perche' e' fuori (quale soglia di Prossimita o Probabilita manca, o la capienza), "
+        "l'orizzonte stimato e il segnale che lo farebbe salire. Dal piu' alto per score; in fondo chi e' entrato o uscito "
+        "dal radar nel ciclo."]),
     "Metodologia": ("calcolo", [
         "COME SI LEGGONO I NUMERI DEL REPORT — scale e regole dalla rubrica del pacchetto, pesi e parametri letti dal "
         "foglio Parametri: sono sempre quelli in vigore.",
@@ -229,9 +234,10 @@ GUIDE = {
     "Notizie": ("settimanale", [
         "CICLO SETTIMANALE — solo formule sulle notizie delle ultime 4 settimane (foglio NewsLog, scritto dopo A3).",
         "Per categoria quante notizie e quanto forti. AREA NON PRESIDIATA = notizie di intensita' 2 o piu' su una "
-        "categoria senza rischi in anagrafica: tema da portare al prossimo ciclo trimestrale. Le notizie non cambiano score. "
-        "A destra la sintesi di A3 della settimana corrente, i flag proposti (foglio Sintesi_Settimane, D-66) e i "
-        "segnali di A3 sulle voci della lista di osservazione (D-73); in rosso la proposta di ciclo straordinario (D-75). "
+        "categoria senza rischi nel registro: tema da portare al prossimo ciclo trimestrale; In osservazione = nessun "
+        "rischio nel radar, almeno uno in osservazione (D-79). Le notizie non cambiano score. "
+        "A destra la sintesi di A3 della settimana corrente e i flag proposti, anche sui rischi in osservazione (foglio "
+        "Sintesi_Settimane, D-66, D-79); in rosso la proposta di ciclo straordinario (D-75). "
         "A4 (pareri su richiesta) non scrive nel workbook."]),
     "Piano_azioni": ("validazione", [
         "CICLO TRIMESTRALE (A1 propone) · VALIDATORE (decide nel foglio Validazione; poi aggiorna lo Stato nel foglio Azioni).",
@@ -240,12 +246,13 @@ GUIDE = {
         "foglio Azioni, quando l'owner lo comunica. Scadenza = data della decisione + orizzonte. Le azioni aperte passano "
         "ad A1 nel trimestre dopo."]),
     "Osservazione": ("trimestrale", [
-        "CICLO TRIMESTRALE — solo formule sulla lista di osservazione del ciclo corrente (foglio Lista_Osservazione, D-73).",
-        "A sinistra le voci in osservazione con il meccanismo, la motivazione di A1 e la validazione, poi quelle uscite nel "
-        "ciclo (promosse a rischio, archiviate, respinte); colonna O le notizie che A3 ha collegato a ogni voce nelle "
-        "ultime 4 settimane. A destra dove si concentrano: voci per driver ed event type e, "
-        "sotto, i rischi del registro con lo stesso incrocio, per vedere i temi che il registro non copre. Le voci si "
-        "validano nel foglio Validazione (sezione Lista di osservazione); si leggono nel report alla pagina Fenomeni."]),
+        "CICLO TRIMESTRALE — solo formule sui rischi in osservazione del ciclo corrente (foglio RiskRegister, colonna "
+        "Stato; registro unico, D-79).",
+        "A sinistra i rischi fuori dal radar con le quattro dimensioni, lo score, il motivo dello stato, l'orizzonte e il "
+        "segnale di avvicinamento, il razionale di A1; colonna O le notizie che A3 ha collegato a ogni rischio nelle ultime "
+        "4 settimane. A destra dove si concentrano: rischi in osservazione per driver e categoria e, sotto, i rischi del "
+        "radar con lo stesso incrocio. Si validano nel foglio Validazione con gli altri rischi; si leggono nel report "
+        "alla pagina Fenomeni."]),
     "Dizionario": ("calcolo", [
         "OGNI DATO DEL WORKBOOK — chi lo scrive e quando (colore del processo), che cosa significa, come si calcola, "
         "valori ammessi, un esempio.",
@@ -254,7 +261,8 @@ GUIDE = {
     "Parametri": ("validazione", [
         "CELLE GIALLE = INPUT, decisi dalla funzione di rischio e registrati in DECISIONI.md.",
         "Pesi, soglie e parametri dell'urgenza valgono per tutti i cicli, passati compresi. Ciclo e settimana correnti li "
-        "scrive lo script. Nessuna costante e' nascosta nelle formule."]),
+        "scrive lo script. Nessuna costante e' nascosta nelle formule. Righe 65-75: la regola del registro unico, chi "
+        "entra nel radar di Mosca (D-79)."]),
     # ---------------------------------------------------------------- dati
     "RiskRegister": ("trimestrale", [
         "CICLO TRIMESTRALE — lo script scrive la valutazione di A1 dopo i suoi controlli (e A5, se usato); il comando "
@@ -267,15 +275,19 @@ GUIDE = {
         "massimo di un punto e cita "
         "un'evidenza datata. Esito e \"da/a\" delle variazioni li calcola lo script; Rilievi = segnalazioni di A5 e dei "
         "controlli sul rischio (⚑ DA MOTIVARE = la validazione chiede una Motivazione), le stesse della colonna "
-        "Segnalazioni del foglio Validazione.",
+        "Segnalazioni del foglio Validazione. Registro unico (D-79): Stato = Radar (gestione completa), Radar, in uscita "
+        "(sotto la regola per il primo ciclo) o Osservazione (fuori dal radar, niente KRI ne' azioni), con il motivo; "
+        "Movimento = Entrato o Uscito dal radar nel ciclo; Decisione_Stato = scelta del validatore (Automatico = vale la "
+        "regola). Orizzonte_Anni e Segnale_Avvicinamento: note di A1 per i rischi in osservazione.",
         LEGENDA_COLORI + " Righe grigie = dati di esempio."]),
     "Azioni": ("trimestrale", [
         "CICLO TRIMESTRALE — A1 propone da 1 a 5 azioni per rischio; la validazione e' la delibera (Accettato o "
         "Rettificato = Approvata, Respinto = Respinta).",
         "Mesi_Orizzonte alimenta la Y di Mosca: l'orizzonte piu' lungo fra le azioni del ciclo non respinte. Le azioni "
         "non Completate, Respinte o Annullate passano ad A1 come aperte nel ciclo dopo. Vista d'insieme: Piano_azioni.",
-        "Unica modifica a mano: la colonna Stato di un'azione approvata (In corso, Completata), quando l'owner lo "
-        "comunica. Il resto si scrive solo con lo script.",
+        "Modifiche a mano: la colonna Stato di un'azione approvata (In corso, Completata), quando l'owner lo "
+        "comunica, e i testi Descrizione e Razionale (D-76). Owner e orizzonte di un'azione gia' decisa: comando riapri e "
+        "validazione. Il resto si scrive solo con lo script.",
         LEGENDA_COLORI + " Righe grigie = dati di esempio."]),
     "KRI": ("trimestrale", [
         "CICLO TRIMESTRALE — A1 propone due KRI per rischio, uno di esposizione e uno di evoluzione (colonna Tipo, D-64; con "
@@ -314,8 +326,11 @@ GUIDE = {
         LEGENDA_COLORI]),
     "Validazione": ("validazione", [
         "VALIDATORE — dopo ogni ciclo trimestrale (obbligatorio: il ciclo dopo non parte finche' non e' validato) e, se si "
-        "vuole, dopo ogni settimana per le notizie. Qui ci sono solo i periodi ancora da validare (riga 3).",
-        "Come si valida: una riga per rischio, KRI, azione, voce della lista di osservazione e notizia. Le celle GIALLE contengono gia' i valori proposti "
+        "vuole, dopo ogni settimana per le notizie. Qui ci sono solo i periodi ancora da validare (riga 3). Per cambiare "
+        "valori di un ciclo GIA' VALIDATO: python esegui_ciclo_locale.py riapri (D-76), poi qui come sempre e valida, "
+        "quante volte serve; in riapertura il grigio e' il valore validato, non c'e' il limite di un punto e Respingi = Sì "
+        "toglie un KRI o annulla un'azione.",
+        "Come si valida: una riga per rischio (nel radar o in osservazione), KRI, azione e notizia. Le celle GIALLE contengono gia' i valori proposti "
         "dagli agenti (accanto, in grigio, la proposta): se sei d'accordo non toccarle, la riga vale come accettata. Se non "
         "sei d'accordo scrivi il valore giusto nella cella gialla (anche piu' di uno nella stessa riga) e il perche' in "
         "Motivazione, almeno 10 caratteri: la cella cambiata diventa arancio, la Motivazione resta rossa finche' manca. "
@@ -332,27 +347,18 @@ GUIDE = {
         "colonne grigie si leggono soltanto; non inserire ne' cancellare righe (se succede: python esegui_ciclo_locale.py "
         "griglia ricostruisce il foglio e conserva cio' che hai gia' scritto).",
         "Criteri — Rischio: il punteggio corrisponde al descrittore della rubrica, dati razionale e fonti (foglio "
-        "Metodologia); un valore cambiato e' intero 1-5, al massimo un punto dal ciclo precedente, motivato con un'evidenza "
+        "Metodologia); un valore cambiato e' intero 1-5, al massimo un punto dal ciclo precedente (non in riapertura), motivato con un'evidenza "
         "(la Velocity puo' restare vuota = non valutata, o entrare con qualunque valore); anni di adeguamento da 0 a 30 o "
         "vuoti. KRI: respingere se la fonte dati non e' identificabile o se non misura il rischio; cambiare le soglie "
         "(entrambe; allerta >= attenzione, crescente = peggio; vuote = da definire) o un valore rilevato errato. Azione: "
         "respingere se duplicata o non pertinente al rischio; cambiare Owner (una funzione: il nome di una persona non si "
         "accetta) o Orizzonte (3, 6 o 12 mesi). Notizia: cambiare Rischio o Segnale; respingere se non pertinente o gia' "
-        "contata. Voce in osservazione (solo quelle che A1 propone o aggiorna): impatto potenziale 1-5, orizzonte 1-20 anni, "
-        "plausibilita' teorica / possibile / in crescita; Respingi = Sì se il fenomeno non ha un meccanismo di perdita per la "
-        "Banca o la proposta non e' sostenuta (una voce nuova esce, una voce esistente resta com'era).",
+        "contata. Stato del rischio (D-79): la colonna Stato dice dove lo mette la regola e perche'; Decisione sullo stato "
+        "= Automatico (vale la regola), Radar (resta o entra nel radar) o Osservazione (resta fuori), con la Motivazione; "
+        "lo stato si ricalcola con valida.",
         "Prima di decidere leggere i rilievi di A5 e dei controlli (colonna Rilievi del RiskRegister; rilievi del ciclo "
         "in Sintesi_Cicli; file Esito_controlli del ciclo). La proposta dell'agente non si cancella mai: le rettifiche "
         "motivate servono a migliorare gli agenti."]),
-    "Lista_Osservazione": ("trimestrale", [
-        "CICLO TRIMESTRALE — lo script scrive ogni ciclo tutte le voci in osservazione: quelle proposte o aggiornate da A1 "
-        "e quelle riportate invariate dal ciclo prima (Esito Invariata); il comando valida applica le decisioni. "
-        + NON_A_MANO,
-        "Cosa contiene: lo STORICO, una riga per voce per ciclo (la fotografia della lista). Stato: In osservazione; "
-        "Promossa (diventata il rischio di Promosso_A); Archiviata; Respinta (voce nuova respinta in validazione). "
-        "Impatto_Potenziale con i descrittori della rubrica, Orizzonte_Anni, Plausibilita teorica / possibile / in crescita. "
-        "Viste: fogli Osservazione e Fenomeni.",
-        LEGENDA_COLORI + " Righe grigie = dati di esempio."]),
     "Storico_Validazioni": ("validazione", [
         "COMANDO VALIDA — la scrittura (trimestrale, settimanale) aggiunge una riga Da decidere per ogni campo proposto; il "
         "comando valida la compila dalla griglia del foglio Validazione e la mette Applicata. " + NON_A_MANO,
@@ -608,39 +614,53 @@ KRI_ESEMPIO = [
 DATA_VALIDAZIONE_Q2 = date(2026, 7, 15)
 VALIDATORE = "Comitato Rischi"
 
-# A3 collega le notizie alle voci in osservazione (D-73): una notizia di esempio sulla voce dei cavi sottomarini.
-VOCE_NOTIZIA_ESEMPIO = {}
-SEGNALI_OSS_ESEMPIO = {}
+# A3 collegava le notizie alle voci della lista di osservazione (D-73): con il registro unico (D-79) le collega ai
+# rischi in osservazione con Rischio_ID, come a quelli del radar.
 
-# Lista di osservazione (D-73): due voci dal 2026Q1 e una nuova nel 2026Q2; OSS-02 aggiornata nel 2026Q2 (Confermata),
-# OSS-01 invariata (nessuna evidenza nuova). Fonti datate prima del ciclo che le cita.
+# Registro unico (D-79): rischi in osservazione, stessa scala e stesso score dei rischi del radar, niente KRI ne'
+# azioni. Sono le tre voci della vecchia lista di osservazione (D-73), rivalutate con la rubrica: restano fuori dal
+# radar perche' Prossimita o Probabilita sono sotto la soglia di Parametri. NFR-13 e NFR-14 dal 2026Q1, NFR-15 nuovo
+# nel 2026Q2; NFR-14 aggiornato nel 2026Q2 con evidenza nuova, NFR-13 riportato com'era (periodo 2026Q1).
+# rischio, nome, event type, driver, owner, descrizione, razionale, orizzonte anni, segnale di avvicinamento,
+# fonti (riferimento, data, tipo, rilevanza), {ciclo: (impatto, velocity, prossimita, probabilita, esito, periodo)}
 OSSERVAZIONE_ESEMPIO = [
-    ("OSS-01", "Rottura della crittografia dei pagamenti con il calcolo quantistico",
-     "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti "
-     "e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, "
-     "sostituzione d'urgenza della crittografia.", ["DRV-TEC", "DRV-CYB"], "9.7", ["NFR-11"], 5, 10, "teorica",
-     "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione "
-     "post-quantistica dei sistemi di pagamento.",
-     "Nessun calcolatore oggi ha la capacita' necessaria; se accadesse toccherebbe tutti i canali: impatto critico.",
-     [("Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza", "2026-02-10")],
-     {"2026Q1": "Nuova", "2026Q2": "Invariata"}),
-    ("OSS-02", "Interruzione di cavi sottomarini per una crisi geopolitica",
-     "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore "
-     "cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
-     ["DRV-GEO", "DRV-TPR"], "9.6", ["NFR-02"], 4, 5, "possibile",
-     "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
-     "Danneggiamenti di cavi nel Mar Baltico e nel Mar Rosso nel 2025-2026: plausibile, non ancora sulle rotte italiane.",
-     [("Rapporto sulla resilienza delle infrastrutture critiche sottomarine", "2026-05-20")],
-     {"2026Q1": "Nuova", "2026Q2": "Confermata"}),
-    ("OSS-03", "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti",
+    ("NFR-13", "Rottura della crittografia dei pagamenti con il calcolo quantistico", "9.7", ["DRV-TEC", "DRV-CYB"],
+     "Funzione Sicurezza delle Informazioni",
+     "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono "
+     "pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione "
+     "di dati, sostituzione d'urgenza della crittografia.",
+     "Impatto 5 perche' toccherebbe tutti i canali; Probabilita 1 e Prossimita 1: nessun calcolatore oggi ha la capacita' "
+     "necessaria e nessun caso e' documentato; velocity non valutata: nessuna fonte sui tempi.",
+     10, "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la "
+     "migrazione post-quantistica dei sistemi di pagamento.",
+     [("Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza", "2026-02-10", "Esterna", 2)],
+     {"2026Q1": (5, None, 1, 1, "Nuovo", "2026Q1"), "2026Q2": (5, None, 1, 1, "Confermato", "2026Q1")}),
+    ("NFR-14", "Interruzione di cavi sottomarini per una crisi geopolitica", "9.6", ["DRV-GEO", "DRV-TPR"],
+     "Funzione ICT & Security Risk",
+     "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del "
+     "fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti "
+     "esteri per giorni.",
+     "Impatto 4 per servizi e pagamenti esteri fermi per giorni; velocity 4 perche' il taglio e' immediato; "
+     "Probabilita 2 dopo i danneggiamenti nel Mar Baltico e nel Mar Rosso; Prossimita 1: nessun caso sulle rotte italiane.",
+     5, "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della "
+     "connettivita'.",
+     [("Rapporto sulla resilienza delle infrastrutture critiche sottomarine", "2026-05-20", "Esterna", 3)],
+     {"2026Q1": (4, 4, 1, 1, "Nuovo", "2026Q1"), "2026Q2": (4, 4, 1, 2, "Variato", "2026Q2")}),
+    ("NFR-15", "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti", "9.4", ["DRV-AI", "DRV-CON"],
+     "Funzione Customer Experience",
      "Agenti di IA che agiscono per conto dei clienti (pagamenti, investimenti) potrebbero eseguire operazioni non volute; "
-     "la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi e "
-     "contenzioso.", ["DRV-AI", "DRV-CON"], "9.4", ["NFR-10"], 3, 4, "in crescita",
-     "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
-     "Sperimentazioni di pagamenti disposti da agenti di IA presso grandi piattaforme; nessun caso in banca.",
-     [("Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA", "2026-06-03")],
-     {"2026Q2": "Nuova"}),
+     "la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi "
+     "e contenzioso.",
+     "Impatto 3 per rimborsi e contenzioso; Prossimita 2 per sperimentazioni presso grandi piattaforme di pagamento; "
+     "Probabilita 1: nessun caso in banca; velocity non valutata.",
+     4, "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
+     [("Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA", "2026-06-03", "Esterna", 2)],
+     {"2026Q2": (3, None, 2, 1, "Nuovo", "2026Q2")}),
 ]
+VARIAZIONI_OSSERVAZIONE = {
+    ("2026Q2", "NFR-14"): [("probabilita", 1, 2, "Il rapporto sulla resilienza delle infrastrutture critiche sottomarine "
+                            "documenta tre danneggiamenti dolosi di cavi europei in un anno.", "2026-05-20")],
+}
 
 AZIONI_ESEMPIO = [
     # rischio, descrizione, owner, orizzonte, razionale, stato (dopo la validazione del 2026Q2)
@@ -1016,6 +1036,43 @@ def foglio_parametri(wb):
         c = ws.cell(row=riga, column=2, value=valore); c.fill = INPUT; c.number_format = formato
         nome_definito(wb, nome, f"Parametri!$B${riga}")
 
+    # Registro unico (D-79, rubrica sezione 9): chi entra nel radar di Mosca. La regola la applica lo script
+    # (07_Senza_Studio/radar.py) a ogni ciclo e a ogni validazione, leggendo queste celle.
+    ws["A65"] = "Registro unico: chi entra nel radar di Mosca (D-79)"; ws["A65"].font = GRASSETTO
+    for riga, (etichetta, nome, valore, minimo, massimo, spiegazione) in enumerate([
+            (f"Capienza del radar (fino a {MAX_RISCHI})", "capienzaRadar", CAPIENZA_RADAR, 1, MAX_RISCHI,
+             "rischi con gestione completa: KRI, azioni, urgenza, report, schede"),
+            ("Soglia di Prossimita' per entrare", "sogliaProssimitaRadar", 2, 1, 5, "2 = puo' manifestarsi entro 3 anni"),
+            ("Soglia di Probabilita' per entrare", "sogliaProbabilitaRadar", 2, 1, 5, "2 = non solo teorico"),
+            ("Cicli sotto la soglia prima di uscire", "cicliUscitaRadar", 2, 1, 2,
+             "1 = esce subito; 2 = un ciclo come \"Radar, in uscita\"")], start=66):
+        ws.cell(row=riga, column=1, value=etichetta)
+        c = ws.cell(row=riga, column=2, value=valore); c.fill = INPUT
+        ws.cell(row=riga, column=3, value=spiegazione).font = NOTA
+        nome_definito(wb, nome, f"Parametri!$B${riga}")
+        dv = DataValidation(type="whole", operator="between", formula1=str(minimo), formula2=str(massimo),
+                            error=f"{etichetta}: un intero da {minimo} a {massimo}.", showErrorMessage=True)
+        dv.add(f"B{riga}")
+        ws.add_data_validation(dv)
+    ws["A70"] = "Rischi in osservazione al massimo (fisso)"
+    ws["B70"] = MAX_OSSERVAZIONE
+    ws["C70"] = "oltre, A1 lascia fuori i meno rilevanti"; ws["C70"].font = NOTA
+    nome_definito(wb, "capienzaOsservazione", str(MAX_OSSERVAZIONE))
+    regola = ("LA REGOLA (la applica lo script a ogni ciclo e a ogni validazione). 1. Entra nel radar un rischio con "
+              "Prossimita' e Probabilita' almeno pari alle soglie. 2. Restano sempre nel radar, anche sotto le soglie: un "
+              "rischio AGIRE ORA, un tema all'attenzione del supervisore (◆), un rischio che il validatore mette nel radar "
+              "(colonna Decisione sullo stato del foglio Validazione, con la Motivazione); mai nel radar un rischio che il "
+              "validatore mette in osservazione. 3. Se i candidati sono piu' dei posti: prima le eccezioni, poi i piu' alti "
+              "per score composito; gli altri restano in osservazione \"fuori per capienza\". 4. Un rischio del radar sotto "
+              "la regola resta un ciclo come \"Radar, in uscita\" (con i cicli prima dell'uscita a 2), poi passa in "
+              "osservazione; un rischio che sale entra subito, con i KRI e le azioni che A1 scrive. In osservazione: "
+              "stessa scala e stesso score, niente KRI ne' azioni (fogli Osservazione e Fenomeni).")
+    ws["A71"] = regola
+    ws["A71"].alignment = A_CAPO
+    ws.merge_cells("A71:C75")
+    for r in range(71, 76):
+        ws.row_dimensions[r].height = 30
+
     # Etichetta del ciclo nella fascia del titolo di ogni foglio: ciclo (straordinario se AAAAQn-Sk), data di
     # riferimento (dataRiferimento, D-75), stato di validazione, riservatezza. Niente TEXT: dipende dalla lingua.
     ws["A57"] = "Etichetta del ciclo (fascia del titolo)"; ws["A57"].font = GRASSETTO
@@ -1045,8 +1102,9 @@ def foglio_parametri(wb):
 
     # Anagrafica dei rischi attivi: H..O, righe 4..(3+MAX_RISCHI). H-K dal ciclo
     # trimestrale (A1, scritte dallo script); L-O input del validatore (gialle).
-    ws["H2"] = ("ANAGRAFICA DEI RISCHI ATTIVI — colonne H-K: lo script le scrive a ogni ciclo trimestrale dalla valutazione "
-                "di A1. Colonne gialle L-O: le decide il validatore e restano da un ciclo all'altro (M = anni di "
+    ws["H2"] = ("ANAGRAFICA DEI RISCHI NEL RADAR DI MOSCA (registro unico, D-79: lo script vi mette e toglie i rischi con "
+                "la regola delle righe 65-75; quelli in osservazione stanno solo nel RiskRegister) — colonne H-K: lo script "
+                "le scrive a ogni ciclo trimestrale dalla valutazione di A1. Colonne gialle L-O: le decide il validatore e restano da un ciclo all'altro (M = anni di "
                 "adeguamento: li stima A1 e li scrive la validazione, correggibili a mano; O = presidio dei controlli, "
                 "giudizio della Banca fuori dallo score). Un rischio si toglie solo con il comando 'dismetti': "
                 "una riga vuota in mezzo toglierebbe dal radar l'ultimo rischio.")
@@ -1092,7 +1150,7 @@ def foglio_parametri(wb):
     nota = _righe_stimate(ws["H2"].value, sum(_larghezza(ws, j) for j in range(8, 16)) * 1.0) * 15 + 5
     ws.row_dimensions[2].height = max(ws.row_dimensions[2].height, nota)
     # Stampa (30/09 sera): orizzontale, parametri e anagrafica (A-O) in una pagina di larghezza.
-    imposta_stampa(ws, f"A1:O{max(63, fine)}")
+    imposta_stampa(ws, f"A1:O{max(75, fine)}")
 
 
 def lunedi_di(giorno):
@@ -1100,22 +1158,51 @@ def lunedi_di(giorno):
 
 
 def osservazione_esempio():
-    """Righe di tblOsservazione: la fotografia della lista per ogni ciclo dei dati di esempio (D-73)."""
+    """Righe del RiskRegister dei rischi in osservazione dei dati di esempio (D-79): stesse colonne dei rischi del
+    radar; lo stato lo mette applica_stati_esempio."""
     righe = []
-    for ciclo in DATE_CICLO:
-        for oid, nome, descr, drv, et, rischi, imp, oriz, plaus, segn, mot, fonti, esiti in OSSERVAZIONE_ESEMPIO:
-            if ciclo not in esiti:
-                continue
-            righe.append({"Ciclo": ciclo, "OSS_ID": oid, "Nome": nome, "Esito": esiti[ciclo], "Stato": "In osservazione",
-                          "Descrizione": descr, "Driver": ", ".join(drv), "Event_Type": et, "Rischi_Toccati": ", ".join(rischi),
-                          "Impatto_Potenziale": imp, "Orizzonte_Anni": oriz, "Plausibilita": plaus,
-                          "Segnale_Avvicinamento": segn, "Motivazione": mot,
-                          "Fonti": json.dumps([{"riferimento": r, "data": d} for r, d in fonti if d <= DATE_CICLO[ciclo].isoformat()],
-                                              ensure_ascii=False),
-                          "Promosso_A": None, "Prima_Osservazione": min(esiti),
-                          "Validazione": None if esiti[ciclo] == "Invariata" else "Accettato",
-                          "Data_Scrittura": DATE_CICLO[ciclo]})
+    for rid, nome, et, drv, owner, descr, raz, oriz, segn, fonti, storia in OSSERVAZIONE_ESEMPIO:
+        for ciclo, (imp, vel, pro, prob, esito, periodo) in storia.items():
+            var = VARIAZIONI_OSSERVAZIONE.get((ciclo, rid), [])
+            righe.append({
+                "Ciclo": ciclo, "Data_Riferimento": DATE_CICLO[ciclo], "ID_Rischio": rid, "Nome": nome,
+                "Event_Type": et, "Driver": ", ".join(drv), "Impatto": imp, "Velocity": vel,
+                "Prossimita": pro, "Probabilita": prob, "Anni_Adeguamento": None, "Rilievi": None,
+                "Esito": esito, "Descrizione": descr, "Razionale": raz,
+                "Variazioni": json.dumps([{"dimensione": d, "da": a, "a": b, "evidenza": ev, "data_evidenza": dt}
+                                          for d, a, b, ev, dt in var], ensure_ascii=False),
+                "Fonti": json.dumps([{"riferimento": r, "data": d, "tipo": t, "rilevanza": ril} for r, d, t, ril in fonti
+                                     if d <= DATE_CICLO[periodo].isoformat()], ensure_ascii=False),
+                "Owner": owner, "Data_Scrittura": DATE_CICLO[ciclo], "Approvato_Da": VALIDATORE,
+                "Validazione": "Accettato", "Data_Validazione": DATE_CICLO[periodo] + timedelta(days=15),
+                "Periodo_Valutazione": periodo, "Orizzonte_Anni": oriz, "Segnale_Avvicinamento": segn,
+            })
     return righe
+
+
+def applica_stati_esempio(register, azioni):
+    """Stato, motivo e movimento di ogni riga del RiskRegister di esempio con la regola del registro unico (D-79),
+    ciclo per ciclo come lo script: stesso modulo radar.py, valori del template."""
+    regola = dict(radar.REGOLA_DEFAULT, capienza=CAPIENZA_RADAR, max_radar=MAX_RISCHI, max_osservazione=MAX_OSSERVAZIONE)
+    prima = {}
+    for ciclo in DATE_CICLO:
+        righe = [r for r in register if r["Ciclo"] == ciclo]
+        stati = radar.stati([{
+            "id": r["ID_Rischio"], "impatto": r["Impatto"], "probabilita": r["Probabilita"],
+            "prossimita": r["Prossimita"], "velocity": r["Velocity"],
+            "supervisore": ATTENZIONE_SUPERVISORE.get(r["ID_Rischio"]) == "Sì",
+            "anni_adeguamento": r["Anni_Adeguamento"],
+            "y_azioni": radar.y_azioni([a["Orizzonte"] for a in azioni if a["ID_Rischio"] == r["ID_Rischio"]
+                                        and a["Ciclo"] == r["Periodo_Valutazione"] and a["Stato"] != "Respinta"]),
+            "stato_prima": prima.get(r["ID_Rischio"]), "decisione": radar.AUTOMATICO} for r in righe], regola)
+        for r in righe:
+            s = stati[r["ID_Rischio"]]
+            r.update(Stato=s["stato"], Motivo_Stato=s["motivo"], Movimento=s["movimento"] or None,
+                     Decisione_Stato=radar.AUTOMATICO)
+            prima[r["ID_Rischio"]] = s["stato"]
+    attesi = {r["ID_Rischio"] for r in register if r["Stato"] == radar.OSSERVAZIONE}
+    assert attesi == {x[0] for x in OSSERVAZIONE_ESEMPIO}, f"rischi di esempio nello stato sbagliato: {attesi}"
+    return register
 
 
 def dati_esempio():
@@ -1144,7 +1231,10 @@ def dati_esempio():
                 "Owner": owner, "Data_Scrittura": DATE_CICLO[ciclo], "Approvato_Da": VALIDATORE,
                 "Validazione": esito_validazione("Rischio", rid, ciclo),
                 "Data_Validazione": DATE_CICLO[ciclo] + timedelta(days=15), "Periodo_Valutazione": ciclo,
+                "Orizzonte_Anni": None, "Segnale_Avvicinamento": None,
             })
+    register += osservazione_esempio()
+    register.sort(key=lambda r: r["Ciclo"])                    # una riga per rischio per ciclo, ciclo dopo ciclo
     azioni = []
     for rid, descr, owner, oriz, raz, stato in AZIONI_ESEMPIO:
         ida = f"{CICLO_CORRENTE}-{rid}-A1"
@@ -1153,6 +1243,7 @@ def dati_esempio():
                        "Razionale": raz, "Stato": stato, "Data_Decisione": DATA_VALIDAZIONE_Q2, "Decisa_Da": VALIDATORE,
                        "Validazione": esito_validazione("Azione", ida, CICLO_CORRENTE)})
     # KRI: storico, una riga per KRI per ciclo, a partire dal ciclo di definizione.
+    applica_stati_esempio(register, azioni)
     kri = []
     for i, ciclo in enumerate(DATE_CICLO):
         for kid, rid, tipo, nome, unita, fonte, att, all_, cdef, valori in KRI_ESEMPIO:
@@ -1173,7 +1264,7 @@ def dati_esempio():
     news = []
     for dt, nid, tit, fonte, codice, rid, seg, imp, sint in NEWS_ESEMPIO:
         riga = {"Data": dt, "ID_Notizia": nid, "Titolo": tit, "Fonte": fonte, "Codice_Fonte": codice, "Rischio_ID": rid,
-                "Segnale": seg, "Sintesi": sint, "Validazione": "Accettato", "Voce_Osservazione": VOCE_NOTIZIA_ESEMPIO.get(nid)}
+                "Segnale": seg, "Sintesi": sint, "Validazione": "Accettato"}
         for cod, _ in TASSONOMIA:
             riga["Imp_" + cod.replace("-", "_").replace(".", "_")] = imp.get(cod, 0)
         news.append(riga)
@@ -1204,11 +1295,11 @@ def dati_esempio():
                                     "Validato_Da": VALIDATORE, "Data_Validazione": data(r), "Stato": "Applicata"})
 
     corrente = lambda righe: [r for r in righe if r["Ciclo"] == CICLO_CORRENTE]
-    righe_oggetto("Rischio", corrente(register), lambda r: CICLO_CORRENTE, lambda r: DATA_VALIDAZIONE_Q2)
+    # Un rischio riportato com'era (in osservazione, senza evidenza nuova) non si rivaluta: niente righe (D-79).
+    righe_oggetto("Rischio", [r for r in corrente(register) if r["Periodo_Valutazione"] == CICLO_CORRENTE],
+                  lambda r: CICLO_CORRENTE, lambda r: DATA_VALIDAZIONE_Q2)
     righe_oggetto("KRI", corrente(kri), lambda r: CICLO_CORRENTE, lambda r: DATA_VALIDAZIONE_Q2)
     righe_oggetto("Azione", azioni, lambda r: CICLO_CORRENTE, lambda r: DATA_VALIDAZIONE_Q2)
-    righe_oggetto("Osservazione", [r for r in corrente(osservazione_esempio()) if r["Esito"] != "Invariata"],
-                  lambda r: CICLO_CORRENTE, lambda r: DATA_VALIDAZIONE_Q2)
     # Periodo di una notizia = lunedi' in cui A3 l'ha valutata (la settimana DOPO la notizia),
     # come scrive il comando settimanale (Periodo = "settimana" dell'output di A3).
     righe_oggetto("Notizia", news, lambda r: (lunedi_di(r["Data"]) + timedelta(days=7)).isoformat(),
@@ -1224,6 +1315,8 @@ def fogli_dati(wb):
     ws = scrivi_tabella(wb, "tblRegister", register, "RiskRegister — valutazioni dei rischi, una riga per rischio per ciclo")
     convalida_lista(ws, intervallo("tblRegister", "Event_Type"), "=codiciL1")
     convalida_lista(ws, intervallo("tblRegister", "Esito"), "Confermato,Variato,Nuovo")
+    convalida_lista(ws, intervallo("tblRegister", "Stato"), ",".join(STATI_REGISTRO))
+    convalida_lista(ws, intervallo("tblRegister", "Decisione_Stato"), ",".join(DECISIONI_STATO))
 
     ws = scrivi_tabella(wb, "tblAzioni", azioni, "Azioni — azioni di mitigazione proposte e loro stato")
     convalida_lista(ws, intervallo("tblAzioni", "Stato"), ",".join(STATI_AZIONE))
@@ -1244,17 +1337,8 @@ def fogli_dati(wb):
         for c in riga:
             c.alignment = A_CAPO
 
-    ws = scrivi_tabella(wb, "tblOsservazione", osservazione_esempio(),
-                        "Lista_Osservazione — fenomeni in osservazione, una riga per voce per ciclo (D-73)")
-    convalida_lista(ws, intervallo("tblOsservazione", "Plausibilita"), ",".join(PLAUSIBILITA))
-    convalida_lista(ws, intervallo("tblOsservazione", "Event_Type"), "=codiciL1")
-    for riga in ws.iter_rows(min_row=P, max_row=P + len(osservazione_esempio()) - 1):
-        for c in riga:
-            c.alignment = A_CAPO
-
     ws = scrivi_tabella(wb, "tblSettimane", [
-        {"Settimana": sett, "Notizie": n, "Sintesi_A3": testo, "Flag_Proposti": flag, "Data_Scrittura": sett,
-         "Segnali_Osservazione": SEGNALI_OSS_ESEMPIO.get(sett, "Nessun segnale sulla lista di osservazione")}
+        {"Settimana": sett, "Notizie": n, "Sintesi_A3": testo, "Flag_Proposti": flag, "Data_Scrittura": sett}
         for sett, n, testo, flag in SETTIMANE_ESEMPIO], "Sintesi_Settimane — sintesi di A3 e flag proposti, una riga per settimana")
     for riga in ws.iter_rows(min_row=P, max_row=P + len(SETTIMANE_ESEMPIO) - 1):
         for c in riga:
@@ -2249,12 +2333,15 @@ def foglio_notizie(wb):
         ws[f"C{r}"] = f"=_xlfn.MAXIFS({col},{finestra})"
         ws[f"D{r}"] = f'=COUNTIFS({col},">=2",{finestra})'
         ws[f"E{r}"] = f"=COUNTIF(ANA_Event_Type,A{r})"
-        ws[f"F{r}"] = (f'=IF(AND(D{r}>0,E{r}=0),"AREA NON PRESIDIATA",'
-                       f'IF(E{r}=0,"Nessun rischio censito","Presidiata"))')
+        # D-79: una categoria senza rischi del radar ma con un rischio in osservazione non e' scoperta: e' osservata.
+        ws[f"F{r}"] = (f'=IF(E{r}>0,"Presidiata",IF(COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",'
+                       f'RR_Event_Type,A{r})>0,"In osservazione",IF(D{r}>0,"AREA NON PRESIDIATA","Nessun rischio censito")))')
         for k, l in enumerate("GHI", start=1):
             ws[f"{l}{r}"] = f"=COUNTIFS({col},{k},{finestra})"
         ws[f"J{r}"] = f'=IF(F{r}="AREA NON PRESIDIATA","NON PRESIDIATA ► ","")&A{r}&" "&B{r}'
     ws.conditional_formatting.add(f"F5:F{fine}", FormulaRule(formula=['F5="AREA NON PRESIDIATA"'], fill=ROSSO_CF))
+    ws.conditional_formatting.add(f"F5:F{fine}", FormulaRule(formula=['F5="In osservazione"'], fill=fill(FONDO_OSSERVAZIONE),
+                                                             font=Font(color=TESTO_OSSERVAZIONE)))
     nome_definito(wb, "presidioCodici", f"Notizie!$A$5:$A${fine}")      # letti dallo script (comando settimanale)
     nome_definito(wb, "presidioStato", f"Notizie!$F$5:$F${fine}")
     # Sintesi di A3 e flag della settimana corrente (tabella tblSettimane, D-66), a destra della tabella.
@@ -2275,10 +2362,14 @@ def foglio_notizie(wb):
     c.alignment, c.font, c.fill = Alignment(wrap_text=True, vertical="top"), Font(size=9, bold=True), fill(VERDE_TENUE)
     ws.conditional_formatting.add("L22", FormulaRule(formula=['LEFT($L$22,8)="PROPOSTA"'], fill=fill("F8CBAD"),
                                                      font=Font(bold=True, color="C00000")))
-    c = ws.cell(row=15, column=12, value="Segnali di A3 sulla lista di osservazione (proposte per il ciclo)")
+    c = ws.cell(row=15, column=12, value="Notizie di A3 sui rischi in osservazione (registro unico, D-79)")
     c.font = GRASSETTO
     ws.merge_cells(start_row=16, start_column=12, end_row=19, end_column=19)
-    c = ws.cell(row=16, column=12, value='=IFERROR(INDEX(SE_Segnali_Osservazione,MATCH(settimanaCorrente,SE_Settimana,0))&"","—")')
+    c = ws.cell(row=16, column=12, value=(
+        '=IF(cicloCorrente="","—","Nelle ultime 4 settimane A3 ha collegato "&SUMPRODUCT((NW_Settimana>=inizioFinestra4)'
+        '*(NW_Settimana<=settimanaCorrente)*(COUNTIFS(RR_ID_Rischio,NW_Rischio_ID,RR_Ciclo,cicloCorrente,'
+        'RR_Stato,"Osservazione")>0))&" notizie a rischi in osservazione: quanti per rischio nel foglio Osservazione, '
+        'colonna O; un flag di A3 su uno di questi rischi è fra i flag proposti qui sopra.")'))
     c.alignment, c.font, c.fill = Alignment(wrap_text=True, vertical="top"), Font(size=9), fill(VERDE_TENUE)
     for l in "LMNOPQRS":
         ws.column_dimensions[l].width = 12
@@ -2590,8 +2681,12 @@ def foglio_quadro(wb):
         ("Livello di allerta: attivazione · attenzione", f'=$T$4&" · "&COUNTIF({livelli},"Attenzione")',
          f'=IF($T$4=0,"nessun rischio in attivazione","in attivazione: "&_xlfn.TEXTJOIN(", ",TRUE,$T$5:$T${4 + MAX_RISCHI}))'
          f'&" · in monitoraggio "&COUNTIF({livelli},"Monitoraggio")', ROSSO_TENUE, ROSSO),
-        ("Variati · nuovi", '=COUNTIFS(RR_Ciclo,cicloCorrente,RR_Esito,"Variato")&" · "&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Esito,"Nuovo")',
-         '="rispetto al "&cicloPrecedente', FONDO_TENUE, BLU_NOTTE),
+        # D-79: variati e nuovi fra i rischi del radar ("Radar*" = Radar e Radar, in uscita); sotto i movimenti.
+        ("Variati · nuovi (radar)", '=COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Radar*",RR_Esito,"Variato")&" · "'
+                                    '&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Radar*",RR_Esito,"Nuovo")',
+         '="rispetto al "&cicloPrecedente&" · entrati nel radar "&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Movimento,"Entrato")'
+         '&", usciti "&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Movimento,"Uscito")&" · in osservazione "'
+         '&COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione")', FONDO_TENUE, BLU_NOTTE),
         ("KRI in rosso", '=COUNTIFS(KRI_Ciclo,cicloCorrente,KRI_In_Vigore,"Sì",KRI_Stato,"Rosso")',
          f'="su "&{kri_vigore}&" in vigore"', ROSSO_TENUE, ROSSO),
         ("Validazione", '=IF(decisioniDaPrendere>0,decisioniDaPrendere,"✓")',
@@ -2608,7 +2703,7 @@ def foglio_quadro(wb):
                 ws.cell(row=r, column=x).fill = fill(fondo)
             ws.cell(row=r, column=a).border = Border(right=Side(style="thick", color="FFFFFF"))
     ws.row_dimensions[5].height = 36
-    ws.row_dimensions[6].height = 22
+    ws.row_dimensions[6].height = 34                  # D-79: sotto "Variati" anche i movimenti del radar
     # Senza rischi in attivazione o KRI rossi, il riquadro torna grigio.
     ws.conditional_formatting.add("D4:F6", FormulaRule(formula=["$T$4=0"], fill=fill(FONDO_TENUE)))
     ws.conditional_formatting.add("J4:L6", FormulaRule(formula=["$J$5=0"], fill=fill(FONDO_TENUE)))
@@ -2884,29 +2979,34 @@ def foglio_piano_azioni(wb):
                               "respinta o annullata.")
 
 
-# ---------------------------------------------------------------- Lista di osservazione (D-73)
-# Due viste della stessa tabella (tblOsservazione), solo formule: il foglio di lavoro Osservazione (tutto, piu' la
-# concentrazione per driver ed event type) e la pagina Fenomeni del report. Ordine: colonna Ordine della tabella
-# (impatto piu' alto, poi orizzonte piu' vicino), che vale solo per le voci in osservazione del ciclo corrente.
+# ---------------------------------------------------------------- Rischi in osservazione (registro unico, D-79)
+# Due viste dei rischi del RiskRegister con Stato "Osservazione" nel ciclo corrente, solo formule: il foglio di lavoro
+# Osservazione (tutto, piu' la concentrazione per driver e categoria) e la pagina Fenomeni del report. Ordine: colonna
+# Ordine_Osservazione della tabella (score piu' alto prima), che vale solo per le righe in osservazione del ciclo
+# corrente. Sotto, chi e' entrato o uscito dal radar nel ciclo (colonna Movimento).
+FONDO_OSSERVAZIONE = "EDE7F6"           # lilla tenue: rischi in osservazione e loro movimenti
+TESTO_OSSERVAZIONE = "5B3F8C"
+
+
 def _riga_ordine(k):
-    """Riga del foglio Lista_Osservazione della k-esima voce in osservazione del ciclo corrente; "" se non c'e'."""
-    return f'=IFERROR(MATCH(_xlfn.AGGREGATE(14,6,OS_Ordine,{k}),OS_Ordine,0)+{PRIMA_RIGA_DATI - 1},"")'
+    """Riga del foglio RiskRegister del k-esimo rischio in osservazione del ciclo corrente; "" se non c'e'."""
+    return (f'=IFERROR(MATCH(_xlfn.AGGREGATE(14,6,RR_Ordine_Osservazione,{k}),RR_Ordine_Osservazione,0)'
+            f'+{PRIMA_RIGA_DATI - 1},"")')
 
 
-def _riga_uscita(k):
-    """Riga della k-esima voce uscita dalla lista nel ciclo corrente (promossa, archiviata, respinta)."""
-    return (f'=IFERROR(_xlfn.AGGREGATE(15,6,ROW(OS_Ciclo)/((OS_Ciclo=cicloCorrente)*((OS_Stato="Promossa")'
-            f'+(OS_Stato="Archiviata")+(OS_Stato="Respinta"))),{k}),"")')
+def _riga_movimento(k):
+    """Riga del k-esimo rischio entrato o uscito dal radar nel ciclo corrente."""
+    return f'=IFERROR(_xlfn.AGGREGATE(15,6,ROW(RR_Ciclo)/((RR_Ciclo=cicloCorrente)*(RR_Movimento<>"")),{k}),"")'
 
 
-def _oss(colonna, appoggio, testo=True):
-    return _cella_tab("tblOsservazione", "Lista_Osservazione", colonna, appoggio, testo)
+def _rr(colonna, appoggio, testo=True):
+    return _cella_tab("tblRegister", "RiskRegister", colonna, appoggio, testo)
 
 
 def _ix(colonna, appoggio):
-    """INDEX della colonna di tblOsservazione alla riga di appoggio (senza il controllo del vuoto)."""
-    l = lettera("tblOsservazione", colonna)
-    return f"INDEX(Lista_Osservazione!${l}:${l},{appoggio})"
+    """INDEX della colonna di tblRegister alla riga di appoggio (senza il controllo del vuoto)."""
+    l = lettera("tblRegister", colonna)
+    return f"INDEX(RiskRegister!${l}:${l},{appoggio})"
 
 
 def _nomi_driver(cella):
@@ -2925,93 +3025,94 @@ def _intestazione(ws, riga, colonne):
     ws.row_dimensions[riga].height = 28
 
 
-def _colora_oss(ws, esito, plaus):
-    """Esito del ciclo e plausibilita' come etichette colorate (stessi toni del Piano_azioni)."""
-    for testo, fondo, colore in (("Nuova", BLU_CHIARO, BLU_NOTTE), ("Avvicinata", AMBRA_TENUE, "7F6000"),
-                                 ("Promossa", "F8CBAD", "C00000"), ("Archiviata", FONDO_TENUE, TESTO_TENUE),
-                                 ("Respinta", FONDO_TENUE, TESTO_TENUE)):
-        if not esito:
-            break
-        c = esito.split(":")[0]
-        ws.conditional_formatting.add(esito, FormulaRule(formula=[f'LEFT({c},{len(testo)})="{testo}"'], fill=fill(fondo),
+def _colora_movimento(ws, area):
+    """Entrato nel radar in blu, uscito in lilla."""
+    c = area.split(":")[0]
+    for testo, fondo, colore in (("Entrato", BLU_CHIARO, BLU_NOTTE), ("Uscito", FONDO_OSSERVAZIONE, TESTO_OSSERVAZIONE)):
+        ws.conditional_formatting.add(area, FormulaRule(formula=[f'LEFT({c},{len(testo)})="{testo}"'], fill=fill(fondo),
                                                          font=Font(bold=True, color=colore)))
-    if plaus:
-        c = plaus.split(":")[0]
-        ws.conditional_formatting.add(plaus, FormulaRule(formula=[f'{c}="in crescita"'], fill=fill(AMBRA_TENUE),
-                                                         font=Font(bold=True, color="7F6000")))
+
+
+def _dimensioni(a):
+    """'Imp · Prob · Pross · Vel' di un rischio alla riga di appoggio a (Velocity non valutata = —)."""
+    vel = _ix("Velocity", a)
+    return (f'=IF({a}="","",{_ix("Impatto", a)}&" · "&{_ix("Probabilita", a)}&" · "&{_ix("Prossimita", a)}'
+            f'&" · "&IF({vel}="","—",{vel}))')
 
 
 def foglio_osservazione(wb):
-    """Foglio di lavoro: voci in osservazione del ciclo corrente con tutti i testi, uscite del ciclo, concentrazione per
-    driver e categoria accanto a quella dei rischi del registro."""
+    """Foglio di lavoro: rischi in osservazione del ciclo corrente con tutti i testi, entrati e usciti dal radar,
+    concentrazione per driver e categoria accanto a quella dei rischi del radar."""
     ws = wb["Osservazione"]
-    nome_definito(wb, "capienzaOsservazione", str(MAX_OSSERVAZIONE))
-    titolo(ws, "Lista di osservazione", 14)
-    larghezze = [8, 30, 11, 8, 16, 12, 6, 7, 10, 36, 44, 44, 8, 11]
+    titolo(ws, "Rischi in osservazione", 14)
+    larghezze = [8, 30, 10, 16, 6, 6, 6, 6, 7, 36, 8, 40, 44, 11]
     for j, w in enumerate(larghezze, start=1):
         ws.column_dimensions[get_column_letter(j)].width = w
     ws.column_dimensions["AF"].hidden = True
-    sezione(ws, 4, 1, 14, "Voci in osservazione nel ciclo corrente: prima l'impatto piu' alto, poi l'orizzonte piu' vicino")
-    _intestazione(ws, 5, list(zip("ABCDEFGHIJKLMN", ["Voce", "Fenomeno", "Esito nel ciclo", "Categoria", "Driver",
-                                                       "Rischi toccati", "Imp. pot.", "Orizz. (anni)", "Plausibilità",
-                                                       "Segnale di avvicinamento", "Meccanismo (descrizione)",
-                                                       "Motivazione di A1", "Dal", "Validazione"])))
-    campi = [("OSS_ID", True), ("Nome", True), ("Esito", True), ("Event_Type", True), ("Driver", True),
-             ("Rischi_Toccati", True), ("Impatto_Potenziale", False), ("Orizzonte_Anni", False), ("Plausibilita", True),
-             ("Segnale_Avvicinamento", True), ("Descrizione", True), ("Motivazione", True), ("Prima_Osservazione", True),
+    sezione(ws, 4, 1, 14, "Rischi in osservazione nel ciclo corrente (fuori dal radar: niente KRI ne' azioni), dallo "
+                          "score piu' alto")
+    _intestazione(ws, 5, list(zip("ABCDEFGHIJKLMN", ["ID", "Rischio", "Categoria", "Driver", "Imp.", "Prob.", "Pross.",
+                                                       "Vel.", "Score", "Perché fuori dal radar (regola, D-79)",
+                                                       "Orizz. (anni)", "Segnale che lo porterebbe nel radar",
+                                                       "Meccanismo (descrizione)", "Validazione"])))
+    campi = [("ID_Rischio", True), ("Nome", True), ("Event_Type", True), ("Driver", True), ("Impatto", False),
+             ("Probabilita", False), ("Prossimita", False), ("Velocity", False), ("Score_Composito", False),
+             ("Motivo_Stato", True), ("Orizzonte_Anni", False), ("Segnale_Avvicinamento", True), ("Descrizione", True),
              ("Validazione", True)]
     prima, ultima = 6, 5 + MAX_OSSERVAZIONE
     for k in range(1, MAX_OSSERVAZIONE + 1):
         r = 5 + k
         ws[f"AF{r}"] = _riga_ordine(k)
         for j, (col, testo) in enumerate(campi, start=1):
-            c = ws.cell(row=r, column=j, value=_oss(col, f"$AF{r}", testo))
+            c = ws.cell(row=r, column=j, value=_rr(col, f"$AF{r}", testo))
             c.font = Font(size=9, bold=j == 1, color=BLU_NOTTE if j == 1 else "262626")
-            c.alignment = Alignment(wrap_text=True, vertical="top", horizontal="center" if j in (3, 4, 7, 8, 9, 13, 14) else "left")
+            c.alignment = Alignment(wrap_text=True, vertical="top",
+                                    horizontal="center" if j in (1, 3, 5, 6, 7, 8, 9, 11, 14) else "left")
             c.border = BORDO_SOTTILE
+        ws[f"I{r}"].number_format = "0.00"
         ws.row_dimensions[r].height = 45
     finestra_a3 = 'NW_Settimana,">="&inizioFinestra4,NW_Settimana,"<="&settimanaCorrente'
-    ws["O5"].value = "Notizie di A3 (4 sett.)"
     _intestazione(ws, 5, [("O", "Notizie di A3 (4 sett.)")])
     ws.column_dimensions["O"].width = 9
     for r in range(prima, ultima + 1):
-        ws[f"O{r}"] = f'=IF($A{r}="","",COUNTIFS(NW_Voce_Osservazione,$A{r},{finestra_a3}))'
+        ws[f"O{r}"] = f'=IF($A{r}="","",COUNTIFS(NW_Rischio_ID,$A{r},{finestra_a3}))'
         ws[f"O{r}"].alignment, ws[f"O{r}"].border = Alignment(horizontal="center", vertical="top"), BORDO_SOTTILE
     ws.conditional_formatting.add(f"O{prima}:O{ultima}", FormulaRule(formula=[f'AND(ISNUMBER(O{prima}),O{prima}>0)'],
                                                                      fill=fill(AMBRA_TENUE), font=Font(bold=True)))
-    _colora_oss(ws, f"C{prima}:C{ultima}", f"I{prima}:I{ultima}")
-    colora_dimensioni(ws, f"G{prima}:G{ultima}", f"G{prima}")
+    colora_dimensioni(ws, f"E{prima}:H{ultima}", f"E{prima}")
     r = ultima + 2
-    sezione(ws, r, 1, 14, "Uscite dalla lista nel ciclo corrente (promosse a rischio, archiviate, respinte in validazione)")
-    _intestazione(ws, r + 1, list(zip("ABCDEFGHIJKL", ["Voce", "Fenomeno", "Stato", "Categoria", "Driver", "Rischio",
-                                                     "Imp. pot.", "Orizz. (anni)", "Plausibilità", "Segnale di avvicinamento",
-                                                     "Meccanismo (descrizione)", "Motivazione di A1"])))
-    campi_u = [("OSS_ID", True), ("Nome", True), ("Stato", True), ("Event_Type", True), ("Driver", True),
-               ("Promosso_A", True), ("Impatto_Potenziale", False), ("Orizzonte_Anni", False), ("Plausibilita", True),
-               ("Segnale_Avvicinamento", True), ("Descrizione", True), ("Motivazione", True)]
-    prima_u = r + 2
+    sezione(ws, r, 1, 14, "Entrati e usciti dal radar nel ciclo corrente (colonna Movimento del RiskRegister)")
+    _intestazione(ws, r + 1, list(zip("ABCDEFGHIJ", ["ID", "Rischio", "Movimento", "Stato ora", "Imp.", "Prob.",
+                                                   "Pross.", "Vel.", "Score", "Motivo (regola, D-79)"])))
+    ws.merge_cells(start_row=r + 1, start_column=10, end_row=r + 1, end_column=14)
+    campi_m = [("ID_Rischio", True), ("Nome", True), ("Movimento", True), ("Stato", True), ("Impatto", False),
+               ("Probabilita", False), ("Prossimita", False), ("Velocity", False), ("Score_Composito", False),
+               ("Motivo_Stato", True)]
+    prima_m = r + 2
     for k in range(1, 11):
-        rr = prima_u + k - 1
-        ws[f"AF{rr}"] = _riga_uscita(k)
-        for j, (col, testo) in enumerate(campi_u, start=1):
-            c = ws.cell(row=rr, column=j, value=_oss(col, f"$AF{rr}", testo))
+        rr = prima_m + k - 1
+        ws[f"AF{rr}"] = _riga_movimento(k)
+        for j, (col, testo) in enumerate(campi_m, start=1):
+            c = ws.cell(row=rr, column=j, value=_rr(col, f"$AF{rr}", testo))
             c.font = Font(size=9, bold=j == 1)
-            c.alignment = Alignment(wrap_text=True, vertical="top")
+            c.alignment = Alignment(wrap_text=True, vertical="top", horizontal="center" if 3 <= j <= 9 else "left")
             c.border = BORDO_SOTTILE
+        ws[f"I{rr}"].number_format = "0.00"
+        ws.merge_cells(start_row=rr, start_column=10, end_row=rr, end_column=14)
         ws.row_dimensions[rr].height = 30
-    _colora_oss(ws, f"C{prima_u}:C{prima_u + 9}", None)
-    fine_lista = prima_u + 9
+    _colora_movimento(ws, f"C{prima_m}:C{prima_m + 9}")
+    fine_lista = prima_m + 9
 
-    # Concentrazione: driver (righe) x event type (colonne), voci in osservazione e rischi del registro.
+    # Concentrazione: driver (righe) x categoria (colonne), rischi in osservazione e rischi del radar.
     P0 = 16                                            # colonna P
     N = len(TASSONOMIA)
     for j in range(P0, P0 + N + 2):
         ws.column_dimensions[get_column_letter(j)].width = 22 if j == P0 else 8
     L = lambda j: get_column_letter(j)
-    blocchi = [(4, "Dove si concentrano le voci in osservazione (driver x categoria)",
-                lambda et, drv: f'COUNTIFS(OS_Ciclo,cicloCorrente,OS_Stato,"In osservazione",OS_Event_Type,{et},'
-                                f'OS_Driver,"*"&{drv}&"*")'),
-               (8 + len(DRIVER), "Rischi del registro con lo stesso incrocio (anagrafica)",
+    blocchi = [(4, "Dove si concentrano i rischi in osservazione (driver x categoria)",
+                lambda et, drv: f'COUNTIFS(RR_Ciclo,cicloCorrente,RR_Stato,"Osservazione",RR_Event_Type,{et},'
+                                f'RR_Driver,"*"&{drv}&"*")'),
+               (8 + len(DRIVER), "Rischi del radar con lo stesso incrocio (anagrafica)",
                 lambda et, drv: f'COUNTIFS(ANA_Event_Type,{et},ANA_Driver,"*"&{drv}&"*")')]
     for riga0, testo, conta in blocchi:
         sezione(ws, riga0, P0, P0 + N + 1, testo)
@@ -3034,80 +3135,78 @@ def foglio_osservazione(wb):
                                                                      f'{L(P0 + 1)}{riga0 + 2}>={soglia})'], fill=fill(colore)))
     nota = 9 + 2 * len(DRIVER) + 2
     ws.merge_cells(start_row=nota, start_column=P0, end_row=nota + 2, end_column=P0 + N + 1)
-    c = ws.cell(row=nota, column=P0, value="Una voce o un rischio con piu' driver conta in ogni driver. Una casella piena "
-                                           "sopra e vuota sotto e' un tema che il registro non copre: la lista lo osserva. "
+    c = ws.cell(row=nota, column=P0, value="Un rischio con piu' driver conta in ogni driver. Una casella piena sopra e "
+                                           "vuota sotto e' un tema che il radar non gestisce: il registro lo osserva. "
                                            "Codici delle categorie: foglio Parametri (tassonomia interna).")
     c.font, c.alignment = Font(size=8, italic=True, color=TESTO_TENUE), Alignment(wrap_text=True, vertical="top")
-    legenda(ws, fine_lista + 2, 14, "Imp. pot. = impatto se il fenomeno si manifestasse, descrittori della rubrica (5 = "
-                                    "critico); Orizz. = anni stimati prima che possa manifestarsi; Plausibilita' teorica / "
-                                    "possibile / in crescita; Esito nel ciclo: Nuova, Confermata o Avvicinata (proposte di A1, "
-                                    "da validare), Invariata (nessuna evidenza nuova). Storia completa: foglio Lista_Osservazione.")
+    legenda(ws, fine_lista + 2, 14, "Registro unico (D-79): stessa scala e stesso score dei rischi del radar. Un rischio "
+                                    "entra nel radar se Prossimita e Probabilita raggiungono le soglie di Parametri (righe "
+                                    "65-75) e c'e' posto, o per eccezione (AGIRE ORA, tema del supervisore, decisione del "
+                                    "validatore); esce dopo due cicli sotto la regola. Orizz. = anni stimati da A1 prima che "
+                                    "possa manifestarsi. Storia completa: foglio RiskRegister (colonne Stato, Motivo_Stato, "
+                                    "Movimento).")
     ws.freeze_panes = "C6"
 
 
 def foglio_fenomeni(wb):
-    """Pagina del report: le voci in osservazione in forma compatta e le uscite del ciclo."""
+    """Pagina del report: i rischi in osservazione in forma compatta e chi e' entrato o uscito dal radar nel ciclo."""
     ws = wb["Fenomeni"]
-    titolo(ws, "Fenomeni in osservazione", 11)
-    for l, w in zip("ABCDEFGHIJK", [4, 8, 34, 22, 20, 13, 9, 11, 42, 11, 9]):
+    titolo(ws, "Rischi in osservazione", 11)
+    for l, w in zip("ABCDEFGHIJK", [4, 8, 30, 18, 12, 7, 34, 9, 38, 16, 9]):
         ws.column_dimensions[l].width = w
     ws.column_dimensions["L"].hidden = True
-    conta = lambda *crit: "COUNTIFS(OS_Ciclo,cicloCorrente" + "".join(f',{a},"{b}"' for a, b in crit) + ")"
+    conta = lambda *crit: "COUNTIFS(RR_Ciclo,cicloCorrente" + "".join(f',{a},"{b}"' for a, b in crit) + ")"
     ws.merge_cells("A4:K4")
-    ws["A4"] = (f'=IF(cicloCorrente="","","Voci in osservazione: "&{conta(("OS_Stato", "In osservazione"))}&" (al massimo '
-                f'{MAX_OSSERVAZIONE}) · nel ciclo: nuove "&{conta(("OS_Stato", "In osservazione"), ("OS_Esito", "Nuova"))}'
-                f'&", aggiornate con evidenza nuova "&({conta(("OS_Esito", "Confermata"))}+{conta(("OS_Esito", "Avvicinata"))})'
-                f'&", promosse a rischio "&{conta(("OS_Stato", "Promossa"))}&", archiviate "&{conta(("OS_Stato", "Archiviata"))}&".")')
+    ws["A4"] = (f'=IF(cicloCorrente="","","Registro unico: nel radar "&COUNTIF(ANA_ID,"NFR-*")&" rischi (capienza "&capienzaRadar'
+                f'&"), in osservazione "&{conta(("RR_Stato", "Osservazione"))}&" (al massimo {MAX_OSSERVAZIONE}) · nel '
+                f'ciclo: entrati nel radar "&{conta(("RR_Movimento", "Entrato"))}&", usciti "'
+                f'&{conta(("RR_Movimento", "Uscito"))}&", in uscita "&{conta(("RR_Stato", "Radar, in uscita"))}&".")')
     ws["A4"].font = Font(bold=True, size=11, color=BLU_NOTTE)
     ws["A4"].alignment = Alignment(vertical="center", indent=1)
     ws.row_dimensions[4].height = 20
-    _intestazione(ws, 6, list(zip("ABCDEFGHIJ", ["#", "Voce", "Fenomeno", "Categoria", "Driver", "Impatto potenziale",
-                                                   "Orizzonte", "Plausibilità", "Segnale che lo farebbe diventare un rischio",
-                                                   "Rischi toccati"])) + [("K", "Notizie A3 (4 sett.)")])
+    _intestazione(ws, 6, list(zip("ABCDEFGHIJ", ["#", "ID", "Rischio", "Categoria", "Imp · Prob · Pross · Vel",
+                                                   "Score", "Perché fuori dal radar", "Orizzonte",
+                                                   "Segnale che lo porterebbe nel radar", "Driver"]))
+                  + [("K", "Notizie A3 (4 sett.)")])
     prima, ultima = 7, 6 + MAX_OSSERVAZIONE
-    descr = ",".join(f'"{DESCR_S[i].lower()}"' for i in range(1, 6))
     for k in range(1, MAX_OSSERVAZIONE + 1):
         r = 6 + k
         a = f"$L{r}"
         ws[f"L{r}"] = _riga_ordine(k)
         ws[f"A{r}"] = f'=IF({a}="","",{k})'
-        ws[f"B{r}"] = _oss("OSS_ID", a)
-        ws[f"C{r}"] = _oss("Nome", a)
-        et, imp = _ix("Event_Type", a), _ix("Impatto_Potenziale", a)
+        ws[f"B{r}"] = _rr("ID_Rischio", a)
+        ws[f"C{r}"] = _rr("Nome", a)
+        et = _ix("Event_Type", a)
         ws[f"D{r}"] = f'=IF({a}="","",{et}&" "&IFERROR(INDEX(nomiL1,MATCH({et},codiciL1,0)),""))'
-        ws[f"E{r}"] = _nomi_driver(_oss("Driver", a)[1:])
-        ws[f"F{r}"] = f'=IF({a}="","",{imp}&" "&IFERROR(CHOOSE({imp},{descr}),""))'
-        ws[f"G{r}"] = f'=IF({a}="","",{_ix("Orizzonte_Anni", a)}&" anni")'
-        ws[f"H{r}"] = _oss("Plausibilita", a)
-        ws[f"I{r}"] = _oss("Segnale_Avvicinamento", a)
-        ws[f"J{r}"] = _oss("Rischi_Toccati", a)
-        ws[f"K{r}"] = (f'=IF({a}="","",COUNTIFS(NW_Voce_Osservazione,INDEX(Lista_Osservazione!$B:$B,{a}),'
+        ws[f"E{r}"] = _dimensioni(a)
+        ws[f"F{r}"] = _rr("Score_Composito", a, False)
+        ws[f"F{r}"].number_format = "0.00"
+        ws[f"G{r}"] = _rr("Motivo_Stato", a)
+        ws[f"H{r}"] = f'=IF({a}="","",IF({_ix("Orizzonte_Anni", a)}="","—",{_ix("Orizzonte_Anni", a)}&" anni"))'
+        ws[f"I{r}"] = _rr("Segnale_Avvicinamento", a)
+        ws[f"J{r}"] = _nomi_driver(_rr("Driver", a)[1:])
+        ws[f"K{r}"] = (f'=IF({a}="","",COUNTIFS(NW_Rischio_ID,{_ix("ID_Rischio", a)},'
                        f'NW_Settimana,">="&inizioFinestra4,NW_Settimana,"<="&settimanaCorrente))')
         for x in "ABCDEFGHIJK":
             c = ws[f"{x}{r}"]
             c.font = Font(size=9, bold=x == "B", color=BLU_NOTTE if x == "B" else "262626")
-            c.alignment = Alignment(wrap_text=True, vertical="top", horizontal="center" if x in "AFGHJK" else "left")
+            c.alignment = Alignment(wrap_text=True, vertical="top", horizontal="center" if x in "AEFHK" else "left")
             c.border = BORDO_SOTTILE
         ws.row_dimensions[r].height = 3
     nome_definito(wb, "fenomeniLista", f"'Fenomeni'!$A${prima}:$K${ultima}")
-    _colora_oss(ws, None, f"H{prima}:H{ultima}")
-    for livello, colore in ((5, "C55A11"), (4, "F4B183")):
-        ws.conditional_formatting.add(f"F{prima}:F{ultima}", FormulaRule(formula=[f'LEFT(F{prima},1)="{livello}"'],
-                                                                         fill=fill(colore), font=Font(bold=True)))
     r = ultima + 2
-    sezione(ws, r, 1, 11, "Uscite dalla lista in questo ciclo")
-    _intestazione(ws, r + 1, [("B", "Voce"), ("C", "Fenomeno"), ("D", "Esito"), ("E", "Motivazione di A1")])
+    sezione(ws, r, 1, 11, "Entrati e usciti dal radar in questo ciclo")
+    _intestazione(ws, r + 1, [("B", "ID"), ("C", "Rischio"), ("D", "Movimento"), ("E", "Motivo (regola, D-79)")])
     ws.merge_cells(start_row=r + 1, start_column=5, end_row=r + 1, end_column=11)
     prima_u = r + 2
     for k in range(1, 7):
         rr = prima_u + k - 1
         a = f"$L{rr}"
-        ws[f"L{rr}"] = _riga_uscita(k)
-        ws[f"B{rr}"] = _oss("OSS_ID", a)
-        ws[f"C{rr}"] = _oss("Nome", a)
-        verso = _ix("Promosso_A", a)
-        ws[f"D{rr}"] = f'=IF({a}="","",{_ix("Stato", a)}&IF({verso}="",""," a "&{verso}))'
-        ws[f"E{rr}"] = _oss("Motivazione", a)
+        ws[f"L{rr}"] = _riga_movimento(k)
+        ws[f"B{rr}"] = _rr("ID_Rischio", a)
+        ws[f"C{rr}"] = _rr("Nome", a)
+        ws[f"D{rr}"] = _rr("Movimento", a)
+        ws[f"E{rr}"] = _rr("Motivo_Stato", a)
         ws.merge_cells(start_row=rr, start_column=5, end_row=rr, end_column=11)
         for x in "BCDE":
             ws[f"{x}{rr}"].font = Font(size=9, bold=x == "B")
@@ -3115,17 +3214,15 @@ def foglio_fenomeni(wb):
             ws[f"{x}{rr}"].border = BORDO_SOTTILE
         ws.row_dimensions[rr].height = 3
     nome_definito(wb, "fenomeniUscite", f"'Fenomeni'!$A${prima_u}:$K${prima_u + 5}")
-    _colora_oss(ws, f"D{prima_u}:D{prima_u + 5}", None)
+    _colora_movimento(ws, f"D{prima_u}:D{prima_u + 5}")
     fine = prima_u + 7
-    legenda(ws, fine, 11, "Notizie A3 = notizie delle ultime 4 settimane che A3 ha collegato alla voce (segnali "
-                          "di A3 sulla voce: foglio Notizie). Impatto potenziale = danno se il fenomeno si manifestasse, con i descrittori della rubrica "
-                          "(1 limitato ... 5 critico); Orizzonte = anni stimati prima che possa manifestarsi; Plausibilita' "
-                          "teorica (nessun caso noto), possibile (casi fuori dal settore finanziario), in crescita (segnali in "
-                          "aumento nel settore). Promossa = il segnale si e' verificato: il fenomeno e' entrato nel registro "
-                          "come rischio nuovo. Nessuna voce ha uno score ne' entra in radar e classifica.")
+    legenda(ws, fine, 11, "Registro unico (D-79): tutti i rischi hanno la stessa scala (Impatto, Probabilita, Prossimita, "
+                          "Velocity; — = non valutata) e lo stesso score; nel radar di Mosca entrano quelli con Prossimita "
+                          "e Probabilita alle soglie di Parametri, fino alla capienza, piu' le eccezioni (AGIRE ORA, tema "
+                          "del supervisore, decisione del validatore). Gli altri restano qui, senza KRI ne' azioni, con "
+                          "l'orizzonte stimato e il segnale che li porterebbe nel radar. Notizie A3 = notizie delle ultime "
+                          "4 settimane collegate al rischio (foglio Notizie).")
     imposta_stampa(ws, f"A1:K{fine}")
-
-
 # ---------------------------------------------------------------- Validazione (griglia di lavoro, D-67)
 # Una riga per oggetto: accanto a ogni proposta (grigia) il valore giallo, gia' compilato con la proposta. Sezioni a
 # capienza fissa, una sotto l'altra: lo script scrive le righe dei periodi da validare e nasconde le altre (nel
@@ -3136,25 +3233,26 @@ MAX_KRI_GRIGLIA = 80          # KRI del ciclo, anche quelli che escono di vigore
 MAX_AZIONI_GRIGLIA = 100      # fino a 5 azioni per rischio (schema A1) x 20 rischi
 MAX_NOTIZIE_GRIGLIA = 200     # notizie delle settimane non ancora validate; oltre, il settimanale si ferma
 G_SEGN = "P"                  # D-71: segnalazioni di A5 e dei controlli sul rischio (solo la sezione Rischi)
+# D-79 (solo Rischi): dopo le colonne nascoste, lo stato calcolato con il motivo e la decisione del validatore sullo
+# stato (proposta grigia = la decisione in vigore, Automatico se nessuna).
+G_STATO, G_DEC_P, G_DEC = "W", "X", "Y"
 GRIGLIA = {
     # oggetto: (titolo, capienza, intestazioni di ID e Nome, {campo: (colonna proposta, colonna valore, etichetta)},
     #           colonna Respingi, {colonna extra: (lettera, intestazione)})
     "Rischio": ("RISCHI", MAX_RISCHI, ("ID", "Rischio"),
                 {"Impatto": ("C", "D", "Imp."), "Velocity": ("I", "J", "Vel."), "Prossimita": ("G", "H", "Pross."),
-                 "Probabilita": ("E", "F", "Prob."), "Anni_Adeguamento": ("K", "L", "Anni adeg.")}, None,
+                 "Probabilita": ("E", "F", "Prob."), "Anni_Adeguamento": ("K", "L", "Anni adeg."),
+                 "Decisione_Stato": (G_DEC_P, G_DEC, "Decisione sullo stato")}, None,
                 {"Segnalazioni": (G_SEGN, "Segnalazioni dei controlli (script e A5, se usato): ⚑ DA MOTIVARE = "
-                                          "Motivazione obbligatoria")}),
+                                          "Motivazione obbligatoria"),
+                 "Stato": (G_STATO, "Stato nel registro unico (calcolato con la regola, D-79)")}),
     "KRI": ("KRI", MAX_KRI_GRIGLIA, ("KRI", "Indicatore"),
             {"Valore_Corrente": ("D", "E", "Valore"), "Soglia_Attenzione": ("F", "G", "Soglia att."),
              "Soglia_Allerta": ("H", "I", "Soglia all.")}, "J", {"Tipo": ("C", "Tipo")}),
     "Azione": ("AZIONI", MAX_AZIONI_GRIGLIA, ("Azione", "Descrizione"),
                {"Owner": ("C", "E", "Owner"), "Orizzonte": ("G", "H", "Orizzonte")}, "I", {}),
-    "Osservazione": ("LISTA DI OSSERVAZIONE", MAX_OSSERVAZIONE, ("Voce", "Fenomeno"),
-                     {"Impatto_Potenziale": ("D", "E", "Impatto pot."), "Orizzonte_Anni": ("F", "G", "Orizzonte (anni)"),
-                      "Plausibilita": ("H", "I", "Plausibilità")}, "J", {"Esito": ("C", "Esito di A1")}),
     "Notizia": ("NOTIZIE", MAX_NOTIZIE_GRIGLIA, ("Notizia", "Titolo"),
-                {"Rischio_ID": ("C", "E", "Rischio"), "Segnale": ("G", "H", "Segnale"),
-                 "Voce_Osservazione": ("K", "L", "Voce oss.")}, "I",
+                {"Rischio_ID": ("C", "E", "Rischio"), "Segnale": ("G", "H", "Segnale")}, "I",
                 {"Settimana": ("J", "Settimana")}),
 }
 UNITE = {"Azione", "Notizia"}          # proposta e valore su due colonne unite (C:D, E:F): owner e rischio sono testi lunghi
@@ -3194,8 +3292,9 @@ def foglio_validazione(wb):
     oggetti = MAPPA["validazione"]["oggetti"]
     if list(GRIGLIA) != list(oggetti) or any(sorted(GRIGLIA[o][3]) != sorted(oggetti[o]["campi"]) for o in oggetti):
         raise SystemExit("GRIGLIA (genera_dashboard.py) e la sezione validazione della mappa devono avere gli stessi oggetti e campi")
-    titolo(ws, "Validazione: una riga per rischio, KRI, azione, voce in osservazione e notizia", 15)
-    for j, w in enumerate([16, 42, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 46, 15, 25, 60, 12, 12, 10, 10, 10, 10], start=1):
+    titolo(ws, "Validazione: una riga per rischio (nel radar o in osservazione), KRI, azione e notizia", 15)
+    for j, w in enumerate([16, 42, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 46, 15, 25, 60, 12, 12, 10, 10, 10, 10, 36, 13, 15],
+                          start=1):
         ws.column_dimensions[get_column_letter(j)].width = w
     for l in "QRSTUV":
         ws.column_dimensions[l].hidden = True
@@ -3229,8 +3328,9 @@ def foglio_validazione(wb):
         intest = {"A": (int_id, "info"), "B": (int_nome, "info"),
                   G_MOT: ("Motivazione (se cambi un valore" + (" o respingi)" if respingi else ")"), "val")}
         for campo, (cp, cv, et) in campi.items():
-            intest[cp] = (f"{et} proposto", "prop")
-            intest[cv] = ("Owner (una funzione)" if campo == "Owner" else et, "val")
+            intest[cp] = ("Decisione in vigore" if campo == "Decisione_Stato" else f"{et} proposto", "prop")
+            intest[cv] = ("Owner (una funzione)" if campo == "Owner" else
+                          "Decisione sullo stato (Automatico = la regola)" if campo == "Decisione_Stato" else et, "val")
         if respingi:
             intest[respingi] = ("Respingi", "val")
         for col, et in extra.values():
@@ -3264,6 +3364,10 @@ def foglio_validazione(wb):
             if oggetto == "Rischio":
                 ws[f"{G_SEGN}{i}"].font = Font(size=8)
                 ws[f"{G_SEGN}{i}"].alignment = Alignment(wrap_text=True, vertical="center")
+                ws[f"{G_STATO}{i}"].font = Font(size=8)
+                ws[f"{G_STATO}{i}"].alignment = Alignment(wrap_text=True, vertical="center")
+                for x in (G_STATO, G_DEC_P, G_DEC):
+                    ws[f"{x}{i}"].border = sottile
             ws[f"{G_MOT}{i}"].font, ws[f"{G_MOT}{i}"].fill = Font(size=9), fill("FFF2CC")
             ws[f"{G_MOT}{i}"].alignment = Alignment(wrap_text=True, vertical="center")
             for x in range(1, 17 if oggetto == "Rischio" else 16):
@@ -3316,13 +3420,13 @@ def foglio_validazione(wb):
             convalida_lista(ws, f"{respingi}{prima}:{respingi}{ultima}", "Sì")
         if oggetto == "Azione":
             convalida_lista(ws, f"H{prima}:H{ultima}", "3 mesi,6 mesi,12 mesi")
-        if oggetto == "Osservazione":                  # D-73
-            for col, massimo in (("E", 5), ("G", 20)):
-                dv = DataValidation(type="whole", operator="between", formula1="1", formula2=str(massimo), allow_blank=False,
-                                    error=f"Un intero da 1 a {massimo}.", showErrorMessage=True)
-                dv.add(f"{col}{prima}:{col}{ultima}")
-                ws.add_data_validation(dv)
-            convalida_lista(ws, f"I{prima}:I{ultima}", ",".join(PLAUSIBILITA))
+        if oggetto == "Rischio":                       # D-79
+            convalida_lista(ws, f"{G_DEC}{prima}:{G_DEC}{ultima}", ",".join(DECISIONI_STATO))
+            st = f"{G_STATO}{prima}"
+            for testo, fondo, colore in (("Osservazione", FONDO_OSSERVAZIONE, TESTO_OSSERVAZIONE),
+                                         ("Radar, in uscita", AMBRA_TENUE, "7F6000")):
+                ws.conditional_formatting.add(f"{G_STATO}{prima}:{G_STATO}{ultima}", FormulaRule(
+                    formula=[f'LEFT({st},{len(testo)})="{testo}"'], fill=fill(fondo), font=Font(size=8, bold=True, color=colore)))
         if oggetto == "Notizia":
             convalida_lista(ws, f"H{prima}:H{ultima}", ",".join(SEGNALI))
         r = ultima + 2
@@ -3411,22 +3515,29 @@ COME = {
     "Oggetto": "Tipo della riga proposta dall'agente.",
     "ID": "Codice dell'oggetto proposto (rischio, KRI, azione, notizia).",
     "Nome@tblValidazione": "Copiato dall'oggetto, per riconoscerlo senza cambiare foglio.",
-    "Campo": "Uno dei campi validati: 5 per rischio, 3 per KRI, 2 per azione, 2 per notizia (una colonna gialla della griglia ciascuno).",
+    "Campo": "Uno dei campi validati: 6 per rischio (con la decisione sullo stato, D-79), 3 per KRI, 2 per azione, 2 per notizia (una colonna gialla della griglia ciascuno).",
     "Proposta_Agente": "Valore scritto dall'agente, copiato qui alla scrittura; resta per sempre.",
-    "Decisione": "Dal comando valida, confrontando la cella gialla della griglia con la proposta: uguale = Accettato, diversa = Rettificato; Respingi = Sì = Respinto per tutti i campi dell'oggetto.",
-    "Valore_Validato": "Rischio: intero 1-5 a non piu' di un punto dal ciclo prima (Velocity anche vuota; da n.v. qualunque valore); KRI: numero, soglie entrambe o nessuna; azione: owner (una funzione) o 3/6/12 mesi.",
+    "Decisione": "Dal comando valida, confrontando la cella gialla della griglia con la proposta: uguale = Accettato, diversa = Rettificato; Respingi = Sì = Respinto per tutti i campi dell'oggetto. Dopo il comando riapri (D-76): Invariato, Rettificato o Respinto (riapertura), dove la proposta e' il valore validato prima.",
+    "Valore_Validato": "Rischio: intero 1-5 a non piu' di un punto dal ciclo prima (in riapertura senza limite; Velocity anche vuota; da n.v. qualunque valore); KRI: numero, soglie entrambe o nessuna; azione: owner (una funzione) o 3/6/12 mesi.",
     "Motivazione": "Quella della riga della griglia, riportata su ogni campo dell'oggetto; obbligatoria se un valore cambia, se si respinge e per un rischio con una segnalazione da motivare (⚑): almeno 10 caratteri, con l'evidenza.",
     "Validato_Da": "Il nome passato al comando valida (--validatore).",
     "Ciclo": "Ciclo da valutare, dalla baseline.",
     "Data_Riferimento": "Fine del trimestre valutato, dalla baseline.",
     "Sintesi_A1": "Scritta da A1 nella forma \"MESSAGGIO: ... DECISIONI: ...\": il Quadro d'insieme la divide in due righe.",
+    "Stato@tblRegister": "Dallo script con la regola del registro unico (07_Senza_Studio/radar.py, D-79) sui valori proposti alla scrittura e sui valori validati dopo valida: soglie di Prossimita e Probabilita, eccezioni, capienza (Parametri, righe 65-75); Dismesso con il comando dismetti.",
+    "Motivo_Stato": "Dalla stessa regola: quale soglia manca o quale eccezione vale, la capienza; per Radar, in uscita il primo ciclo sotto la regola.",
+    "Movimento": "Dallo script: Entrato se il ciclo prima il rischio era in osservazione e ora e' nel radar; Uscito se era nel radar e ora e' in osservazione.",
+    "Decisione_Stato": "Automatico alla scrittura (o la decisione in vigore dal ciclo prima); il comando valida scrive quella della griglia (Radar, Osservazione o Automatico).",
+    "Ordine_Osservazione": "Solo per le righe del ciclo corrente in osservazione: score x 100.000 piu' un decimale dalla riga, per ordinarle dallo score piu' alto (fogli Osservazione e Fenomeni).",
 }
 VALORI = {"Data_Riferimento": "data", "Impatto": "1-5", "Velocity": "1-5 o vuota (n.v.)", "Prossimita": "1-5",
           "Probabilita": "1-5", "Anni_Adeguamento": "anni 0-30 o vuoto", "Score_Composito": "1,00-5,00",
           "Soglia_Attenzione": "numero o vuota", "Soglia_Allerta": "numero o vuota",
           "Esito": "Confermato, Variato, Nuovo", "Event_Type": "9.1 ... 9.13 (FP fuori perimetro)", "Ciclo": "AAAAQn o AAAAQn-Sk (straordinario)", "Orizzonte": "3, 6, 12 mesi",
           "Segnale": "Peggiorativo, Migliorativo, Neutro, Non rilevante", "Decisione": "Accettato, Rettificato, Respinto",
-          "Validazione": "Da validare, Accettato, Rettificato, Respinto", "In_Vigore": "Sì, No"}
+          "Validazione": "Da validare, Accettato, Rettificato, Respinto", "In_Vigore": "Sì, No",
+          "Stato@tblRegister": "Radar, Radar, in uscita, Osservazione, Dismesso", "Movimento": "Entrato, Uscito o vuoto",
+          "Decisione_Stato": "Automatico, Radar, Osservazione", "Orizzonte_Anni": "anni 1-30 o vuoto"}
 ESEMPI_EXTRA = {"Score_Composito": "3,80", "Chiave": "2026Q2|NFR-01", "Mesi_Orizzonte": "6", "Stato@tblKRI": "Ambra",
                 "Settimana": "08/06/2026", "Variazioni": "impatto da 3 a 4: report frodi (2026-06-10)", "Fonti": "4 fonti, 2 interne"}
 CALCOLATI = [
@@ -3522,7 +3633,7 @@ def foglio_dizionario(wb):
                 es = str(es)
             if isinstance(es, str) and len(es) > 38:
                 es = es[:36] + "…"
-            voce([n, spec["foglio"], CHI_TESTO[chi], c["significato"], come, VALORI.get(n, "—"), es], proc[chi])
+            voce([n, spec["foglio"], CHI_TESTO[chi], c["significato"], come, VALORI.get(f"{n}@{nome_t}") or VALORI.get(n, "—"), es], proc[chi])
     sez("Valori calcolati nelle viste")
     for v in CALCOLATI:
         voce(list(v), "calcolo")
@@ -3560,8 +3671,8 @@ def leggi_regole_variazione():
 
 
 def leggi_limiti():
-    """Testo dei limiti da riportare in ogni memo: 06_Governance, sezione 5."""
-    corpo = _testo_kernel("06_Governance", "controlli_e_model_risk.md").split("## 5.", 1)[1].split("\n## ", 1)[0]
+    """Testo dei limiti da riportare in ogni memo: 04_Riferimenti/controlli_e_model_risk.md, sezione 5."""
+    corpo = _testo_kernel("04_Riferimenti", "controlli_e_model_risk.md").split("## 5.", 1)[1].split("\n## ", 1)[0]
     return " ".join(r.lstrip("> ").strip() for r in corpo.splitlines() if r.startswith(">")).strip()
 
 
@@ -3710,18 +3821,19 @@ def foglio_metodologia(wb):
     riga("Fonte", "Ogni KRI ha una fonte dati identificabile; A1 rilegge i valori che trova, gli altri restano "
                   "Non rilevato.")
     spazio()
-    riga("LISTA DI OSSERVAZIONE (pagina Fenomeni)", "", sezione_="trimestrale")
-    riga("Che cos'e'", "Fenomeni con un meccanismo di perdita per la Banca che oggi sono troppo lontani (oltre i 3 anni "
-                       "della Prossimita 1) o solo teorici per essere rischi del registro (D-73). Non hanno KRI, azioni "
-                       "ne' score e non entrano in radar, classifica e urgenza: si osservano finche' il segnale di "
-                       "avvicinamento non si verifica.")
-    riga("Valutazione preliminare", "Impatto potenziale con i descrittori della rubrica (se il fenomeno si manifestasse); "
-                                    "orizzonte stimato in anni; plausibilita' teorica (nessun caso noto), possibile (casi "
-                                    "fuori dal settore finanziario) o in crescita (segnali che aumentano nel settore).")
-    riga("Come cambia", f"A1 propone le voci nuove e aggiorna solo quelle con evidenza nuova; al massimo {MAX_OSSERVAZIONE} "
-                        "voci. Promossa: il segnale si e' verificato e il fenomeno entra nel registro come rischio nuovo, "
-                        "valutato con la rubrica. Archiviata: non e' piu' plausibile o e' assorbito da un rischio. Ogni "
-                        "proposta passa dal validatore.")
+    riga("REGISTRO UNICO: RADAR E OSSERVAZIONE (pagina Fenomeni)", "", sezione_="trimestrale")
+    riga("Che cos'e'", "Un solo registro di rischi, tutti valutati con la stessa rubrica e lo stesso score (D-79). I "
+                       "rischi nel radar di Mosca hanno la gestione completa (KRI, azioni, urgenza, schede); gli altri sono "
+                       "in osservazione: niente KRI ne' azioni, fuori da radar, classifica e urgenza, con l'orizzonte "
+                       "stimato e il segnale che li porterebbe nel radar.")
+    riga("Chi entra nel radar", '="Prossimita almeno "&sogliaProssimitaRadar&" e Probabilita almeno "&sogliaProbabilitaRadar'
+                                '&", fino a "&capienzaRadar&" rischi (i più alti per score); sempre dentro, anche oltre la '
+                                'capienza: AGIRE ORA (margine di Mosca negativo), tema del supervisore, decisione Radar del '
+                                'validatore; mai dentro: decisione Osservazione del validatore."')
+    riga("Come cambia", '="Lo script ricalcola lo stato a ogni ciclo e a ogni validazione. Un rischio che sale entra subito '
+                        '(KRI e azioni li propone A1); uno che scende resta Radar, in uscita per "&(cicliUscitaRadar-1)'
+                        '&" ciclo ed esce se lo è ancora dopo: i suoi KRI escono di vigore, la storia resta. Al massimo '
+                        f'{MAX_OSSERVAZIONE} rischi in osservazione. Regola e parametri: foglio Parametri, righe 65-75."')
     spazio()
     riga("COME SI LEGGONO I GRAFICI", "", sezione_="calcolo")
     riga("Classifica", "Una barra per rischio, dal piu' alto per score composito; colore = esito dell'urgenza; freccia = "
@@ -3740,8 +3852,8 @@ def foglio_metodologia(wb):
                   "l'evidenza.")
     spazio()
     riga("VALIDAZIONE", "", sezione_="validazione")
-    riga("", "Ogni valore proposto dagli agenti passa dal validatore, una riga per rischio, KRI, azione, voce della "
-             "lista di osservazione e notizia: "
+    riga("", "Ogni valore proposto dagli agenti passa dal validatore, una riga per rischio (nel radar o in "
+             "osservazione), KRI, azione e notizia: "
              "accettato, rettificato con motivazione o respinto. Il report mostra i valori validati; la proposta originale "
              "resta nel foglio Storico_Validazioni del registro. Un rischio con una segnalazione da motivare dei controlli "
              "o di A5 richiede sempre una motivazione (Quadro, pagina 2).")
@@ -3758,26 +3870,25 @@ CHI_AGGIORNA = [
     ("Radar_Mosca", "segnali netti (livello)", "score, azioni (Y), KRI", "anni di adeguamento, presidio, attenzione del supervisore", "quanto presto agire, quanto e' grande, livello di allerta"),
     ("Matrice", "", "Probabilita e Impatto", "valori validati", "gravita' dei rischi"),
     ("Delta", "", "confronto con il ciclo prima", "", "che cosa e' cambiato e perche'"),
-    ("Fenomeni", "", "voci della lista di osservazione", "voci validate", "fenomeni lontani da osservare, con il segnale"),
+    ("Fenomeni", "", "rischi in osservazione, entrati e usciti", "valori e decisioni sullo stato", "rischi fuori dal radar, perche', con il segnale"),
     ("Metodologia", "", "", "pesi e parametri (Parametri)", "come si leggono i numeri"),
     ("LAVORO", None, None, None, None),
     ("Registro", "segnali netti (colonna Q)", "dimensioni, score, urgenza, KRI, rilievi", "righe 4-5; presidio (anagrafica)", "il ciclo corrente, un rischio per riga"),
     ("Storico, Indicatori", "", "si aggiornano", "", "score negli ultimi cicli; KRI del ciclo e storia di uno"),
     ("Notizie", "si aggiorna; sintesi e flag di A3", "", "", "pressione delle notizie, aree non presidiate, sintesi della settimana"),
     ("Piano_azioni", "", "azioni proposte da A1", "decisione; Stato In corso/Completata (foglio Azioni)", "tutte le azioni e la loro scadenza"),
-    ("Osservazione", "", "si aggiorna", "", "lista di osservazione e dove si concentra (driver x categoria)"),
-    ("Validazione", "righe delle notizie", "righe di rischi, KRI, azioni, voci in osservazione", "valori gialli, Motivazione, Respingi (a mano)",
+    ("Osservazione", "", "si aggiorna", "", "rischi in osservazione e dove si concentrano (driver x categoria)"),
+    ("Validazione", "righe delle notizie", "righe di rischi, KRI, azioni; stato dei rischi", "valori gialli, decisione sullo stato, Motivazione, Respingi (a mano)",
      "unico foglio da compilare: una riga per oggetto"),
-    ("Parametri", "settimana corrente", "ciclo corrente; anagrafica H-K", "celle gialle", "pesi, soglie, urgenza, anagrafica"),
+    ("Parametri", "settimana corrente", "ciclo corrente; anagrafica H-K (= il radar)", "celle gialle", "pesi, soglie, urgenza, regola del radar, anagrafica"),
     ("Dizionario", "", "", "", "ogni dato: chi lo scrive, come si calcola"),
     ("DATI (solo lo script)", None, None, None, None),
-    ("RiskRegister", "", "valutazioni di A1", "valori validati", "una riga per rischio per ciclo"),
+    ("RiskRegister", "", "valutazioni di A1; stato nel registro unico", "valori validati, decisione sullo stato", "una riga per rischio per ciclo, radar e osservazione"),
     ("Azioni", "", "azioni proposte da A1", "delibera; Stato In corso/Completata a mano", "una riga per azione"),
     ("KRI", "", "KRI e valori riletti da A1", "rettifiche, KRI respinti", "storico, una riga per KRI per ciclo"),
     ("NewsLog", "notizie valutate da A3", "", "rettifiche (facoltative)", "una riga per notizia"),
     ("Sintesi_Cicli", "", "commento di A1 e di A5", "", "una riga per ciclo"),
     ("Sintesi_Settimane", "sintesi di A3 e flag proposti", "", "", "una riga per settimana"),
-    ("Lista_Osservazione", "", "voci proposte da A1, invariate riportate", "decisioni (comando valida)", "una riga per voce per ciclo"),
     ("Storico_Validazioni", "proposte delle notizie", "proposte di rischi, KRI, azioni", "decisioni (comando valida)",
      "una riga per oggetto e campo: proposta, valore deciso, motivo"),
     ("FILE A PARTE", None, None, None, None),
@@ -3858,6 +3969,13 @@ def foglio_guida(wb):
         "ciclo all'altro).",
         "Azioni, colonna Stato: avanzamento di un'azione approvata (In corso, Completata); il Piano_azioni si aggiorna da solo.",
         "Indicatori, cella N4: il KRI di cui guardare la storia.",
+        "Testi delle tabelle dati, per correggerne la forma (D-76): RiskRegister Descrizione e Razionale (lasciando le "
+        "etichette RISCHIO:, IMPATTO:...); KRI Nome, Unita, Fonte_Dati, Razionale, Nota_Rilevazione; Azioni Descrizione e "
+        "Razionale; RiskRegister Segnale_Avvicinamento dei rischi in osservazione. Mai ID, numeri, date, "
+        "Validazione o righe intere. Non resta traccia automatica: dopo, salvare, chiudere e lanciare  python "
+        "esegui_ciclo_locale.py baseline  (riallinea baseline e knowledge di A7).",
+        "Valori di un ciclo gia' validato (punteggi, decisione sullo stato, KRI, owner e orizzonte delle azioni): non qui, "
+        "ma con  python esegui_ciclo_locale.py riapri, poi la griglia del foglio Validazione e valida, quante volte serve.",
         "Tutto il resto lo scrive lo script o e' una formula: non modificarlo.",
     ]:
         testo(t)
@@ -3865,7 +3983,9 @@ def foglio_guida(wb):
     testo("REGOLE", "misto")
     for t in [
         "1. Score composito, urgenza e stato dei KRI li calcola il foglio. Nessun agente li fornisce.",
-        "2. Solo il ciclo trimestrale cambia uno score, al massimo di un punto per dimensione e con un'evidenza datata.",
+        "2. Solo un ciclo (trimestrale o straordinario) cambia uno score, al massimo di un punto per dimensione e con "
+        "un'evidenza datata; fuori dai cicli solo la funzione di rischio, riaprendo la validazione (riapri, con la "
+        "motivazione, D-76).",
         "3. Prima di leggere i numeri guardare Registro righe 4 e 5: ciclo non validato o incompleto = numeri non definitivi.",
         "4. Il trimestre dopo non parte finche' quello prima non e' validato (lo script si ferma e lo dice).",
         "5. I grafici hanno scala fissa: cicli diversi si confrontano a colpo d'occhio.",
@@ -3887,13 +4007,13 @@ def foglio_guida(wb):
 FOGLI = ["Guida", "Quadro", "Classifica", "Radar_Mosca", "Matrice", "Delta", "Fenomeni", "Metodologia",
          "Registro", "Storico", "Indicatori", "Notizie", "Piano_azioni", "Osservazione", "Validazione", "Parametri",
          "Dizionario", "RiskRegister", "Azioni", "KRI", "NewsLog", "Sintesi_Cicli", "Sintesi_Settimane",
-         "Lista_Osservazione", "Storico_Validazioni"]
+         "Storico_Validazioni"]
 FOGLI_REPORT = FOGLI[1:8]
 GRUPPO_FOGLIO = {**{f: "report" for f in FOGLI_REPORT}, "Guida": "guida",
                  **{f: "lavoro" for f in ("Registro", "Storico", "Indicatori", "Notizie", "Piano_azioni", "Osservazione",
                                           "Validazione", "Parametri", "Dizionario")},
                  **{f: "dati" for f in ("RiskRegister", "Azioni", "KRI", "NewsLog", "Sintesi_Cicli", "Sintesi_Settimane",
-                                        "Lista_Osservazione", "Storico_Validazioni")}}
+                                        "Storico_Validazioni")}}
 COLORE_LINGUETTA = {"report": BLU_NOTTE, "lavoro": BLU_DIM, "dati": GRIGIO_URG, "guida": "BF8F00"}
 
 

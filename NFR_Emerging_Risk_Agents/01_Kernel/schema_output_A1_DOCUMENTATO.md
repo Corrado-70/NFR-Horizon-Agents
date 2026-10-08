@@ -25,34 +25,27 @@ La destinazione di ogni campo sta in `mappatura_campi.json`.
 
 | Campo | Regola | Perche' | Destinazione |
 |---|---|---|---|
-| `ciclo` | `^[0-9]{4}Q[1-4](-S[1-9])?$`: un trimestre o, dal 07/10 (D-75), un ciclo straordinario `AAAAQn-Sk` (anche negli schemi di A5 e A6); con la baseline di uno straordinario (chiave `straordinario`: rischi_da_rivalutare, motivo, decisore, data_decisione) A1 scrive solo i rischi indicati | criterio delle SUMIFS | RiskRegister.Ciclo, Azioni.Ciclo, KRI.Ciclo_Aggiornamento, Parametri cicloCorrente |
+| `ciclo` | `^[0-9]{4}Q[1-4](-S[1-9])?$`: un trimestre o, dal 07/10 (D-75), un ciclo straordinario `AAAAQn-Sk` (anche negli schemi di A5 e A6); con la baseline di uno straordinario (chiave `straordinario`: rischi_da_rivalutare, motivo, decisore, data_decisione) A1 (o A8, D-77) scrive solo i rischi indicati e quelli nuovi; con rischi_da_rivalutare vuoto, solo rischi nuovi (almeno uno) | criterio delle SUMIFS | RiskRegister.Ciclo, Azioni.Ciclo, KRI.Ciclo_Aggiornamento, Parametri cicloCorrente |
 | `data_riferimento` | data | finestra dell'evidenza (C3, C5) | RiskRegister.Data_Riferimento; data dei KRI riletti |
 | `rischi` | almeno 1 | | una riga RiskRegister per elemento |
 | `ricalcolo_kri_ciclo_precedente` | array, a livello CICLO | la rilettura riguarda i KRI in vigore anche dei rischi non rivalutati | KRI (aggiornamento per KRI_ID) |
 | `sintesi` | 100-3000 caratteri | commento per il comitato nella forma "MESSAGGIO: ... DECISIONI: ..." (messaggio chiave, 3 priorita', nuovi e variati; poi decisioni richieste) | Sintesi_Cicli.Sintesi_A1; foglio Quadro del report, diviso in messaggio e decisioni (D-32, D-39) |
 | `fenomeni_non_censiti` | facoltativo, al massimo 15: fenomeno, event_type (o null), fonti (fino a 3, riferimento e data), motivo fra `nessun_meccanismo`, `fonte_non_specifica`, `gia_coperto`, `troppo_lontano`, `altro`, spiegazione fino a 300 caratteri | i fenomeni esaminati nelle fonti e non censiti, con il motivo; istruzioni nella guida di scrittura dell'allegato (prompt invariato) | nessuna colonna: output archiviato di A1 e `Ciclo.txt` della knowledge di A7 (D-72) |
-| `osservazione` | facoltativo, al massimo 30 voci (sezione "A1 — voce della lista di osservazione") | solo le voci nuove e quelle con evidenza nuova; le altre le riporta lo script (D-73) | tblOsservazione, una riga per voce per ciclo |
+| `analisi_evento` | facoltativo, per il ciclo straordinario (lo scrive A8, D-77): evento (50-800), catena_causale (50-1500), rischi_toccati (1-10: id_rischio ed effetto), rischi_non_toccati (testo, anche vuoto), documenti (1-15: riferimento, data, uso), limiti | l'analisi approfondita dell'evento; non porta valori e non si valida; controlli dello script solo Osservazioni (straordinario senza analisi, rischio toccato inesistente o non indicato, rischio scritto assente dai toccati, documento dopo la data di riferimento, analisi in un trimestre); istruzioni nella guida di scrittura | il campo evento nella colonna Straordinario di Sintesi_Cicli; l'analisi intera nell'output archiviato e in `Ciclo.txt` della knowledge di A7 |
 
-## A1 — voce della lista di osservazione (D-73)
+## A1 — registro unico: radar e osservazione (D-79)
 
-Istruzioni per A1 nella guida di scrittura dell'allegato (`guida_scrittura_A1.md`, sezione "Lista di osservazione"); prompt di A1 invariato. Controlli solo dello script (`controlla_osservazione`).
-
-| Campo | Regola | Destinazione |
-|---|---|---|
-| `oss_id` | `^OSS-[0-9]{2}$` per una voce della baseline, **null** per una voce nuova (il codice lo assegna lo script: primo libero, mai riusato) | tblOsservazione.OSS_ID |
-| `esito` | `nuova`, `confermata`, `avvicinata`, `promossa`, `archiviata`; codice e esito coerenti (C1 Bloccante) | Esito (Nuova...; Invariata per le voci riportate dallo script) e Stato (In osservazione, Promossa, Archiviata; Respinta dalla validazione) |
-| `nome`, `descrizione` | 5-120 e 20-500 caratteri: il meccanismo di perdita, anche lontano | Nome, Descrizione |
-| `driver`, `event_type` | da 1 a 3 driver della tassonomia; una categoria (D-74) | Driver ("a, b"), Event_Type |
-| `rischi_toccati` | da 0 a 5 `NFR-nn` (un codice che non esiste = Osservazione) | Rischi_Toccati |
-| `impatto_potenziale` | intero 1-5, descrittori della rubrica | Impatto_Potenziale (validato) |
-| `orizzonte_anni` | intero 1-20 | Orizzonte_Anni (validato) |
-| `plausibilita` | `teorica`, `possibile`, `in crescita` | Plausibilita (validata) |
-| `segnale_avvicinamento` | 10-300 caratteri: il fatto osservabile che lo farebbe diventare un rischio | Segnale_Avvicinamento |
-| `motivazione` | 20-600 caratteri, con l'evidenza nuova per una voce esistente | Motivazione |
-| `fonti` | da 1 a 3, riferimento e data (data dopo la data di riferimento = Osservazione; voce aggiornata senza una fonte nuova = Osservazione) | Fonti (JSON) |
-| `promosso_a` | `NFR-nn` di un rischio **nuovo** del ciclo, solo con esito `promossa`; altrimenti null (C1 Bloccante) | Promosso_A |
-
-Al massimo 30 voci in osservazione dopo il ciclo (C1 Bloccante).
+Dall'08/10/2026 non c'e' piu' il campo `osservazione` (lista `OSS-nn` della D-73): ogni fenomeno censito e' un elemento
+di `rischi`. Lo stato (nel radar o in osservazione) non e' un campo dello schema: lo calcola lo script con la regola
+della baseline (`regola_radar`; `07_Senza_Studio/radar.py`, rubrica sezione 9) e va in RiskRegister.Stato,
+Motivo_Stato, Movimento. A1 scrive tutti i rischi di `rischi` della baseline (il radar) e, di `rischi_in_osservazione`,
+solo quelli con evidenza nuova (gli altri lo script li riporta gia' validati). Per un rischio che restera' in
+osservazione: niente KRI ne' azioni (`kri_proposti` e `azioni_mitigazione` vuoti), `orizzonte_anni` e
+`segnale_avvicinamento` valorizzati; per uno che entra nel radar, subito due KRI e da 1 a 5 azioni. Controlli dello
+script (`controlli_a5.controlla`, con lo stato previsto da `stati_previsti`): KRI o azioni su un rischio in osservazione
+= Osservazione C9; rischio in osservazione riscritto senza una fonte nuova = Osservazione C5; senza orizzonte o segnale =
+Osservazione C1; rischio che entra senza KRI o azioni = Da motivare C9; rischio del radar senza = Bloccante C9; piu' di
+20 rischi in osservazione dopo il ciclo = Bloccante C1.
 
 ## A1 — rischio
 
@@ -68,9 +61,11 @@ Al massimo 30 voci in osservazione dopo il ciclo (C1 Bloccante).
 | `variazioni[]` | dimensione (impatto, velocity, prossimita, probabilita), evidenza (>= 20 caratteri), data_evidenza | RiskRegister.Variazioni (JSON), con "da" e "a" aggiunti dallo script dalla baseline (D-51) |
 | `fonti[]` | almeno 1; riferimento, data, tipo Interna/Esterna | RiskRegister.Fonti (JSON); C5 conta le fonti |
 | `razionale` | 50-2500 caratteri; **in parti con etichette fisse** (D-68, chieste dallo scheletro del prompt): `RISCHIO:` il fenomeno in termini di rischio (causa, evento, danno); `IMPATTO:`, `PROBABILITA:`, `PROSSIMITA:`, `VELOCITY:` perche' quel valore, con il fatto e il documento; `ADEGUAMENTO:` se c'e' una stima. Cita un dato numerico con la fonte, se esiste, e dichiara come valutazione un numero senza fonte (rubrica, regola 7; A5 in C4). Il formato non e' imposto dallo schema: un razionale senza etichette passa, `trimestrale` lo segnala con un avviso e la scheda lo mostra intero | RiskRegister.Razionale; le parti le legge `schede.parti_razionale` |
-| `azioni_mitigazione[]` | 1-5; descrizione, owner, orizzonte (3/6/12 mesi), razionale (20-700 caratteri: perche', poi `EFFETTO:` che cosa dovrebbe cambiare, D-68; niente `dimensione`, D-54) | una riga in Azioni per elemento |
+| `orizzonte_anni` | intero 1-30 o null (facoltativo, D-79): per un rischio in osservazione, gli anni stimati prima che possa manifestarsi (la Prossimita non distingue oltre i 3 anni) | RiskRegister.Orizzonte_Anni; foglio Osservazione, pagina Fenomeni |
+| `segnale_avvicinamento` | 10-300 caratteri o null (facoltativo, D-79): il fatto osservabile che lo porterebbe nel radar | RiskRegister.Segnale_Avvicinamento; foglio Osservazione, pagina Fenomeni; A3 lo verifica sulle notizie |
+| `azioni_mitigazione[]` | da 0 a 5 (D-79: nessuna per un rischio in osservazione; da 1 a 5 per uno del radar, lo presidia C9); descrizione, owner, orizzonte (3/6/12 mesi), razionale (20-700 caratteri: perche', poi `EFFETTO:` che cosa dovrebbe cambiare, D-68; niente `dimensione`, D-54) | una riga in Azioni per elemento |
 | `probabilita` | intero 1-5, obbligatorio; descrittori di plausibilita' (D-52, D-61) | RiskRegister.Probabilita; nel composito; area del Radar_Mosca (x Impatto) |
-| `kri_proposti[]` | **esattamente 2** (D-64; prima da 1 a 3, D-53) | storico KRI, una riga per KRI nel ciclo; kri_id riusato = stessa serie |
+| `kri_proposti[]` | al massimo 2 (D-79): **due** per un rischio del radar, uno per tipo (D-64, lo presidia C9), nessuno per uno in osservazione | storico KRI, una riga per KRI nel ciclo, solo per i rischi del radar; kri_id riusato = stessa serie |
 
 L'esito (Nuovo se l'id non e' nella baseline; Variato se cambia Impatto,
 Probabilita, Prossimita o Velocity, anche da vuota a un valore; altrimenti
@@ -103,12 +98,11 @@ calcola lo script e va in RiskRegister.Esito (D-51).
 | `notizie[].id_notizia` | `^N-[0-9]{8}-[0-9]{2}$` | NewsLog.ID_Notizia (chiave anti-duplicato) |
 | `notizie[].fonte` | 3-150 caratteri, per esteso | NewsLog.Fonte |
 | `notizie[].codice_fonte` | `^(FNT-[0-9]{2}\|MAN)$`; la scrittura verifica che sia in `fonti.md` e non escluso | NewsLog.Codice_Fonte |
-| `notizie[].rischio_collegato` | NFR-nn o null | NewsLog.Rischio_ID ("NON PRESIDIATO" se null) |
+| `notizie[].rischio_collegato` | NFR-nn (nel radar o in osservazione, D-79) o null | NewsLog.Rischio_ID ("NON PRESIDIATO" se null) |
 | `notizie[].segnale` | quattro valori letterali | NewsLog.Segnale |
 | `notizie[].impatti` | esattamente 9, una per categoria (D-74); intensita 0-3; direzione | NewsLog.Imp_9_n (intensita'); la direzione per categoria va nel report |
 | `flag_proposti[]` | id, direzione, motivazione | report settimanale |
-| `notizie[].voce_osservazione` | facoltativo: OSS-nn di una voce in osservazione (la scrittura lo verifica) o null (D-73) | NewsLog.Voce_Osservazione (validabile) |
-| `segnali_osservazione[]` | facoltativo: oss_id, direzione Avvicina / Segnale verificato / Allontana, motivazione (D-73) | Sintesi_Settimane.Segnali_Osservazione; baseline del ciclo dopo (notizie_a3, segnali_a3 della voce) |
+| (D-79) | `voce_osservazione` e `segnali_osservazione` (D-73) non ci sono piu': una notizia su un rischio in osservazione va in `rischio_collegato`, un suo segnale di avvicinamento realizzato in `flag_proposti` | baseline del ciclo dopo: `notizie_a3` e `flag_a3` del rischio in osservazione |
 | `proposta_straordinario` | facoltativo: rischi (in anagrafica) e motivo, oppure null; regola del segnale critico, rubrica sezione 6 (D-75) | Sintesi_Settimane.Proposta_Straordinario, riquadro del foglio Notizie, messaggio di `settimanale` |
 | `sintesi` | | report settimanale |
 

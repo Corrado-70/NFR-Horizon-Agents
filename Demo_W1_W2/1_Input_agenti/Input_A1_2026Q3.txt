@@ -1,4 +1,4 @@
-INPUT DI A1 PER IL CICLO 2026Q3: scritto da esegui_ciclo_locale.py il 2026-10-07, da non modificare a mano.
+INPUT DI A1 PER IL CICLO 2026Q3: scritto da esegui_ciclo_locale.py il 2026-10-08, da non modificare a mano.
 Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se usato) applicano al tuo output; 3. GUIDA DI SCRITTURA.
 
 === 1. BASELINE ===
@@ -11,7 +11,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-01",
       "nome": "Frodi su pagamenti istantanei abilitate da AI generativa",
-      "event_type": "L1-02",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-CYB"
@@ -19,6 +19,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione Antifrode",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 4,
@@ -51,6 +52,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -71,7 +74,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-02",
       "nome": "Concentrazione su un fornitore cloud critico",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-TPR",
         "DRV-CYB"
@@ -79,6 +82,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 4,
       "prossimita": 3,
@@ -105,6 +109,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -125,7 +131,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-03",
       "nome": "Greenwashing nella commercializzazione di prodotti ESG",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-CON",
         "DRV-CLI"
@@ -133,6 +139,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -153,6 +160,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -173,13 +182,14 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-04",
       "nome": "Eventi climatici estremi su sedi e data center",
-      "event_type": "L1-05",
+      "event_type": "9.8",
       "driver": [
         "DRV-CLI"
       ],
       "owner": "Funzione Business Continuity",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -200,6 +210,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -220,13 +232,14 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-05",
       "nome": "Errori di processo nella migrazione del core banking",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione Operations",
       "presidio_controlli": "Adeguato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -253,6 +266,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -273,7 +288,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-06",
       "nome": "Esfiltrazione di dati tramite strumenti di AI non autorizzati",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-AI",
         "DRV-HUM"
@@ -281,6 +296,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Assente",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -301,6 +317,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -314,7 +332,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-07",
       "nome": "Ransomware presso un fornitore di servizi di pagamento",
-      "event_type": "L1-06",
+      "event_type": "9.9",
       "driver": [
         "DRV-CYB",
         "DRV-TPR"
@@ -322,6 +340,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione ICT & Security Risk",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 5,
       "prossimita": 3,
@@ -342,6 +361,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -362,7 +383,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-08",
       "nome": "Accessi impropri di dipendenti ai dati dei clienti",
-      "event_type": "L1-01",
+      "event_type": "9.7",
       "driver": [
         "DRV-HUM",
         "DRV-CON"
@@ -370,6 +391,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione Sicurezza delle Informazioni",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -390,6 +412,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -410,13 +434,14 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-09",
       "nome": "Violazione di sanzioni internazionali tramite triangolazioni",
-      "event_type": "L1-04",
+      "event_type": "9.4",
       "driver": [
         "DRV-GEO"
       ],
       "owner": "Funzione Compliance",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": true,
       "impatto": 4,
       "velocity": 3,
       "prossimita": 2,
@@ -437,6 +462,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -450,7 +477,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-10",
       "nome": "Informazioni errate ai clienti da assistenti di AI generativa",
-      "event_type": "L1-04",
+      "event_type": "9.1",
       "driver": [
         "DRV-AI",
         "DRV-CON"
@@ -458,6 +485,7 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "owner": "Funzione Customer Experience",
       "presidio_controlli": "Non verificato",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": null,
       "prossimita": 3,
@@ -478,6 +506,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 2
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -491,13 +521,14 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-11",
       "nome": "Fine del supporto dei sistemi di pagamento legacy",
-      "event_type": "L1-06",
+      "event_type": "9.6",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione IT Operations",
       "presidio_controlli": "Assente",
       "anni_adeguamento": 3.0,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -518,6 +549,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -538,13 +571,14 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
     {
       "id_rischio": "NFR-12",
       "nome": "Errori operativi nei pagamenti istantanei obbligatori",
-      "event_type": "L1-07",
+      "event_type": "9.13",
       "driver": [
         "DRV-TEC"
       ],
       "owner": "Funzione Operations",
       "presidio_controlli": "Parziale",
       "anni_adeguamento": null,
+      "attenzione_supervisore": false,
       "impatto": 3,
       "velocity": 4,
       "prossimita": 4,
@@ -565,6 +599,8 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "rilevanza": 3
         }
       ],
+      "stato": "Radar",
+      "decisione_stato": "Automatico",
       "storico": [
         {
           "ciclo": "2026Q1",
@@ -581,6 +617,123 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
           "probabilita": 4
         }
       ]
+    }
+  ],
+  "rischi_in_osservazione": [
+    {
+      "id_rischio": "NFR-13",
+      "nome": "Rottura della crittografia dei pagamenti con il calcolo quantistico",
+      "event_type": "9.7",
+      "driver": [
+        "DRV-TEC",
+        "DRV-CYB"
+      ],
+      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia.",
+      "anni_adeguamento": null,
+      "impatto": 5,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 1,
+      "orizzonte_anni": 10,
+      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento.",
+      "esito_precedente": "Confermato",
+      "razionale": "Impatto 5 perche' toccherebbe tutti i canali; Probabilita 1 e Prossimita 1: nessun calcolatore oggi ha la capacita' necessaria e nessun caso e' documentato; velocity non valutata: nessuna fonte sui tempi.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla crittografia post-quantistica di un'agenzia europea per la cybersicurezza",
+          "data": "2026-02-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2; Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q1",
+          "impatto": 5,
+          "velocity": null,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-14",
+      "nome": "Interruzione di cavi sottomarini per una crisi geopolitica",
+      "event_type": "9.6",
+      "driver": [
+        "DRV-GEO",
+        "DRV-TPR"
+      ],
+      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
+      "anni_adeguamento": null,
+      "impatto": 4,
+      "velocity": 4,
+      "prossimita": 1,
+      "probabilita": 2,
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
+      "esito_precedente": "Variato",
+      "razionale": "Impatto 4 per servizi e pagamenti esteri fermi per giorni; velocity 4 perche' il taglio e' immediato; Probabilita 2 dopo i danneggiamenti nel Mar Baltico e nel Mar Rosso; Prossimita 1: nessun caso sulle rotte italiane.",
+      "fonti": [
+        {
+          "riferimento": "Rapporto sulla resilienza delle infrastrutture critiche sottomarine",
+          "data": "2026-05-20",
+          "tipo": "Esterna",
+          "rilevanza": 3
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Prossimita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [
+        {
+          "ciclo": "2026Q1",
+          "impatto": 4,
+          "velocity": 4,
+          "prossimita": 1,
+          "probabilita": 1
+        }
+      ],
+      "notizie_a3": [],
+      "flag_a3": []
+    },
+    {
+      "id_rischio": "NFR-15",
+      "nome": "Responsabilita' per decisioni di agenti di IA autonomi verso i clienti",
+      "event_type": "9.4",
+      "driver": [
+        "DRV-AI",
+        "DRV-CON"
+      ],
+      "descrizione": "Agenti di IA che agiscono per conto dei clienti (pagamenti, investimenti) potrebbero eseguire operazioni non volute; la ripartizione della responsabilita' fra cliente, fornitore dell'agente e Banca non e' definita. Danno: rimborsi e contenzioso.",
+      "anni_adeguamento": null,
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 2,
+      "probabilita": 1,
+      "orizzonte_anni": 4,
+      "segnale_avvicinamento": "Primo contenzioso o orientamento di un'autorita' europea su un'operazione bancaria disposta da un agente di IA.",
+      "esito_precedente": "Nuovo",
+      "razionale": "Impatto 3 per rimborsi e contenzioso; Prossimita 2 per sperimentazioni presso grandi piattaforme di pagamento; Probabilita 1: nessun caso in banca; velocity non valutata.",
+      "fonti": [
+        {
+          "riferimento": "Comunicato di una piattaforma di pagamento sugli acquisti delegati ad agenti di IA",
+          "data": "2026-06-03",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "stato": "Osservazione",
+      "motivo_stato": "Probabilita 1 sotto la soglia 2",
+      "decisione_stato": "Automatico",
+      "storico": [],
+      "notizie_a3": [],
+      "flag_a3": []
     }
   ],
   "kri_in_vigore": [
@@ -879,95 +1032,143 @@ Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se u
       "id_rischio": "NFR-01",
       "descrizione": "Introdurre la verifica fuori banda per bonifici istantanei sopra soglia verso beneficiari nuovi.",
       "owner": "Funzione Antifrode",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-02-A1",
       "id_rischio": "NFR-02",
       "descrizione": "Eseguire il test completo di exit strategy sui due servizi critici non ancora coperti.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-03-A1",
       "id_rischio": "NFR-03",
       "descrizione": "Revisione indipendente dei claim ambientali di tutti i prodotti ESG in catalogo.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-04-A1",
       "id_rischio": "NFR-04",
       "descrizione": "Redigere piani di continuita' specifici per le due sedi critiche in aree a rischio.",
       "owner": "Funzione Business Continuity",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-06-A1",
       "id_rischio": "NFR-06",
       "descrizione": "Estendere il DLP a tutti i servizi di AI generativa e bloccare quelli non autorizzati.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-07-A1",
       "id_rischio": "NFR-07",
       "descrizione": "Test congiunto di ripristino da ransomware con il fornitore del gateway di pagamento.",
       "owner": "Funzione ICT & Security Risk",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "6 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-08-A1",
       "id_rischio": "NFR-08",
       "descrizione": "Revisione trimestrale automatica degli accessi ai dati clienti senza pratica associata.",
       "owner": "Funzione Sicurezza delle Informazioni",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-09-A1",
       "id_rischio": "NFR-09",
       "descrizione": "Estendere lo screening sanzioni alle controparti indirette dei pagamenti verso paesi di transito.",
       "owner": "Funzione Compliance",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-10-A1",
       "id_rischio": "NFR-10",
       "descrizione": "Campionamento settimanale delle risposte del chatbot con verifica umana.",
       "owner": "Funzione Customer Experience",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-11-A1",
       "id_rischio": "NFR-11",
       "descrizione": "Piano di sostituzione delle componenti fuori supporto del sistema di pagamento.",
       "owner": "Funzione IT Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "12 mesi",
+      "ciclo": "2026Q2"
     },
     {
       "id_azione": "2026Q2-NFR-12-A1",
       "id_rischio": "NFR-12",
       "descrizione": "Controllo giornaliero automatico delle differenze di riconciliazione sui bonifici istantanei.",
       "owner": "Funzione Operations",
-      "stato": "Approvata"
+      "stato": "Approvata",
+      "orizzonte": "3 mesi",
+      "ciclo": "2026Q2"
     }
-  ]
+  ],
+  "regola_radar": {
+    "capienza": 15,
+    "soglia_prossimita": 2,
+    "soglia_probabilita": 2,
+    "cicli_uscita": 2,
+    "max_radar": 20,
+    "max_osservazione": 20,
+    "pesi": {
+      "impatto": 0.35,
+      "probabilita": 0.25,
+      "prossimita": 0.2,
+      "velocity": 0.2
+    },
+    "anni_prossimita": [
+      3.5,
+      2.5,
+      1.5,
+      0.5,
+      0.0
+    ],
+    "mosca_x": 0.25,
+    "mosca_y_riserva": 1.0
+  }
 }
 
 === 2. CONTROLLI ===
 Prima di rispondere verifica ogni rischio con questi controlli e correggi. Li applicano lo script e, se usato, A5 Challenger: un difetto di completezza o di coerenza (C1, C2, C7, identificativi dei KRI) ferma il ciclo e torna a te; ogni altro rilievo arriva al validatore, che dovra' motivarlo uno per uno.
-- C1 Completezza: ogni rischio dell'anagrafica della baseline e' valutato, con lo stesso event type; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline.
+- C1 Completezza: ogni rischio di "rischi" della baseline (il radar) e' valutato, con la stessa categoria; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline.
 - C2 Variazioni: una voce per ogni valore cambiato rispetto alla baseline e solo per quelli; nessuna per un rischio nuovo.
 - C3 Evidenza delle variazioni: data_evidenza dopo data_riferimento_precedente e non dopo data_riferimento; evidenza specifica, non una frase generica; nessun valore cambiato di piu' di un punto (una velocity prima null puo' entrare con qualunque valore).
-- C4 Plausibilita': gli score corrispondono ai descrittori della rubrica, dati razionale e fonti (Probabilita 4-5 con la Banca esposta); event type coerente con la tassonomia; un rischio = un meccanismo di perdita; velocity solo se le fonti documentano i tempi; la deroga alla Prossimita 4-5 e' dichiarata e riguarda un fenomeno ad altissimo impatto; anni_adeguamento motivati; una riduzione ha lo stesso onere di un aumento; un numero senza fonte non dichiarato come valutazione e' un'Osservazione.
+- C4 Plausibilita': gli score corrispondono ai descrittori della rubrica, dati razionale e fonti (Probabilita 4-5 con la Banca esposta); categoria coerente con la tassonomia; un rischio = un meccanismo di perdita; velocity solo se le fonti documentano i tempi; la deroga alla Prossimita 4-5 e' dichiarata e riguarda un fenomeno ad altissimo impatto; anni_adeguamento motivati; una riduzione ha lo stesso onere di un aumento; un numero senza fonte non dichiarato come valutazione e' un'Osservazione.
 - C5 Fonti: rilevanza coerente con i descrittori della rubrica; Probabilita 5 o Prossimita 4-5 con almeno una fonte di rilevanza 3, salvo deroga dichiarata; nessuna fonte datata dopo data_riferimento; un rischio confermato con meno fonti della baseline rivede i valori.
 - C6 Deriva: aumenti sostenuti solo dallo stesso fatto ripetuto o da copertura mediatica; aumenti su piu' della meta' dei rischi senza fonti nuove (inflazione progressiva).
 - C7 Rilettura KRI: ogni kri_id riletto e' in vigore nella baseline e compare una sola volta.
 - C8 Azioni (sempre Osservazione): owner e' una funzione, mai una persona; l'azione e' pertinente al meccanismo di perdita e non ripete un'azione aperta della baseline.
-- C9 KRI: due per rischio, uno di Esposizione e uno di Evoluzione, coerenti con cio' che misurano; fonte_dati identificabile; soglie entrambe o nessuna, soglia_allerta >= soglia_attenzione; valore crescente = peggio; un kri_id valorizzato esiste in baseline ed e' dello stesso rischio; nessun kri_id ripetuto.
+- C9 KRI: due per rischio del radar, uno di Esposizione e uno di Evoluzione, coerenti con cio' che misurano; fonte_dati identificabile; soglie entrambe o nessuna, soglia_allerta >= soglia_attenzione; valore crescente = peggio; un kri_id valorizzato esiste in baseline ed e' dello stesso rischio; nessun kri_id ripetuto.
 
 === 3. GUIDA DI SCRITTURA ===
 I tuoi testi finiscono nel registro e nelle schede dei rischi per il comitato: chi legge non conosce le fonti e deve capire perche' un rischio conta e da dove viene ogni numero.
+
+## Categoria di rischio
+event_type e' il codice della categoria della tassonomia interna (sezione "Categorie di rischio" delle istruzioni) in cui ricade la perdita per la Banca. Un rischio della baseline con un codice di Basilea (L1-01 ... L1-07) va riclassificato: scrivi la categoria in cui ricade il suo meccanismo di perdita, senza cambiare id ne' valori (non e' un cambio di meccanismo). Se il meccanismo non ricade in nessuna categoria in perimetro (per esempio una frode o un tema di financial crime), scrivi "FP" (fuori perimetro) e nel razionale perche': la funzione di rischio lo togliera' dal registro. Un rischio nuovo non e' mai FP: un tema fuori perimetro va fra i fenomeni non censiti (motivo fuori_perimetro).
 
 ## Descrizione del rischio
 Da 3 a 5 frasi, comprensibili senza leggere le fonti:
@@ -998,13 +1199,41 @@ Un numero (importo, percentuale, conteggio) cita la sua fonte o e' dichiarato co
 
 ## Fenomeni considerati e non censiti
 Chi legge il registro chiede anche perche' un tema presente nei documenti non e' diventato un rischio. Nel JSON, accanto a "rischi", aggiungi "fenomeni_non_censiti": i fenomeni che hai esaminato nelle fonti del ciclo e non hai censito, al massimo 15, i piu' visibili nei documenti. Per ciascuno:
-{"fenomeno": "nome breve", "event_type": "L1-0n o null", "fonti": [{"riferimento": "", "data": "AAAA-MM-GG"}], "motivo": "nessun_meccanismo|fonte_non_specifica|gia_coperto|troppo_lontano|altro", "spiegazione": "una o due frasi, fino a 300 caratteri"}
+{"fenomeno": "nome breve", "event_type": "codice della categoria o null", "fonti": [{"riferimento": "", "data": "AAAA-MM-GG"}], "motivo": "nessun_meccanismo|fonte_non_specifica|gia_coperto|troppo_lontano|fuori_perimetro|altro", "spiegazione": "una o due frasi, fino a 300 caratteri"}
 - nessun_meccanismo: non c'e' un meccanismo di perdita per la Banca (il tema esiste, ma non tocca processi, sistemi, fornitori o clientela della Banca);
 - fonte_non_specifica: nessuna fonte specifica e datata nella finestra del ciclo lo sostiene;
 - gia_coperto: il meccanismo e' gia' quello di un rischio del registro: scrivi quale (NFR-nn) nella spiegazione;
-- troppo_lontano: meccanismo plausibile ma oltre l'orizzonte della Prossimita 1: candidato alla lista di osservazione;
+- troppo_lontano: meccanismo plausibile ma lontano o poco plausibile, quando i rischi in osservazione sono gia' 20; altrimenti il fenomeno e' un rischio in osservazione (sezione seguente), non va qui;
+- fuori_perimetro: il meccanismo esiste ma ricade in un tipo di rischio fuori dal perimetro della tassonomia (per esempio frode o financial crime);
 - altro: spiega nella spiegazione.
 Se non hai scartato niente, scrivi "fenomeni_non_censiti": [].
+
+## Radar e osservazione
+Il registro e' unico: ogni rischio e' nel radar di Mosca (gestione completa: KRI, azioni, urgenza) oppure in osservazione (stessa scala e stesso score, niente KRI ne' azioni). Lo stato lo calcola lo script, non tu, con la regola della baseline (chiave "regola_radar"):
+1. nel radar un rischio con prossimita >= soglia_prossimita e probabilita >= soglia_probabilita, fino ai posti della capienza, i piu' alti per score;
+2. sempre nel radar, anche sotto le soglie: un rischio AGIRE ORA, un tema del supervisore, una decisione del validatore;
+3. un rischio del radar che scende sotto le soglie resta un ciclo "in uscita", poi passa in osservazione.
+Nella baseline i rischi del radar sono in "rischi", quelli in osservazione in "rischi_in_osservazione".
+- Rischi del radar: valutali TUTTI, ogni ciclo, con due KRI e da 1 a 5 azioni.
+- Rischi in osservazione: riscrivili SOLO se le fonti del ciclo portano evidenza nuova, con lo stesso id e le stesse regole di variazione (un punto per ciclo); gli altri restano com'erano. Per ognuno che scrivi: le quattro dimensioni, fonti, descrizione, razionale con RISCHIO: e una parte per dimensione, orizzonte_anni (anni stimati prima che possa manifestarsi: 5, 10...) e segnale_avvicinamento (il fatto osservabile e verificabile che lo farebbe salire, "primo caso documentato presso una banca europea", non una tendenza); kri_proposti e azioni_mitigazione vuoti. Se i nuovi valori lo portano sopra le soglie, entra nel radar: allora scrivi anche i due KRI e le azioni.
+- Un rischio nuovo va nel radar o in osservazione secondo la regola: serve sempre un meccanismo di perdita per la Banca e almeno una fonte specifica; in osservazione bastano dimensioni, fonti, orizzonte e segnale. Un tema senza meccanismo va fra i fenomeni non censiti.
+- Ogni rischio in osservazione porta nella baseline le notizie che A3 vi ha collegato dopo il ciclo precedente (notizie_a3) e i suoi flag (flag_a3): verificali nelle fonti, sono proposte.
+- Al massimo 20 rischi in osservazione: oltre, il fenomeno meno rilevante va fra i non censiti (troppo_lontano). Un rischio in osservazione non piu' plausibile non si cancella riscrivendolo: dillo nel razionale, lo toglie la funzione di rischio.
+Lo script ferma il ciclo se manca un rischio del radar o se i rischi in osservazione superano 20; segnala al validatore, da motivare, un rischio che entra nel radar senza i due KRI o senza azioni.
+
+## Ciclo straordinario
+Se la baseline ha la chiave "straordinario" (ciclo_da_valutare AAAAQn-Sk), il ciclo e' straordinario, deciso dalla funzione di rischio per un evento critico: valuta SOLO i rischi in "rischi_da_rivalutare" (tutti), per il motivo indicato, e censisci un rischio nuovo solo se l'evento lo crea; non riscrivere gli altri rischi della baseline (lo script li riporta com'erano). Le regole sono quelle del trimestre: evidenza datata dopo data_riferimento_precedente, al massimo un punto per dimensione rispetto ai valori della baseline, due KRI e azioni per ogni rischio scritto; in ricalcolo_kri_ciclo_precedente rileggi ogni KRI in vigore dei rischi che riscrivi (un KRI non riletto resta Non rilevato e il validatore deve scriverne il valore o motivare: il livello di allerta perderebbe l'aggravante proprio quando il rischio sale), mai ricopiando il valore della baseline. rischi_da_rivalutare puo' indicare anche un rischio in osservazione: se l'evento lo porta sopra le soglie entra nel radar, con i due KRI e le azioni. La sintesi spiega l'evento e che cosa cambia.
+Se rischi_da_rivalutare e' vuoto lo straordinario e' di solo censimento: scrivi solo i rischi nuovi che l'evento crea (almeno uno).
+Lo script ferma il ciclo se manca un rischio da rivalutare, se scrivi un rischio esistente non indicato o se un censimento non ha rischi nuovi.
+Nello straordinario scrivi anche "analisi_evento" (agente A8), l'analisi approfondita sui documenti dell'evento:
+- evento: il fatto, quando, dove, chi (ruoli, mai persone), con data e documento;
+- catena_causale: causa, evento, danno possibile per la Banca, per ogni meccanismo di perdita; distingui fatti e tua lettura;
+- rischi_toccati: ogni rischio che scrivi (rivalutato o nuovo) e ogni rischio esistente che l'evento tocca senza che tu possa riscriverlo, con l'effetto (quale dimensione e descrittore cambia o potrebbe cambiare);
+- rischi_non_toccati: i rischi vicini del registro che l'evento non cambia, e perche';
+- documenti: ogni documento letto, con data e a che cosa serve nell'analisi (non dopo data_riferimento);
+- limiti: che cosa non si sa ancora e quale dato servirebbe.
+{"evento":"","catena_causale":"","rischi_toccati":[{"id_rischio":"NFR-01","effetto":""}],"rischi_non_toccati":"","documenti":[{"riferimento":"","data":"","uso":""}],"limiti":""}
+L'analisi non porta valori: i valori sono nei rischi e passano dalla validazione. Lo script segnala al validatore (senza fermare) un rischio scritto che non e' fra i toccati e un rischio toccato non indicato per lo straordinario.
 
 ## Esempio di forma
 Fatti, importi e documenti dell'esempio sono inventati: non usarli e non citarli. Mostra solo come si scrive.

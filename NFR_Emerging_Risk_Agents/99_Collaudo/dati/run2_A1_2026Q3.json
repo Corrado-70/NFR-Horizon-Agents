@@ -801,6 +801,35 @@
           "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
         }
       ]
+    },
+    {
+      "id_rischio": "NFR-16",
+      "nome": "Vertenze e carenza di tecnici nei ruoli IT critici",
+      "event_type": "9.11",
+      "driver": [
+        "DRV-HUM",
+        "DRV-TEC"
+      ],
+      "descrizione": "Uscite di personale tecnico difficile da sostituire e possibili vertenze di settore lascerebbero scoperti ruoli IT critici, con turni di copertura che violano obblighi di lavoro e sicurezza. Il danno: interruzioni dei servizi e contenzioso con il personale.",
+      "impatto": 3,
+      "velocity": null,
+      "prossimita": 1,
+      "probabilita": 2,
+      "anni_adeguamento": null,
+      "variazioni": [],
+      "fonti": [
+        {
+          "riferimento": "Rapporto sul mercato del lavoro ICT in Italia, carenza di competenze sui sistemi legacy",
+          "data": "2026-09-10",
+          "tipo": "Esterna",
+          "rilevanza": 2
+        }
+      ],
+      "razionale": "Nuovo rischio, fuori dal radar: nessun rischio censito riguarda i rapporti di impiego (9.11). Impatto 3, perche' uno sciopero o l'uscita di pochi tecnici degraderebbe processi critici. Probabilita 2: il rapporto sul mercato del lavoro ICT documenta la carenza di tecnici sui sistemi legacy, senza vertenze aperte. Prossimita 1: oltre tre anni. Velocity non valutata per mancanza di fonti sui tempi.",
+      "orizzonte_anni": 5,
+      "segnale_avvicinamento": "Uno sciopero di settore che coinvolga il personale IT, o l'uscita non rimpiazzata di tecnici in ruoli critici della Banca.",
+      "azioni_mitigazione": [],
+      "kri_proposti": []
     }
   ],
   "ricalcolo_kri_ciclo_precedente": [

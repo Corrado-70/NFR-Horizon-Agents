@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-05 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-05 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-05 Errori di processo nella migrazione del core banking
-Event type: L1-07 Esecuzione, consegna e gestione dei processi; driver: DRV-TEC; owner: Funzione Operations.
+Categoria: 9.13 Processo; driver: DRV-TEC; owner: Funzione Operations.
 Esito nel ciclo: Confermato. Posizione in classifica per score: 6 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 3: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Adeguato.
 
 DESCRIZIONE
@@ -39,8 +40,8 @@ AZIONI
 - 2026Q4-NFR-05-A1 [Approvata, 3 mesi, Funzione Operations]: Aggiungere a ogni ondata di migrazione una riconciliazione dei saldi prima e dopo la conversione, firmata dal responsabile. Perche': Il monitoraggio degli incidenti (2026Q3-NFR-05-A1) intercetta gli errori dopo il passaggio in produzione; la riconciliazione li ferma prima. Effetto atteso: Meno errori di conversione che arrivano ai clienti; gli incidenti di produzione (NFR-05-K2) restano sotto la soglia di attenzione dopo ogni ondata.
 
 KRI IN VIGORE
-- NFR-05-K2 (Evoluzione) Incidenti di produzione legati alla migrazione [n]: valore 2 (prima 4), soglie 3 / 6, stato Verde; fonte dati Incident management IT. Perche': Misura il fenomeno nel momento piu' delicato: gli incidenti di produzione dopo ogni ondata.
-- NFR-05-K3 (Esposizione) Quota di controlli di processo non ridisegnati sul nuovo core [%]: valore 12 (prima 18), soglie 30 / 60, stato Verde; fonte dati Piano di migrazione — PMO. Perche': Misura quanto la Banca arriva esposta alla wave 2: ogni controllo non ridisegnato e' un punto in cui un errore passa inosservato.
+- NFR-05-K2 (Evoluzione) Incidenti di produzione legati alla migrazione [n]: valore 2 (prima 2), soglie 3 / 6, stato Verde; fonte dati Incident management IT. Perche': Misura il fenomeno nel momento piu' delicato: gli incidenti di produzione dopo ogni ondata.
+- NFR-05-K3 (Esposizione) Quota di controlli di processo non ridisegnati sul nuovo core [%]: valore 12 (prima 12), soglie 30 / 60, stato Verde; fonte dati Piano di migrazione — PMO. Perche': Misura quanto la Banca arriva esposta alla wave 2: ogni controllo non ridisegnato e' un punto in cui un errore passa inosservato.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 3, Probabilita 3, Prossimita 4, Velocity 3, score 3,20
@@ -48,6 +49,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q4-S1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

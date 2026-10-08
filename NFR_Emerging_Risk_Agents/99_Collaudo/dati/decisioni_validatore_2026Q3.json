@@ -49,21 +49,6 @@
       "campo": "Owner",
       "decisione": "Respinto",
       "motivazione": "Gia' prevista dal piano IAM approvato a luglio: azione duplicata."
-    },
-    {
-      "oggetto": "Osservazione",
-      "id": "OSS-04",
-      "campo": "Orizzonte_Anni",
-      "decisione": "Rettificato",
-      "valore": 3,
-      "motivazione": "Il piano di successione dei ruoli IT mostra uscite gia' programmate nel 2027-2028: orizzonte 3 anni."
-    },
-    {
-      "oggetto": "Osservazione",
-      "id": "OSS-05",
-      "campo": "",
-      "decisione": "Respinto",
-      "motivazione": "I sistemi di pagamento della Banca e del fornitore cloud si sincronizzano su orologi terrestri (NTP): nessun meccanismo di perdita."
     }
   ]
 }

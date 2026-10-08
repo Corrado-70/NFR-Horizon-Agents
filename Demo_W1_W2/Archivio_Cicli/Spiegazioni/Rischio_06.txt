@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-06 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-06 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-06 Esfiltrazione di dati tramite strumenti di AI non autorizzati
-Event type: L1-01 Frode interna; driver: DRV-AI, DRV-HUM; owner: Funzione Sicurezza delle Informazioni.
+Categoria: 9.7 Sicurezza informatica; driver: DRV-AI, DRV-HUM; owner: Funzione Sicurezza delle Informazioni.
 Esito nel ciclo: Confermato. Posizione in classifica per score: 7 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 3 e Probabilita 3: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Assente.
 
 DESCRIZIONE
@@ -41,14 +42,15 @@ AZIONI
 - 2026Q4-NFR-06-A1 [Approvata, 6 mesi, Direzione Risorse Umane]: Inserire nel codice di comportamento gli strumenti di AI ammessi e i dati che non si possono caricare, con le conseguenze disciplinari. Perche': La formazione (2026Q3-NFR-06-A1) spiega le regole; il codice di comportamento le rende vincolanti. Effetto atteso: Meno tentativi di caricamento di dati riservati (NFR-06-K1); al ciclo successivo puo' sostenere una Probabilita' piu' bassa.
 
 KRI IN VIGORE
-- NFR-06-K1 (Evoluzione) Tentativi di caricamento di dati riservati su servizi AI non autorizzati [n/mese]: valore 5 (prima 6), soglie 10 / 30, stato Verde; fonte dati DLP e proxy web. Perche': Misura il comportamento a rischio come lo vede il DLP: ogni tentativo e' un'esfiltrazione fermata o mancata di poco.
-- NFR-06-K2 (Esposizione) Quota di dipendenti senza formazione sull'uso dell'AI [%]: valore 12 (prima 22), soglie 20 / 40, stato Verde; fonte dati Piattaforma di formazione. Perche': Misura quanta parte del personale e' esposta all'errore per inconsapevolezza.
+- NFR-06-K1 (Evoluzione) Tentativi di caricamento di dati riservati su servizi AI non autorizzati [n/mese]: valore 5 (prima 5), soglie 10 / 30, stato Verde; fonte dati DLP e proxy web. Perche': Misura il comportamento a rischio come lo vede il DLP: ogni tentativo e' un'esfiltrazione fermata o mancata di poco.
+- NFR-06-K2 (Esposizione) Quota di dipendenti senza formazione sull'uso dell'AI [%]: valore 12 (prima 12), soglie 20 / 40, stato Verde; fonte dati Piattaforma di formazione. Perche': Misura quanta parte del personale e' esposta all'errore per inconsapevolezza.
 
 STORIA (cicli, dal piu' vecchio)
 - 2026Q1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q3: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 - 2026Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
+- 2026Q4-S1: Impatto 3, Probabilita 3, Prossimita 3, Velocity 3, score 3
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

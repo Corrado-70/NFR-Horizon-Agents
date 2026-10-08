@@ -23,14 +23,50 @@
       "maxItems": 15,
       "items": {"$ref": "#/$defs/fenomeno_non_censito"}
     },
-    "osservazione": {
-      "type": "array",
-      "maxItems": 30,
-      "items": {"$ref": "#/$defs/voce_osservazione"}
-    }
+    "analisi_evento": {"$ref": "#/$defs/analisi_evento"}
   },
   "$defs": {
     "data": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "analisi_evento": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evento", "catena_causale", "rischi_toccati", "rischi_non_toccati", "documenti", "limiti"],
+      "properties": {
+        "evento": {"type": "string", "minLength": 50, "maxLength": 800},
+        "catena_causale": {"type": "string", "minLength": 50, "maxLength": 1500},
+        "rischi_toccati": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id_rischio", "effetto"],
+            "properties": {
+              "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
+              "effetto": {"type": "string", "minLength": 10, "maxLength": 400}
+            }
+          }
+        },
+        "rischi_non_toccati": {"type": "string", "maxLength": 800},
+        "documenti": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 15,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["riferimento", "data", "uso"],
+            "properties": {
+              "riferimento": {"type": "string", "minLength": 3, "maxLength": 300},
+              "data": {"$ref": "#/$defs/data"},
+              "uso": {"type": "string", "minLength": 5, "maxLength": 300}
+            }
+          }
+        },
+        "limiti": {"type": "string", "minLength": 10, "maxLength": 600}
+      }
+    },
     "fenomeno_non_censito": {
       "type": "object",
       "additionalProperties": false,
@@ -53,44 +89,6 @@
         },
         "motivo": {"enum": ["nessun_meccanismo", "fonte_non_specifica", "gia_coperto", "troppo_lontano", "fuori_perimetro", "altro"]},
         "spiegazione": {"type": "string", "minLength": 10, "maxLength": 300}
-      }
-    },
-    "voce_osservazione": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["oss_id", "esito", "nome", "descrizione", "driver", "event_type", "rischi_toccati",
-                   "impatto_potenziale", "orizzonte_anni", "plausibilita", "segnale_avvicinamento", "motivazione",
-                   "fonti", "promosso_a"],
-      "properties": {
-        "oss_id": {"type": ["string", "null"], "pattern": "^OSS-[0-9]{2}$"},
-        "esito": {"enum": ["nuova", "confermata", "avvicinata", "promossa", "archiviata"]},
-        "nome": {"type": "string", "minLength": 5, "maxLength": 120},
-        "descrizione": {"type": "string", "minLength": 20, "maxLength": 500},
-        "driver": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true,
-                   "items": {"type": "string", "enum": ["DRV-CYB", "DRV-TPR", "DRV-AI", "DRV-CLI", "DRV-CON", "DRV-GEO", "DRV-TEC", "DRV-HUM"]}},
-        "event_type": {"type": "string", "enum": ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]},
-        "rischi_toccati": {"type": "array", "maxItems": 5, "uniqueItems": true,
-                           "items": {"type": "string", "pattern": "^NFR-[0-9]{2}$"}},
-        "impatto_potenziale": {"$ref": "#/$defs/punteggio"},
-        "orizzonte_anni": {"type": "integer", "minimum": 1, "maximum": 20},
-        "plausibilita": {"enum": ["teorica", "possibile", "in crescita"]},
-        "segnale_avvicinamento": {"type": "string", "minLength": 10, "maxLength": 300},
-        "motivazione": {"type": "string", "minLength": 20, "maxLength": 600},
-        "fonti": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 3,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["riferimento", "data"],
-            "properties": {
-              "riferimento": {"type": "string", "minLength": 3, "maxLength": 300},
-              "data": {"$ref": "#/$defs/data"}
-            }
-          }
-        },
-        "promosso_a": {"type": ["string", "null"], "pattern": "^NFR-[0-9]{2}$"}
       }
     },
     "punteggio": {"type": "integer", "minimum": 1, "maximum": 5},
@@ -116,6 +114,8 @@
         "prossimita": {"$ref": "#/$defs/punteggio"},
         "probabilita": {"$ref": "#/$defs/punteggio"},
         "anni_adeguamento": {"type": ["number", "null"], "minimum": 0, "maximum": 30},
+        "orizzonte_anni": {"type": ["integer", "null"], "minimum": 1, "maximum": 30},
+        "segnale_avvicinamento": {"type": ["string", "null"], "minLength": 10, "maxLength": 300},
         "variazioni": {
           "type": "array",
           "items": {
@@ -147,7 +147,6 @@
         "razionale": {"type": "string", "minLength": 50, "maxLength": 2500},
         "azioni_mitigazione": {
           "type": "array",
-          "minItems": 1,
           "maxItems": 5,
           "items": {
             "type": "object",
@@ -163,7 +162,6 @@
         },
         "kri_proposti": {
           "type": "array",
-          "minItems": 2,
           "maxItems": 2,
           "items": {
             "type": "object",

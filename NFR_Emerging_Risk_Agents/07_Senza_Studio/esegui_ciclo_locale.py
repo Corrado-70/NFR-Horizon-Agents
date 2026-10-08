@@ -50,6 +50,14 @@ Comandi:
       decidere, conservando cio' che il validatore ha gia' scritto nelle righe
       intatte: per ripararla dopo una modifica a mano (righe cancellate, ID
       cambiati). La riscrivono comunque trimestrale, settimanale e valida.
+  riapri       [--rischi NFR-02,NFR-06]
+      riapre la validazione del ciclo corrente, gia' validato (D-76): rischi
+      (nel radar e in osservazione, D-79), KRI in vigore e azioni aperte tornano
+      nella griglia con il valore validato; poi valida come sempre, quante volte
+      serve. Riga non toccata = niente cambia; valore cambiato = rettifica con
+      Motivazione, senza limite di un punto; Respingi = Si' toglie un KRI o
+      annulla un'azione; Decisione sullo stato = rischio nel radar o in
+      osservazione. Nello storico: "(riapertura)".
   inizializza  --ciclo-precedente 2026Q3 --settimana 2026-09-28 [--template file.xlsx]
       crea il registro vivo (percorso --workbook o configurazione.json) dal
       template, SENZA i dati di esempio. Non sovrascrive mai un file esistente.
@@ -120,13 +128,15 @@ sys.path.insert(0, str(QUI))
 
 import controlli_a5                      # noqa: E402
 import input_a1                          # noqa: E402
+import radar                             # noqa: E402  regola del registro unico (D-79)
 from fonti import codici_ammessi, leggi_fonti   # noqa: E402
 from precontrollo import ciclo_di, conta, impronta, messaggio_correzione, precontrolla, riga_esito   # noqa: E402
+from precontrollo import agente as agente_di   # noqa: E402  A1 per un trimestre, A8 per uno straordinario (D-77)
 from valida_output import carica_json, valida   # noqa: E402
 
 # Versione della struttura del workbook richiesta (nome definito versioneTemplate,
 # scritto da 03_Excel/genera_dashboard.py con lo stesso valore).
-VERSIONE_TEMPLATE = "2026-10-08b"
+VERSIONE_TEMPLATE = "2026-10-09"
 TEMPLATE_PREDEFINITO = QUI.parent / "03_Excel" / "NFR_Dashboard_Template.xlsx"
 GIALLO_INPUT = 0xCCF2FF                  # FFF2CC in formato BGR di Excel: celle di input
 STATO_AZIONE_INIZIALE = "Proposta — da valutare"
@@ -142,10 +152,9 @@ ORIZZONTI = ["3 mesi", "6 mesi", "12 mesi"]
 PRESIDIO_NUOVO = "Non verificato"       # presidio dei controlli di un rischio nuovo (anagrafica, D-49)
 BLOCCANTE_SUPERATO = "BLOCCANTE SUPERATO"     # registri fino al 2026-10-02: Bloccante di A5 superato (D-56)
 DA_MOTIVARE = "DA MOTIVARE"                   # D-71: segnalazione che chiede una Motivazione in validazione
-IN_OSSERVAZIONE = "In osservazione"           # D-73: Stato di una voce della lista di osservazione ancora seguita
-ESITI_OSSERVAZIONE = {"nuova": "Nuova", "confermata": "Confermata", "avvicinata": "Avvicinata", "promossa": "Promossa",
-                      "archiviata": "Archiviata"}
-PLAUSIBILITA = ["teorica", "possibile", "in crescita"]
+DISMESSO = "Dismesso"                         # D-79: Stato della riga del ciclo di un rischio tolto con dismetti
+# D-79: conversione della lista di osservazione della D-73 (aggiorna-registro): plausibilita' -> Probabilita.
+PROBABILITA_DA_PLAUSIBILITA = {"teorica": 1, "possibile": 2, "in crescita": 3}
 
 
 def da_motivare(rilievi):
@@ -356,7 +365,7 @@ def completa_payload(payload, baseline):
     variazioni, dal confronto con la baseline (la stessa che ha letto A1 e che
     ha usato A5). Toglie anche dai riferimenti delle fonti i codici dello
     strumento di ricerca. Idempotente: si puo' chiamare due volte."""
-    base = {r["id_rischio"]: r for r in baseline.get("rischi", [])}
+    base = {r["id_rischio"]: r for r in baseline.get("rischi", []) + baseline.get("rischi_in_osservazione", [])}
     for x in payload["rischi"]:
         for f in x.get("fonti", []):
             f["riferimento"] = pulisci_riferimento(f["riferimento"])
@@ -408,7 +417,7 @@ def risolvi(sorgente, ctx, stato):
     return valore
 
 
-# Campi calcolati dalla scrittura, non dal payload (vedi 05_Workflow, "Campi
+# Campi calcolati dalla scrittura, non dal payload (vedi 04_Riferimenti/workflow.md, "Campi
 # derivati"). Il collaudo verifica che ogni 'derivato:' della mappa sia qui.
 DERIVATI = {
     "vuoto": lambda ctx, s: None,
@@ -442,21 +451,17 @@ DERIVATI = {
     "vuoto": lambda ctx, s: None,                     # colonna scritta dopo, non dal payload (es. Note_Analista, D-72)
     # Sintesi della settimana (D-66): numero di notizie e flag di A3, uno per riga.
     "numero_notizie": lambda ctx, s: len(ctx[""]["notizie"]),
-    # Lista di osservazione (D-73): codice, esito, stato, primo ciclo e validazione li calcola voci_osservazione.
+    # Registro unico (D-79): stato, motivo e movimento li calcola radar.stati; la decisione del validatore resta
+    # quella del ciclo prima finche' non la cambia.
+    "stato_radar": lambda ctx, s: s["stati"][ctx["rischi[]"]["id_rischio"]]["stato"],
+    "motivo_stato": lambda ctx, s: s["stati"][ctx["rischi[]"]["id_rischio"]]["motivo"],
+    "movimento": lambda ctx, s: s["stati"][ctx["rischi[]"]["id_rischio"]]["movimento"] or None,
+    "decisione_stato": lambda ctx, s: s.get("decisioni", {}).get(ctx["rischi[]"]["id_rischio"]) or radar.AUTOMATICO,
     # Ciclo straordinario (D-75): periodo di valutazione della riga e, nella sintesi, chi l'ha deciso e perche'.
     "periodo_valutazione": lambda ctx, s: ctx[""]["ciclo"],
     "straordinario": lambda ctx, s: s.get("straordinario_testo"),
     "proposta_straordinario": lambda ctx, s: ((lambda p: f"PROPOSTA DI CICLO STRAORDINARIO per {', '.join(p['rischi'])}: "
                                                          f"{p['motivo']}" if p else "—")(ctx[""].get("proposta_straordinario"))),
-    "oss_id": lambda ctx, s: ctx["osservazione[]"]["_oss_id"],
-    "esito_osservazione": lambda ctx, s: ctx["osservazione[]"]["_esito"],
-    "stato_osservazione": lambda ctx, s: ctx["osservazione[]"]["_stato"],
-    "prima_osservazione": lambda ctx, s: ctx["osservazione[]"]["_prima"],
-    "validazione_osservazione": lambda ctx, s: ctx["osservazione[]"]["_validazione"],
-    # Segnali di A3 sulle voci della lista di osservazione, uno per riga (D-73).
-    "segnali_osservazione": lambda ctx, s: ("\n".join(f"{x['oss_id']} · {x['direzione']}: {x['motivazione']}"
-                                                       for x in ctx[""].get("segnali_osservazione") or [])
-                                             or "Nessun segnale sulla lista di osservazione"),
     "flag_proposti": lambda ctx, s: ("\n".join(f"{f['id_rischio']} · {f['direzione']}: {f['motivazione']}"
                                                for f in ctx[""]["flag_proposti"]) or "Nessun flag proposto"),
 }
@@ -604,7 +609,8 @@ def prepara_report(sessione):
         adatta_altezze(sessione, "quadroCommento", 15)
         adatta_altezze(sessione, "quadroSegnalati", 3)
         adatta_altezze(sessione, "deltaMotivi", 3)
-        adatta_altezze(sessione, "fenomeniLista", 3)              # D-73: voci in osservazione
+        adatta_altezze(sessione, "fenomeniLista", 3)              # D-79: rischi in osservazione
+        adatta_altezze(sessione, "fenomeniUscite", 3)             # D-79: entrati e usciti dal radar
         spazio_per_il_grafico(sessione, "Delta", "deltaMotivi")
         scala_quadro(sessione)
     except Exception as ex:
@@ -689,7 +695,7 @@ class Scrittore:
     @staticmethod
     def _prefisso(nome_tabella):
         return {"tblRegister": "RR", "tblAzioni": "AZ", "tblKRI": "KRI", "tblNews": "NW", "tblValidazione": "VAL",
-                "tblSintesi": "SI", "tblSettimane": "SE", "tblOsservazione": "OS"}[nome_tabella]
+                "tblSintesi": "SI", "tblSettimane": "SE"}[nome_tabella]
 
     def append(self, nome_tabella, righe):
         """Append relativo alla TABELLA (ListRows.Add), mai all'ultima riga del foglio."""
@@ -732,14 +738,16 @@ class Scrittore:
         """Una riga per rischio del payload, colonne dalla mappa: ID, Nome,
         Event_Type e Driver dal payload; Owner, Anni_Adeguamento,
         Attenzione_Supervisore e Presidio_Controlli (input umani) conservati
-        dalla riga esistente."""
+        dalla riga esistente. D-79: un rischio che rientra nel radar riprende
+        owner e anni di adeguamento dalla sua ultima riga del registro
+        (stato["owner_storico"], stato["anni_storici"])."""
         rng, righe = self.leggi_anagrafica()
         per_id = {r["ID"]: i for i, r in righe}
         occupate = {i for i, _ in righe}
         libere = [i for i in range(1, rng.Rows.Count + 1) if i not in occupate]
         spec = self.mappa["anagrafica"]
-        stato = dict(stato, owner={r["ID"]: r["Owner"] for _, r in righe},
-                     anni_adeguamento={r["ID"]: r.get("Anni_Adeguamento") for _, r in righe},
+        stato = dict(stato, owner={**stato.get("owner_storico", {}), **{r["ID"]: r["Owner"] for _, r in righe}},
+                     anni_adeguamento={**stato.get("anni_storici", {}), **{r["ID"]: r.get("Anni_Adeguamento") for _, r in righe}},
                      attenzione_supervisore={r["ID"]: r.get("Attenzione_Supervisore") for _, r in righe},
                      presidio={r["ID"]: r.get("Presidio_Controlli") for _, r in righe})
         for ctx in contesti(payload, spec["righe_da"]):
@@ -767,6 +775,127 @@ class Scrittore:
         self.x.intervallo_nome(nome).Value = per_cella(valore)
 
 
+# ================================================================ registro unico: radar e osservazione (D-79)
+def regola_radar(sessione):
+    """Parametri della regola dal registro (celle gialle di Parametri, pesi, Z e X/Y di Mosca); per un nome che manca,
+    il valore del template (radar.REGOLA_DEFAULT). La capienza non supera i posti dell'anagrafica."""
+    r = json.loads(json.dumps(radar.REGOLA_DEFAULT))
+
+    def numero(nome):
+        try:
+            v = sessione.intervallo_nome(nome).Value
+        except Exception:
+            return None
+        return v if isinstance(v, (int, float)) and not isinstance(v, bool) else None
+    for chiave, nome in (("capienza", "capienzaRadar"), ("soglia_prossimita", "sogliaProssimitaRadar"),
+                         ("soglia_probabilita", "sogliaProbabilitaRadar"), ("cicli_uscita", "cicliUscitaRadar")):
+        if numero(nome) is not None:
+            r[chiave] = int(numero(nome))
+    for dim, nome in (("impatto", "pesoImpatto"), ("probabilita", "pesoProbabilita"), ("prossimita", "pesoProssimita"),
+                      ("velocity", "pesoVelocity")):
+        if numero(nome) is not None:
+            r["pesi"][dim] = float(numero(nome))
+    try:
+        z = sessione.intervallo_nome("anniProssimita").Value
+        r["anni_prossimita"] = [float(x[0]) for x in z]
+    except Exception:
+        pass
+    for chiave, nome in (("mosca_x", "moscaX"), ("mosca_y_riserva", "moscaYDefault")):
+        if numero(nome) is not None:
+            r[chiave] = float(numero(nome))
+    r["max_radar"] = sessione.intervallo_nome("anagrafica").Rows.Count
+    r["max_osservazione"] = costante(sessione, "capienzaOsservazione") or r["max_osservazione"]
+    r["capienza"] = max(0, min(r["capienza"], r["max_radar"]))
+    return r
+
+
+def stato_prima_di(riga_prima, in_anagrafica):
+    """Stato del rischio nel periodo prima: quello scritto; per un registro precedente al 2026-10-09 (senza Stato),
+    Radar se il rischio era valutato. None per un rischio nuovo o dismesso."""
+    if riga_prima is None:
+        return radar.RADAR if in_anagrafica else None
+    stato = riga_prima.get("Stato")
+    if stato == DISMESSO:
+        return None
+    return stato if stato in radar.STATI else radar.RADAR
+
+
+def y_azioni_di(azioni, rid, periodo):
+    """Y delle azioni per il margine di Mosca: azioni del rischio nel periodo di valutazione, non respinte (come il
+    foglio Radar_Mosca)."""
+    return radar.y_azioni([a["Orizzonte"] for a in azioni
+                           if a["ID_Rischio"] == rid and str(a["Ciclo"]) == str(periodo) and a["Stato"] != "Respinta"])
+
+
+def ingresso_radar(rid, valori, stato_prima, decisione, supervisore, anni, y):
+    """Un rischio per radar.stati: valori = {impatto, probabilita, prossimita, velocity}."""
+    return {"id": rid, **{d: _vuoto(valori.get(d)) for d in radar.DIMENSIONI}, "supervisore": supervisore,
+            "anni_adeguamento": _vuoto(anni), "y_azioni": y, "stato_prima": stato_prima,
+            "decisione": decisione or radar.AUTOMATICO}
+
+
+def valori_riga_rr(r):
+    return {d: r.get(c) for d, c in (("impatto", "Impatto"), ("probabilita", "Probabilita"),
+                                     ("prossimita", "Prossimita"), ("velocity", "Velocity"))}
+
+
+def stati_del_ciclo(scr, ciclo):
+    """D-79: stato di ogni rischio del ciclo dai valori scritti (validati o no) e dalle decisioni del validatore. La usano
+    valida e la riapertura, dopo aver applicato le decisioni."""
+    regola = regola_radar(scr.x)
+    _, anag = scr.leggi_anagrafica()
+    info = {r["ID"]: r for _, r in anag}
+    registro = scr.righe("tblRegister")
+    prima = periodi_prima(scr, ciclo, 1)
+    prec = {r["ID_Rischio"]: r for r in registro if prima and str(r["Ciclo"]) == str(prima[0])}
+    azioni = scr.righe("tblAzioni")
+    ingressi = []
+    for r in registro:
+        if str(r["Ciclo"]) != str(ciclo) or r.get("Stato") == DISMESSO:
+            continue
+        rid = r["ID_Rischio"]
+        a = info.get(rid, {})
+        anni = a.get("Anni_Adeguamento") if rid in info else r.get("Anni_Adeguamento")
+        ingressi.append(ingresso_radar(rid, valori_riga_rr(r), stato_prima_di(prec.get(rid), rid in info),
+                                       r.get("Decisione_Stato"), a.get("Attenzione_Supervisore") == "Sì", anni,
+                                       y_azioni_di(azioni, rid, r.get("Periodo_Valutazione") or ciclo)))
+    return radar.stati(ingressi, regola)
+
+
+def applica_stati(scr, ciclo, stati, extra_motivo=None):
+    """Scrive stato, motivo e movimento nelle righe del ciclo e allinea l'anagrafica (= il radar): chi esce la lascia
+    senza buchi e i suoi KRI del ciclo escono di vigore (la storia resta; le azioni aperte restano nel Piano_azioni);
+    chi entra riprende owner e anni di adeguamento dalla sua riga. extra_motivo: {id: testo da aggiungere al motivo}.
+    Restituisce (entrati, usciti)."""
+    registro = scr.righe("tblRegister")
+    _, anag = scr.leggi_anagrafica()
+    attivi = [r["ID"] for _, r in anag]
+    dentro = {i for i, s in stati.items() if radar.nel_radar(s["stato"])}
+    righe_ciclo = {}
+    for n, r in enumerate(registro, start=1):
+        if str(r["Ciclo"]) == str(ciclo) and r["ID_Rischio"] in stati:
+            righe_ciclo[r["ID_Rischio"]] = (n, r)
+            s = stati[r["ID_Rischio"]]
+            motivo = s["motivo"] + ((extra_motivo or {}).get(r["ID_Rischio"]) or "")
+            if (r.get("Stato"), r.get("Motivo_Stato"), r.get("Movimento") or None) != (s["stato"], motivo, s["movimento"] or None):
+                scr.aggiorna("tblRegister", n, {"Stato": s["stato"], "Motivo_Stato": motivo, "Movimento": s["movimento"] or None})
+    usciti = [i for i in attivi if i in stati and i not in dentro]
+    for rid in usciti:
+        scr.compatta_anagrafica(rid)
+    for n, k in enumerate(scr.righe("tblKRI"), start=1):
+        if str(k["Ciclo"]) == str(ciclo) and k["ID_Rischio"] in usciti and k["In_Vigore"] == "Sì":
+            scr.aggiorna("tblKRI", n, {"In_Vigore": "No"})
+    entrati = sorted(dentro - set(attivi))
+    if entrati:
+        pseudo = {"ciclo": ciclo, "rischi": [{"id_rischio": rid, "nome": righe_ciclo[rid][1]["Nome"],
+                                              "event_type": righe_ciclo[rid][1]["Event_Type"],
+                                              "driver": elenco(righe_ciclo[rid][1]["Driver"])} for rid in entrati]}
+        scr.upsert_anagrafica(pseudo, {"owner_storico": {rid: righe_ciclo[rid][1].get("Owner") for rid in entrati
+                                                         if righe_ciclo[rid][1].get("Owner") not in (None, OWNER_NUOVO)},
+                                       "anni_storici": {rid: righe_ciclo[rid][1].get("Anni_Adeguamento") for rid in entrati}})
+    return entrati, usciti
+
+
 def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
     """A2: sequenza deterministica di scrittura del payload di A1. controlli =
     {"agente": output di A5, "esito": esito combinato, "superamento_testo": ...}:
@@ -783,15 +912,56 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
     decisione = baseline.get("straordinario")
     valutati = {x["id_rischio"] for x in payload["rischi"]}
     if decisione:
+        nuovi = sorted(valutati - set(decisione.get("rischi_da_rivalutare") or []))
+        evento = (payload.get("analisi_evento") or {}).get("evento")       # D-77: l'analisi completa e' nella knowledge di A7
         stato["straordinario_testo"] = (f"Deciso da {decisione['decisore']} il {decisione['data_decisione']}: "
-                                        f"{decisione['motivo']} Rischi rivalutati: {', '.join(sorted(valutati))}.")
+                                        f"{decisione['motivo']} Rischi rivalutati: "
+                                        f"{', '.join(sorted(valutati - set(nuovi))) or 'nessuno'}"
+                                        + (f"; nuovi: {', '.join(nuovi)}" if nuovi else "") + "."
+                                        + (f" Evento (analisi di A8): {evento}" if evento else ""))
+
+    # 0. Registro unico (D-79): stato di ogni rischio del ciclo sui valori proposti, cosi' le viste sono gia' giuste
+    #    durante la validazione (valida lo ricalcola sui valori validati). Entrano nel calcolo i rischi scritti da A1 e
+    #    quelli che si riportano dal ciclo prima: in osservazione e non toccati da A1, o (straordinario) nel radar e non
+    #    rivalutati. KRI e azioni si scrivono solo per i rischi nel radar.
+    ciclo_prec = da_excel(scr.x.intervallo_nome("cicloCorrente").Value)
+    regola = regola_radar(scr.x)
+    info = {r["ID"]: r for _, r in anag}
+    righe_prec = {r["ID_Rischio"]: r for r in scr.righe("tblRegister") if str(r["Ciclo"]) == str(ciclo_prec)}
+    azioni_tutte = scr.righe("tblAzioni")
+    riportati = [r for rid, r in righe_prec.items() if rid not in valutati and r.get("Stato") != DISMESSO
+                 and ((stato_prima_di(r, rid in info) == radar.OSSERVAZIONE and rid not in info)
+                      or (decisione and rid in info))]
+    ingressi = []
+    for x in payload["rischi"]:
+        rid, p = x["id_rischio"], righe_prec.get(x["id_rischio"])
+        ingressi.append(ingresso_radar(rid, x, stato_prima_di(p, rid in info), (p or {}).get("Decisione_Stato"),
+                                       info.get(rid, {}).get("Attenzione_Supervisore") == "Sì",
+                                       info[rid].get("Anni_Adeguamento") if rid in info else x.get("anni_adeguamento"),
+                                       radar.y_azioni([a["orizzonte"] for a in x.get("azioni_mitigazione") or []])))
+    for r in riportati:
+        rid = r["ID_Rischio"]
+        ingressi.append(ingresso_radar(rid, valori_riga_rr(r), stato_prima_di(r, rid in info), r.get("Decisione_Stato"),
+                                       info.get(rid, {}).get("Attenzione_Supervisore") == "Sì",
+                                       info[rid].get("Anni_Adeguamento") if rid in info else r.get("Anni_Adeguamento"),
+                                       y_azioni_di(azioni_tutte, rid, r.get("Periodo_Valutazione") or r["Ciclo"])))
+    stati = radar.stati(ingressi, regola)
+    in_osservazione = [i for i, s in stati.items() if s["stato"] == radar.OSSERVAZIONE]
+    if len(in_osservazione) > regola["max_osservazione"]:
+        raise Fermo(f"Rischi in osservazione {len(in_osservazione)}, oltre il massimo di {regola['max_osservazione']} "
+                    "(D-79): A1 deve lasciare fuori i meno rilevanti (fra i fenomeni non censiti, motivo troppo_lontano).")
+    dentro = {i for i, s in stati.items() if radar.nel_radar(s["stato"])}
+    # Escono dal radar solo i rischi a cui la regola ha dato uno stato fuori dal radar: un rischio del radar che manca
+    # dall'output (lo ferma C1; qui la seconda difesa) resta in anagrafica e il controllo di copertura ferma il ciclo.
+    fuori = {i for i, s in stati.items() if not radar.nel_radar(s["stato"])}
+    stato.update(stati=stati, decisioni={rid: r.get("Decisione_Stato") for rid, r in righe_prec.items()})
+    payload_radar = dict(payload, rischi=[x for x in payload["rischi"] if x["id_rischio"] in dentro])
 
     # 1-2. KRI. La tabella e' STORICA: una riga per KRI per ciclo, mai
     #    modificata dopo. Il ciclo aggiunge la sua fotografia: ogni KRI in
     #    vigore nel ciclo precedente, con il valore riletto ORA (mai ricopiato
     #    dal ciclo prima), e i KRI nuovi. Id nuovi = primo progressivo libero
     #    del rischio, mai la posizione nell'array; un id usato non si riusa.
-    ciclo_prec = da_excel(scr.x.intervallo_nome("cicloCorrente").Value)
     tutte = scr.righe("tblKRI")
     attivi = {r["ID"] for _, r in anag}          # un rischio dismesso non porta avanti i suoi KRI
     in_vigore = [r for r in tutte if r["Ciclo"] == ciclo_prec and r["In_Vigore"] == "Sì" and r["ID_Rischio"] in attivi]
@@ -802,7 +972,7 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
     usati = {r["KRI_ID"] for r in tutte}
     spec_kri = mappa["tabelle"]["tblKRI"]
     proposti, proposti_per_rischio = {}, {}
-    for ctx in contesti(payload, spec_kri["righe_da"]):
+    for ctx in contesti(payload_radar, spec_kri["righe_da"]):          # D-79: niente KRI per chi e' in osservazione
         k, rid = ctx["rischi[].kri_proposti[]"], ctx["rischi[]"]["id_rischio"]
         if k.get("kri_id"):
             k["_kri_id"] = k["kri_id"]
@@ -816,11 +986,21 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
         proposti[k["_kri_id"]] = valori_riga(spec_kri, ctx, stato)
 
     formule = {c["nome"] for c in spec_kri["colonne"] if c["sorgente"].startswith("formula:")}
+    date_kri = {c["nome"] for c in spec_kri["colonne"] if c.get("formato") == "data"}
     righe_kri, usciti = [], []
     for r in in_vigore:                              # stesso ordine del ciclo precedente
-        riga = {k: v for k, v in r.items() if k not in formule}
+        # Le date tornano da COM come testo ISO: si riscrivono come seriale (un KRI riportato in uno straordinario
+        # tiene la sua Data_Rilevazione, che altrimenti finirebbe nella cella come testo).
+        riga = {k: a_data(v) if k in date_kri and isinstance(v, str) else v for k, v in r.items() if k not in formule}
         riga["Ciclo"] = ciclo
         riga["Validazione"] = DA_VALIDARE           # la fotografia del ciclo va validata di nuovo
+        if r["ID_Rischio"] in fuori:
+            # D-79: il rischio esce dal radar (passa in osservazione): i suoi KRI escono di vigore, la storia resta.
+            riga.update(In_Vigore="No", Validazione=r.get("Validazione"), Valore_Corrente=None, Data_Rilevazione=None,
+                        Fonte_Rilevazione=None, Nota_Rilevazione=None)
+            usciti.append(r["KRI_ID"])
+            righe_kri.append(riga)
+            continue
         if decisione and r["ID_Rischio"] not in valutati and r["KRI_ID"] not in riletti:
             # Straordinario (D-75): il KRI di un rischio non rivalutato resta com'era, valore e validazione compresi.
             riga["Validazione"] = r.get("Validazione")
@@ -857,102 +1037,67 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
                                "MAX_ELENCO_KRI in genera_dashboard.py e rigenerare il template.")
     scr.append("tblKRI", righe_kri)
 
-    # 3. Anagrafica: prima del RiskRegister, cosi' l'Owner derivato di un
-    #    rischio nuovo e' gia' "Da assegnare" e il controllo di copertura lo conta.
-    scr.upsert_anagrafica(payload, stato)
+    # 3. Anagrafica = il radar (D-79): prima del RiskRegister, cosi' l'Owner derivato di un rischio nuovo e' gia'
+    #    "Da assegnare" e il controllo di copertura lo conta. Chi esce la lascia senza buchi; chi entra dall'osservazione
+    #    riprende owner e anni di adeguamento dalla sua ultima riga.
+    for rid in [i for i in attivi if i in fuori]:
+        scr.compatta_anagrafica(rid)
+    entranti_riportati = [r for r in riportati if r["ID_Rischio"] in dentro and r["ID_Rischio"] not in attivi]
+    scr.upsert_anagrafica(
+        dict(payload_radar, rischi=payload_radar["rischi"] + [
+            {"id_rischio": r["ID_Rischio"], "nome": r["Nome"], "event_type": r["Event_Type"], "driver": elenco(r["Driver"])}
+            for r in entranti_riportati]),
+        dict(stato, owner_storico={rid: r.get("Owner") for rid, r in righe_prec.items() if r.get("Owner") not in (None, OWNER_NUOVO)},
+             anni_storici={rid: r.get("Anni_Adeguamento") for rid, r in righe_prec.items()}))
     _, anag = scr.leggi_anagrafica()
     stato["owner"] = {r["ID"]: r["Owner"] for _, r in anag}
 
     # Capacita' del Piano_azioni: proposte e azioni aperte di ogni ciclo, chiuse del ciclo e del precedente.
     limite = scr.capienza("capienzaPianoAzioni")
     if limite is not None:
-        nuove = len(list(contesti(payload, mappa["tabelle"]["tblAzioni"]["righe_da"])))
+        nuove = len(list(contesti(payload_radar, mappa["tabelle"]["tblAzioni"]["righe_da"])))
         mostrate = sum(1 for r in scr.righe("tblAzioni") if r.get("ID_Azione") and
                        (r.get("Stato") not in STATI_AZIONE_CHIUSI or r.get("Ciclo") in (ciclo, ciclo_prec)))
         if mostrate + nuove > limite:
             raise RuntimeError(f"{mostrate + nuove} azioni superano le {limite} righe del Piano_azioni "
                                "(capienzaPianoAzioni). Alzare MAX_AZIONI_PIANO in genera_dashboard.py e rigenerare il template.")
 
-    # 4. Append su RiskRegister, Azioni e Sintesi_Cicli (commento di A1 e del challenger).
-    for nome in ("tblRegister", "tblAzioni", "tblSintesi"):
+    # 4. Append su RiskRegister (tutti i rischi scritti da A1, con lo stato), Azioni (solo il radar) e Sintesi_Cicli
+    #    (commento di A1 e del challenger).
+    for nome, fonte in (("tblRegister", payload), ("tblAzioni", payload_radar), ("tblSintesi", payload)):
         spec = mappa["tabelle"][nome]
-        scr.append(nome, [valori_riga(spec, ctx, stato) for ctx in contesti(payload, spec["righe_da"])])
-    if decisione:
-        # 4-bis. Straordinario (D-75): il periodo e' completo. I rischi non rivalutati si riportano dal ciclo prima,
-        # validati come allora; Periodo_Valutazione dice da dove vengono (il Radar_Mosca ne prende le azioni).
-        spec_rr = mappa["tabelle"]["tblRegister"]
-        formule_rr = {c["nome"] for c in spec_rr["colonne"] if c["sorgente"].startswith("formula:")}
-        date_rr = {c["nome"] for c in spec_rr["colonne"] if c.get("formato") == "data"}
-        attivi_ora = {r["ID"] for _, r in scr.leggi_anagrafica()[1]}
-        riportate = []
-        for r in scr.righe("tblRegister"):
-            if str(r["Ciclo"]) != str(ciclo_prec) or r["ID_Rischio"] in valutati or r["ID_Rischio"] not in attivi_ora:
-                continue
-            nuova = {k: v for k, v in r.items() if k not in formule_rr}
-            nuova.update(Ciclo=ciclo, Data_Riferimento=payload["data_riferimento"], Esito="Confermato", Variazioni="[]",
-                         Rilievi=None, Data_Scrittura=oggi, Periodo_Valutazione=r.get("Periodo_Valutazione") or r["Ciclo"])
-            riportate.append({k: a_data(v) if k in date_rr and isinstance(v, str) else v for k, v in nuova.items()})
-        scr.append("tblRegister", riportate)
-
-    # 4b. Lista di osservazione (D-73): le voci di A1 e quelle in osservazione che A1 non ha toccato (Invariata).
-    spec_oss = mappa["tabelle"]["tblOsservazione"]
-    voci = voci_osservazione(scr, payload, ciclo_prec)
-    if voci:
-        scr.append("tblOsservazione", [valori_riga(spec_oss, ctx, stato)
-                                       for ctx in contesti({"ciclo": ciclo, "osservazione": voci}, spec_oss["righe_da"])])
+        scr.append(nome, [valori_riga(spec, ctx, stato) for ctx in contesti(fonte, spec["righe_da"])])
+    # 4-bis. Rischi riportati dal ciclo prima, validati come allora (Periodo_Valutazione dice da dove vengono: il
+    #    Radar_Mosca ne prende le azioni): i rischi in osservazione che A1 non ha toccato (D-79) e, nello straordinario,
+    #    quelli del radar non rivalutati (D-75). Il periodo e' cosi' completo.
+    spec_rr = mappa["tabelle"]["tblRegister"]
+    formule_rr = {c["nome"] for c in spec_rr["colonne"] if c["sorgente"].startswith("formula:")}
+    date_rr = {c["nome"] for c in spec_rr["colonne"] if c.get("formato") == "data"}
+    riportate = []
+    for r in riportati:
+        s = stati[r["ID_Rischio"]]
+        nuova = {k: v for k, v in r.items() if k not in formule_rr}
+        nuova.update(Ciclo=ciclo, Data_Riferimento=payload["data_riferimento"], Esito="Confermato", Variazioni="[]",
+                     Rilievi=None, Data_Scrittura=oggi, Periodo_Valutazione=r.get("Periodo_Valutazione") or r["Ciclo"],
+                     Stato=s["stato"], Motivo_Stato=s["motivo"], Movimento=s["movimento"] or None,
+                     Decisione_Stato=r.get("Decisione_Stato") or radar.AUTOMATICO,
+                     Owner=stato["owner"].get(r["ID_Rischio"]) or r.get("Owner"))
+        riportate.append({k: a_data(v) if k in date_rr and isinstance(v, str) else v for k, v in nuova.items()})
+    scr.append("tblRegister", riportate)
 
     # 5. Righe da validare: nello storico una per oggetto e campo proposto, Stato "Da decidere"; nella griglia
-    #    del foglio Validazione una per oggetto (D-67), accanto alle settimane ancora da validare. Della lista di
-    #    osservazione solo le voci con un esito di A1: quelle invariate sono gia' state validate.
+    #    del foglio Validazione una per oggetto (D-67), accanto alle settimane ancora da validare. I rischi riportati
+    #    (in osservazione non toccati, straordinario) sono gia' validati.
     aggiungi_da_validare(scr, ciclo, "Rischio", lambda r: r["Ciclo"] == ciclo and r["ID_Rischio"] in valutati)
     aggiungi_da_validare(scr, ciclo, "KRI", lambda r: r["Ciclo"] == ciclo and r.get("Validazione") == DA_VALIDARE)
     aggiungi_da_validare(scr, ciclo, "Azione", lambda r: r["Ciclo"] == ciclo)
-    aggiungi_da_validare(scr, ciclo, "Osservazione", lambda r: r["Ciclo"] == ciclo and r["Esito"] != "Invariata")
     ricostruisci_griglia(scr)
 
     # 6. Ciclo corrente: fa scorrere radar, trend e delta (D-75: anche i periodi delle viste).
     imposta_ciclo(scr, ciclo, payload["data_riferimento"])
-    return {"kri_usciti": usciti, "osservazione": voci}
-
-
-def voci_osservazione(scr, payload, ciclo_prec):
-    """Voci della lista di osservazione da scrivere per il ciclo (D-73): quelle di A1 (nuove o con evidenza nuova) e,
-    dopo, quelle in osservazione nel ciclo prima che A1 non ha toccato, riportate invariate (Esito Invariata, nessuna
-    validazione). Ogni ciclo ha cosi' la fotografia intera della lista. Codice di una voce nuova: primo progressivo
-    libero, mai riusato. I controlli (controlli_a5.controlla_osservazione) hanno gia' verificato codici e promozioni."""
-    tutte = scr.righe("tblOsservazione")
-    prima = {}
-    for r in tutte:
-        prima.setdefault(r["OSS_ID"], str(r.get("Prima_Osservazione") or r["Ciclo"]))
-    usati = set(prima)
-    voci = []
-    for v in payload.get("osservazione") or []:
-        v = dict(v)
-        if v.get("oss_id"):
-            v["_oss_id"] = v["oss_id"]
-        else:
-            n = 1
-            while f"OSS-{n:02d}" in usati:
-                n += 1
-            v["_oss_id"] = f"OSS-{n:02d}"
-            usati.add(v["_oss_id"])
-        v["_esito"] = ESITI_OSSERVAZIONE[v["esito"]]
-        v["_stato"] = {"promossa": "Promossa", "archiviata": "Archiviata"}.get(v["esito"], IN_OSSERVAZIONE)
-        v["_prima"] = prima.get(v["_oss_id"], payload["ciclo"])
-        v["_validazione"] = DA_VALIDARE
-        voci.append(v)
-    toccate = {v["_oss_id"] for v in voci}
-    for r in tutte:
-        if str(r["Ciclo"]) != str(ciclo_prec) or r["Stato"] != IN_OSSERVAZIONE or r["OSS_ID"] in toccate:
-            continue
-        voci.append({"nome": r["Nome"], "descrizione": r["Descrizione"], "event_type": r["Event_Type"],
-                     "driver": elenco(r["Driver"]), "rischi_toccati": elenco(r["Rischi_Toccati"]),
-                     "impatto_potenziale": r["Impatto_Potenziale"], "orizzonte_anni": r["Orizzonte_Anni"],
-                     "plausibilita": r["Plausibilita"], "segnale_avvicinamento": r["Segnale_Avvicinamento"],
-                     "motivazione": r["Motivazione"], "fonti": json.loads(r["Fonti"] or "[]"), "promosso_a": None,
-                     "_oss_id": r["OSS_ID"], "_esito": "Invariata", "_stato": IN_OSSERVAZIONE,
-                     "_prima": prima[r["OSS_ID"]], "_validazione": None})
-    return voci
+    return {"kri_usciti": usciti, "stati": stati,
+            "entrati": sorted(i for i, s in stati.items() if s["movimento"] == radar.ENTRATO),
+            "usciti": sorted(i for i, s in stati.items() if s["movimento"] == radar.USCITO)}
 
 
 def elenco(testo):
@@ -960,20 +1105,15 @@ def elenco(testo):
     return [x.strip() for x in str(testo or "").split(",") if x.strip()]
 
 
-def segnali_a3(scr, oss_id, dopo):
-    """Notizie e segnali di A3 su una voce in osservazione (spiegazioni.segnali_a3, senza Excel)."""
+def rischi_osservazione(scr, ciclo):
+    """D-79: righe del ciclo dei rischi in osservazione (Stato Osservazione), per la baseline, i controlli e A7."""
+    return [r for r in scr.righe("tblRegister") if str(r["Ciclo"]) == str(ciclo) and r.get("Stato") == radar.OSSERVAZIONE]
+
+
+def notizie_a3(scr, rid, dopo):
+    """Notizie e flag di A3 su un rischio, datati dopo 'dopo' (spiegazioni.notizie_a3, senza Excel)."""
     import spiegazioni
-    return spiegazioni.segnali_a3(scr, oss_id, dopo)
-
-
-def lista_osservazione(scr, ciclo):
-    """Voci in osservazione (Stato In osservazione) della fotografia del ciclo: per la baseline e per A7."""
-    try:
-        righe = scr.righe("tblOsservazione")
-    except KeyError:
-        return []                                  # registro di un template precedente al 2026-10-07b
-    return [r for r in righe if str(r["Ciclo"]) == str(ciclo) and r["Stato"] == IN_OSSERVAZIONE]
-
+    return spiegazioni.notizie_a3(scr, rid, dopo)
 
 def righe_liste(scr, ciclo):
     """Righe del ciclo per le tre liste SharePoint, lette dal workbook appena
@@ -1050,11 +1190,10 @@ def righe_griglia(righe_storico):
 FOGLIO_GRIGLIA = "Validazione"
 RESPINGI_SI = {"sì", "si"}
 TITOLI_GRIGLIA = {
-    "Rischio": ("RISCHI", "i quattro punteggi e gli anni di adeguamento"),
+    "Rischio": ("RISCHI", "i quattro punteggi, gli anni di adeguamento e la decisione sullo stato (Automatico, Radar, "
+                          "Osservazione: D-79)"),
     "KRI": ("KRI", "valore rilevato e soglie; Respingi = Sì toglie il KRI"),
     "Azione": ("AZIONI", "owner e orizzonte; Respingi = Sì non approva l'azione"),
-    "Osservazione": ("LISTA DI OSSERVAZIONE", "impatto potenziale, orizzonte e plausibilita'; Respingi = Sì: la proposta "
-                                              "di A1 non passa (voce nuova esclusa, voce esistente com'era)"),
     "Notizia": ("NOTIZIE", "rischio collegato e segnale; Respingi = Sì: notizia non rilevante (validazione facoltativa, D-17)"),
 }
 
@@ -1135,6 +1274,41 @@ def _titolo_sezione(oggetto, voci):
     return f"{nome} — {quando} ({len(voci)} righe): {cosa}"
 
 
+# ---------------------------------------------------------------- riapertura della validazione (D-76)
+# Un ciclo gia' validato si puo' riaprire (comando riapri) quante volte serve: gli oggetti tornano nella griglia con il
+# valore validato al posto della proposta, e valida li tratta cosi': riga non toccata = niente cambia; cella cambiata =
+# rettifica senza il limite di un punto (scelta dell'utente del 07/10/2026), con la Motivazione; Respingi = Si' toglie
+# un KRI, annulla un'azione, archivia una voce della lista. Un oggetto e' "riaperto" se il suo dato ha gia' una
+# validazione (le proposte degli agenti hanno "Da validare"). Nello storico la decisione ha il suffisso (riapertura).
+SUFFISSO_RIAPERTURA = " (riapertura)"
+DECISIONE_RIAPERTURA = {"Accettato": "Invariato", "Rettificato": "Rettificato", "Respinto": "Respinto"}
+
+
+def riga_dato(righe_tabella, o, ident, periodo):
+    """(posizione 1-based, riga) del dato di un oggetto della griglia, per ID e periodo; un'azione riaperta puo' essere
+    di un ciclo prima (il suo ID e' unico): allora basta l'ID. (None, None) se non c'e'."""
+    trovate = [(i, d) for i, d in enumerate(righe_tabella, start=1) if str(d[o["id"]]) == str(ident)]
+    for i, d in trovate:
+        if o["periodo"] is None or str(d[o["periodo"]]) == str(periodo):
+            return i, d
+    return trovate[-1] if trovate and o["tabella"] == "tblAzioni" else (None, None)
+
+
+def oggetti_riaperti(scr, chiavi):
+    """Le chiavi (oggetto, periodo, id) da decidere che vengono da una riapertura: il dato ha gia' una validazione."""
+    out, cache = set(), {}
+    for oggetto, periodo, ident in chiavi:
+        if oggetto == "Notizia":
+            continue
+        o = scr.mappa["validazione"]["oggetti"][oggetto]
+        if o["tabella"] not in cache:
+            cache[o["tabella"]] = scr.righe(o["tabella"])
+        _, d = riga_dato(cache[o["tabella"]], o, ident, periodo)
+        if d is not None and d.get("Validazione") != DA_VALIDARE:
+            out.add((oggetto, str(periodo), str(ident)))
+    return out
+
+
 def ricostruisci_griglia(scr, modifiche=None):
     """Riscrive la griglia del foglio Validazione con gli oggetti ancora da decidere (storico, Stato 'Da decidere').
     Per una riga gia' presente (stesso oggetto, periodo e ID) conserva i valori gialli, la Motivazione e Respingi
@@ -1146,14 +1320,16 @@ def ricostruisci_griglia(scr, modifiche=None):
         modifiche = leggi_griglia(s, mappa)
     tutte = scr.righe(spec["tabella"])
     pendenti = oggetti_pendenti([(n, r) for n, r in enumerate(tutte, start=1) if r["Stato"] == DA_DECIDERE])
+    riaperti = oggetti_riaperti(scr, pendenti)
     tipo_kri = {(str(r["Ciclo"]), r["KRI_ID"]): r.get("Tipo") for r in scr.righe("tblKRI")}
     # D-71: le segnalazioni di A5 e dei controlli su ogni rischio (colonna Rilievi del RiskRegister) vanno nella
     # colonna Segnalazioni della griglia; quelle "da motivare" chiedono una Motivazione (⚑).
     segnalazioni = {(str(r["Ciclo"]), r["ID_Rischio"]): r.get("Rilievi") or None for r in scr.righe("tblRegister")}
     superati = {k for k, v in segnalazioni.items() if da_motivare(v)}
     rischio_azione = {(str(r["Ciclo"]), r["ID_Azione"]): r["ID_Rischio"] for r in scr.righe("tblAzioni")}
-    esito_oss = {(str(r["Ciclo"]), r["OSS_ID"]): r["Esito"] + (f" a {r['Promosso_A']}" if r.get("Promosso_A") else "")
-                 for r in scr.righe("tblOsservazione")}
+    # D-79: lo stato calcolato del rischio, con il motivo (si ricalcola a ogni validazione).
+    stato_rischio = {(str(r["Ciclo"]), r["ID_Rischio"]): (f"{r.get('Stato')}: {r.get('Motivo_Stato')}" if r.get("Stato") else None)
+                     for r in scr.righe("tblRegister")}
     ws = s.foglio(FOGLIO_GRIGLIA)
     scritte = {}
     for oggetto, o in spec["oggetti"].items():
@@ -1171,7 +1347,7 @@ def ricostruisci_griglia(scr, modifiche=None):
         righe = []
         for (_, periodo, ident), voce in voci:
             m = modifiche.get((oggetto, periodo, ident))
-            obbligo = oggetto == "Rischio" and (periodo, ident) in superati
+            obbligo = oggetto == "Rischio" and (periodo, ident) in superati and (oggetto, periodo, ident) not in riaperti
             riga = {"ID": ident, "Periodo": periodo, "Nome": ("⚑ " if obbligo else "") + str(voce["Nome"] or ""),
                     "Motivazione": m["motivazione"] if m else None}
             for c in o["campi"]:
@@ -1183,18 +1359,17 @@ def ricostruisci_griglia(scr, modifiche=None):
             if oggetto == "Rischio":
                 riga["Appoggio"] = 1 if obbligo else None             # Motivazione obbligatoria (formato condizionale)
                 riga["Segnalazioni"] = segnalazioni.get((periodo, ident))
+                riga["Stato"] = stato_rischio.get((periodo, ident))
             elif oggetto == "Azione":
                 riga["Appoggio"] = rischio_azione.get((periodo, ident)) or "-".join(ident.split("-")[1:3])   # per la Y di Mosca
             elif oggetto == "KRI":
                 riga["Tipo"] = tipo_kri.get((periodo, ident)) or "—"
-            elif oggetto == "Osservazione":
-                riga["Esito"] = esito_oss.get((periodo, ident)) or "—"
             elif oggetto == "Notizia":
                 riga["Settimana"] = _data_settimana(periodo)
             righe.append(riga)
         nomi = ["ID", "Nome", "Motivazione", "Periodo", "Appoggio", *(f"{c}_P" for c in o["campi"]), *o["campi"]] + \
                (["Respingi"] if o["respingibile"] else []) + \
-               {"Rischio": ["Segnalazioni"], "KRI": ["Tipo"], "Osservazione": ["Esito"], "Notizia": ["Settimana"]}.get(oggetto, [])
+               {"Rischio": ["Segnalazioni", "Stato"], "KRI": ["Tipo"], "Notizia": ["Settimana"]}.get(oggetto, [])
         for nome in nomi:
             vettore = [per_cella(r.get(nome)) for r in righe] + [None] * (capienza - len(righe))
             s.intervallo_nome(f"VG_{oggetto}_{nome}").Value = tuple((v,) for v in vettore)
@@ -1204,7 +1379,7 @@ def ricostruisci_griglia(scr, modifiche=None):
         larghezza = lambda nome: (lambda rng: rng.ColumnWidth * rng.Cells(1, 1).MergeArea.Columns.Count)(
             s.intervallo_nome(f"VG_{oggetto}_{nome}"))
         testi = [("Nome", 9), ("Motivazione", 9)] + ([(c, 10) for c in o["campi"]] if oggetto in ("Azione", "Notizia") else []) \
-            + ([("Segnalazioni", 8)] if oggetto == "Rischio" else [])
+            + ([("Segnalazioni", 8), ("Stato", 8)] if oggetto == "Rischio" else [])
         misure = {nome: larghezza(nome) for nome, _ in testi}
         for i, riga in enumerate(righe, start=1):
             altezza = max([righe_di_testo(riga[nome], misure[nome], punti) * punti * 1.35 + 6
@@ -1214,7 +1389,11 @@ def ricostruisci_griglia(scr, modifiche=None):
             ws.Range(blocco.Rows(1), blocco.Rows(len(righe))).EntireRow.Hidden = False
         if len(righe) < capienza:
             ws.Range(blocco.Rows(len(righe) + 1), blocco.Rows(capienza)).EntireRow.Hidden = True
-        s.intervallo_nome(f"VG_{oggetto}_titolo").Value = per_cella(_titolo_sezione(oggetto, voci))
+        titolo_sezione = _titolo_sezione(oggetto, voci)
+        if any(k in riaperti for k, _ in voci):         # D-76: il grigio non e' una proposta, e' il valore validato
+            titolo_sezione += (" — RIAPERTURA: in grigio il valore validato; una riga non toccata resta com'e'"
+                               + {"KRI": "; Respingi = Sì toglie il KRI", "Azione": "; Respingi = Sì annulla l'azione"}.get(oggetto, ""))
+        s.intervallo_nome(f"VG_{oggetto}_titolo").Value = per_cella(titolo_sezione)
         scritte[oggetto] = len(righe)
     # D-71: segnalazioni che riguardano il ciclo e non un rischio (es. C6), sopra la colonna Segnalazioni dei rischi.
     cicli_rischi = {k[1] for k in pendenti if k[0] == "Rischio"}
@@ -1281,6 +1460,10 @@ def controlla_valore(oggetto, campo, valore, contesto):
     if oggetto == "Rischio":
         if campo == "Velocity" and valore in (None, ""):
             return None, None                         # vuota = non valutata (D-50)
+        if campo == "Decisione_Stato":                # D-79: decisione del validatore sullo stato
+            testo = str(valore or "").strip().capitalize()
+            return (testo, None) if testo in radar.DECISIONI else \
+                (valore, f"Decisione sullo stato deve essere una di {', '.join(radar.DECISIONI)} (trovato {valore!r})")
         if campo == "Anni_Adeguamento":               # D-60: anni stimati da A1, vuoto = non serve
             if valore in (None, ""):
                 return None, None
@@ -1308,26 +1491,12 @@ def controlla_valore(oggetto, campo, valore, contesto):
         if len(testo) < 3 or controlli_a5.sembra_persona(testo):
             return testo, "Owner deve essere una funzione aziendale, non vuoto e non il nome di una persona"
         return testo, None
-    if oggetto == "Osservazione":                   # D-73
-        if campo == "Plausibilita":
-            testo = str(valore or "").strip().lower()
-            return (testo, None) if testo in PLAUSIBILITA else (valore, f"Plausibilita deve essere una di {PLAUSIBILITA}")
-        n = _numero(valore)
-        massimo = 5 if campo == "Impatto_Potenziale" else 20
-        if n is None or n != int(n) or not 1 <= n <= massimo:
-            return valore, f"{campo} deve essere un intero da 1 a {massimo} (trovato {valore!r})"
-        return int(n), None
     if oggetto == "Notizia":
         if campo == "Segnale":
             return (valore, None) if valore in SEGNALI else (valore, f"Segnale deve essere uno di {SEGNALI}")
-        if campo == "Voce_Osservazione":            # D-73: vuota = nessuna voce
-            if valore in (None, ""):
-                return None, None
-            v = str(valore).strip().upper()
-            return (v, None) if v in contesto.get("osservazione", set()) else \
-                (valore, "Voce_Osservazione deve essere una voce in osservazione (OSS-nn) o vuota")
         ammessi = contesto["rischi"] | {NON_PRESIDIATO}
-        return (valore, None) if valore in ammessi else (valore, f"Rischio_ID deve essere un rischio in anagrafica o {NON_PRESIDIATO}")
+        return (valore, None) if valore in ammessi else \
+            (valore, f"Rischio_ID deve essere un rischio del registro (nel radar o in osservazione) o {NON_PRESIDIATO}")
     return valore, f"oggetto sconosciuto {oggetto}"
 
 
@@ -1371,18 +1540,22 @@ def applica_validazione(scr, periodo, validatore, oggi):
     prec_ciclo = periodi_prima(scr, periodo, 1)[0] if "Q" in periodo else None      # D-75: anche uno straordinario
     registro = scr.righe("tblRegister")
     precedenti = {r["ID_Rischio"]: r for r in registro if r["Ciclo"] == prec_ciclo}
-    contesto_base = {"rischi": {r["ID"] for _, r in anag},
-                     "osservazione": {r["OSS_ID"] for r in lista_osservazione(scr, da_excel(scr.x.intervallo_nome("cicloCorrente").Value))}}
+    # Una notizia si collega a un rischio del radar o in osservazione (D-79).
+    contesto_base = {"rischi": {r["ID"] for _, r in anag} |
+                               {r["ID_Rischio"] for r in rischi_osservazione(scr, da_excel(scr.x.intervallo_nome("cicloCorrente").Value))}}
     # Rischi con una segnalazione da motivare di A5 o dei controlli (D-71; prima, D-56, un Bloccante di A5 superato con
     # --procedi-con-rilievi): la loro riga vuole una Motivazione anche se i valori restano quelli proposti.
     superati = {r["ID_Rischio"] for r in registro if str(r["Ciclo"]) == periodo and da_motivare(r.get("Rilievi"))}
-    vuoti_ammessi = {("KRI", "Valore_Corrente"), ("Rischio", "Velocity"), ("Rischio", "Anni_Adeguamento"),
-                     ("Notizia", "Voce_Osservazione")}
+    vuoti_ammessi = {("KRI", "Valore_Corrente"), ("Rischio", "Velocity"), ("Rischio", "Anni_Adeguamento")}
+
+    riaperti = oggetti_riaperti(scr, pendenti)       # D-76: valore validato al posto della proposta
+    e_riaperto = lambda r: (r["Oggetto"], str(r["Periodo"]), str(r["ID"])) in riaperti
 
     problemi, decisioni = [], []
     esiti_righe = {"Accettato": 0, "Rettificato": 0, "Respinto": 0}
     for chiave, voce in pendenti.items():
         oggetto, _, ident = chiave
+        riaperto = chiave in riaperti
         g = griglia[chiave]
         etichetta = f"{oggetto} {ident} (riga {g['riga']} del foglio Validazione)"
         scritto_resp = str(g["respingi"] or "").strip()
@@ -1394,7 +1567,7 @@ def applica_validazione(scr, periodo, validatore, oggi):
         if (respinto or cambiati) and len(motivo) < 10:
             cosa = "respinto" if respinto else "cambiato " + ", ".join(cambiati)
             problemi.append(f"{etichetta}: {cosa} senza una Motivazione di almeno 10 caratteri, con l'evidenza")
-        elif oggetto == "Rischio" and ident in superati and len(motivo) < 10:
+        elif oggetto == "Rischio" and ident in superati and not riaperto and len(motivo) < 10:
             problemi.append(f"{etichetta}: il rischio ha segnalazioni da motivare (⚑; colonna Segnalazioni dei controlli): "
                             "scrivere una Motivazione di almeno 10 caratteri anche se i valori restano quelli proposti")
         esiti_righe["Respinto" if respinto else "Rettificato" if cambiati else "Accettato"] += 1
@@ -1409,13 +1582,14 @@ def applica_validazione(scr, periodo, validatore, oggi):
                     problemi.append(f"{et_campo}: cella gialla vuota, scrivere il valore (la proposta era {proposta!r})")
                     valore = scritto
                 else:
+                    # D-76: in una riapertura il limite di un punto non vale (motivazione obbligatoria comunque).
                     valore, problema = controlla_valore(oggetto, campo, scritto,
-                                                        dict(contesto_base, precedente=precedenti.get(ident)))
+                                                        dict(contesto_base, precedente=None if riaperto else precedenti.get(ident)))
                     if problema:
                         problemi.append(f"{et_campo}: {problema}")
             else:
                 dec, valore = "Accettato", proposta
-                if oggetto == "Rischio" and campo in DIMENSIONI_RISCHIO and proposta not in (None, ""):
+                if oggetto == "Rischio" and campo in DIMENSIONI_RISCHIO and proposta not in (None, "") and not riaperto:
                     # D-71: il salto di piu' di un punto (C3) non ferma piu' la scrittura: lo ferma qui, anche se la
                     # proposta e' accettata cosi' com'e'.
                     _, problema = controlla_valore(oggetto, campo, proposta, dict(contesto_base, precedente=precedenti.get(ident)))
@@ -1455,11 +1629,12 @@ def applica_validazione(scr, periodo, validatore, oggi):
     for (oggetto, ident), voci in per_oggetto.items():
         o = oggetti[oggetto]
         righe_dati = scr.righe(o["tabella"])
-        pos = next(i for i, d in enumerate(righe_dati, start=1)
-                   if d[o["id"]] == ident and (o["periodo"] is None or str(d[o["periodo"]]) == periodo))
-        dato = righe_dati[pos - 1]
+        pos, dato = riga_dato(righe_dati, o, ident, periodo)
         respinto = any(dec == "Respinto" for _, dec, _, _ in voci)
         rettificato = any(dec == "Rettificato" for _, dec, _, _ in voci)
+        riaperto = (oggetto, str(periodo), str(ident)) in riaperti
+        if riaperto and not respinto and not rettificato:
+            continue                                 # D-76: riga riaperta e non toccata: il dato resta com'era
         nuovi = {campo: valore for campo, dec, valore, _ in voci if dec == "Rettificato"}
         nuovi["Validazione"] = "Respinto" if respinto else "Rettificato" if rettificato else "Accettato"
         if oggetto == "Rischio":
@@ -1476,8 +1651,9 @@ def applica_validazione(scr, periodo, validatore, oggi):
                 nuovi["Esito"] = "Confermato" if all(valori[c] == _vuoto(prec.get(c)) for _, c in DIMENSIONI_ESITO) else "Variato"
             # D-60: gli anni di adeguamento validati (proposta accettata o rettifica) vanno nell'anagrafica,
             # da cui li legge il Radar_Mosca. Vuoto = nessuna stima: il valore gia' in anagrafica resta.
+            # In una riapertura (D-76) solo se cambiati qui: l'anagrafica puo' essere stata corretta a mano.
             anni = _vuoto(nuovi.get("Anni_Adeguamento", dato.get("Anni_Adeguamento")))
-            if anni is not None:
+            if anni is not None and (not riaperto or "Anni_Adeguamento" in nuovi):
                 anni_validati[ident] = anni
         elif oggetto == "KRI":
             if respinto:
@@ -1491,20 +1667,13 @@ def applica_validazione(scr, periodo, validatore, oggi):
                         nuovi["Data_Rilevazione"] = a_data(data_periodo(scr, periodo))
                     if not dato["Fonte_Rilevazione"]:
                         nuovi["Fonte_Rilevazione"] = f"Rettifica del validatore ({validatore})"
+        elif oggetto == "Azione" and riaperto:
+            # D-76: un'azione gia' decisa resta nel suo stato (Approvata, In corso); Respingi = Si' la annulla.
+            nuovi.update(Decisa_Da=validatore, Data_Decisione=data, **({"Stato": ANNULLATA} if respinto else {}))
         elif oggetto == "Azione":
             nuovi.update(Stato="Respinta" if respinto else "Approvata", Decisa_Da=validatore, Data_Decisione=data)
-        elif oggetto == "Osservazione" and respinto:
-            # D-73: la proposta di A1 non passa. Una voce nuova esce (Respinta); una voce esistente torna com'era
-            # nel ciclo prima (valori, segnale, stato), con l'Esito di A1 che resta come traccia.
-            vecchia = next((d for d in righe_dati if d["OSS_ID"] == ident and str(d["Ciclo"]) == str(prec_ciclo)), None)
-            if vecchia is None:
-                nuovi["Stato"] = "Respinta"
-            else:
-                nuovi.update({c: vecchia[c] for c in ("Impatto_Potenziale", "Orizzonte_Anni", "Plausibilita",
-                                                      "Segnale_Avvicinamento", "Stato", "Promosso_A")})
         elif oggetto == "Notizia" and respinto:
             nuovi["Segnale"] = "Non rilevante"
-            nuovi["Voce_Osservazione"] = None
             nuovi.update({c["nome"]: 0 for c in scr.mappa["tabelle"]["tblNews"]["colonne"] if c["nome"].startswith("Imp_")})
         scr.aggiorna(o["tabella"], pos, nuovi)
     if anni_validati:
@@ -1512,16 +1681,28 @@ def applica_validazione(scr, periodo, validatore, oggi):
         for pos, a in anag:
             if a["ID"] in anni_validati:
                 cella.Cells(pos, 1).Value = anni_validati[a["ID"]]
+    # D-79: lo stato di ogni rischio si ricalcola sui valori validati (e sulle decisioni del validatore); un rischio che
+    # entra nel radar qui, senza i KRI e le azioni che A1 scrive solo per il radar, li avra' al ciclo dopo.
+    movimenti = {"entrati": [], "usciti": []}
+    if "Q" in periodo and str(periodo) == str(da_excel(scr.x.intervallo_nome("cicloCorrente").Value)):
+        stati = stati_del_ciclo(scr, periodo)
+        con_kri = {k["ID_Rischio"] for k in scr.righe("tblKRI") if str(k["Ciclo"]) == str(periodo) and k["In_Vigore"] == "Sì"}
+        extra = {rid: "; entrato in validazione: KRI e azioni da definire al ciclo dopo" for rid, s in stati.items()
+                 if radar.nel_radar(s["stato"]) and rid not in con_kri}
+        movimenti["entrati"], movimenti["usciti"] = applica_stati(scr, periodo, stati, extra)
+    # Nello storico una decisione su un oggetto riaperto ha il suffisso (riapertura): il valore di partenza non era una
+    # proposta di un agente (base dati per l'apprendimento: si distinguono).
+    etichetta_dec = lambda r, dec: DECISIONE_RIAPERTURA[dec] + SUFFISSO_RIAPERTURA if e_riaperto(r) else dec
     for n, r, dec, valore, motivo in decisioni:
         scr.aggiorna("tblValidazione", n, {
-            "Decisione": dec, "Valore_Validato": None if dec == "Respinto" else valore, "Motivazione": motivo,
+            "Decisione": etichetta_dec(r, dec), "Valore_Validato": None if dec == "Respinto" else valore, "Motivazione": motivo,
             "Validato_Da": validatore, "Data_Validazione": data, "Stato": APPLICATA})
-    registro = [dict(r, Decisione=dec, Valore_Validato=None if dec == "Respinto" else valore, Motivazione=motivo,
-                     Validato_Da=validatore, Data_Validazione=oggi, Stato=APPLICATA)
+    registro = [dict(r, Decisione=etichetta_dec(r, dec), Valore_Validato=None if dec == "Respinto" else valore,
+                     Motivazione=motivo, Validato_Da=validatore, Data_Validazione=oggi, Stato=APPLICATA)
                 for n, r, dec, valore, motivo in decisioni]
     # Le righe del periodo escono dalla griglia; quelle degli altri periodi restano con cio' che c'e' scritto.
     ricostruisci_griglia(scr)
-    return esiti, esiti_righe, registro
+    return esiti, esiti_righe, registro, movimenti
 
 
 # ================================================================ verifiche
@@ -1631,12 +1812,33 @@ def estrai_baseline(sessione, mappa, straordinario=None):
             "driver": [d.strip() for d in str(a["Driver"]).split(",")], "owner": a["Owner"],
             "presidio_controlli": a.get("Presidio_Controlli") or PRESIDIO_NUOVO,
             "anni_adeguamento": _vuoto(a.get("Anni_Adeguamento")),
+            "attenzione_supervisore": a.get("Attenzione_Supervisore") == "Sì",
             **{v: _vuoto(colonna(r, k, mappa)) for v, k in DIMENSIONI_BASELINE},
             "esito_precedente": r["Esito"], "razionale": r["Razionale"],
             "fonti": json.loads(r["Fonti"] or "[]"),
+            # D-79: stato nel registro unico e decisione del validatore (la regola li usa per il ciclo dopo).
+            "stato": r.get("Stato") if r.get("Stato") in radar.STATI else radar.RADAR,
+            "decisione_stato": r.get("Decisione_Stato") or radar.AUTOMATICO,
             "storico": [{"ciclo": c, **{v: _vuoto(colonna(per_ciclo[c][a["ID"]], k, mappa)) for v, k in DIMENSIONI_BASELINE}}
                         for c in storico_cicli if a["ID"] in per_ciclo.get(c, {})],
         })
+    # D-79: i rischi in osservazione (fuori dall'anagrafica, che e' il radar); A1 li riscrive solo con evidenza nuova.
+    in_osservazione = []
+    for r in correnti.values():
+        if r.get("Stato") != radar.OSSERVAZIONE or r["ID_Rischio"] in {a["ID"] for _, a in anag}:
+            continue
+        rid = r["ID_Rischio"]
+        in_osservazione.append({
+            "id_rischio": rid, "nome": r["Nome"], "event_type": r["Event_Type"], "driver": elenco(r["Driver"]),
+            "descrizione": r["Descrizione"], "anni_adeguamento": _vuoto(r.get("Anni_Adeguamento")),
+            **{v: _vuoto(colonna(r, k, mappa)) for v, k in DIMENSIONI_BASELINE},
+            "orizzonte_anni": _vuoto(r.get("Orizzonte_Anni")), "segnale_avvicinamento": r.get("Segnale_Avvicinamento"),
+            "esito_precedente": r["Esito"], "razionale": r["Razionale"], "fonti": json.loads(r["Fonti"] or "[]"),
+            "stato": radar.OSSERVAZIONE, "motivo_stato": r.get("Motivo_Stato"),
+            "decisione_stato": r.get("Decisione_Stato") or radar.AUTOMATICO,
+            "storico": [{"ciclo": c, **{v: _vuoto(colonna(per_ciclo[c][rid], k, mappa)) for v, k in DIMENSIONI_BASELINE}}
+                        for c in storico_cicli if rid in per_ciclo.get(c, {})],
+            **notizie_a3(scr, rid, max(date_prec) if date_prec else None)})
     attivi = {a["ID"] for _, a in anag}        # solo i rischi in anagrafica: un rischio dismesso esce del tutto
     kri = [{"kri_id": k["KRI_ID"], "id_rischio": k["ID_Rischio"], "tipo": k.get("Tipo") or None,   # D-64
             "nome": k["Nome"], "unita": k["Unita"],
@@ -1645,7 +1847,7 @@ def estrai_baseline(sessione, mappa, straordinario=None):
             "data_rilevazione": k["Data_Rilevazione"]}
            for k in scr.righe("tblKRI") if k["Ciclo"] == ciclo_prec and k["In_Vigore"] == "Sì" and k["ID_Rischio"] in attivi]
     azioni = [{"id_azione": z["ID_Azione"], "id_rischio": z["ID_Rischio"], "descrizione": z["Descrizione"],
-               "owner": z["Owner"], "stato": z["Stato"]}
+               "owner": z["Owner"], "stato": z["Stato"], "orizzonte": z.get("Orizzonte"), "ciclo": str(z.get("Ciclo") or "")}
               for z in scr.righe("tblAzioni") if z["Stato"] not in STATI_AZIONE_CHIUSI and z["ID_Rischio"] in attivi]
     prossimo = ciclo_successivo(trimestre_di(ciclo_prec)) if ciclo_prec else None
     data_prossimo = fine_trimestre(prossimo) if prossimo else None
@@ -1660,17 +1862,11 @@ def estrai_baseline(sessione, mappa, straordinario=None):
         "data_riferimento": data_prossimo,
         **extra,
         "rischi": rischi,
+        "rischi_in_osservazione": in_osservazione,
         "kri_in_vigore": kri,
         "azioni_aperte": azioni,
-        # D-73: le voci in osservazione; A1 riscrive solo quelle con evidenza nuova.
-        "osservazione": [{"oss_id": v["OSS_ID"], "nome": v["Nome"], "descrizione": v["Descrizione"],
-                          "driver": elenco(v["Driver"]), "event_type": v["Event_Type"],
-                          "rischi_toccati": elenco(v["Rischi_Toccati"]), "impatto_potenziale": v["Impatto_Potenziale"],
-                          "orizzonte_anni": v["Orizzonte_Anni"], "plausibilita": v["Plausibilita"],
-                          "segnale_avvicinamento": v["Segnale_Avvicinamento"], "motivazione": v["Motivazione"],
-                          "fonti": json.loads(v["Fonti"] or "[]"), "prima_osservazione": str(v["Prima_Osservazione"] or ""),
-                          **segnali_a3(scr, v["OSS_ID"], max(date_prec) if date_prec else None)}
-                         for v in lista_osservazione(scr, ciclo_prec)] if ciclo_prec else [],
+        # D-79: la regola del registro unico, per A1 (guida di scrittura) e per i controlli dello script.
+        "regola_radar": regola_radar(sessione),
     }
 
 
@@ -1751,22 +1947,23 @@ def comando_precontrollo(arg, conf):
     ciclo = ciclo_di(payload, baseline)
     da_correggere, da_verificare = conta(esito)
     file = conf["cartella_uscita"] / "Cicli" / ciclo / f"Correzione_A1_{ciclo}.txt"
-    firma = f"Impronta dell'output di A1: {impronta(payload)}"
+    firma = f"Impronta dell'output di {agente_di(ciclo)}: {impronta(payload)}"
     if not da_correggere and not da_verificare:
         if file.exists():
             file.unlink()                            # messaggio di un output precedente: non vale piu'
         print(f"{riga_esito(ciclo, esito)} Ora il comando trimestrale; se si usa A5 (facoltativo), prima allegargli "
-              f"l'output di A1 e Baseline_corrente.json e scrivere \"Esegui i nove controlli\".\n{firma}")
+              f"l'output di {agente_di(ciclo)} e Baseline_corrente.json e scrivere \"Esegui i nove controlli\".\n{firma}")
         return 0
     testo = messaggio_correzione(ciclo, esito)
     _cartella(conf, "Cicli", ciclo)
     file.write_text(testo, encoding="utf-8")
     print(f"{riga_esito(ciclo, esito)}\n{firma}\n"
-          f"Messaggio per A1: {file}\n(aprirlo con Blocco note, copiarlo tutto e incollarlo nella chat di A1)\n\n{testo}\n"
-          + ("Dopo la risposta di A1: salvarla di nuovo e ripetere il precontrollo. Il registro non e' stato toccato."
+          f"Messaggio per {agente_di(ciclo)}: {file}\n(aprirlo con Blocco note, copiarlo tutto e incollarlo nella chat di "
+          f"{agente_di(ciclo)})\n\n{testo}\n"
+          + (f"Dopo la risposta di {agente_di(ciclo)}: salvarla di nuovo e ripetere il precontrollo. Il registro non e' stato toccato."
              if da_correggere else
              "Nessun punto ferma il ciclo: si puo' lanciare trimestrale (questi punti andranno nella colonna Segnalazioni "
-             "del foglio Validazione), oppure chiedere prima ad A1 di rivederli."))
+             f"del foglio Validazione), oppure chiedere prima ad {agente_di(ciclo)} di rivederli."))
     return 1 if da_correggere else 0
 
 
@@ -1840,7 +2037,8 @@ def comando_trimestrale(arg, conf):
         correzione.write_text(messaggio_correzione(
             ciclo, precontrolla(payload, baseline, carica_json(file_kernel(conf, "schema_output_A1.json")))), encoding="utf-8")
         raise Fermo("Ciclo da rivedere (difetti che renderebbero incoerente il registro):\n  - " + "\n  - ".join(bloccanti)
-                    + f"\nMessaggio per A1: {correzione}\n(aprirlo con Blocco note, copiarlo tutto nella chat di A1, salvare "
+                    + f"\nMessaggio per {agente_di(ciclo)}: {correzione}\n(aprirlo con Blocco note, copiarlo tutto nella chat "
+                    f"di {agente_di(ciclo)}, salvare "
                     f"la nuova risposta e rilanciare trimestrale)\nRapporto: {rapporto}")
     testo_superamento = (f"Segnalazioni da motivare in validazione: {len(da_mot)} (controlli "
                          f"{sum(1 for x in da_mot if x['origine'] == 'script')}, A5 {sum(1 for x in da_mot if x['origine'] == 'A5')})."
@@ -1853,14 +2051,15 @@ def comando_trimestrale(arg, conf):
                                              controlli={"agente": agente, "esito": esito,
                                                         "superamento_testo": testo_superamento})
         copertura = verifica_dopo_scrittura(s, scr, ciclo)
-        voci = esito_scrittura["osservazione"]
+        stati = esito_scrittura["stati"]
+        capienza_radar = regola_radar(s)["capienza"]
         prepara_report(s)
         copia = _salva_con_backup(s, conf["workbook"], conf)
         nuova_baseline = estrai_baseline(s, mappa)
         liste = righe_liste(scr, ciclo)
         rng_anag, occupate = scr.leggi_anagrafica()
         posti_liberi = rng_anag.Rows.Count - len(occupate)
-        msg_a7 = aggiorna_spiegazioni(s, scr, conf, scartati=payload.get("fenomeni_non_censiti") or [])
+        msg_a7 = aggiorna_spiegazioni(s, scr, conf, payload=payload)
     # Dopo il salvataggio, prima cio' che serve al prossimo run (la baseline),
     # per ultimo la copia dell'Excel, che fallisce se qualcuno ha aperto il file.
     file_baseline = _scrivi_baseline(conf, nuova_baseline)
@@ -1883,25 +2082,28 @@ def comando_trimestrale(arg, conf):
           f"KRI: {len(liste['KRI_Storico'])} righe di storico per il ciclo; usciti di vigore: {esito_scrittura['kri_usciti'] or 'nessuno'}.\n"
           f"A5: {'usato' if agente is not None else 'non usato (facoltativo)'}. Osservazioni: "
           f"{sum(1 for x in esito['rilievi'] if x['gravita'] == controlli_a5.OSSERVAZIONE)}.\n"
-          f"Lista di osservazione: {sum(1 for v in voci if v['_stato'] == IN_OSSERVAZIONE)} voci in osservazione; proposte "
-          f"di A1 da validare: {sum(1 for v in voci if v['_esito'] != 'Invariata')}"
-          + (" (" + ", ".join(f"{v['_oss_id']} {v['_esito'].lower()}" for v in voci if v["_esito"] != "Invariata") + ")"
-             if any(v["_esito"] != "Invariata" for v in voci) else "") + ".\n"
+          f"Registro unico (D-79): nel radar {sum(1 for x in stati.values() if radar.nel_radar(x['stato']))} rischi su "
+          f"{capienza_radar} posti"
+          + (f" (in uscita: {', '.join(sorted(i for i, x in stati.items() if x['stato'] == radar.IN_USCITA))})"
+             if any(x["stato"] == radar.IN_USCITA for x in stati.values()) else "")
+          + f"; in osservazione {sum(1 for x in stati.values() if x['stato'] == radar.OSSERVAZIONE)}; entrati nel radar "
+          f"{', '.join(esito_scrittura['entrati']) or 'nessuno'}; usciti {', '.join(esito_scrittura['usciti']) or 'nessuno'}.\n"
           + (f"SEGNALAZIONI DA MOTIVARE: {len(da_mot)} su "
              f"{len({x['id_rischio'] for x in da_mot if x['id_rischio']})} rischi (colonna Segnalazioni dei controlli del "
              "foglio Validazione, ⚑ davanti al nome): in validazione quei rischi chiedono una Motivazione.\n" if da_mot else "") +
           f"Excel di output: {excel}\nArchivio del ciclo: {cartella}\n"
           f"Backup (stato prima): {copia}\nBaseline per il prossimo run: {file_baseline}\n"
-          f"DA FARE: validazione umana nel foglio Validazione (una riga per rischio, KRI, azione e voce in osservazione proposta da A1: si cambiano solo le celle "
-          f"gialle, la Motivazione e Respingi), poi: python esegui_ciclo_locale.py valida --periodo {ciclo} "
+          f"DA FARE: validazione umana nel foglio Validazione (una riga per rischio scritto da A1, nel radar o in osservazione, "
+          f"KRI e azione: si cambiano solo le celle gialle, la Motivazione e Respingi; lo stato si ricalcola sui valori "
+          f"validati), poi: python esegui_ciclo_locale.py valida --periodo {ciclo} "
           "--validatore \"<chi valida>\". Nessuna auto-approvazione: il ciclo dopo non parte finche' questo non e' validato.\n"
           f"Righe per le liste (Righe_liste_{ciclo}.json): valori NON ancora validati; il comando valida le riscrive."
           + (f"\nNote dell'analista del Quadro archiviate nella riga del ciclo {nota_archiviata} (Sintesi_Cicli) e "
              "svuotate per il ciclo nuovo." if nota_archiviata else "")
           + (f"\n{msg_a7}" if msg_a7 else ""))
     if posti_liberi <= 2:
-        print(f"ATTENZIONE: l'anagrafica ha {posti_liberi} posti liberi. Un rischio in piu' oltre il limite ferma lo script: "
-              "chi mantiene il pacchetto deve alzare MAX_RISCHI in genera_dashboard.py e preparare un template nuovo.")
+        print(f"Nota: il radar ha {posti_liberi} posti liberi su {rng_anag.Rows.Count} (D-79): oltre la capienza di Parametri "
+              "entrano i rischi con lo score piu' alto, gli altri restano in osservazione.")
     # D-68: senza le parti del razionale le schede non possono mettere il perche' accanto a ogni valore.
     import schede
     non_divisi = [x["id_rischio"] for x in payload["rischi"] if not schede.parti_razionale(x["razionale"])]
@@ -1939,24 +2141,18 @@ def comando_settimanale(arg, conf):
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         _, anag = scr.leggi_anagrafica()
-        ids = {r["ID"] for _, r in anag}
+        # D-79: A3 collega notizie, flag e proposte ai rischi del registro, nel radar o in osservazione.
+        ids = {r["ID"] for _, r in anag} | {r["ID_Rischio"] for r in rischi_osservazione(
+            scr, da_excel(s.intervallo_nome("cicloCorrente").Value))}
         sconosciuti = {n["rischio_collegato"] for n in payload["notizie"]} - ids - {None}
         if sconosciuti:
-            raise Fermo(f"Notizie collegate a rischi non in anagrafica: {sorted(sconosciuti)}")
+            raise Fermo(f"Notizie collegate a rischi che non sono nel registro: {sorted(sconosciuti)}")
         flag_ignoti = {f["id_rischio"] for f in payload["flag_proposti"]} - ids
         if flag_ignoti:
-            raise Fermo(f"Flag proposti per rischi non in anagrafica: {sorted(flag_ignoti)}")
+            raise Fermo(f"Flag proposti per rischi che non sono nel registro: {sorted(flag_ignoti)}")
         proposta = payload.get("proposta_straordinario")
         if proposta and set(proposta["rischi"]) - ids:
-            raise Fermo(f"Proposta di ciclo straordinario per rischi non in anagrafica: {sorted(set(proposta['rischi']) - ids)}")
-        # D-73: A3 collega notizie e segnali solo alle voci in osservazione del ciclo corrente.
-        attive = {r["OSS_ID"] for r in lista_osservazione(scr, da_excel(s.intervallo_nome("cicloCorrente").Value))}
-        fuori_lista = ({n.get("voce_osservazione") for n in payload["notizie"]} |
-                       {x["oss_id"] for x in payload.get("segnali_osservazione") or []}) - attive - {None}
-        if fuori_lista:
-            raise Fermo(f"Notizie o segnali di A3 su voci che non sono nella lista di osservazione: {sorted(fuori_lista)} "
-                        f"(in osservazione: {', '.join(sorted(attive)) or 'nessuna'}). Chiedere ad A3 di usare solo le voci "
-                        "della baseline, o null.")
+            raise Fermo(f"Proposta di ciclo straordinario per rischi che non sono nel registro: {sorted(set(proposta['rischi']) - ids)}")
         aggiunte = scrivi_settimanale(scr, payload)
         s.ricalcola()
         mancanti = formule_mancanti(s, mappa)
@@ -1979,9 +2175,6 @@ def comando_settimanale(arg, conf):
              "esegui_ciclo_locale.py baseline --straordinario --rischi ... --motivo \"...\" --decisore \"...\" (guida, "
              "sezione 2-bis).\n" if payload.get("proposta_straordinario") else "") +
           f"Flag proposti da A3: {len(payload['flag_proposti'])}\n"
-          f"Lista di osservazione: {sum(1 for n in payload['notizie'] if n.get('voce_osservazione'))} notizie collegate a "
-          f"una voce, segnali {len(payload.get('segnali_osservazione') or [])}"
-          + "".join(f"\n  {x['oss_id']} · {x['direzione']}" for x in payload.get("segnali_osservazione") or []) + "\n"
           f"Notizie da validare (facoltativo) nel foglio Validazione, poi: python esegui_ciclo_locale.py valida --periodo "
           f"{payload['settimana']} --validatore \"<chi valida>\"\n"
           f"Excel di output: {excel}\nBackup (stato prima): {copia}")
@@ -1997,7 +2190,7 @@ def comando_valida(arg, conf):
     with SessioneExcel(conf["workbook"]) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
-        esiti, esiti_righe, registro = applica_validazione(scr, periodo, arg.validatore.strip(), oggi)
+        esiti, esiti_righe, registro, movimenti = applica_validazione(scr, periodo, arg.validatore.strip(), oggi)
         s.ricalcola()
         mancanti = formule_mancanti(s, mappa)
         if mancanti:
@@ -2023,6 +2216,8 @@ def comando_valida(arg, conf):
     print(f"Validazione del periodo {periodo} applicata: {sum(esiti_righe.values())} righe — accettate "
           f"{esiti_righe['Accettato']}, rettificate {esiti_righe['Rettificato']} ({esiti['Rettificato']} valori cambiati), "
           f"respinte {esiti_righe['Respinto']}.\n"
+          + (f"Radar di Mosca dopo la validazione (D-79): entrati {', '.join(movimenti['entrati']) or 'nessuno'}; usciti "
+             f"{', '.join(movimenti['usciti']) or 'nessuno'}.\n" if movimenti["entrati"] or movimenti["usciti"] else "") +
           f"Excel validato: {excel}\nRegistro delle decisioni: {cartella / f'Validazione_{periodo}.json'}\n"
           f"Backup (stato prima): {copia}"
           + ("\nBaseline per il prossimo ciclo aggiornata con i valori validati." if nuova_baseline is not None else "")
@@ -2047,6 +2242,60 @@ def comando_griglia(arg, conf):
     print("Foglio Validazione ricostruito dalle proposte da decidere: "
           + ", ".join(f"{oggetto} {n}" for oggetto, n in scritte.items()) + " righe.\n"
           "Cio' che era gia' scritto nelle righe intatte (valori gialli, Motivazione, Respingi) e' stato conservato.\n"
+          f"Backup (stato prima): {copia}")
+
+
+def comando_riapri(arg, conf):
+    """D-76: riapre la validazione del ciclo corrente, gia' validato. Gli oggetti tornano nella griglia del foglio
+    Validazione con il valore validato in grigio e nella cella gialla; poi si valida come sempre (comando valida), quante
+    volte serve. Senza --rischi riapre tutto: i rischi del registro (nel radar e in osservazione, D-79), i KRI in vigore
+    e le azioni aperte. Anche lo stato si cambia cosi' (colonna Decisione sullo stato)."""
+    from excel_com import SessioneExcel
+    mappa = carica_mappa(conf)
+    rischi_scelti = {x.strip().upper() for x in (arg.rischi or "").split(",") if x.strip()}
+    with SessioneExcel(conf["workbook"]) as s:
+        controlla_versione(s)
+        scr = Scrittore(s, mappa)
+        ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
+        if not ciclo or not scr.righe("tblRegister"):
+            raise Fermo("Il registro non ha ancora un ciclo validato: niente da riaprire.")
+        pendenti = da_decidere(scr, ciclo)
+        if pendenti:
+            raise Fermo(f"Il ciclo {ciclo} ha gia' {righe_griglia(pendenti)} righe da validare nel foglio Validazione: si "
+                        "cambiano li', poi valida. Si riapre solo un ciclo gia' validato.")
+        _, anag = scr.leggi_anagrafica()
+        attivi = {r["ID"] for _, r in anag}
+        osservati = {r["ID_Rischio"] for r in rischi_osservazione(scr, ciclo)}
+        ignoti = sorted(rischi_scelti - attivi - osservati)
+        if ignoti:
+            raise Fermo(f"Da riaprire ma non nel ciclo {ciclo}: {', '.join(ignoti)} (nel radar: {', '.join(sorted(attivi))}; "
+                        f"in osservazione: {', '.join(sorted(osservati)) or 'nessuno'}).")
+        rischi = rischi_scelti or (attivi | osservati)
+        conteggi = {
+            "Rischio": aggiungi_da_validare(scr, ciclo, "Rischio", lambda r: str(r["Ciclo"]) == str(ciclo)
+                                            and r["ID_Rischio"] in rischi),
+            "KRI": aggiungi_da_validare(scr, ciclo, "KRI", lambda r: str(r["Ciclo"]) == str(ciclo) and r["In_Vigore"] == "Sì"
+                                        and r["ID_Rischio"] in rischi),
+            # Le azioni aperte di qualunque ciclo (approvate o in corso): restano nel loro ciclo, si validano con questo.
+            "Azione": aggiungi_da_validare(scr, ciclo, "Azione", lambda r: r["ID_Rischio"] in rischi
+                                           and r["Stato"] not in STATI_AZIONE_CHIUSI and r["Stato"] != STATO_AZIONE_INIZIALE),
+        }
+        campi = {o: len(scr.mappa["validazione"]["oggetti"][o]["campi"]) for o in conteggi}
+        oggetti = {o: n // campi[o] for o, n in conteggi.items()}
+        ricostruisci_griglia(scr)
+        s.ricalcola()
+        errori = s.errori_formula()
+        if errori:
+            raise Fermo("Errori di formula dopo la riapertura: " + "; ".join(f"{e[0]}!{e[1]} {e[2]}" for e in errori[:10]))
+        copia = _salva_con_backup(s, conf["workbook"], conf)
+    print(f"Validazione del ciclo {ciclo} RIAPERTA (D-76): rischi {oggetti['Rischio']}, KRI {oggetti['KRI']}, azioni "
+          f"{oggetti['Azione']}, nel foglio Validazione.\n"
+          "In grigio il valore validato, nella cella gialla lo stesso valore: una riga non toccata resta com'e'. Per cambiare "
+          "un valore scriverlo nella cella gialla con la Motivazione (almeno 10 caratteri; in riapertura nessun limite di un "
+          "punto); Respingi = Sì toglie un KRI o annulla un'azione; la colonna Decisione sullo stato mette un rischio nel "
+          "radar o in osservazione (D-79). Score e margine di Mosca si ricalcolano mentre scrivi, lo stato con valida.\n"
+          f"Poi, con il file chiuso:  python esegui_ciclo_locale.py valida --periodo {ciclo} --validatore \"<chi decide>\"\n"
+          "Si puo' riaprire di nuovo dopo, quante volte serve. Finche' non si valida, trimestrale, report e schede aspettano.\n"
           f"Backup (stato prima): {copia}")
 
 
@@ -2117,11 +2366,21 @@ def comando_dismetti(arg, conf):
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         _, anag = scr.leggi_anagrafica()
-        voce = next((r for _, r in anag if r["ID"] == rid), None)
-        if voce is None:
-            raise Fermo(f"{rid} non e' nell'anagrafica dei rischi attivi.")
         ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
-        scr.compatta_anagrafica(rid)
+        voce = next((r for _, r in anag if r["ID"] == rid), None)
+        # D-79: si toglie anche un rischio in osservazione (non e' nell'anagrafica, che e' il radar).
+        osservato = next((r for r in rischi_osservazione(scr, ciclo) if r["ID_Rischio"] == rid), None)
+        if voce is None and osservato is None:
+            raise Fermo(f"{rid} non e' nell'anagrafica dei rischi attivi ne' fra i rischi in osservazione del ciclo {ciclo}.")
+        if voce is None:
+            voce = {"ID": rid, "Nome": osservato["Nome"], "Event_Type": osservato["Event_Type"], "Owner": osservato.get("Owner")}
+        else:
+            scr.compatta_anagrafica(rid)
+        # La riga del ciclo corrente dice che il rischio e' uscito dal registro: il ciclo dopo non lo riporta.
+        for n, r in enumerate(scr.righe("tblRegister"), start=1):
+            if str(r["Ciclo"]) == str(ciclo) and r["ID_Rischio"] == rid:
+                scr.aggiorna("tblRegister", n, {"Stato": DISMESSO, "Movimento": None,
+                                                "Motivo_Stato": f"dismesso il {oggi} da {decisore}: {motivo}"[:500]})
         # Unica modifica a righe storiche oltre alla validazione: i KRI del ciclo
         # corrente escono di vigore, come un KRI sostituito.
         usciti = []
@@ -2157,6 +2416,13 @@ def comando_dismetti(arg, conf):
           + (f"\n{msg_a7}" if msg_a7 else ""))
 
 
+def rischi_straordinario(decisione):
+    """Testo dei rischi di uno straordinario: quelli da rivalutare o, senza, il solo censimento (D-77)."""
+    da_rivalutare = decisione.get("rischi_da_rivalutare") or []
+    return (f"rischi da rivalutare {', '.join(da_rivalutare)}" if da_rivalutare else
+            "solo censimento di rischi nuovi creati dall'evento, nessun rischio da rivalutare")
+
+
 def decisione_straordinario(arg, s, mappa):
     """D-75: la funzione di rischio decide un ciclo straordinario (dopo una proposta di A3 o A4, o di sua iniziativa).
     Periodo AAAAQn-Sk: il trimestre del ciclo corrente e il primo numero libero. Restituisce la decisione da archiviare."""
@@ -2169,11 +2435,14 @@ def decisione_straordinario(arg, s, mappa):
         raise Fermo(f"Il ciclo {corrente} ha ancora {righe_griglia(pendenti)} righe da validare: lo straordinario parte dai valori "
                     "validati. Validare prima (comando valida).")
     _, anag = scr.leggi_anagrafica()
-    ids = {r["ID"] for _, r in anag}
+    # D-79: si puo' rivalutare anche un rischio in osservazione (se l'evento lo porta sopra le soglie entra nel radar).
+    ids = {r["ID"] for _, r in anag} | {r["ID_Rischio"] for r in rischi_osservazione(scr, corrente)}
+    # Senza --rischi lo straordinario e' di solo censimento: l'evento crea rischi nuovi e non ne rivaluta (D-77).
     rischi = sorted({x.strip().upper() for x in (arg.rischi or "").split(",") if x.strip()})
-    if not rischi or set(rischi) - ids:
+    if set(rischi) - ids:
         raise Fermo(f"--rischi: indicare i rischi da rivalutare, separati da virgole, fra quelli in anagrafica "
-                    f"({', '.join(sorted(ids))}); non validi: {sorted(set(rischi) - ids) or 'nessuno indicato'}.")
+                    f"({', '.join(sorted(ids))}); non validi: {sorted(set(rischi) - ids)}. Senza --rischi lo straordinario "
+                    "censisce solo rischi nuovi.")
     motivo, decisore = (arg.motivo or "").strip(), (arg.decisore or "").strip()
     if len(motivo) < 20 or len(decisore) < 3:
         raise Fermo("--motivo (almeno 20 caratteri: l'evento critico e perche' non puo' aspettare il trimestre) e --decisore "
@@ -2206,15 +2475,24 @@ def comando_baseline(arg, conf):
             decisione = decisione_straordinario(arg, s, mappa)
         dati = estrai_baseline(s, mappa, straordinario=decisione)
         pendenti = da_decidere(Scrittore(s, mappa), dati["ciclo_precedente"] or "")
+        msg_a7 = None
+        if not decisione and not arg.uscita:
+            # D-76: dopo una correzione a mano dei testi (descrizioni, razionali, KRI, azioni) basta questo comando per
+            # riallineare baseline, allegato di A1 e knowledge di A7.
+            s.ricalcola()
+            msg_a7 = aggiorna_spiegazioni(s, Scrittore(s, mappa), conf)
+    if msg_a7:
+        print(msg_a7)
     if decisione:
         archivio = _scrivi_json(_cartella(conf, "Cicli", decisione["periodo"]) / f"Straordinario_{decisione['periodo']}.json",
                                 decisione)
-        print(f"CICLO STRAORDINARIO {decisione['periodo']} deciso da {decisione['decisore']} (D-75): rischi da rivalutare "
-              f"{', '.join(decisione['rischi_da_rivalutare'])}; data di riferimento {decisione['data_riferimento']}.\n"
+        print(f"CICLO STRAORDINARIO {decisione['periodo']} deciso da {decisione['decisore']} (D-75): "
+              f"{rischi_straordinario(decisione)}; data di riferimento {decisione['data_riferimento']}.\n"
               f"Decisione archiviata: {archivio}\n"
-              f"Prossimi passi: A1 con l'allegato Input_A1_{decisione['periodo']}.txt e il messaggio \"Esegui il ciclo "
-              f"straordinario\", poi python esegui_ciclo_locale.py trimestrale --payload A1_{decisione['periodo']}.json, "
-              "poi la validazione (solo i rischi rivalutati).")
+              f"Prossimi passi: A8 Evento critico con l'allegato Input_A1_{decisione['periodo']}.txt e i documenti "
+              f"sull'evento (D-77), poi python esegui_ciclo_locale.py precontrollo --payload A8_{decisione['periodo']}.json "
+              f"e trimestrale --payload A8_{decisione['periodo']}.json, poi la validazione (solo i rischi rivalutati e "
+              "quelli nuovi).")
     if pendenti:
         print(f"ATTENZIONE: il ciclo {dati['ciclo_precedente']} ha ancora {righe_griglia(pendenti)} righe da validare nel foglio "
               "Validazione. Questa baseline contiene valori NON validati; il comando trimestrale si fermera' finche' "
@@ -2222,7 +2500,8 @@ def comando_baseline(arg, conf):
     uscita = _scrivi_json(Path(arg.uscita), dati) if arg.uscita else _scrivi_baseline(conf, dati)
     print(f"Baseline scritta: {uscita}")
     if not arg.uscita:
-        print(f"Allegato per A1: {uscita.parent / input_a1.nome_file(dati)} (baseline, controlli di A5 e guida di scrittura)")
+        print(f"Allegato per {agente_di(dati.get('ciclo_da_valutare'))}: {uscita.parent / input_a1.nome_file(dati)} "
+              "(baseline, controlli di A5 e guida di scrittura)")
 
 
 def _input_schede(s, mappa):
@@ -2248,9 +2527,11 @@ def cartella_spiegazioni(conf):
     return kernel / "Spiegazioni"
 
 
-def aggiorna_spiegazioni(s, scr, conf, scartati=None, dismesso=None):
+def aggiorna_spiegazioni(s, scr, conf, payload=None, dismesso=None):
     """Riscrive la knowledge di A7 dal registro aperto (dopo il ricalcolo). Un errore non ferma il comando: i dati
-    sono gia' scritti, la knowledge si riallinea al comando dopo. Restituisce il messaggio da stampare."""
+    sono gia' scritti, la knowledge si riallinea al comando dopo. Con 'payload' (trimestrale) fenomeni non censiti e
+    analisi dell'evento vengono dall'output appena scritto, che si archiviera' nella cartella del ciclo solo dopo.
+    Restituisce il messaggio da stampare."""
     import spiegazioni
     try:
         ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
@@ -2262,8 +2543,9 @@ def aggiorna_spiegazioni(s, scr, conf, scartati=None, dismesso=None):
             nota = None
         dati = spiegazioni.raccogli(scr, s, conf["cartella_uscita"], ciclo, periodi_prima(scr, ciclo, 1)[0], data_periodo(scr, ciclo),
                                     not da_decidere(scr, ciclo), nota)
-        if scartati is not None:
-            dati["scartati"] = scartati
+        if payload is not None:
+            dati["scartati"] = payload.get("fenomeni_non_censiti") or []
+            dati["analisi_evento"] = payload.get("analisi_evento")
         if dismesso:                                 # l'atto della dismissione si archivia dopo la sessione
             dati["dismessi"].append(dismesso)
         cartella = cartella_spiegazioni(conf)
@@ -2374,7 +2656,43 @@ def comando_schede(arg, conf):
           f"{'testi di A6 controllati' if uscita_a6 else 'testi di A1 dal registro (senza A6)'}.\nFile: {file}")
 
 
-PARAMETRI_DA_CONSERVARE = ["cicloCorrente", "settimanaCorrente", "moscaX", "moscaYDefault", "quadroNote"]   # quadroNote: D-72
+PARAMETRI_DA_CONSERVARE = ["cicloCorrente", "settimanaCorrente", "moscaX", "moscaYDefault", "quadroNote",   # quadroNote: D-72
+                           "capienzaRadar", "sogliaProssimitaRadar", "sogliaProbabilitaRadar", "cicliUscitaRadar"]   # D-79
+
+
+def prossimita_da_orizzonte(anni):
+    """D-79, conversione della lista: orizzonte in anni -> Prossimita (1 oltre 3 anni, 2 da 2 a 3, 3 da 1 a 2)."""
+    n = _numero(anni)
+    return 1 if n is None or n > 3 else 2 if n >= 2 else 3
+
+
+def rischi_da_lista(voci, ciclo, data_rif, usati, oggi):
+    """D-79: le voci in osservazione della lista della D-73 (tabella tblOsservazione di un registro fino al 2026-10-08b)
+    diventano rischi in osservazione del ciclo corrente, con un codice NFR-nn libero. Valori convertiti in via
+    provvisoria (A1 li rivaluta al ciclo dopo): Impatto = impatto potenziale; Probabilita dalla plausibilita' (teorica 1,
+    possibile 2, in crescita 3); Prossimita dall'orizzonte; Velocity non valutata. Restituisce (righe, {OSS: NFR})."""
+    righe, codici = [], {}
+    for v in voci:
+        n = 1
+        while f"NFR-{n:02d}" in usati:
+            n += 1
+        rid = f"NFR-{n:02d}"
+        usati.add(rid)
+        codici[v["OSS_ID"]] = rid
+        motivo = (f"convertito dalla lista di osservazione ({v['OSS_ID']}, D-79): valori da rivalutare da A1 al prossimo ciclo")
+        righe.append({
+            "Ciclo": ciclo, "Data_Riferimento": a_data(data_rif), "ID_Rischio": rid, "Nome": v.get("Nome"),
+            "Event_Type": v.get("Event_Type"), "Driver": v.get("Driver"), "Impatto": _numero(v.get("Impatto_Potenziale")),
+            "Velocity": None, "Prossimita": prossimita_da_orizzonte(v.get("Orizzonte_Anni")),
+            "Probabilita": PROBABILITA_DA_PLAUSIBILITA.get(str(v.get("Plausibilita") or "").lower(), 1),
+            "Anni_Adeguamento": None, "Esito": "Nuovo", "Descrizione": v.get("Descrizione"),
+            "Razionale": f"Voce {v['OSS_ID']} della lista di osservazione, convertita il {oggi}. {v.get('Motivazione') or ''}".strip(),
+            "Variazioni": "[]", "Fonti": v.get("Fonti") or "[]", "Rilievi": None, "Owner": OWNER_NUOVO,
+            "Data_Scrittura": a_data(oggi), "Approvato_Da": "Conversione D-79", "Validazione": "Accettato",
+            "Data_Validazione": a_data(oggi), "Periodo_Valutazione": ciclo, "Stato": radar.OSSERVAZIONE,
+            "Motivo_Stato": motivo, "Movimento": None, "Decisione_Stato": radar.AUTOMATICO,
+            "Orizzonte_Anni": _numero(v.get("Orizzonte_Anni")), "Segnale_Avvicinamento": v.get("Segnale_Avvicinamento")})
+    return righe, codici
 # Parametri decisi con il template (pesi D-50, soglie D-61, Z per Prossimita D-59): valgono quelli del
 # template nuovo; i vecchi si leggono solo per il messaggio finale (pesoGap e pesoSeverity: template precedenti).
 PESI = ["pesoImpatto", "pesoSeverity", "pesoProbabilita", "pesoProssimita", "pesoVelocity", "pesoGap",
@@ -2418,6 +2736,10 @@ def comando_aggiorna_registro(arg, conf):
                 continue                              # tabella nata con il template nuovo (es. tblSintesi)
             dati[nome] = ([c.Name for c in lo.ListColumns], scr.righe(nome))
         anagrafica = [list(r) for r in s.intervallo_nome("anagrafica").Value if r[0]]
+        try:                                         # D-79: la lista di osservazione di un registro fino al 2026-10-08b
+            voci_lista = scr.righe("tblOsservazione")
+        except KeyError:
+            voci_lista = []
         parametri = {}
         for nome in PARAMETRI_DA_CONSERVARE + PESI:
             try:
@@ -2457,8 +2779,23 @@ def comando_aggiorna_registro(arg, conf):
                 for r in righe:
                     r.setdefault(nuova, r.get(vecchia))
     # D-75: un registro precedente al 2026-10-08 non ha Periodo_Valutazione: ogni riga e' stata valutata nel suo ciclo.
+    # D-79: ne' lo stato del registro unico: ogni rischio valutato era nel radar (la regola vale dal ciclo dopo).
     for r in dati.get("tblRegister", ([], []))[1]:
         r.setdefault("Periodo_Valutazione", r.get("Ciclo"))
+        if not r.get("Stato"):
+            r.update(Stato=radar.RADAR, Decisione_Stato=radar.AUTOMATICO,
+                     Motivo_Stato="registro precedente al registro unico (D-79): la regola vale dal ciclo dopo"
+                     if str(r.get("Ciclo")) == str(ciclo) else None)
+    # D-79: le voci ancora in osservazione della lista diventano rischi in osservazione del ciclo corrente; le notizie
+    # collegate a una voce passano al rischio nuovo.
+    voci_attive = [v for v in voci_lista if str(v.get("Ciclo")) == str(ciclo) and v.get("Stato") == "In osservazione"]
+    usati = {str(r.get("ID_Rischio")) for r in dati.get("tblRegister", ([], []))[1]} | {str(r[0]) for r in anagrafica}
+    convertiti, codici_oss = rischi_da_lista(voci_attive, ciclo, baseline_prima["data_riferimento_precedente"]
+                                             or fine_trimestre(trimestre_di(ciclo)), usati, dt.date.today().isoformat())
+    dati["tblRegister"][1].extend(convertiti)
+    for n in dati.get("tblNews", ([], []))[1]:
+        if n.get("Voce_Osservazione") in codici_oss and n.get("Rischio_ID") in (None, "", NON_PRESIDIATO):
+            n["Rischio_ID"] = codici_oss[n["Voce_Osservazione"]]
     # Colonne tolte dal modello (mappa, colonne_dismesse): non si copiano; restano nel registro vecchio (Backup).
     dismesse = {k: set(v) for k, v in mappa.get("colonne_dismesse", {}).items() if not k.startswith("_")}
     for nome, cambi in rinominate.items():
@@ -2516,10 +2853,17 @@ def comando_aggiorna_registro(arg, conf):
                           for nome, (_, righe) in dati.items() if len(scr.righe(nome)) != len(righe)]
             copertura_dopo = copertura_python(scr, ciclo)
             baseline_dopo = estrai_baseline(s, mappa)
+            # D-79: i rischi in osservazione convertiti dalla lista sono la sola differenza ammessa; la regola del radar
+            # (pesi, soglie, capienza) e' quella del template nuovo, come gli altri parametri.
+            senza_osservazione = lambda b: {k: v for k, v in b.items() if k not in ("rischi_in_osservazione", "regola_radar")}
             problemi = ([f"formule mancanti: {mancanti[:5]}"] if mancanti else []) + \
                        ([f"errori di formula: {[e[:3] for e in errori[:5]]}"] if errori else []) + differenze + \
                        ([f"copertura {copertura_prima} prima, {copertura_dopo} dopo"] if copertura_dopo != copertura_prima else []) + \
-                       (["la baseline estratta dal registro nuovo e' diversa da quella del vecchio"] if baseline_dopo != baseline_prima else [])
+                       (["la baseline estratta dal registro nuovo e' diversa da quella del vecchio"]
+                        if senza_osservazione(baseline_dopo) != senza_osservazione(baseline_prima) else []) + \
+                       ([f"rischi in osservazione {len(baseline_dopo['rischi_in_osservazione'])} nella baseline, convertiti "
+                         f"{len(convertiti)}"] if len(baseline_dopo["rischi_in_osservazione"]) != len(convertiti)
+                        + len(baseline_prima["rischi_in_osservazione"]) else [])
             if problemi:
                 raise Fermo("Aggiornamento NON applicato, il registro vecchio resta com'e':\n  - " + "\n  - ".join(problemi))
             prepara_report(s)
@@ -2539,6 +2883,14 @@ def comando_aggiorna_registro(arg, conf):
     print(f"Registro aggiornato alla versione {VERSIONE_TEMPLATE} (era: {versione or 'precedente al 25/09/2026'}): {vecchio}\n"
           f"Righe copiate: " + ", ".join(f"{nome} {len(righe)}" for nome, (_, righe) in dati.items()) + "\n"
           f"Anagrafica: {len(anagrafica)} rischi; ciclo corrente {ciclo}; baseline identica a prima.\n"
+          + (f"Lista di osservazione (D-73) convertita nel registro unico (D-79): "
+             + ", ".join(f"{o} -> {r}" for o, r in codici_oss.items())
+             + " ora sono rischi in osservazione, con valori convertiti in via provvisoria (Impatto = impatto potenziale, "
+               "Probabilita dalla plausibilita', Prossimita dall'orizzonte): A1 li rivaluta al prossimo ciclo.\n"
+             if codici_oss else "")
+          + (f"Registro unico (D-79): i rischi dell'anagrafica sono nel radar; la regola (capienza, soglie) vale dal "
+             f"prossimo ciclo.\n" if not codici_oss else "") +
+          f""
           f"Pesi, soglie e anni per Prossimita (Z): quelli del template nuovo (D-50, D-59, D-61). Nel registro vecchio erano "
           f"{pesi_vecchi}: i punteggi compositi e l'urgenza di tutti i cicli sono ricalcolati.\n"
           + (f"Colonne rinominate: {rinominate}.\n" if any(v in c for n, (c, _) in dati.items() for v in rinominate.get(n, {})) else "")
@@ -2587,6 +2939,8 @@ def main(argv=None):
     # accettata: resta solo per non rompere i comandi gia' in uso, e lo dice.
     v.add_argument("--accetta-il-resto", dest="accetta_il_resto", action="store_true", help=argparse.SUPPRESS)
     sub.add_parser("griglia", help="ricostruisce il foglio Validazione dalle proposte da decidere (dopo una modifica a mano)")
+    ra = sub.add_parser("riapri", help="riapre la validazione del ciclo corrente, gia' validato, per cambiare dei valori (D-76)")
+    ra.add_argument("--rischi", help="solo questi rischi, con i loro KRI e azioni (NFR-02,NFR-06); senza: tutto")
     i = sub.add_parser("inizializza", help="crea il registro vivo dal template, senza dati di esempio")
     i.add_argument("--ciclo-precedente", dest="ciclo_precedente", required=True,
                    help="il trimestre PRIMA del primo da valutare (es. 2026Q3 per valutare il 2026Q4)")
@@ -2615,7 +2969,7 @@ def main(argv=None):
             return 2
         codice = {"trimestrale": comando_trimestrale, "settimanale": comando_settimanale,
                   "baseline": comando_baseline, "precontrollo": comando_precontrollo,
-                  "valida": comando_valida, "griglia": comando_griglia,
+                  "valida": comando_valida, "griglia": comando_griglia, "riapri": comando_riapri,
                   "inizializza": comando_inizializza, "dismetti": comando_dismetti,
                   "aggiorna-registro": comando_aggiorna_registro, "schede-input": comando_schede_input,
                   "schede": comando_schede, "report": comando_report}[arg.comando](arg, conf)

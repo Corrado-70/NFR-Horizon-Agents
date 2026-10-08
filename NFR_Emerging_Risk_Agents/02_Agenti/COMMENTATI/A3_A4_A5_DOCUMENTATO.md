@@ -1,4 +1,4 @@
-# A3, A4, A5, A6 — perche' di ogni blocco
+# A3, A4, A5, A6, A7, A8 — perche' di ogni blocco
 
 Documentazione dei prompt generati da `02_Agenti/modelli/A3.md`, `A4.md`,
 `A5.md`, `A6.md`. Numeri di passo, sezioni e controlli sono quelli dei modelli; il
@@ -56,10 +56,11 @@ verifica.
 Null e' un'informazione, non un errore: alimenta "Notizie non collegate" e il
 presidio per categoria nel foglio Notizie.
 
-Passo 5-bis (D-73): la voce della lista di osservazione toccata dalla notizia e i
-segnali sulle voci (Avvicina, Segnale verificato, Allontana). Lo script ferma una voce
-che non e' in osservazione; notizie e segnali arrivano ad A1 nella baseline del ciclo
-dopo, come evidenza da verificare: A3 non promuove ne' archivia.
+Dal registro unico (D-79) i rischi in osservazione sono rischi come gli altri: una
+notizia su uno di loro va in `rischio_collegato` (passo 5) e, se realizza il suo segnale
+di avvicinamento, A3 propone un flag (passo 6). Notizie e flag arrivano ad A1 nella
+baseline del ciclo dopo (`notizie_a3`, `flag_a3` del rischio), come evidenza da
+verificare: lo stato lo cambia solo la regola, con i valori di A1 validati.
 
 ### Passo 6 — Flag proposti
 Un flag cita un descrittore della rubrica: e' un argomento per il prossimo
@@ -131,7 +132,7 @@ istruzioni sono in conflitto per scelta, non per svista.
 
 ## I nove controlli
 Ogni controllo ha una controparte in `07_Senza_Studio/controlli_a5.py` nella
-misura in cui e' esprimibile come regola (vedi `06_Governance`, tabella dei
+misura in cui e' esprimibile come regola (vedi `04_Riferimenti/controlli_e_model_risk.md`, tabella dei
 controlli). Il 30/09/2026 (D-49...D-56) i controlli sono stati ridotti a cio'
 che A1 scrive davvero: stessa numerazione, contenuto piu' snello.
 
@@ -308,11 +309,44 @@ aggiornato si reindicizza subito.
 - Nessun valore nuovo: come A4 e A6, A7 non valuta (D-41); per "dovrebbe essere piu' alto?" indica il descrittore
   e l'evidenza che servirebbe.
 - Fenomeni non censiti: il motivo lo scrive A1 nel ciclo (campo `fenomeni_non_censiti`); se manca, A7 cerca nei
-  documenti e lo dice. Senza questo campo ogni risposta sarebbe una ricostruzione. Dal 07/10 sera (D-73) anche la
-  lista di osservazione e' in `Ciclo.txt`: per un fenomeno in osservazione A7 riporta valutazione preliminare,
-  motivazione e segnale di avvicinamento (regola 4).
+  documenti e lo dice. Senza questo campo ogni risposta sarebbe una ricostruzione. Dall'08/10 (D-79) i rischi in
+  osservazione e chi e' entrato o uscito dal radar sono in `Ciclo.txt`: per un rischio in osservazione A7 riporta i
+  valori, il perche' e' fuori dal radar (CALCOLATO dalla regola), l'orizzonte e il segnale di avvicinamento (regola 4).
 - Sintesi per il Quadro: al massimo 600 caratteri, perche' sta in una riga della prima pagina del report.
 
-**Rubrica**: sezioni 1, 2, 3, 8 (dimensioni, rilevanza delle fonti, regole di variazione, urgenza). Prompt 6.726
-caratteri (6.575 fino al 07/10 pomeriggio): lo spazio restante serve al modo manutenzione della fase 4.
+- Richieste di modifica (regola 8, riscritta il 07/10 sera, D-76): A7 non modifica e non ha un modo manutenzione;
+  indica la via (riapri e valida per i valori, celle gialle, testi a mano poi baseline, dismetti).
+
+**Rubrica**: sezioni 1, 2, 3, 8 (dimensioni, rilevanza delle fonti, regole di variazione, urgenza). Prompt 6.891
+caratteri dal 07/10 sera (D-76; 6.575 fino al 07/10 pomeriggio).
+
+# A8 Evento critico (D-77, 07/10/2026)
+
+**Perche' esiste.** Il ciclo straordinario (D-75) rivaluta pochi rischi per un evento che non puo' aspettare il
+trimestre. A1 e' scritto per valutare tutto il registro con la stessa profondita'; per un evento serve l'opposto:
+leggere per intero pochi documenti, ricostruire la catena causale e dire quali rischi l'evento tocca e quali no.
+
+**Perche' lo stesso formato di A1.** Allegato (`Input_A1_<AAAAQn-Sk>.txt`), schema e comandi sono gli stessi:
+precontrollo, controlli, scrittura e validazione non cambiano e non c'e' un secondo percorso da mantenere. Lo script
+non distingue chi ha scritto l'output (A1 sa ancora fare lo straordinario); cambia solo il destinatario dei messaggi
+di correzione ("Messaggio per A8", dal periodo `-Sk`).
+
+**Regole del prompt e perche'.**
+- Passo 3, "TUTTI e SOLO i rischi_da_rivalutare": i rischi li decide la funzione di rischio; un rischio in piu' o in
+  meno e' un fermo C1 (D-75).
+- Passo 4, rischio nuovo solo per un meccanismo creato dall'evento: lo straordinario non e' un trimestre anticipato.
+  Con `rischi_da_rivalutare` vuoto lo straordinario e' di solo censimento (scelta dell'utente) e serve almeno un
+  rischio nuovo.
+- `analisi_evento` (scelta dell'utente: nel JSON, struttura del registro invariata): il perche' dello straordinario
+  in un posto solo. Non porta valori, quindi non si valida: i valori restano nei rischi. Le istruzioni di dettaglio
+  sono nella guida di scrittura dell'allegato, perche' il prompt e' al limite (7.994 caratteri).
+- `rischi_toccati` comprende anche i rischi esistenti che A8 non puo' riscrivere: e' il modo di dire alla funzione di
+  rischio che forse andavano indicati (lo script lo segnala al validatore, senza fermare).
+- Passo 7, "rileggi ogni KRI in vigore dei rischi che riscrivi": in un trimestre un KRI non riletto e' normale (il
+  dato arriva al ciclo dopo); nello straordinario lascerebbe Non rilevato proprio il KRI del rischio che sale, e il
+  livello di allerta perderebbe l'aggravante (visto nella demo del 07/10). Scelta dell'utente; il controllo C7 lo
+  segnala da motivare.
+- Modalita' Think deeper: e' il compito piu' profondo, su pochi rischi.
+
+**Rubrica**: sezioni 1-4, come A1 (dimensioni, rilevanza delle fonti, regole di variazione, KRI).
 

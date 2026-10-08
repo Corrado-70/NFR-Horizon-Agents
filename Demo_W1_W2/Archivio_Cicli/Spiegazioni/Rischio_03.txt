@@ -1,9 +1,10 @@
-SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-03 — ciclo 2026Q4 (valori VALIDATI dal validatore).
-Scritto da esegui_ciclo_locale.py il 2026-10-07: dati del registro, da non modificare a mano.
+SPIEGAZIONI DEL REGISTRO NFR — RISCHIO NFR-03 — ciclo 2026Q4-S1 (valori VALIDATI dal validatore).
+Scritto da esegui_ciclo_locale.py il 2026-10-08: dati del registro, da non modificare a mano.
 
 NFR-03 Greenwashing nella commercializzazione di prodotti ESG
-Event type: L1-04 Clientela, prodotti e prassi professionali; driver: DRV-CON, DRV-CLI; owner: Funzione Compliance.
+Categoria: 9.1 Condotta; driver: DRV-CON, DRV-CLI; owner: Funzione Compliance.
 Esito nel ciclo: Confermato. Posizione in classifica per score: 5 su 13.
+Stato nel registro unico (D-79, CALCOLATO dalla regola): Radar — Prossimita 4 e Probabilita 3: sopra la soglia.
 Attenzione del supervisore: no. Presidio dei controlli (giudizio della Banca, fuori dallo score): Non verificato.
 
 DESCRIZIONE
@@ -40,8 +41,8 @@ AZIONI
 - 2026Q4-NFR-03-A1 [Approvata, 3 mesi, Funzione Compliance]: Completare la revisione indipendente dei claim ambientali dei prodotti ESG residui. Perche': La Verifica interna della Compliance ha lasciato una parte dei prodotti senza revisione: e' la lacuna da chiudere prima di un'istruttoria. Effetto atteso: Tutti i claim sostanziati; la quota di prodotti senza revisione (NFR-03-K2) deve scendere fino a zero e, con essa, la Probabilita' al ciclo successivo.
 
 KRI IN VIGORE
-- NFR-03-K1 (Evoluzione) Reclami su prodotti ESG ogni 1.000 contratti [n/1000]: valore 1,70 (prima 1,90), soglie 1,50 / 3, stato Ambra; fonte dati Sistema di gestione reclami. Perche': Segnale anticipato: i reclami dei clienti di solito precedono le contestazioni dell'autorita'.
-- NFR-03-K2 (Esposizione) Quota di prodotti ESG senza revisione dei claim nell'anno [%]: valore 35 (prima —), soglie 20 / 40, stato Ambra; fonte dati Inventario prodotti — Compliance. Perche': Misura quanto la Banca e' esposta: ogni prodotto non rivisto e' un claim che potrebbe non reggere a una verifica.
+- NFR-03-K1 (Evoluzione) Reclami su prodotti ESG ogni 1.000 contratti [n/1000]: valore 1,70 (prima 1,70), soglie 1,50 / 3, stato Ambra; fonte dati Sistema di gestione reclami. Perche': Segnale anticipato: i reclami dei clienti di solito precedono le contestazioni dell'autorita'.
+- NFR-03-K2 (Esposizione) Quota di prodotti ESG senza revisione dei claim nell'anno [%]: valore 35 (prima 35), soglie 20 / 40, stato Ambra; fonte dati Inventario prodotti — Compliance. Perche': Misura quanto la Banca e' esposta: ogni prodotto non rivisto e' un claim che potrebbe non reggere a una verifica.
 
 STORIA (cicli, dal piu' vecchio)
 - 2025Q4: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
@@ -49,6 +50,7 @@ STORIA (cicli, dal piu' vecchio)
 - 2026Q2: Impatto 3, Probabilita 3, Prossimita 3, Velocity 2, score 2,80
 - 2026Q3: Impatto 3, Probabilita 3, Prossimita 4, Velocity 2, score 3
 - 2026Q4: Impatto 3, Probabilita 3, Prossimita 4, Velocity 2, score 3
+- 2026Q4-S1: Impatto 3, Probabilita 3, Prossimita 4, Velocity 2, score 3
 
 DECISIONI DEL VALIDATORE IN QUESTO CICLO
 Nessuna rettifica ne' respingimento: le proposte di A1 sono state accettate

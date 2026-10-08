@@ -18,7 +18,11 @@
 > in due opzioni del codice, D-70, pacchetto del 05/10: sezione 2-octodecies**;
 > **A5 facoltativo e segnalazioni in validazione, D-71, struttura 2026-10-06:
 > sezione 2-novodecies**; **piano degli agenti nuovi e fase 1, A7 Assistente del registro, D-72,
-> struttura 2026-10-07: sezione 2-vicies**).
+> struttura 2026-10-07: sezione 2-vicies**; lista di osservazione, straordinario, tassonomia interna,
+> riapertura della validazione: 2-unvicies; **A8 Evento critico, D-77, e proposta della scala unica: sezione
+> 2-duovicies**; **08/10: KRI in A8, analisi della scala unica, documenti in 04_Riferimenti, collaudo in
+> parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
+> 2026-10-09: sezione 2-quattuorvicies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -188,7 +192,7 @@ priorita' A:
 - **D-32 report al comitato**: sei fogli di seguito nel workbook, da salvare in
   PDF dall'Excel validato. Sintesi (stato, primi cinque, agire ora, nuovi e
   variati, commento di A1, avviso se dopo ci sono state rettifiche, sintesi di
-  A5, limiti di 06_Governance sez. 5), Classifica (barre ordinate colorate per
+  A5, limiti di 04_Riferimenti/controlli_e_model_risk.md sez. 5), Classifica (barre ordinate colorate per
   urgenza + lente di Mosca X + Y contro Z), Radar_Mosca, Delta, Schede (una per
   rischio), Metodologia. La `sintesi` di A1 ora ha una struttura fissata nel
   prompt e finisce nella tabella nuova Sintesi_Cicli (prima non arrivava in
@@ -763,7 +767,7 @@ stava anche verificando se il pacchetto del 02/10 e' gia' installato in Banca.
     due zip di `Da_caricare/` (cartella alla radice o SKILL.md alla radice) e come `.txt` da
     allegare. Output deterministico: stessi sorgenti, stessi byte.
 - **Prove scritte per l'utente**:
-  - `08_Deploy/Prova_senza_Copilot_Studio.md`: parte 1, installazione sul registro vero, con il
+  - `04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md`: parte 1, installazione sul registro vero, con il
     controllo di cosa c'e' gia' (frasi da cercare nelle istruzioni degli agenti); parte 2, ciclo
     2026Q4 completo su un registro di prova nuovo in `C:\NFR_Prova`.
     **Trappola**: un ciclo 2027Q1 di prova oggi e' impossibile, perche' C3 vuole evidenze dopo il
@@ -872,7 +876,7 @@ applicata subito (eccezione a D-05); lista di osservazione nel piano.
   - schema di A1: `fenomeni_non_censiti` facoltativo; guida di scrittura con il formato; prompt di A1 invariato;
   - Quadro: Note dell'analista in prima pagina (`quadroNote`), archiviate da `trimestrale` in
     `tblSintesi.Note_Analista`; conservate da `aggiorna-registro`, svuotate da `inizializza`; struttura 2026-10-07;
-  - A7: `02_Agenti/modelli/A7.md` -> `A7_Assistente_registro.md` (6.575 caratteri); copione `08_Deploy/Prova_A7.md`.
+  - A7: `02_Agenti/modelli/A7.md` -> `A7_Assistente_registro.md` (6.575 caratteri); copione `04_Riferimenti/Prove/Prova_A7.md`.
 - **Collaudo** (primo giro 278/280: note archiviate con un apostrofo in piu' e Quadro in 3 pagine dopo una settimana,
   corretti: aggiorna non riapplica per_cella, `scala_quadro` usa l'interruzione manuale, `settimanale` chiama
   `prepara_report`, scala del template al 74%; trappola 89): `test_controlli.py` 231/231; catena con Excel 280/280
@@ -914,14 +918,145 @@ applicata subito (eccezione a D-05); lista di osservazione nel piano.
   il resto in `Archivio/`); `diagnosi_validazione.py` eliminato; TODO con la sezione "Pulizia e ottimizzazione"
   (M1 collaudo piu' corto, M2 regola della demo, M3 `Anteprima_S1` non attuale, M4 alberatura, M5 fatto).
 - **Collaudo** a fine giornata: suite veloci verdi (mappa 158/158, controlli 267/267, fonti 21/21, riferimenti
-  31/31); catena con Excel sullo stato finale lanciata su una copia del pacchetto (esito nella sezione 4 quando
-  disponibile). Demo da rilanciare (struttura cambiata).
+  31/31); catena con Excel sullo stato finale 298/302. I quattro KO erano dei test, non dello script, e sono
+  corretti il 07/10 sera: il passo 11 copiava nel payload di A1 i codici di Basilea del registro del 23/09 (ora prende la
+  categoria interna dei dati convertiti, come farebbe A1 riclassificando; da qui gli altri due KO del passo); il
+  passo 3b confrontava l'intensita' di 9.7 con quella di prima della settimana, ma la finestra di 4 settimane si
+  sposta con la settimana nuova (ora il valore atteso si calcola dal NewsLog sulla stessa finestra,
+  `massimo_finestra`). Passi 11 e 3b rilanciati: 59/59; catena quindi 302/302. Demo da rilanciare (struttura
+  cambiata).
 - **Regola della demo (M2)**: si rigenera solo quando cambia cio' che si vede (template e viste, report, schede,
   knowledge di A7, passi della guida, comandi) e prima di ogni consegna in Banca; non a ogni modifica interna.
   Scritta nel PROMPT_MASTER, sezione DEMO.
 - **Sul PC della Banca**: pacchetto completo, kernel nella library Kernel, reincollare A1, A3, A4, A5 e A7,
   `aggiorna-registro` alla 2026-10-08b; al primo ciclo A1 riclassifica i rischi.
 - **Restano** del piano agenti la fase 4 (manutenzione in Excel e A7 in modo manutenzione) e la fase 5 (A8).
+- **Fase 4, rivista dall'utente (07/10 sera, D-76)**: era pronta l'anteprima di un foglio Manutenzione con A7 in
+  modo manutenzione (`Anteprima_Manutenzione/`, fuori dal pacchetto, cancellata l'08/10 sera perche' superata); l'utente ha scelto una
+  strada piu' semplice: **riaprire la validazione** e **correggere i testi a mano**. Fatto:
+  - comando `riapri [--rischi] [--voci]`: il ciclo corrente, gia' validato, torna nella griglia (rischi, KRI in
+    vigore, azioni aperte, voci in osservazione) con il valore validato; poi `valida`, quante volte serve. Riga non
+    toccata = niente cambia; nessun limite di un punto (scelta dell'utente); Respingi = KRI fuori vigore, azione
+    annullata, voce archiviata; storico "(riapertura)";
+  - testi a mano nelle colonne di testo dei fogli dati (foglio Guida, guida sezione 3-ter); `baseline` riscrive
+    anche la knowledge di A7;
+  - A7 solo spiegazioni (regola 8 riscritta, 6.891 caratteri); struttura del workbook invariata (2026-10-08b),
+    template rigenerato solo nei testi (guide del foglio Validazione, dei fogli dati, Guida, Dizionario);
+  - corretto un difetto trovato strada facendo: nello straordinario la Data_Rilevazione dei KRI riportati finiva
+    nella cella come testo;
+  - collaudo: passo 13 della catena 24/24; suite veloci verdi (controlli 267/267, mappa 158/158, fonti 21/21,
+    riferimenti 31/31). Catena intera non rilanciata (il resto dello script non e' cambiato oltre la data dei KRI).
+  - Sul PC della Banca: pacchetto completo, kernel nella library Kernel (mappa con le decisioni nuove), reincollare A7;
+    nessun `aggiorna-registro`.
+  - Resta la fase 5 (A8).
+
+## 2-duovicies. 07/10 notte: demo con straordinario e riapertura, A8 Evento critico (D-77), proposta della scala unica
+
+- **Demo** (`Demo_W1_W2/esegui_demo.py`): aggiunti la riapertura della validazione del 2026Q4 per NFR-02 (Probabilita
+  da 2 a 4 senza limite di un punto, KRI NFR-02-K1 rettificato), la settimana del 16/11/2026 con la proposta di ciclo
+  straordinario di A3 e lo straordinario 2026Q4-S1 su NFR-01 (decisione, precontrollo, scrittura senza A5,
+  validazione), con Radar_Mosca e Storico esportati di nuovo. Sezione DEMO del PROMPT_MASTER aggiornata.
+- **Fase 5, A8 Evento critico (D-77)**. Scelte dell'utente: l'analisi dell'evento nel JSON (campo `analisi_evento`,
+  struttura del registro invariata); `--rischi` facoltativo (straordinario di solo censimento). A8 usa allegato,
+  formato e comandi di A1 (`precontrollo`, `trimestrale`, `valida`): nessun comando nuovo. Fatto:
+  - `02_Agenti/modelli/A8.md` -> `A8_Evento_critico.md` (7.994 caratteri; il dettaglio di `analisi_evento` e' nella
+    guida di scrittura dell'allegato, sezione "Ciclo straordinario");
+  - schema di A1 con `analisi_evento`; controlli (`controlli_a5._controlla_analisi_evento`, tutte Osservazioni; C1
+    Bloccante per un censimento senza rischi nuovi); `baseline --straordinario` senza `--rischi`; allegato con il
+    caso del censimento; messaggi "Messaggio per A8" nei periodi `-Sk` (`agente_di`); colonna Straordinario di
+    Sintesi_Cicli con i rischi nuovi e l'evento; `Ciclo.txt` di A7 con l'analisi (`spiegazioni.testo_analisi_evento`);
+  - kit di Copilot Studio rigenerato (`prepara_kit.py`); mappa (`non_nel_workbook.analisi_evento`);
+  - dati di prova: `run4_A1_2026Q4-S1.json` ha ora l'analisi dell'evento (con NFR-07 toccato e non indicato:
+    un'osservazione al validatore);
+  - collaudo: `test_controlli.py` 276/276 (`test_a8`), mappa 158/158, riferimenti 31/31, fonti 21/21; catena con il
+    passo nuovo **8a** (straordinario di solo censimento con NFR-14 scritto da A8).
+  - Documenti: DECISIONI (D-77), guida (in breve, 0.2, 0-bis, 2-bis, sezioni 8 e 9), 00_LEGGIMI, README della
+    variante locale, workflow, schema documentato, COMMENTATI (A8), TODO, PROMPT_MASTER.
+  - Sul PC della Banca: pacchetto completo, kernel nella library Kernel (schema, guida di scrittura, mappa), creare
+    A8 (guida 0.2); nessun `aggiorna-registro`; A1 non cambia.
+- **Demo rilanciata** con A8 (verde; `REPORT_demo.md` riscritto). Trovato un punto di metodo, nel TODO fra le
+  decisioni: nello straordinario i KRI di NFR-01 (rivalutato, non riletti da A8) risultano Non rilevati e il livello
+  scende da Attivazione ad Attenzione mentre la Probabilita sale. **Deciso dall'utente: A8 rilegge i KRI** (D-77,
+  punto 4): prompt (7.994 caratteri) e guida di scrittura; controllo C7 da motivare per un KRI riproposto e non
+  riletto; `run4` rilegge NFR-01-K1 e K3; `test_a8` 277/277. Ordine di lavoro del TODO aggiornato: P10 e M4 da
+  decidere; M1 e P9 in parallelo; P3 e P8 tolte dal passo 4 (fatte).
+- **Proposta dell'utente, da analizzare** (TODO, P10): una sola scala per tutti i fenomeni, nel registro i primi N per
+  score, gli altri in osservazione, al posto della lista D-73. Nodi: peso della risposta di A1, margine sulla soglia,
+  eccezioni per l'urgenza, fenomeni oltre i 3 anni. Prossimo passo: analisi a due opzioni e anteprima Excel.
+
+## 2-trevicies. 08/10: rilettura dei KRI in A8, analisi della scala unica, sezione M completata
+
+Su indicazione dell'utente ("procedi automaticamente fino in fondo"):
+- **A8 rilegge i KRI** (D-77, punto 4): vedi 2-duovicies. Demo rilanciata: NFR-01 resta in Attivazione nello
+  straordinario (K1 7,2 rosso, K3 5,0 ambra); `REPORT_demo.md` aggiornato.
+- **Analisi della scala unica** (TODO P10): `Analisi_Architettura/13_Scala_unica.md`. Raccomandata l'opzione B,
+  un registro con due stati:
+  - regola calcolata: Prossimita >= 2 e Probabilita >= 2, poi capienza N per score;
+  - eccezioni per AGIRE ORA, supervisore e validatore;
+  - uscita dopo due cicli sotto la regola.
+
+  Il solo "primi N per score" non regge: OSS-01, teorica a 10 anni con Impatto 5, fa 2,75 come NFR-08. Restano
+  le sei scelte della 13.7, poi l'anteprima Excel.
+- **M4 (D-78)**: documenti di riferimento in `04_Riferimenti` (DECISIONI, struttura_e_liste, workflow,
+  controlli_e_model_risk, `Prove/`), spostati con `git mv`. Riferimenti riscritti in pacchetto, HANDOFF,
+  PROMPT_MASTER e analisi (l'Archivio resta com'era); codice aggiornato (`genera_dashboard.py`, `test_mappatura.py`,
+  `verifica_riferimenti.py`, `confronta.py`, commenti). Template rigenerato dal percorso nuovo (stesso testo della governance) e collaudato. Le
+  cartelle del codice restano: si uniscono con AU3. Guida 0-bis: in Banca cancellare le quattro cartelle vecchie.
+- **M1 (D-78)**:
+  - `run_catena.py` in dieci gruppi (`passi()`, `--passo`, `--parallelo N`);
+  - `esegui_collaudo.py` lancia la catena in tre processi e ha `--mirato` (impronte in `%LOCALAPPDATA%\NFR_collaudo`)
+    e `--in-sequenza`;
+  - collaudo completo verde: prompt, mappa 158/158, controlli 277/277, fonti 21/21, riferimenti 31/31, catena
+    331/331 in 40 minuti;
+  - `--mirato` subito dopo: catena saltata, pochi secondi.
+- Sul PC della Banca: pacchetto completo, cancellare `04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy`;
+  kernel nella library Kernel; creare A8 (guida 0.2).
+
+## 2-quattuorvicies. 08/10 sera: registro unico, radar e osservazione (D-79)
+
+L'utente ha scelto l'opzione B dell'analisi della scala unica (TODO P10) e approvato l'anteprima Excel
+(`Anteprima_Scala_unica/`, fuori dal pacchetto, cancellata dopo la realizzazione): "mi piace procedi". Terminologia sua: **registro unico** (fino a
+40 rischi), i primi **nel radar** di Mosca (capienza 15, fino a 20, gestione completa), gli altri **in
+osservazione** (al massimo 20). Sostituisce la lista di osservazione della D-73.
+
+- **Regola** in un solo modulo, `07_Senza_Studio/radar.py` (rubrica sezione 9; Parametri righe 65-75):
+  - candidato con Prossimita >= 2 e Probabilita >= 2, fino alla capienza per score;
+  - eccezioni AGIRE ORA, tema del supervisore, decisione Radar del validatore; la decisione Osservazione esclude;
+  - chi scende e' "Radar, in uscita" per un ciclo, poi esce; oltre i 20 posti delle viste esce il piu' basso;
+  - Movimento Entrato / Uscito solo rispetto al ciclo prima (un rischio nuovo che va subito nel radar non e'
+    "Entrato": e' Nuovo).
+
+  La usano script, controlli (`stati_previsti`), precontrollo e kit di Copilot Studio (`prepara_kit.py`, MODULI).
+- **Kernel**: schema A1 (niente `osservazione`; nel rischio `orizzonte_anni` e `segnale_avvicinamento`, KRI al
+  massimo 2 e azioni al massimo 5 senza minimo), schema A3 (niente `voce_osservazione` ne' `segnali_osservazione`),
+  guida di scrittura (sezione "Radar e osservazione"), controlli C1 e C9, mappa (sette colonne nuove nel
+  RiskRegister, `tblOsservazione` tolta, Decisione_Stato validabile). Prompt A1, A3, A5, A7, A8 sotto gli 8.000.
+- **Script**: stato calcolato alla scrittura sui valori proposti e ricalcolato da `valida` (anche dopo `riapri`);
+  KRI e azioni solo per il radar; chi esce lascia l'anagrafica senza buchi e i KRI escono di vigore; chi entra
+  riprende owner e anni dalla sua ultima riga; i rischi in osservazione non toccati da A1 si riportano gia'
+  validati; fermo oltre 20 in osservazione; baseline con `rischi_in_osservazione` (notizie e flag di A3) e
+  `regola_radar`; `dismetti` anche per un rischio in osservazione; `riapri` senza `--voci`;
+  `aggiorna-registro` converte le voci `OSS-nn` in rischi in osservazione con un codice libero (valori provvisori)
+  e confronta la baseline senza `rischi_in_osservazione` e `regola_radar`.
+- **Generatore e template** (struttura 2026-10-09): Parametri righe 65-75 con la regola documentata; fogli
+  Osservazione e Fenomeni sul RiskRegister (dallo score piu' alto, con il perche' fuori dal radar; entrati e usciti);
+  griglia con Stato e Decisione sullo stato (colonne W-Y); Quadro "Variati · nuovi (radar)" con entrati, usciti e
+  in osservazione; Notizie con il presidio "In osservazione"; Metodologia, Guida dei fogli e Dizionario aggiornati;
+  dati di esempio con NFR-13, 14, 15 in osservazione (le tre voci della vecchia lista, rivalutate).
+- **Dati di prova**: NFR-16 (vertenze) nasce in osservazione nel 2026Q3 (run1, anche run2) ed entra nel radar nel
+  2026Q4 (run3, con KRI e azioni); NFR-14 aggiornato e NFR-13 confermato in osservazione; A3 collega lo sciopero a
+  NFR-16 con un flag; A8 censisce NFR-17; baseline attese rigenerate con `NFR_RIGENERA_ATTESI=1` (opzione nuova
+  della catena: solo dopo una modifica voluta del formato, poi si guarda il diff).
+- **Collaudo**: test della regola e dei controlli D-79 in `test_controlli.py`; catena passi 2-5 riscritti, 13 con
+  la decisione sullo stato in riapertura, **14** nuovo (uscita in due cicli, decisioni del validatore, capienza
+  ridotta, dismissione di un rischio in osservazione), **11c** nuovo (migrazione dal template 2026-10-08b).
+  Collaudo completo verde l'08/10 sera: prompt, mappa 139/139, controlli 271/271, fonti 21/21, riferimenti 31/31, catena 364/364 in 60 minuti (dodici gruppi in tre processi). Il gate di copertura ha trovato un difetto vero: un rischio del radar mancante dall'output di A1 usciva in silenzio dall'anagrafica; ora resta e il ciclo si ferma (trappola 106). Demo rilanciata (`REPORT_demo.md`): guardando la pagina Fenomeni la sezione degli entrati e usciti era alta 3 punti e non si vedeva; ora `prepara_report` ne adatta l'altezza (trappola 107). TODO riordinato su richiesta dell'utente: voci aperte in sezioni, passi in Banca B1-B7, processi prima dell'automazione, fatto in fondo.
+- **Documenti**: DECISIONI (D-79; D-73 sostituita; D-76 senza `--voci`), guida, 00_LEGGIMI, README della variante
+  locale, workflow, governance, struttura delle liste (colonne nuove di RiskRegister_Storico), schema documentato,
+  COMMENTATI di A1 e A3-A7, manuale del template, LEGGIMI del collaudo, TODO (P10 fatta, P8 sostituita),
+  PROMPT_MASTER (trappole 103-107), analisi 13.8, demo.
+- Sul PC della Banca: pacchetto completo, kernel nella library Kernel, reincollare A1, A3, A5, A7, A8,
+  `aggiorna-registro` (le voci della lista diventano rischi in osservazione, A1 li rivaluta al primo ciclo).
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
@@ -941,7 +1076,7 @@ applicata subito (eccezione a D-05); lista di osservazione nel piano.
    da sincronizzare a mano sono diventati zero.
 3. **Una sola implementazione della scrittura per entrambe le varianti.** Anche
    con Power Automate la scrittura e' lo stesso script, lanciato da un desktop
-   flow (`05_Workflow`): "Analizza JSON" non applica pattern, enum, min/max ne' i
+   flow (`04_Riferimenti/workflow.md`): "Analizza JSON" non applica pattern, enum, min/max ne' i
    controlli di A5.
 4. **Mappa campi come dato** (`01_Kernel/mappatura_campi.json`): colonne delle
    tabelle e delle liste, sorgenti, formule. La leggono generatore, scrittura e
@@ -1049,7 +1184,7 @@ Decisioni della Banca (non tecniche), prima di tutto:
       raccomandazioni). Poi la procedura "Se cambia il kernel" di 00_LEGGIMI.
 - [x] Qualificazione model-risk: non rilevante, nessun requisito ulteriore (D-23, 24/09).
 - [x] Rapporto col processo di rischio operativo esistente: affianca (D-14, 24/09).
-- [x] **`08_Deploy/DECISIONI.md` creato e compilato il 24/09**, aggiornato il
+- [x] **`04_Riferimenti/DECISIONI.md` creato e compilato il 24/09**, aggiornato il
       25/09: 38 decisioni prese (D-01..D-38) e 5 aperte (A-14: ridisegno del registro), con i responsabili. Le decisioni della
       Banca si leggono li'. In sintesi: Corrado copre tutti i ruoli, validatore
       compreso (limite di segregazione accettato nel pilota, D-30); il registro
@@ -1092,7 +1227,7 @@ Decisioni della Banca (non tecniche), prima di tutto:
       allargare il registro (a 50 rischi non reggono risposte degli agenti,
       validazione e report). Da decidere: scala, revisione, criteri.
 - [ ] **Due prove sul PC della Banca (05/10, pacchetto del 05/10)**:
-      `08_Deploy/Prova_senza_Copilot_Studio.md` (installazione sul registro
+      `04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md` (installazione sul registro
       vero, poi un ciclo 2026Q4 completo su un registro di prova in
       `C:\NFR_Prova`) e `09_Copilot_Studio/Prova_con_Copilot_Studio.md` (A1 in
       Copilot Studio sullo stesso input, precontrollo dentro l'agente con il
@@ -1111,7 +1246,7 @@ Decisioni della Banca (non tecniche), prima di tutto:
       e licenze assegnate (D-25), 24/09.
 
 Nel tenant (fuori dalla portata di Claude Code) — seguire `08_Deploy/Piano_deploy.md`:
-- [x] Sito, library (`04_SharePoint`); registro creato con `inizializza` (24/09,
+- [x] Sito, library (`04_Riferimenti/struttura_e_liste.md`); registro creato con `inizializza` (24/09,
       ciclo precedente 2026Q3).
 - [x] Agenti in Agent Builder, tutti e quattro provati (G2, 24/09; condizione: ricaricarli).
 - [ ] Creare A6 Schede dei rischi in Agent Builder (D-40) e provarlo su un input
@@ -1133,7 +1268,7 @@ Nel tenant (fuori dalla portata di Claude Code) — seguire `08_Deploy/Piano_dep
 - [x] (24/09: validatore = Corrado, D-13; notizie facoltative, D-17) Decidere chi e' il validatore e se la validazione delle notizie
       settimanali e' obbligatoria (oggi facoltativa, non bloccante).
 - [ ] Apprendimento dalle rettifiche (rimandato su richiesta): la base dati e'
-      il foglio Validazione + `Validazione_<periodo>.json`; vedi 06_Governance 4-bis.
+      il foglio Validazione + `Validazione_<periodo>.json`; vedi 04_Riferimenti/controlli_e_model_risk.md 4-bis.
 - [ ] Limite noto: la legenda dello Storico mostra voci vuote per le righe libere
       dell'anagrafica (serie per riga, non rese dinamiche).
 - [ ] Collaudo in ambiente sul primo ciclo **da registro vuoto**: doppio run

@@ -1,7 +1,8 @@
 # Guida di scrittura di A1
 
 > Come si scrivono descrizione, razionale, azioni e KRI (D-69, 02/10/2026), i fenomeni
-> non censiti (D-72) e la lista di osservazione (D-73, 07/10/2026).
+> non censiti (D-72) e i rischi in osservazione del registro unico (D-79, 08/10/2026, al
+> posto della lista di osservazione della D-73).
 > Le istruzioni di A1 sono al limite degli 8.000 caratteri: questa guida entra
 > nell'allegato Input_A1_<ciclo>.txt che lo script scrive con la baseline
 > (07_Senza_Studio/input_a1.py), insieme ai controlli di A5
@@ -50,30 +51,37 @@ Chi legge il registro chiede anche perche' un tema presente nei documenti non e'
 - nessun_meccanismo: non c'e' un meccanismo di perdita per la Banca (il tema esiste, ma non tocca processi, sistemi, fornitori o clientela della Banca);
 - fonte_non_specifica: nessuna fonte specifica e datata nella finestra del ciclo lo sostiene;
 - gia_coperto: il meccanismo e' gia' quello di un rischio del registro: scrivi quale (NFR-nn) nella spiegazione;
-- troppo_lontano: meccanismo plausibile ma oltre l'orizzonte della Prossimita 1, quando la lista di osservazione e' piena; altrimenti il fenomeno va nella lista di osservazione (sezione seguente), non qui;
+- troppo_lontano: meccanismo plausibile ma lontano o poco plausibile, quando i rischi in osservazione sono gia' 20; altrimenti il fenomeno e' un rischio in osservazione (sezione seguente), non va qui;
 - fuori_perimetro: il meccanismo esiste ma ricade in un tipo di rischio fuori dal perimetro della tassonomia (per esempio frode o financial crime);
 - altro: spiega nella spiegazione.
 Se non hai scartato niente, scrivi "fenomeni_non_censiti": [].
 
-## Lista di osservazione
-La lista di osservazione tiene i fenomeni che hanno un meccanismo di perdita per la Banca ma oggi sono troppo lontani o troppo poco plausibili per essere rischi del registro: oltre l'orizzonte della Prossimita 1 (piu' di 3 anni) o solo teorici. Non hanno KRI, azioni ne' score e non entrano in radar e classifica. Le voci in osservazione sono nella baseline, chiave "osservazione". Nel JSON, accanto a "rischi", scrivi "osservazione" con SOLO:
-- le voci nuove: esito "nuova", oss_id null (il codice lo assegna lo script);
-- le voci della baseline per cui le fonti del ciclo portano evidenza nuova, con il loro oss_id: esito confermata, avvicinata, promossa o archiviata.
-Una voce senza evidenza nuova non si scrive: resta com'e'. Nella baseline ogni voce porta anche le notizie che A3 le ha collegato dopo il ciclo precedente (notizie_a3) e i suoi segnali settimanali (segnali_a3: Avvicina, Segnale verificato, Allontana): verificali nelle fonti; sono proposte, non decisioni, ma una voce con un "Segnale verificato" va riesaminata (promossa se il segnale si e' davvero verificato). Al massimo 30 voci in osservazione in tutto: per aggiungerne oltre, archivia le meno rilevanti. Se non hai niente da proporre, scrivi "osservazione": [].
-{"oss_id": "OSS-nn o null", "esito": "nuova|confermata|avvicinata|promossa|archiviata", "nome": "", "descrizione": "", "driver": ["DRV-..."], "event_type": "9.n", "rischi_toccati": ["NFR-nn"], "impatto_potenziale": 1, "orizzonte_anni": 5, "plausibilita": "teorica|possibile|in crescita", "segnale_avvicinamento": "", "motivazione": "", "fonti": [{"riferimento": "", "data": "AAAA-MM-GG"}], "promosso_a": null}
-- ingresso: serve un meccanismo di perdita per la Banca (causa, evento, danno), anche lontano, e almeno una fonte. Un tema senza meccanismo va fra i fenomeni non censiti (nessun_meccanismo); un fenomeno in osservazione non va anche fra i non censiti;
-- nome e descrizione: come per un rischio, il meccanismo e non solo il tema; descrizione in 2-3 frasi;
-- driver, event_type: la collocazione nella tassonomia (perche' emerge, dove si manifesterebbe la perdita); rischi_toccati: i rischi del registro che toccherebbe se si avvicina, anche nessuno;
-- impatto_potenziale: il descrittore della rubrica, se il fenomeno si manifestasse; orizzonte_anni: anni stimati prima che possa manifestarsi (5, 10...);
-- plausibilita: teorica (possibile in principio, nessun caso noto), possibile (casi o prototipi fuori dal settore finanziario), in crescita (segnali che aumentano nel settore finanziario);
-- segnale_avvicinamento: il fatto osservabile e verificabile che lo farebbe diventare un rischio ("primo caso documentato presso una banca europea"), non una tendenza generica;
-- motivazione: perche' questa valutazione; per una voce esistente, l'evidenza nuova del ciclo e che cosa cambia;
-- esiti: confermata = evidenza nuova, il fenomeno resta lontano; avvicinata = il segnale si sta verificando in parte o l'orizzonte si accorcia; promossa = il segnale si e' verificato: censisci il rischio nuovo in "rischi", valutato con la rubrica, e scrivi il suo id_rischio in promosso_a; archiviata = il fenomeno non e' piu' plausibile o e' assorbito da un rischio del registro (scrivi quale nella motivazione).
-Lo script ferma il ciclo, e il JSON torna a te, se: un oss_id non e' nella baseline; una voce nuova ha un oss_id o una voce esistente non ce l'ha; un oss_id e' ripetuto; una voce promossa non indica in promosso_a un rischio nuovo del ciclo, o promosso_a e' scritto senza esito promossa; le voci in osservazione superano 30.
+## Radar e osservazione
+Il registro e' unico: ogni rischio e' nel radar di Mosca (gestione completa: KRI, azioni, urgenza) oppure in osservazione (stessa scala e stesso score, niente KRI ne' azioni). Lo stato lo calcola lo script, non tu, con la regola della baseline (chiave "regola_radar"):
+1. nel radar un rischio con prossimita >= soglia_prossimita e probabilita >= soglia_probabilita, fino ai posti della capienza, i piu' alti per score;
+2. sempre nel radar, anche sotto le soglie: un rischio AGIRE ORA, un tema del supervisore, una decisione del validatore;
+3. un rischio del radar che scende sotto le soglie resta un ciclo "in uscita", poi passa in osservazione.
+Nella baseline i rischi del radar sono in "rischi", quelli in osservazione in "rischi_in_osservazione".
+- Rischi del radar: valutali TUTTI, ogni ciclo, con due KRI e da 1 a 5 azioni.
+- Rischi in osservazione: riscrivili SOLO se le fonti del ciclo portano evidenza nuova, con lo stesso id e le stesse regole di variazione (un punto per ciclo); gli altri restano com'erano. Per ognuno che scrivi: le quattro dimensioni, fonti, descrizione, razionale con RISCHIO: e una parte per dimensione, orizzonte_anni (anni stimati prima che possa manifestarsi: 5, 10...) e segnale_avvicinamento (il fatto osservabile e verificabile che lo farebbe salire, "primo caso documentato presso una banca europea", non una tendenza); kri_proposti e azioni_mitigazione vuoti. Se i nuovi valori lo portano sopra le soglie, entra nel radar: allora scrivi anche i due KRI e le azioni.
+- Un rischio nuovo va nel radar o in osservazione secondo la regola: serve sempre un meccanismo di perdita per la Banca e almeno una fonte specifica; in osservazione bastano dimensioni, fonti, orizzonte e segnale. Un tema senza meccanismo va fra i fenomeni non censiti.
+- Ogni rischio in osservazione porta nella baseline le notizie che A3 vi ha collegato dopo il ciclo precedente (notizie_a3) e i suoi flag (flag_a3): verificali nelle fonti, sono proposte.
+- Al massimo 20 rischi in osservazione: oltre, il fenomeno meno rilevante va fra i non censiti (troppo_lontano). Un rischio in osservazione non piu' plausibile non si cancella riscrivendolo: dillo nel razionale, lo toglie la funzione di rischio.
+Lo script ferma il ciclo se manca un rischio del radar o se i rischi in osservazione superano 20; segnala al validatore, da motivare, un rischio che entra nel radar senza i due KRI o senza azioni.
 
 ## Ciclo straordinario
-Se la baseline ha la chiave "straordinario" (ciclo_da_valutare AAAAQn-Sk), il ciclo e' straordinario, deciso dalla funzione di rischio per un evento critico: valuta SOLO i rischi in "rischi_da_rivalutare" (tutti), per il motivo indicato, e censisci un rischio nuovo solo se l'evento lo crea; non riscrivere gli altri rischi della baseline (lo script li riporta com'erano). Le regole sono quelle del trimestre: evidenza datata dopo data_riferimento_precedente, al massimo un punto per dimensione rispetto ai valori della baseline, due KRI e azioni per ogni rischio scritto; ricalcolo_kri_ciclo_precedente solo per i valori che trovi. La lista di osservazione resta facoltativa (una voce il cui segnale si e' verificato si promuove). La sintesi spiega l'evento e che cosa cambia.
-Lo script ferma il ciclo se manca un rischio da rivalutare o se scrivi un rischio esistente non indicato.
+Se la baseline ha la chiave "straordinario" (ciclo_da_valutare AAAAQn-Sk), il ciclo e' straordinario, deciso dalla funzione di rischio per un evento critico: valuta SOLO i rischi in "rischi_da_rivalutare" (tutti), per il motivo indicato, e censisci un rischio nuovo solo se l'evento lo crea; non riscrivere gli altri rischi della baseline (lo script li riporta com'erano). Le regole sono quelle del trimestre: evidenza datata dopo data_riferimento_precedente, al massimo un punto per dimensione rispetto ai valori della baseline, due KRI e azioni per ogni rischio scritto; in ricalcolo_kri_ciclo_precedente rileggi ogni KRI in vigore dei rischi che riscrivi (un KRI non riletto resta Non rilevato e il validatore deve scriverne il valore o motivare: il livello di allerta perderebbe l'aggravante proprio quando il rischio sale), mai ricopiando il valore della baseline. rischi_da_rivalutare puo' indicare anche un rischio in osservazione: se l'evento lo porta sopra le soglie entra nel radar, con i due KRI e le azioni. La sintesi spiega l'evento e che cosa cambia.
+Se rischi_da_rivalutare e' vuoto lo straordinario e' di solo censimento: scrivi solo i rischi nuovi che l'evento crea (almeno uno).
+Lo script ferma il ciclo se manca un rischio da rivalutare, se scrivi un rischio esistente non indicato o se un censimento non ha rischi nuovi.
+Nello straordinario scrivi anche "analisi_evento" (agente A8), l'analisi approfondita sui documenti dell'evento:
+- evento: il fatto, quando, dove, chi (ruoli, mai persone), con data e documento;
+- catena_causale: causa, evento, danno possibile per la Banca, per ogni meccanismo di perdita; distingui fatti e tua lettura;
+- rischi_toccati: ogni rischio che scrivi (rivalutato o nuovo) e ogni rischio esistente che l'evento tocca senza che tu possa riscriverlo, con l'effetto (quale dimensione e descrittore cambia o potrebbe cambiare);
+- rischi_non_toccati: i rischi vicini del registro che l'evento non cambia, e perche';
+- documenti: ogni documento letto, con data e a che cosa serve nell'analisi (non dopo data_riferimento);
+- limiti: che cosa non si sa ancora e quale dato servirebbe.
+{"evento":"","catena_causale":"","rischi_toccati":[{"id_rischio":"NFR-01","effetto":""}],"rischi_non_toccati":"","documenti":[{"riferimento":"","data":"","uso":""}],"limiti":""}
+L'analisi non porta valori: i valori sono nei rischi e passano dalla validazione. Lo script segnala al validatore (senza fermare) un rischio scritto che non e' fra i toccati e un rischio toccato non indicato per lo straordinario.
 
 ## Esempio di forma
 Fatti, importi e documenti dell'esempio sono inventati: non usarli e non citarli. Mostra solo come si scrive.

@@ -37,7 +37,7 @@ Kernel, prompt, schemi e workbook sono identici al modulo principale.
   scrittura** in Excel o SharePoint: la scrittura resta allo script.
 - Gli allegati caricati in chat vengono copiati nella cartella OneDrive
   "Microsoft Copilot Chat Files" di chi li carica (baseline, output di A1):
-  copie persistenti da tenere presenti (`06_Governance`).
+  copie persistenti da tenere presenti (`04_Riferimenti/controlli_e_model_risk.md`).
 - Prompt schedulati (orari, giornalieri, settimanali, mensili), disponibili da
   maggio 2026: per singolo utente, girano solo per chi li ha creati e solo su
   agenti pubblicati.
@@ -181,12 +181,14 @@ library `Kernel`: le regole non sono copiate qui.
    - codice 0: scritto. In `Cicli/<ciclo>/` c'e' l'**Excel di output**
      `NFR_Registro_<ciclo>.xlsx` con la nuova analisi, insieme agli output degli
      agenti e all'esito dei controlli; `Baseline_corrente.json` e' aggiornata.
-     La **lista di osservazione** (D-73) e' nel foglio dati Lista_Osservazione:
-     le voci proposte o aggiornate da A1 e quelle del ciclo prima riportate
-     invariate; lo script stampa quante sono e quali vanno validate.
+     Lo **stato** di ogni rischio (registro unico, D-79: nel radar, in uscita o
+     in osservazione) e' nel RiskRegister, calcolato con la regola di Parametri
+     (`radar.py`); lo script stampa quanti sono nel radar e in osservazione, chi
+     e' entrato e chi e' uscito.
 5. **Validazione umana** (obbligatoria): nel foglio Validazione del registro,
-   una riga per rischio, KRI, azione e voce in osservazione proposta da A1, con
-   le celle gialle gia' compilate con le proposte (D-67, D-73), il validatore
+   una riga per rischio (anche in osservazione, con la decisione sullo stato),
+   KRI e azione proposti da A1, con le celle gialle gia' compilate con le
+   proposte (D-67, D-79), il validatore
    cambia i valori con cui non e' d'accordo (con la Motivazione) o respinge un
    KRI, un'azione o una voce (Respingi = Sì), salva, chiude
    e lancia
@@ -196,7 +198,11 @@ library `Kernel`: le regole non sono copiate qui.
    dettaglio campo per campo resta nel foglio Storico_Validazioni; la
    validazione riscrive `Cicli/<ciclo>/Righe_liste_<ciclo>.json` con i valori
    validati. Se il foglio Validazione viene modificato per errore (righe
-   cancellate, ID cambiati): `python esegui_ciclo_locale.py griglia`.
+   cancellate, ID cambiati): `python esegui_ciclo_locale.py griglia`. Per
+   cambiare dopo un valore gia' validato (D-76): `python esegui_ciclo_locale.py
+   riapri` (gli oggetti del ciclo tornano nella griglia con il valore validato),
+   poi `valida`, quante volte serve; i testi si correggono a mano nei fogli dati,
+   poi `baseline` (guida, sezione 3-ter).
 6. Archiviare in `Archivio_Cicli` il testo dei prompt in uso.
 7. **Schede dei rischi** (D-40): `python esegui_ciclo_locale.py schede-input`
    (si ferma se il ciclo non e' validato) scrive
@@ -214,10 +220,13 @@ library `Kernel`: le regole non sono copiate qui.
 
 ## Ciclo straordinario (su decisione della funzione di rischio, D-75)
 
-`python esegui_ciclo_locale.py baseline --straordinario --rischi NFR-nn[,NFR-mm] --motivo "..." --decisore "<chi>" [--data AAAA-MM-GG]`
-archivia la decisione e scrive baseline e `Input_A1_<AAAAQn-Sk>.txt`; A1 "Esegui il ciclo
-straordinario" rivaluta solo quei rischi; poi `trimestrale --payload A1_<AAAAQn-Sk>.json` (riporta
-gli altri rischi dal ciclo prima, gia' validati) e `valida --periodo <AAAAQn-Sk>`. La proposta puo'
+`python esegui_ciclo_locale.py baseline --straordinario [--rischi NFR-nn[,NFR-mm]] --motivo "..." --decisore "<chi>" [--data AAAA-MM-GG]`
+archivia la decisione e scrive baseline e `Input_A1_<AAAAQn-Sk>.txt`; A8 Evento critico (D-77),
+con l'allegato e i documenti dell'evento, "Esegui il ciclo straordinario" rivaluta solo quei rischi,
+censisce i nuovi creati dall'evento (senza `--rischi`: solo censimento) e scrive `analisi_evento`;
+poi `precontrollo` e `trimestrale --payload A8_<AAAAQn-Sk>.json` (riporta gli altri rischi dal
+ciclo prima, gia' validati) e `valida --periodo <AAAAQn-Sk>`. L'analisi va nella colonna
+Straordinario di Sintesi_Cicli (il fatto) e nella knowledge di A7 (`Ciclo.txt`). La proposta puo'
 venire da A3 (a video in `settimanale` e nel foglio Notizie) o da A4. Passo per passo: guida,
 sezione 2-bis.
 
@@ -255,7 +264,7 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
 | C5 | date delle fonti Da motivare; rilevanza e fonti perse come Osservazione |
 | C6, C8 | euristica a stringhe: solo Osservazione (un owner persona lo ferma il comando `valida`, D-54) |
 | C4 | **nessuna**: plausibilita' rispetto ai descrittori, solo l'agente A5 |
-| Lista di osservazione (D-73) | solo lo script: codici OSS-nn, promozioni e massimo di 30 voci come C1 Bloccante; rischi toccati inesistenti, fonti datate male, voce aggiornata senza fonte nuova come Osservazione |
+| Registro unico (D-79) | solo lo script, con lo stato previsto dalla regola: oltre 20 rischi in osservazione e rischio del radar senza KRI o azioni come Bloccante; rischio che entra senza KRI o azioni come Da motivare; KRI o azioni su un rischio in osservazione, riscritto senza fonte nuova, senza orizzonte o segnale come Osservazione |
 
 Lo script non giudica la plausibilita' (C4): senza `--challenger` (A5 facoltativo, D-71) quel giudizio resta al
 validatore.
@@ -283,4 +292,4 @@ validatore.
   Oltre, lo script si ferma prima di scrivere; serve un template rigenerato, e
   il registro vivo si porta sul template nuovo con `aggiorna-registro`.
 - **Governance.** Che il trattamento avvenga dentro Agent Builder non e' una
-  qualificazione gia' fatta: vedi `06_Governance`, sezione 6.
+  qualificazione gia' fatta: vedi `04_Riferimenti/controlli_e_model_risk.md`, sezione 6.

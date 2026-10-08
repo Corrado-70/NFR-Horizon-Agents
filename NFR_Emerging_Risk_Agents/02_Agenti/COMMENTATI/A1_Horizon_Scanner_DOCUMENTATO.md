@@ -51,13 +51,14 @@ quella.
 Dal 07/10 la guida di scrittura chiede anche due campi facoltativi del JSON,
 senza toccare il prompt (che resta a 7.963 caratteri): `fenomeni_non_censiti`
 (D-72), i temi esaminati e non censiti con il motivo, che servono ad A7 per
-rispondere "perche' questo tema non e' un rischio"; e `osservazione` (D-73), la
-**lista di osservazione**: i fenomeni con un meccanismo di perdita ma oltre i 3
-anni della Prossimita 1 o solo teorici, con impatto potenziale, orizzonte in
-anni, plausibilita' e segnale di avvicinamento. A1 scrive solo le voci nuove e
-quelle con evidenza nuova (confermata, avvicinata, promossa, archiviata); le
-altre la baseline le elenca e lo script le riporta. Una voce promossa diventa un
-rischio nuovo nello stesso output. Perche' nella guida e non nel prompt: lo
+rispondere "perche' questo tema non e' un rischio"; e il **registro unico**
+(D-79, al posto della lista di osservazione della D-73): un fenomeno lontano o
+solo teorico si censisce come rischio, con la stessa rubrica, e lo script lo
+mette in osservazione (fuori dal radar, niente KRI ne' azioni) con la regola di
+`regola_radar`; A1 scrive l'orizzonte in anni e il segnale di avvicinamento.
+Dei rischi in osservazione della baseline A1 riscrive solo quelli con evidenza
+nuova; gli altri lo script li riporta. Un rischio che sale entra nel radar e A1
+gli scrive subito KRI e azioni. Perche' nella guida e non nel prompt: lo
 spazio (una voce pesa circa 0,5 KB nella risposta, un rischio circa 4 KB) e il
 fatto che l'allegato arriva sempre per intero.
 

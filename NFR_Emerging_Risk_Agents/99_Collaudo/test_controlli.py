@@ -56,7 +56,7 @@ def test_validatore(e):
     difetto("anni di adeguamento oltre 30 (D-60)", lambda p: rischio(p, "NFR-11").update(anni_adeguamento=40), "> massimo 30")
     difetto("punteggio 6", lambda p: rischio(p, "NFR-01").update(velocity=6), "> massimo 5")
     difetto("ciclo nel formato sbagliato", lambda p: p.update(ciclo="2026-Q3"), "non rispetta")
-    difetto("un solo KRI (due per rischio, D-64)", lambda p: rischio(p, "NFR-01")["kri_proposti"].pop(), "elementi < 2")
+    # Un solo KRI passa lo schema dall'08/10 (D-79: un rischio in osservazione non ne ha): lo presidia C9 (sotto).
     difetto("tre KRI (due per rischio, D-64)", lambda p: rischio(p, "NFR-01")["kri_proposti"].append(
         dict(rischio(p, "NFR-01")["kri_proposti"][0], kri_id=None)), "elementi > 2")
     difetto("KRI senza tipo (D-64)", lambda p: rischio(p, "NFR-01")["kri_proposti"][0].pop("tipo"),
@@ -173,6 +173,8 @@ def test_controlli_a5(e):
             lambda p: rischio(p, "NFR-01")["kri_proposti"][0].update(soglia_allerta=None), gravita=DM)
     difetto("C9", "KRI in vigore sostituito da uno nuovo dello stesso tipo: il vecchio esce di vigore",
             lambda p: rischio(p, "NFR-01")["kri_proposti"][0].update(kri_id=None), gravita="Osservazione")
+    difetto("C9", "un solo KRI per un rischio del radar (due per rischio, D-64; lo schema lo ammette dal D-79)",
+            lambda p: rischio(p, "NFR-01")["kri_proposti"].pop(), gravita=DM)
     difetto("C9", "due KRI dello stesso tipo (uno di Esposizione e uno di Evoluzione, D-64)",
             lambda p: [k.update(tipo="Esposizione") for k in rischio(p, "NFR-01")["kri_proposti"]], gravita=DM)
     difetto("C9", "tipo cambiato su un KRI in vigore (resta quello della baseline)",
@@ -269,7 +271,7 @@ def test_rettifiche(e):
     """Una rettifica umana rispetta le stesse regole di una proposta dell'agente."""
     import esegui_ciclo_locale as campo
     cv = campo.controlla_valore
-    ctx = {"precedente": {"Impatto": 3, "Velocity": None}, "rischi": {"NFR-01"}, "osservazione": {"OSS-01"}}
+    ctx = {"precedente": {"Impatto": 3, "Velocity": None}, "rischi": {"NFR-01", "NFR-14"}}
     casi = [
         ("Rischio", "Impatto", 4, True, "rischio: un punto sopra il ciclo precedente e' ammesso"),
         ("Rischio", "Impatto", 5, False, "rischio: due punti sopra il ciclo precedente no (regola di variazione 2)"),
@@ -290,16 +292,10 @@ def test_rettifiche(e):
         ("Notizia", "Segnale", "Negativo", False, "notizia: segnale fuori vocabolario no"),
         ("Notizia", "Rischio_ID", "NON PRESIDIATO", True, "notizia: NON PRESIDIATO ammesso"),
         ("Notizia", "Rischio_ID", "NFR-99", False, "notizia: rischio non in anagrafica no"),
-        ("Notizia", "Voce_Osservazione", "", True, "notizia: nessuna voce della lista di osservazione ammessa (D-73)"),
-        ("Notizia", "Voce_Osservazione", "oss-01", True, "notizia: voce in osservazione ammessa (maiuscole indifferenti)"),
-        ("Notizia", "Voce_Osservazione", "OSS-09", False, "notizia: voce che non e' in osservazione no"),
-        ("Osservazione", "Impatto_Potenziale", 5, True, "osservazione: impatto potenziale 5 ammesso (D-73)"),
-        ("Osservazione", "Impatto_Potenziale", 6, False, "osservazione: impatto potenziale fuori scala no"),
-        ("Osservazione", "Orizzonte_Anni", "12", True, "osservazione: orizzonte 12 anni ammesso"),
-        ("Osservazione", "Orizzonte_Anni", 2.5, False, "osservazione: orizzonte non intero no"),
-        ("Osservazione", "Orizzonte_Anni", 25, False, "osservazione: orizzonte oltre 20 anni no"),
-        ("Osservazione", "Plausibilita", "In crescita", True, "osservazione: plausibilita' in crescita ammessa (maiuscole indifferenti)"),
-        ("Osservazione", "Plausibilita", "alta", False, "osservazione: plausibilita' fuori elenco no"),
+        ("Notizia", "Rischio_ID", "NFR-14", True, "notizia: rischio in osservazione ammesso (D-79)"),
+        ("Rischio", "Decisione_Stato", "radar", True, "rischio: decisione sullo stato Radar (maiuscole indifferenti, D-79)"),
+        ("Rischio", "Decisione_Stato", "Automatico", True, "rischio: decisione sullo stato Automatico (vale la regola)"),
+        ("Rischio", "Decisione_Stato", "Forse", False, "rischio: decisione sullo stato fuori elenco no"),
     ]
     for oggetto, campo_, valore, ok, descrizione in casi:
         _, problema = cv(oggetto, campo_, valore, ctx)
@@ -332,60 +328,112 @@ def test_rettifiche(e):
                "scrittura: ogni testo va in cella come testo (niente formule o date involontarie); numeri e vuoti intatti")
 
 
-def test_osservazione(e):
-    """Lista di osservazione (D-73): schema e controlli dello script sulle voci proposte da A1."""
+def test_registro_unico(e):
+    """Registro unico (D-79): la regola del radar (radar.py), i controlli dello script sui rischi in osservazione e su
+    chi entra, lo schema di A1."""
+    import radar
+    regola = dict(radar.REGOLA_DEFAULT)
+
+    def r(rid, imp=3, prob=3, pross=3, vel=3, **k):
+        return {"id": rid, "impatto": imp, "probabilita": prob, "prossimita": pross, "velocity": vel, **k}
+
+    # 1. Soglie: candidato con Prossimita e Probabilita almeno 2; il motivo dice quale soglia manca.
+    s = radar.stati([r("A"), r("B", pross=1), r("C", prob=1, pross=1)], regola)
+    e.verifica((s["A"]["stato"], s["B"]["stato"], s["C"]["stato"]) == ("Radar", "Osservazione", "Osservazione")
+               and s["A"]["motivo"] == "Prossimita 3 e Probabilita 3: sopra la soglia"
+               and s["B"]["motivo"] == "Prossimita 1 sotto la soglia 2"
+               and s["C"]["motivo"] == "Prossimita 1 sotto la soglia 2; Probabilita 1 sotto la soglia 2",
+               "radar: soglie di Prossimita e Probabilita, con il motivo", str(s))
+    # 2. Eccezioni: AGIRE ORA (margine < 0), tema del supervisore, decisione Radar; decisione Osservazione esclude.
+    s = radar.stati([r("A", prob=1, pross=4, y_azioni=1.0), r("B", prob=1, supervisore=True),
+                     r("C", prob=1, decisione="Radar"), r("D", decisione="Osservazione")], regola)
+    e.verifica(s["A"]["stato"] == "Radar" and "AGIRE ORA" in s["A"]["motivo"] and s["A"]["margine"] < 0
+               and s["B"]["stato"] == "Radar" and "tema del supervisore" in s["B"]["motivo"]
+               and s["C"]["stato"] == "Radar" and "decisione del validatore" in s["C"]["motivo"]
+               and s["D"]["stato"] == "Osservazione" and s["D"]["motivo"] == "in osservazione per decisione del validatore",
+               "radar: eccezioni (AGIRE ORA, supervisore, decisione Radar) e decisione Osservazione", str(s))
+    # 3. Capienza: le eccezioni prima, poi i candidati per score; gli altri fuori per capienza.
+    piccola = dict(regola, capienza=2)
+    s = radar.stati([r("A", imp=5), r("B", imp=4), r("C", imp=2), r("D", imp=1, supervisore=True)], piccola)
+    e.verifica([i for i in "ABCD" if s[i]["stato"] == "Radar"] == ["A", "D"]
+               and s["B"]["motivo"].startswith("fuori per capienza: score ")
+               and s["C"]["motivo"].startswith("fuori per capienza: score "),
+               "radar: capienza 2 con un'eccezione: entrano l'eccezione e il primo per score; gli altri fuori per capienza",
+               str(s))
+    # 4. Uscita in due cicli: il primo ciclo sotto la regola e' "Radar, in uscita", il secondo esce; con 1 esce subito.
+    s1 = radar.stati([r("A", prob=1, stato_prima="Radar")], regola)
+    s2 = radar.stati([r("A", prob=1, stato_prima="Radar, in uscita")], regola)
+    s3 = radar.stati([r("A", prob=1, stato_prima="Radar")], dict(regola, cicli_uscita=1))
+    e.verifica(s1["A"]["stato"] == "Radar, in uscita" and "(primo ciclo: esce se lo e' anche al ciclo dopo)" in s1["A"]["motivo"]
+               and s1["A"]["movimento"] == "" and s2["A"]["stato"] == "Osservazione" and s2["A"]["movimento"] == "Uscito"
+               and s3["A"]["stato"] == "Osservazione" and s3["A"]["movimento"] == "Uscito",
+               "radar: uscita dopo due cicli sotto la regola (Radar, in uscita, poi Uscito); con cicli_uscita 1 subito",
+               f"{s1} {s2} {s3}")
+    s = radar.stati([r("A", stato_prima="Osservazione"), r("B", stato_prima="Radar, in uscita")], regola)
+    e.verifica(s["A"]["movimento"] == "Entrato" and s["B"]["stato"] == "Radar" and s["B"]["movimento"] == "",
+               "radar: un rischio che sale entra subito (Entrato); uno in uscita che risale resta nel radar", str(s))
+    # 5. Oltre il massimo delle viste nessun "in uscita": esce chi ha lo score piu' basso.
+    s = radar.stati([r(f"R{i:02d}", imp=1 + i % 5, supervisore=True) for i in range(22)], regola)
+    fuori = [i for i, x in s.items() if x["stato"] == "Osservazione"]
+    e.verifica(sum(1 for x in s.values() if x["stato"] == "Radar") == 20 and len(fuori) == 2
+               and all("oltre i 20 posti del radar" in s[i]["motivo"] for i in fuori),
+               "radar: 22 eccezioni, 20 posti nelle viste: i due con lo score piu' basso restano fuori", str(fuori))
+    e.verifica(radar.y_azioni(["6 mesi", "12 mesi", "3 mesi"]) == 1.0 and radar.y_azioni([]) is None
+               and round(radar.score({"impatto": 3, "probabilita": 2, "prossimita": 1, "velocity": None}), 6) == 2.1875,
+               "radar: Y dalle azioni (orizzonte piu' lungo, in anni) e score D-50 senza Velocity")
+
+    # 6. Controlli dello script sui dati di prova (baseline del 2026Q4: NFR-13, 14, 15, 16 in osservazione).
     base = carica(DATI / "baseline_2026Q4.json")
     run3 = carica(DATI / "run3_A1_2026Q4.json")
-    e.verifica([v["oss_id"] for v in base["osservazione"]] == ["OSS-04", "OSS-01", "OSS-02", "OSS-03"]
-               and not controlli_a5.controlla_osservazione(run3, base),
-               "osservazione: run3 (una promossa, una avvicinata, una confermata) passa i controlli sulla baseline 2026Q4")
+    previsti = controlli_a5.stati_previsti(run3, base)
+    e.verifica(sorted(x["id_rischio"] for x in base["rischi_in_osservazione"]) == ["NFR-13", "NFR-14", "NFR-15", "NFR-16"]
+               and previsti["NFR-16"]["stato"] == "Radar" and previsti["NFR-16"]["movimento"] == "Entrato"
+               and previsti["NFR-14"]["stato"] == "Osservazione" and previsti["NFR-15"]["stato"] == "Osservazione"
+               and sum(1 for x in previsti.values() if x["stato"] == "Radar") == 13,
+               "controlli: lo stato previsto con i valori di run3 (NFR-16 entra, NFR-15 non toccato resta fuori)", str(previsti))
 
-    def caso(descrizione, modifica, gravita, atteso, base_=base):
+    def rilievi(modifica, controllo, gravita, rid):
         p = copy.deepcopy(run3)
         modifica(p)
-        r = controlli_a5.controlla_osservazione(p, base_)
-        e.verifica(any(x["gravita"] == gravita and atteso in x["descrizione"] for x in r), f"osservazione: {descrizione}",
-                   str(r))
+        return [x for x in controlli_a5.controlla(p, base)["rilievi"]
+                if x["controllo"] == controllo and x["gravita"] == gravita and x["id_rischio"] == rid]
 
-    voce = lambda p, oid: next(v for v in p["osservazione"] if v["oss_id"] == oid)
-    caso("voce nuova con un codice: Bloccante", lambda p: voce(p, "OSS-02").update(esito="nuova"), "Bloccante",
-         "una voce nuova ha oss_id null")
-    caso("voce esistente senza codice: Bloccante", lambda p: voce(p, "OSS-02").update(oss_id=None), "Bloccante",
-         "senza oss_id")
-    caso("codice che non e' nella baseline: Bloccante", lambda p: voce(p, "OSS-02").update(oss_id="OSS-09"), "Bloccante",
-         "OSS-09 non e' fra le voci")
-    caso("codice ripetuto: Bloccante", lambda p: voce(p, "OSS-01").update(oss_id="OSS-02"), "Bloccante", "ripetuta")
-    caso("promossa a un rischio esistente: Bloccante", lambda p: voce(p, "OSS-04").update(promosso_a="NFR-11"), "Bloccante",
-         "non e' un rischio nuovo")
-    caso("promosso_a senza esito promossa: Bloccante", lambda p: voce(p, "OSS-02").update(promosso_a="NFR-13"), "Bloccante",
-         "solo con esito promossa")
-    caso("rischio toccato che non esiste: Osservazione", lambda p: voce(p, "OSS-02").update(rischi_toccati=["NFR-77"]),
-         "Osservazione", "NFR-77")
-    caso("aggiornata senza fonte nuova: Osservazione",
-         lambda p: voce(p, "OSS-02")["fonti"][0].update(data="2026-05-01"), "Osservazione", "senza una fonte dopo")
-    caso("voce nuova vicina e in crescita: Osservazione (forse e' gia' un rischio)",
-         lambda p: p["osservazione"].append(dict(copy.deepcopy(voce(p, "OSS-02")), oss_id=None, esito="nuova", orizzonte_anni=2)),
-         "Osservazione", "gia' un rischio del registro")
-    nuova = dict(copy.deepcopy(run3["osservazione"][1]), oss_id=None, esito="nuova")
-    caso("oltre 30 voci in osservazione: Bloccante", lambda p: p["osservazione"].extend(copy.deepcopy(nuova) for _ in range(28)),
-         "Bloccante", "oltre le 30")
+    O, M, B = controlli_a5.OSSERVAZIONE, controlli_a5.DA_MOTIVARE, controlli_a5.BLOCCANTE
+    kri16 = copy.deepcopy(rischio(run3, "NFR-16")["kri_proposti"])
+    casi = [
+        ("rischio in osservazione con KRI: osservazione (lo script non li scrive)",
+         lambda p: rischio(p, "NFR-14").update(kri_proposti=kri16), "C9", O, "NFR-14"),
+        ("rischio in osservazione riscritto senza una fonte nuova: osservazione",
+         lambda p: rischio(p, "NFR-13")["fonti"][0].update(data="2026-02-10"), "C5", O, "NFR-13"),
+        ("rischio in osservazione senza orizzonte: osservazione",
+         lambda p: rischio(p, "NFR-14").update(orizzonte_anni=None), "C1", O, "NFR-14"),
+        ("rischio che entra nel radar senza KRI: da motivare (KRI al ciclo dopo)",
+         lambda p: rischio(p, "NFR-16").update(kri_proposti=[]), "C9", M, "NFR-16"),
+        ("rischio del radar senza azioni: bloccante",
+         lambda p: rischio(p, "NFR-05").update(azioni_mitigazione=[]), "C9", B, "NFR-05"),
+    ]
+    for descrizione, modifica, controllo, gravita, rid in casi:
+        e.verifica(rilievi(modifica, controllo, gravita, rid), f"controlli D-79: {descrizione}")
+    e.verifica(not [x for x in controlli_a5.controlla(run3, base)["rilievi"] if x["id_rischio"] in ("NFR-13", "NFR-14")],
+               "controlli D-79: i rischi in osservazione di run3 (fonte nuova, orizzonte, segnale, niente KRI) sono puliti")
+    # Oltre 20 rischi in osservazione: bloccante (A1 lascia fuori i meno rilevanti).
     p = copy.deepcopy(run3)
-    p["osservazione"].extend(copy.deepcopy(nuova) for _ in range(27))
-    e.verifica(not [x for x in controlli_a5.controlla_osservazione(p, base) if x["gravita"] == "Bloccante"],
-               "osservazione: 30 voci esatte (3 restano, 1 promossa esce, 27 nuove) sono ammesse")
-    e.verifica(any(x["controllo"] == "C1" and "OSS-09" in x["descrizione"] for x in controlli_a5.controlla(
-        dict(copy.deepcopy(run3), osservazione=[dict(nuova, oss_id="OSS-09", esito="confermata")]), base)["rilievi"]),
-               "osservazione: i controlli della lista sono dentro controlla (precontrollo e trimestrale li vedono)")
+    modello = rischio(p, "NFR-14")
+    for n in range(18):
+        p["rischi"].append(dict(copy.deepcopy(modello), id_rischio=f"NFR-{30 + n}", variazioni=[]))
+    troppi = [x for x in controlli_a5.controlla(p, base)["rilievi"] if x["controllo"] == "C1" and x["gravita"] == B
+              and "oltre il massimo di 20" in x["descrizione"]]
+    p["rischi"].pop()
+    e.verifica(troppi and not [x for x in controlli_a5.controlla(p, base)["rilievi"] if "oltre il massimo" in x["descrizione"]],
+               "controlli D-79: 21 rischi in osservazione fermano, 20 no", str(troppi))
+    # Schema: orizzonte 1-30 anni, al massimo due KRI.
     for descrizione, modifica, atteso in [
-            ("plausibilita' fuori elenco", lambda v: v.update(plausibilita="alta"), "fuori da"),
-            ("orizzonte oltre 20 anni", lambda v: v.update(orizzonte_anni=25), "> massimo 20"),
-            ("voce senza fonti", lambda v: v.update(fonti=[]), "elementi < 1"),
-            ("codice nel formato sbagliato", lambda v: v.update(oss_id="OSS-1"), "non rispetta")]:
+            ("orizzonte oltre 30 anni", lambda p: rischio(p, "NFR-14").update(orizzonte_anni=40), "massimo 30"),
+            ("tre KRI", lambda p: rischio(p, "NFR-16")["kri_proposti"].append(copy.deepcopy(kri16[0])), "elementi > 2")]:
         p = copy.deepcopy(run3)
-        modifica(p["osservazione"][0])
+        modifica(p)
         errori = valida(p, S_A1)
-        e.verifica(any(atteso in x for x in errori), f"validatore rifiuta nella lista di osservazione: {descrizione}",
-                   "\n".join(errori) or "nessun errore")
+        e.verifica(any(atteso in x for x in errori), f"validatore rifiuta: {descrizione} (D-79)", "\n".join(errori) or "nessun errore")
 
 
 def test_tassonomia(e):
@@ -433,7 +481,8 @@ def test_straordinario(e):
                                "decisore": "Comitato Rischi", "data_decisione": "2027-01-20"})
     e.verifica(not valida(run4, S_A1), "straordinario: lo schema di A1 accetta il periodo 2026Q4-S1 (D-75)")
     c1 = lambda p: [x for x in controlli_a5.controlla(p, base)["rilievi"] if x["controllo"] == "C1"]
-    e.verifica(not c1(run4), "straordinario: solo NFR-01, il rischio indicato, nessun rilievo di completezza", str(c1(run4)))
+    bloccanti = lambda p: [x for x in c1(p) if x["gravita"] == controlli_a5.BLOCCANTE]
+    e.verifica(not bloccanti(run4), "straordinario: solo NFR-01, il rischio indicato, nessun fermo di completezza", str(c1(run4)))
     p = copy.deepcopy(run4)
     p["rischi"] = []
     p["rischi"].append(copy.deepcopy(valori_q4["NFR-02"]))
@@ -453,6 +502,68 @@ def test_straordinario(e):
     a3_rotto["proposta_straordinario"] = {"rischi": [], "motivo": "breve"}
     e.verifica(not valida(a3, S_A3) and valida(a3_rotto, S_A3) and not valida(dict(a3, proposta_straordinario=None), S_A3),
                "straordinario: proposta di A3 nello schema (rischi e motivo, oppure null)")
+    test_a8(e, base, run3, run4, c1)
+
+
+def test_a8(e, base, run3, run4, c1):
+    """A8 Evento critico (D-77): analisi dell'evento e straordinario di solo censimento."""
+    import input_a1
+    import spiegazioni
+    analisi = run4["analisi_evento"]
+    rotta = copy.deepcopy(run4)
+    rotta["analisi_evento"]["rischi_toccati"] = []
+    del rotta["analisi_evento"]["limiti"]
+    e.verifica(not valida(run4, S_A1) and valida(rotta, S_A1),
+               "A8: analisi_evento nello schema (almeno un rischio toccato, limiti obbligatori)", str(valida(rotta, S_A1)))
+    oss = lambda p: [(x["id_rischio"], x["descrizione"]) for x in c1(p) if x["gravita"] == controlli_a5.OSSERVAZIONE]
+    e.verifica(oss(run4) == [("NFR-07", oss(run4)[0][1])] and "non indicato per lo straordinario" in oss(run4)[0][1],
+               "A8: un rischio toccato dall'evento ma non indicato (NFR-07) arriva al validatore come osservazione, senza "
+               "fermare", str(oss(run4)))
+    senza = {k: v for k, v in run4.items() if k != "analisi_evento"}
+    e.verifica([x[1][:40] for x in oss(senza)] == ["Ciclo straordinario senza analisi_evento"],
+               "A8: uno straordinario fatto senza analisi (con A1) e' un'osservazione, non un fermo", str(oss(senza)))
+    p = copy.deepcopy(run4)
+    p["analisi_evento"]["rischi_toccati"] = [{"id_rischio": "NFR-99", "effetto": "Rischio che non esiste da nessuna parte."}]
+    p["analisi_evento"]["documenti"].append({"riferimento": "Documento del futuro", "data": "2027-02-01", "uso": "prova"})
+    e.verifica({x[0] for x in oss(p)} == {"NFR-99", "NFR-01", None},
+               "A8: rischio toccato inesistente, rischio scritto assente dai toccati, documento dopo la data di riferimento: "
+               "tre osservazioni", str(oss(p)))
+    trim = copy.deepcopy(run3)
+    trim["analisi_evento"] = analisi
+    base_q4 = {k: v for k, v in base.items() if k != "straordinario"}
+    e.verifica(any("analisi_evento" in x["descrizione"] for x in controlli_a5.controlla(trim, dict(
+                   base_q4, ciclo_da_valutare=run3["ciclo"], data_riferimento=run3["data_riferimento"]))["rilievi"]),
+               "A8: analisi_evento in un ciclo trimestrale: osservazione (resta solo nell'archivio)")
+    # Straordinario di solo censimento: nessun rischio da rivalutare, almeno un rischio nuovo.
+    censimento = dict(base, straordinario=dict(base["straordinario"], rischi_da_rivalutare=[]))
+    nuovo = copy.deepcopy(next(x for x in run3["rischi"] if x["id_rischio"] == "NFR-16"))
+    nuovo.update(id_rischio="NFR-17", variazioni=[])
+    solo_nuovo = dict(copy.deepcopy(run4), rischi=[nuovo])
+    solo_nuovo["analisi_evento"]["rischi_toccati"] = [{"id_rischio": "NFR-17", "effetto": "Rischio nuovo creato dall'evento."}]
+    b = lambda p: [x for x in controlli_a5.controlla(p, censimento)["rilievi"] if x["controllo"] == "C1"
+                   and x["gravita"] == controlli_a5.BLOCCANTE]
+    e.verifica(not b(solo_nuovo),
+               "A8: straordinario di solo censimento con un rischio nuovo: nessun fermo", str(b(solo_nuovo)))
+    con_vecchio = dict(copy.deepcopy(solo_nuovo), rischi=[copy.deepcopy(run4["rischi"][0])])
+    e.verifica(any("solo censimento" in x["descrizione"] for x in b(con_vecchio))
+               and any("non indicato" in x["descrizione"] for x in b(con_vecchio)),
+               "A8: censimento senza rischi nuovi (solo un rischio esistente): fermo", str(b(con_vecchio)))
+    # KRI riletti nello straordinario: run4 rilegge i due KRI di NFR-01; senza rilettura, C7 da motivare.
+    c7 = lambda p: [x for x in controlli_a5.controlla(p, base)["rilievi"] if x["controllo"] == "C7"]
+    k_base = {k["kri_id"] for k in base["kri_in_vigore"] if k["id_rischio"] == "NFR-01"}
+    non_riletto = dict(copy.deepcopy(run4), ricalcolo_kri_ciclo_precedente=[])
+    e.verifica(not c7(run4) and {z["kri_id"] for z in run4["ricalcolo_kri_ciclo_precedente"]} == k_base
+               and [(x["id_rischio"], x["gravita"]) for x in c7(non_riletto)] == [("NFR-01", controlli_a5.DA_MOTIVARE)]
+               and all(k in c7(non_riletto)[0]["descrizione"] for k in k_base),
+               "A8: nello straordinario i KRI in vigore dei rischi rivalutati si rileggono; se no, C7 da motivare (D-77)",
+               str(c7(non_riletto)))
+    testo, _ = input_a1.componi(censimento, KERNEL, "2027-01-20")
+    e.verifica("censisci SOLO i rischi nuovi" in testo and "analisi_evento" in testo,
+               "A8: l'allegato di uno straordinario di solo censimento lo dice in testa e chiede l'analisi dell'evento")
+    righe = spiegazioni.testo_analisi_evento(analisi)
+    e.verifica(righe[0].startswith("ANALISI DELL'EVENTO DI A8") and any(r.startswith("- NFR-07:") for r in righe)
+               and analisi["limiti"] in righe[-1] and "non presente" in spiegazioni.testo_analisi_evento(None)[0],
+               "A8: knowledge di A7 (Ciclo.txt) con l'analisi dell'evento, o la frase che manca")
 
 
 def test_consistenza(e):
@@ -883,16 +994,20 @@ def test_spiegazioni(e):
             "sintesi": {"Sintesi_A1": "MESSAGGIO: prova.", "Sintesi_A5": None, "Rilievi_Ciclo": None, "Rilievi_Superati": None},
             "parametri": [("X di Mosca, anni per decidere e avviare", 0.25)], "z_prossimita": [3.5, 2.5, 1.5, 0.5, 0],
             "scartati": run3["fenomeni_non_censiti"], "dismessi": [], "nota_quadro": None, "note_passate": [],
-            "osservazione": [{"OSS_ID": "OSS-02", "Nome": "Interruzione di cavi sottomarini", "Event_Type": "9.6",
-                              "Driver": "DRV-GEO, DRV-TPR", "Rischi_Toccati": "NFR-02", "Stato": "In osservazione",
-                              "Esito": "Avvicinata", "Prima_Osservazione": "2026Q1", "Impatto_Potenziale": 4,
-                              "Orizzonte_Anni": 3, "Plausibilita": "in crescita", "Descrizione": "Taglio di cavi.",
+            "osservazione": [{"ID_Rischio": "NFR-14", "Nome": "Interruzione di cavi sottomarini", "Event_Type": "9.6",
+                              "Driver": "DRV-GEO, DRV-TPR", "Impatto": 4, "Probabilita": 3, "Prossimita": 1, "Velocity": 4,
+                              "Score_Composito": 3.15, "Stato": "Osservazione", "Motivo_Stato": "Prossimita 1 sotto la soglia 2",
+                              "Decisione_Stato": "Automatico", "Orizzonte_Anni": 4, "Descrizione": "Taglio di cavi.",
                               "Segnale_Avvicinamento": "Un cavo che serve l'Italia danneggiato.",
-                              "Motivazione": "Cavo danneggiato nel Mediterraneo orientale.",
+                              "Razionale": "Cavo danneggiato nel Mediterraneo orientale.", "Periodo_Valutazione": "2026Q4",
                               "Fonti": '[{"riferimento": "Comunicato del gestore del cavo", "data": "2026-11-20"}]',
-                              "Promosso_A": None, "Validazione": "Rettificato"}],
-            "decisioni_osservazione": {"OSS-02": [{"Campo": "Orizzonte_Anni", "Decisione": "Rettificato", "Proposta_Agente": 2,
-                                                   "Valore_Validato": 3, "Motivazione": "Rotte italiane non ancora toccate."}]}}
+                              "Ciclo": "2026Q4", "Validazione": "Rettificato"}],
+            "a3_osservazione": {"NFR-14": {"notizie_a3": [{"id_notizia": "N-20261201-01", "titolo": "Cavo danneggiato",
+                                                          "data": "2026-12-01", "segnale": "Peggiorativo"}], "flag_a3": []}},
+            "movimenti": [{"ID_Rischio": "NFR-16", "Nome": "Vertenze", "Movimento": "Entrato", "Stato": "Radar",
+                           "Motivo_Stato": "Prossimita 2 e Probabilita 3: sopra la soglia"}]}
+    dati["decisioni"]["NFR-14"] = [{"Campo": "Probabilita", "Decisione": "Rettificato", "Proposta_Agente": 4,
+                                    "Valore_Validato": 3, "Motivazione": "Rotte italiane non ancora toccate."}]
     testo = spiegazioni.testo_rischio(rischio, dati, "2026-10-07")
     e.verifica("RISCHIO NFR-01" in testo and "VALIDATI" in testo and "Velocity non valutata" in testo
                and "Prossimita: Rettificato (proposta 4, deciso 5)" in testo and "X 0,25 + Y 1,00 contro Z 0,00" in testo
@@ -900,11 +1015,14 @@ def test_spiegazioni(e):
                "knowledge di A7: file del rischio con valori, urgenza, fonti e decisione del validatore", testo[:1500])
     ciclo = spiegazioni.testo_ciclo(dict(dati, validato=False), "2026-10-07")
     e.verifica("PROPOSTI" in ciclo and all(f["fenomeno"] in ciclo for f in run3["fenomeni_non_censiti"])
-               and "LISTA DI OSSERVAZIONE" in ciclo and "OSS-02 Interruzione di cavi sottomarini" in ciclo
-               and "Impatto potenziale 4 (grave), orizzonte 3 anni" in ciclo and "Orizzonte_Anni: Rettificato, proposta di A1 2" in ciclo
-               and "5 -> 0" in ciclo,
-               "knowledge di A7: Ciclo.txt con stato del ciclo, fenomeni non censiti e motivo, lista di osservazione con le decisioni "
-               "del validatore (D-73), Z per Prossimita", ciclo[-900:])
+               and "RISCHI IN OSSERVAZIONE" in ciclo and "- NFR-14 Interruzione di cavi sottomarini" in ciclo
+               and "Perche' in osservazione (CALCOLATO dalla regola): Prossimita 1 sotto la soglia 2" in ciclo
+               and "Orizzonte stimato da A1: 4 anni" in ciclo and "notizia collegata da A3 dopo il ciclo: N-20261201-01" in ciclo
+               and "decisione del validatore su Probabilita: Rettificato, proposta di A1 4" in ciclo
+               and "- NFR-16 Vertenze: Entrato (Radar)" in ciclo and "5 -> 0" in ciclo,
+               "knowledge di A7: Ciclo.txt con stato del ciclo, fenomeni non censiti e motivo, rischi in osservazione con il "
+               "perche', le notizie di A3 e le decisioni del validatore, entrati e usciti dal radar (D-79), Z per Prossimita",
+               ciclo[-1500:])
     with tempfile.TemporaryDirectory() as tmp:
         cartella = Path(tmp) / "Spiegazioni"
         cartella.mkdir()
@@ -932,7 +1050,7 @@ def main():
     test_controlli_a5(e)
     test_dati_esempio(e)
     test_rettifiche(e)
-    test_osservazione(e)
+    test_registro_unico(e)
     test_tassonomia(e)
     test_straordinario(e)
     test_consistenza(e)

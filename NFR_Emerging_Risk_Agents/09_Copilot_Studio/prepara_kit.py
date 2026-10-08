@@ -28,7 +28,7 @@ QUI = Path(__file__).resolve().parent
 PACCHETTO = QUI.parent
 CAMPO = PACCHETTO / "07_Senza_Studio"
 # Ordine di caricamento: ogni modulo importa solo quelli prima di lui.
-MODULI = ["valida_output", "controlli_a5", "schede", "input_a1", "precontrollo"]
+MODULI = ["valida_output", "radar", "controlli_a5", "schede", "input_a1", "precontrollo"]
 SCHEMA = PACCHETTO / "01_Kernel" / "schema_output_A1.json"
 NOME_SKILL = "precontrollo-nfr"
 SKILL = QUI / NOME_SKILL
