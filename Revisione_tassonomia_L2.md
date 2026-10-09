@@ -1,7 +1,7 @@
 # Tassonomia NFR — event type di secondo livello (Tassonomia Interna, L2)
 
 > **Superato il 07/10/2026 (D-74).** Su indicazione dell'utente la classificazione usa la
-> tassonomia interna della Banca (`NFR_Emerging_Risk_Agents/01_Kernel/Tassonomia dei Rischi.csv`,
+> tassonomia interna della Banca (`NFR_Emerging_Risk_Agents/04_Riferimenti/Tassonomia dei Rischi.csv`, fino al 09/10 in `01_Kernel`,
 > solo le nove categorie marcate SI), che sostituisce del tutto gli event type di Basilea:
 > vedi `01_Kernel/tassonomia_nfr.md` e `04_Riferimenti/DECISIONI.md`, D-74. Questo file resta
 > come traccia della bozza.

@@ -26,13 +26,13 @@ che migliora quel ciclo.
 
 | Passo | Voci | Perche' qui | Giorni |
 |---|---|---|---|
-| 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati, prove K0 e senza Copilot Studio | tutto il resto si appoggia su un'installazione allineata al pacchetto | 1-2 (in Banca) |
+| 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati (B1-B4); poi le **prove della CS-1** (B5) | tutto il resto si appoggia su un'installazione allineata al pacchetto; le prove decidono la A-15 | 1-2 per B1-B4; 1-2 per le prove, piu' le attese (in Banca) |
 | 1 | **P4** rapporti di scenario e **P9** temi da verificare | piccole, e migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1 |
 | 2 | **AU1, solo la parte "scrittura robusta"** (Salvataggio automatico spento, copia di lavoro del registro) | protegge il registro vero da scritture a meta' con OneDrive (rischio visto il 27/09); conviene averla prima del primo ciclo reale | circa 1 |
 | 3 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale (quale rischio e quale dimensione sono sotto pressione) | 2-3 |
 | 4 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 |
 | 5 | **AU1** (il resto), **AU2**, **AU3**: la parte comune dell'automazione | utile qualunque strada si scelga; riduce i passi manuali del trimestre e della settimana | 6-7 |
-| 6 | **AU4**: decisione A-15 (strada A o Copilot Studio), poi **AU5** oppure **AU6** | dopo i risultati della prova K0 | 3-4 oppure 13-15 |
+| 6 | **AU4**: decisione A-15 fra A, CS-1 e CS-2 (`Analisi_Architettura/14_Tre_strade.md`), poi la strada scelta | dopo le prove B5 (e K8, K9 se si punta alla CS-2) | A 3-4; CS-1 13-15; CS-2 6-8 settimane |
 | 7 | **P2**, **P7**, **P6** | presentazione: scia sul radar, riepilogo mensile, scheda per tema | 2-3 |
 | in parallelo | **Q1** nota di metodo (il prototipo dopo il passo 4) | e' soprattutto lavoro della Banca (stime degli esperti) | nota 1-2, prototipo 3-5 |
 | in parallelo | **G1, G3, G2**; **G6** quando servira' leggere A1 accanto ai controlli prima della scrittura | toccano solo il generatore o sono strumenti di lettura | circa 2 |
@@ -51,10 +51,19 @@ Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzi
 | # | Passo | Per quali decisioni | Stato |
 |---|---|---|---|
 | B1 | Pacchetto completo dell'08/10 sera; cancellare le vecchie `04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy` | D-78 | da fare |
-| B2 | Copiare tutto `01_Kernel` e `04_Riferimenti\DECISIONI.md` nella library Kernel | D-74, D-77, D-79 | da fare |
+| B2 | Copiare tutto `01_Kernel` e `04_Riferimenti\DECISIONI.md` nella library Kernel; togliere dalla library `Tassonomia dei Rischi.csv` (dal 09/10 in `04_Riferimenti`, non lo legge nessun componente) | D-74, D-77, D-79 | da fare |
 | B3 | Reincollare in Agent Builder A1, A3, A4, A5, A6, A7; creare A8 (guida, 0.2) | D-68...D-79 | da fare |
 | B4 | `aggiorna-registro`, prima su una copia e poi sul registro in uso (struttura 2026-10-09: le voci della lista di osservazione diventano rischi in osservazione; i codici di Basilea vanno riclassificati da A1 al primo ciclo) | D-74, D-79 | da fare |
-| B5 | Prova della versione senza Copilot Studio (`04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md`) e prova K0 con Copilot Studio (`09_Copilot_Studio/Prova_con_Copilot_Studio.md`) | D-70; i risultati entrano nella decisione A-15 | pronte dal 05/10, risultati attesi |
+| B5 | **Prove di fattibilita' della CS-1**, dopo B1-B4, nell'ordine sotto. Protocollo unico: `09_Copilot_Studio/Prove_CS1.md`, con i tempi, i testi da mandare, i comandi e la tabella dei risultati | A-15 fra le tre strade (`Analisi_Architettura/14_Tre_strade.md`, 14.9) | pronte dal 09/10 |
+| B5.1 | **D1 e D2**: domande all'IT (PC esecutore, avvio automatico, connessione di servizio dei flussi, Office Scripts) e alla compliance (trascrizioni di Copilot Studio, etichette di riservatezza). Si possono mandare subito, anche prima di B1 | un no ferma la CS-1 | da fare |
+| B5.2 | Preparazione: registro di prova rifatto con la parte 2 di `04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md`, configurazione **senza la riga `kernel`**; due run di A1 in Agent Builder (`A1_AB_run1.json`, `A1_AB_run2.json`); cartelle `Archivio_Cicli\Prova_K0\In_arrivo`, `Esiti`, `Spiegazioni` | base di confronto di K4 | da fare |
+| B5.3 | **K6** Operatore a passi fissi, compreso K6.5 in Teams (`09_Copilot_Studio/Prova_K6_Operatore.md`) | il cuore della CS-1 | da fare |
+| B5.4 | **K4** qualita' di A1 in Copilot Studio: `confronta.py` AB/AB, CS/CS, AB/CS; precontrollo al primo giro; modello | D-21 | da fare |
+| B5.5 | **K11** piu' utenti, con un collega: identita' nel flusso, connessione dei flussi, lancio simultaneo, trascrizioni | multiutenza (14.5-bis) | da fare |
+| B5.6 | **K12** A7 come sotto-agente: risposte dai file di `Spiegazioni`, tempo di aggiornamento dopo una riscrittura | consultazione da altri utenti | da fare |
+| B5.7 | **K7a** sincronizzazione SharePoint <-> PC (`99_Collaudo/osserva_cartella.py`), con e senza "Mantieni sempre su questo dispositivo"; conflitto con il registro aperto sul web | tempi e sicurezza della scrittura | da fare |
+| B5.8 | **K7b** Excel senza nessuno davanti: schermo bloccato, avvio automatico, senza accesso, Excel gia' aperto | PC esecutore | da fare |
+| B5.9 | Facoltativo, per la CS-2: prova K0 ripetuta con file allineati (`09_Copilot_Studio/Prova_con_Copilot_Studio.md`: T1.2 con l'impronta, T1.3). Prima tornata del 09/10: opzione 1 funziona (T1.1, T1.2, T1.4 rifiutata), T1.3 una volta in errore, opzione 2 non disponibile in Banca, salvataggio in SharePoint riuscito con impronta uguale | D-70; CS-2 | parziale |
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
 
@@ -184,9 +193,10 @@ azione rimasta si lancia con un doppio clic o un messaggio.
 Punti fermi:
 - **Python resta il motore** (D-43); il piano 07 e' in riserva (sezione 10).
 - **Copilot Studio e Power Query sono disponibili** nel tenant (D-44); **usare Copilot Studio non e' deciso**: e' la
-  decisione aperta A-15, da prendere con AU4. L'analisi architetturale ha due sole opzioni
-  (`Analisi_Architettura/12_Due_opzioni.md`): app Python unica sul PC (AU1-AU5) o Copilot Studio nei vincoli della
-  Banca (CS-1, AU6).
+  decisione aperta A-15, da prendere con AU4. Dal 09/10 l'analisi ha **tre strade**
+  (`Analisi_Architettura/14_Tre_strade.md`): A, app Python sul PC (AU1-AU5); CS-1, ibrida con un PC esecutore (AU6);
+  CS-2, tutto in Copilot Studio senza Python sul PC, che e' l'obiettivo dichiarato dall'utente il 09/10. Si
+  decide dopo le prove K6, K8 (Office Scripts) e K9 (code interpreter su compiti lunghi).
 - **Separare chi chiede da chi esegue**: nella strada A la richiesta la scrive il menu, nella CS-1 un flusso di
   Copilot Studio; tutto cio' che sta dietro la richiesta e' identico.
 - Qualunque strada: nel registro scrive solo il motore, dopo i controlli (D-10); kernel, schemi, controlli,
@@ -265,11 +275,19 @@ Punti fermi:
   o se i gesti per agente e la raccolta sul PC si rivelano un peso; in piu' devono riuscire la prova K0 e il parere
   sulle trascrizioni. **Strada A** se il pilota resta a una persona al proprio PC (D-13), se si vuole la minima
   complessita' prima del primo ciclo vero, o se K0 o il parere non arrivano in tempo.
-- **Prova K0** (passo B5, pronta dal 05/10, D-70): A1 in Copilot Studio sullo stesso input della prova senza Copilot
+- **Prova K0** (passo B5.9, pronta dal 05/10, D-70): A1 in Copilot Studio sullo stesso input della prova senza Copilot
   Studio; il precontrollo dentro l'agente in due modi (Code interpreter dell'esperienza standard con lo script
   allegato, oppure skill `precontrollo-nfr` nella nuova esperienza, a consumo di crediti). Criteri nuovi: se il
   precontrollo gira dentro A1 con l'impronta verificata, il giro A1 -> PC si riduce in tutte e due le strade; i
   crediti della nuova esperienza sono un costo che la strada A non ha.
+
+  Prima tornata del 09/10:
+  - in Banca c'e' solo l'opzione 1: funziona nel riquadro di prova;
+  - in Teams risponde spesso con errori, probabilmente per il limite di circa 100 KB dei messaggi;
+  - il salvataggio in SharePoint dall'agente funziona: all'inizio il file finiva nel OneDrive, risolto il 09/10; il JSON arriva intero (impronta uguale a quella del file scaricato).
+
+  Per la CS-1 questi sono i punti critici, perche' la CS-1 vive in Teams. Il 09/10 l'utente ha scelto di proseguire
+  con la prova K6 (passo B5.3; tutte le prove della CS-1 nel passo B5, `09_Copilot_Studio/Prove_CS1.md`): un argomento a passi fissi, con il JSON che passa solo per i flussi.
 - **Proposta, se alla fine del passo 5 la decisione non c'e'**: strada A. La CS-1 resta aggiungibile dopo, perche'
   cambia solo chi scrive le richieste.
 - **Fatto quando**: A-15 e' chiusa in `04_Riferimenti/DECISIONI.md`.

@@ -118,6 +118,9 @@ possono essere tradotte. Se una voce non c'e', annotarlo: e' un risultato della 
 
 ## B2. Opzione 2: nuova esperienza con la skill
 
+**Al 09/10 in Banca la nuova esperienza non c'e': B2 non si puo' fare.** Resta descritta per quando l'IT la rendesse
+disponibile.
+
 Ogni minuto di costruzione e di prova consuma crediti: tenere aperta la scheda **Monitor** e annotare
 i crediti all'inizio e alla fine.
 
@@ -161,13 +164,26 @@ Solo sull'opzione che ha funzionato meglio.
    1. In SharePoint, creare la cartella di prova `Archivio_Cicli\Prova_K0`.
    2. Nell'agente: **Tools** -> **Add a tool** -> **New agent flow**.
       - Trigger **When an agent calls the flow** con due input di testo, `nome_file` e `contenuto`.
-      - Azione SharePoint **Create file**: il sito NFR; Folder Path `/Archivio_Cicli/Prova_K0`; File
-        Name = `nome_file`; File Content = `contenuto`.
+      - Azione SharePoint **Create file**: il sito NFR; Folder Path `/Archivio_Cicli/Prova_K0`.
+        **File Name** e **File Content** non si scrivono a mano: si sceglie, dal contenuto dinamico
+        (icona del fulmine, oppure `/`), la **variabile del flusso** `nome_file` e la variabile
+        `contenuto`, cioe' gli input del trigger. Se si scrive il nome come testo, il flusso usa quelle
+        parole e non il valore passato dall'agente. Questo passo mancava fino al 09/10.
       - Azione **Respond to the agent** con un output di testo `esito` = `salvato`.
-   3. Salvare e pubblicare il flusso con il nome `Salva_JSON` e la descrizione `Salva in SharePoint il
-      JSON finale di A1`.
-   4. Nella chat di T1.2: testo B3 di `Messaggi_da_incollare.txt`.
-   5. Sul PC, dalla cartella sincronizzata, lanciare il precontrollo su
+   3. Salvare e pubblicare il flusso con il nome `Salva_JSON`.
+   4. Nell'agente, scheda **Tools**, aprire lo strumento `Salva_JSON`:
+      - **Description**: e' cio' che l'agente legge per decidere quando usarlo. Una descrizione generica
+        lo fa partire anche senza richiesta. Incollare:
+
+        `Salva in SharePoint il JSON finale di A1. Usalo SOLO quando l'utente scrive il comando Scrivi_JSON; in ogni altro caso non usarlo, nemmeno se sembra utile: non dopo il ciclo, non dopo il precontrollo, non per altri file. nome_file: il nome del file indicato nel comando. contenuto: il JSON intero del file A1_2026Q4.json consegnato, senza modifiche e senza testo attorno.`
+      - **Inputs**: `nome_file` e `contenuto` li riempie l'agente. Come descrizione di ciascuno, la frase
+        corrispondente della descrizione qui sopra.
+      - **Save**. Poi **ripubblicare l'agente**: Teams usa solo la versione pubblicata.
+   5. Nella chat di T1.2, prima la prova negativa: scrivere `Salva il lavoro`. L'agente **non** deve
+      chiamare lo strumento: niente esecuzione nella cronologia del flusso, niente file nuovo in
+      SharePoint.
+   6. Poi il testo B3 di `Messaggi_da_incollare.txt`, che comincia con il comando `Scrivi_JSON`.
+   7. Sul PC, dalla cartella sincronizzata, lanciare il precontrollo su
       `Archivio_Cicli\Prova_K0\A1_2026Q4_CS.json`. **Stessa impronta del file scaricato** = un JSON
       di 40-60 KB passa intero per un flusso.
 
@@ -185,19 +201,76 @@ Solo sull'opzione che ha funzionato meglio.
 
 ## Tabella dei risultati
 
+Prima tornata del 09/10, parziale: alcuni file erano disallineati (trimestre e tassonomia vecchi, altri file sulla
+tassonomia nuova del 07/10). Valgono le risposte "funziona / non funziona"; numero di rischi, punti del precontrollo
+e qualita' di A1 vanno rimisurati (vedi "Prima di ripetere").
+
 | Voce | Opzione 1 (standard + Code interpreter) | Opzione 2 (nuova esperienza + skill) |
 |---|---|---|
-| B0: ambiente; code interpreter abilitato; New experience visibile; crediti; modelli disponibili | | |
-| Costruzione: istruzioni intere accettate (7.963 caratteri)? knowledge aggiunta? skill caricata (quale zip)? modello scelto | | |
-| T1.1 / T2.0, senza codice: JSON intero o troncato (caratteri), numero di rischi, tempo; precontrollo sul PC (prima riga, impronta) | | |
-| T1.2 / T2.1, con lo script: partito? giri; prime due righe riportate; file scaricabile? | | |
-| Precontrollo sul PC del file scaricato: stessa prima riga? **stessa impronta**? | | |
-| T1.3 / T2.2, ripetibilita': stesse righe? | | |
-| T1.4 / T2.3, richiesta da rifiutare: cosa ha fatto | | |
-| Crediti consumati e tempo totale | (nessun credito atteso) | |
-| B3: Teams (codice, allegati, file) | | |
-| B3: agent flow, impronta del file in SharePoint uguale? | | |
-| Qualita' di A1 rispetto ad Agent Builder (parte 2 dell'altra prova): numero di rischi, testi, punti del precontrollo al primo giro | | |
+| B0: ambiente; code interpreter abilitato; New experience visibile; crediti; modelli disponibili | 09/10: code interpreter disponibile (T1.2 funziona) | 09/10: **nuova esperienza non disponibile in Banca**, prova non fattibile |
+| Costruzione: istruzioni intere accettate (7.963 caratteri)? knowledge aggiunta? skill caricata (quale zip)? modello scelto | 09/10: agente costruito; modello da annotare | — |
+| T1.1 / T2.0, senza codice: JSON intero o troncato (caratteri), numero di rischi, tempo; precontrollo sul PC (prima riga, impronta) | 09/10: **funziona**; caratteri, rischi e tempo da rimisurare sui file allineati | — |
+| T1.2 / T2.1, con lo script: partito? giri; prime due righe riportate; file scaricabile? | 09/10: **funziona**; giri e righe da annotare | — |
+| Precontrollo sul PC del file scaricato: stessa prima riga? **stessa impronta**? | da annotare: e' la prova che lo script e' girato davvero | — |
+| T1.3 / T2.2, ripetibilita': stesse righe? | 09/10: **una volta in errore**; da annotare il testo dell'errore e, quando gira, se le righe sono uguali | — |
+| T1.4 / T2.3, richiesta da rifiutare: cosa ha fatto | 09/10: **rifiutata** (esito giusto) | — |
+| Crediti consumati e tempo totale | (nessun credito atteso) | — |
+| B3: Teams (codice, allegati, file) | 09/10: pubblicato, visibile in Teams e in Microsoft 365 Copilot; **spesso risponde con errori**, 1-2 volte ha funzionato | — |
+| B3: agent flow, impronta del file in SharePoint uguale? | 09/10: prima il file finiva **nel OneDrive personale**; poi corretto dall'utente: File Name e File Content vanno impostati con le variabili del flusso, e lo strumento deve avere una descrizione che lo limita al comando (B3, punti 2 e 4). Ora **l'agente salva nella cartella SharePoint** a comando, e il JSON arriva intero: **impronta del file in SharePoint uguale a quella del file scaricato** (09/10). B3 superato: un JSON di A1 passa intero per un flusso |
+| B3: prova negativa, lo strumento parte solo con `Scrivi_JSON`? | da fare | — | — |
+| Qualita' di A1 rispetto ad Agent Builder (parte 2 dell'altra prova): numero di rischi, testi, punti del precontrollo al primo giro | da rimisurare sui file allineati | — |
+
+### Prima di ripetere: un solo pacchetto per tutti i file
+
+- Registro di prova e `Input_A1_2026Q4.txt` rifatti con il pacchetto dell'08/10 sera: in `C:\NFR_Prova`, parte 2.1-2.2
+  dell'altra prova. Struttura 2026-10-09, tassonomia interna D-74, registro unico D-79.
+- Istruzioni dell'agente = `02_Agenti\A1_Horizon_Scanner.md` dello stesso pacchetto, reincollate.
+- Script allegato = `Da_caricare\precontrollo_nfr.txt` dello stesso pacchetto: quello dell'08/10 contiene la regola
+  del radar. Lo script del 05/10 non la contiene e su un output nuovo darebbe esiti diversi dal PC.
+- Il precontrollo sul PC si lancia da `C:\NFR_Prova\pacchetto\07_Senza_Studio`, cioe' con lo stesso codice.
+
+### B3: perche' Teams da' errori e il flusso salva nel OneDrive (cause probabili, da verificare)
+
+Il salvataggio nel OneDrive e' stato risolto dall'utente il 09/10, con le variabili del flusso in Create file e la
+descrizione dello strumento limitata al comando `Scrivi_JSON` (B3, punti 2 e 4). Il punto 4 qui sotto resta come
+guida se si ripresenta.
+
+Nel riquadro di prova di Copilot Studio queste cose non si vedono: Teams aggiunge limiti suoi.
+
+1. **Messaggio troppo grande.** Teams accetta da un agente messaggi fino a circa 100 KB contati in UTF-16, cioe'
+   circa due byte per carattere; Microsoft consiglia di restare sotto gli 80 KB. Un JSON di A1 di 40-60 KB scritto
+   nel messaggio diventa 80-120 KB: oltre il limite, e l'agente risponde con un errore.
+
+   Le volte che ha funzionato, probabilmente l'output era piu' corto, oppure l'agente ha consegnato solo il file.
+
+   In Teams l'agente non deve mai scrivere il JSON nel messaggio, solo il file e le due righe dell'esito: va
+   per questo la richiesta T1.2 di `Messaggi_da_incollare.txt` dal 09/10 dice `Non scrivere il JSON nel messaggio:
+   solo il file e le due righe.`
+2. **Sessione del code interpreter scaduta.** Il calcolo e' temporaneo e i compiti lunghi possono andare in timeout
+   (FAQ di Microsoft). Probabilmente spiega anche l'errore di T1.3: se nel turno dopo il file `A1_2026Q4.json` non c'e'
+   piu', lo script non trova il file. Lo script in se' da' sempre lo stesso risultato sullo stesso file. Conta il
+   testo dell'errore: "file non trovato" vuol dire sessione scaduta, non un problema di ripetibilita'.
+3. **Il codice dell'errore.** Ogni errore in Teams ha un codice: annotarlo, insieme all'ora. Per esempio:
+   - `OutgoingMessageSizeTooBig`: messaggio troppo grande, punto 1;
+   - `ConsentNotProvidedByUser`: manca il consenso alla connessione, si conferma la scheda di accesso;
+   - `FlowActionTimedOut`: il flusso ha superato i 100 secondi;
+   - `FlowActionException` o `FlowActionBadRequest`: errore nel flusso, si guarda la cronologia delle esecuzioni.
+
+   I codici si leggono nella pagina "Understand error codes" di Learn.
+4. **Il file nel OneDrive non lo ha scritto per forza il flusso.** Se il flusso lanciato da solo scrive in
+   SharePoint, l'azione Create file e' giusta: un'azione SharePoint non scrive in un OneDrive. Probabilmente in
+   Teams il flusso non e' partito, e il file nel OneDrive e' quello consegnato dall'agente nella chat: Teams e
+   Microsoft 365 Copilot conservano nel OneDrive di chi chatta i file della conversazione. Per verificarlo:
+   1. in Power Automate, cronologia delle esecuzioni di `Salva_JSON`: c'e' un'esecuzione all'ora della prova in
+      Teams? Se c'e', con quale esito, e che cosa ha restituito Create file?
+   2. il file nel OneDrive: in quale cartella, con quale nome (`A1_2026Q4_CS.json` o `A1_2026Q4.json`) e a che ora?
+   3. in Copilot Studio, scheda Activity della conversazione di Teams: l'agente ha chiamato lo strumento?
+   4. l'agente e' stato ripubblicato **dopo** aver aggiunto lo strumento? Teams usa solo la versione pubblicata.
+
+   Se non c'e' nessuna esecuzione, l'agente non ha chiamato lo strumento (punto 4.4, oppure la risposta "salvato" e'
+   inventata: vale la trappola dell'esito riferito). Se c'e', l'impronta del file in SharePoint dice se un JSON di
+   40-60 KB passa intero come testo. Il dubbio e' fondato: il modello deve riscriverlo tutto come parametro dello
+   strumento, e il flusso ha 100 secondi.
 
 ## Come si leggono i risultati
 
@@ -227,4 +300,7 @@ Solo sull'opzione che ha funzionato meglio.
 - [Copilot Studio agent sandbox](https://microsoft.github.io/mcscatblog/posts/copilot-studio-agent-sandbox/) (blog del CAT Microsoft, 20/07/2026, agg. 11/08): Python 3.12.9, 99 librerie, niente rete, script delle skill.
 - [Files the agent creates](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/created-files-overview) e [Attach files to a conversation](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/attachments-overview): 10 MB, 16 MiB, 28 giorni, tipi di file.
 - [Overview of usage-based billing](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/billing-credit-overview) (10/09/2026): crediti dalla costruzione. [Billing rates and management](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management): "No charge" per gli utenti Microsoft 365 Copilot nell'esperienza standard.
+- Consultate il 09/10/2026 per B3:
+  - [Understand error codes](https://learn.microsoft.com/en-us/troubleshoot/power-platform/copilot-studio/authoring/error-codes) (04/06/2026): `OutgoingMessageSizeTooBig`, `ConsentNotProvidedByUser`, agent flow oltre i 100 secondi;
+  - [Format your bot messages](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/format-your-bot-messages): messaggi in Teams fino a circa 100 KB in UTF-16, consigliati 80 KB.
 - [Use code interpreter to analyze structured data](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-code-interpreter-structured-data) (04/08/2026), [Code interpreter in a prompt](https://learn.microsoft.com/en-us/microsoft-copilot-studio/code-interpreter-for-prompts) (30/09/2026), [FAQ for code interpreter](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faq-code-interpreter): interruttori, autenticazione, abilitazione dell'amministratore spenta di default.

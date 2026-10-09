@@ -178,7 +178,7 @@ parti, la baseline (lo stesso JSON), i nove controlli di A5
 riscrive ogni volta che aggiorna la baseline e toglie quello del ciclo
 precedente. Con `baseline --uscita <file>` scrive solo il file indicato.
 
-Il comando `precontrollo --payload A1.json` confronta l'output di A1 con
+Il comando facoltativo `precontrollo --payload A1.json` (si puo' saltare: `trimestrale` rifa' tutto) confronta l'output di A1 con
 `Baseline_corrente.json` prima di A5: schema, controlli meccanizzati e parti
 del razionale. Se trova qualcosa scrive `Cicli/<ciclo>/Correzione_A1_<ciclo>.txt`,
 il messaggio di correzione per A1. Non apre il registro.

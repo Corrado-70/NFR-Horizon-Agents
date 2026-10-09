@@ -224,7 +224,7 @@ library `Kernel`: le regole non sono copiate qui.
 archivia la decisione e scrive baseline e `Input_A1_<AAAAQn-Sk>.txt`; A8 Evento critico (D-77),
 con l'allegato e i documenti dell'evento, "Esegui il ciclo straordinario" rivaluta solo quei rischi,
 censisce i nuovi creati dall'evento (senza `--rischi`: solo censimento) e scrive `analisi_evento`;
-poi `precontrollo` e `trimestrale --payload A8_<AAAAQn-Sk>.json` (riporta gli altri rischi dal
+poi `precontrollo` (facoltativo) e `trimestrale --payload A8_<AAAAQn-Sk>.json` (riporta gli altri rischi dal
 ciclo prima, gia' validati) e `valida --periodo <AAAAQn-Sk>`. L'analisi va nella colonna
 Straordinario di Sintesi_Cicli (il fatto) e nella knowledge di A7 (`Ciclo.txt`). La proposta puo'
 venire da A3 (a video in `settimanale` e nel foglio Notizie) o da A4. Passo per passo: guida,

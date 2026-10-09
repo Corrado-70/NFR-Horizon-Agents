@@ -258,6 +258,10 @@ Segnale critico: proponi un ciclo straordinario solo se una notizia (a) ha inten
 > | Tempo di mitigazione senza azioni (Y di riserva) | 1 anno | Parametri (moscaYDefault) |
 > | Anni di adeguamento strutturale di un rischio (Y minima) | proposto da A1, validato (D-60) | Parametri, anagrafica, colonna Anni_Adeguamento (M): la scrive la validazione, correggibile a mano |
 > | Presidio dei controlli della Banca (qualitativo, D-49) | Non verificato | Parametri, anagrafica, colonna Presidio_Controlli (O), input del validatore |
+> | Registro unico: capienza del radar (D-79) | 15, fino a 20 | Parametri!B66 (capienzaRadar) |
+> | Registro unico: soglie di Prossimita e Probabilita per entrare nel radar | 2 e 2 | Parametri!B67:B68 (sogliaProssimitaRadar, sogliaProbabilitaRadar) |
+> | Registro unico: cicli sotto la regola prima di uscire | 2 | Parametri!B69 (cicliUscitaRadar) |
+> | Registro unico: rischi in osservazione al massimo | 20 (fisso) | Parametri!B70 (capienzaOsservazione); per cambiarlo, il generatore del template |
 
 ## 8. Urgenza: disuguaglianza di Mosca
 

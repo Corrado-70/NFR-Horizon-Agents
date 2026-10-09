@@ -116,14 +116,16 @@ compare il percorso del registro vero, ci si trova nella cartella sbagliata: fer
    ```
    {
      "workbook": "C:\\NFR_Prova\\NFR_Registro_prova.xlsx",
-     "kernel": "QUI LA RIGA kernel DEL configurazione.json VERO",
      "cartella_uscita": "C:\\NFR_Prova\\Archivio",
      "news_inbox": "C:\\NFR_Prova\\News_Inbox"
    }
    ```
 
-   Per `kernel`, copiare il valore dal `configurazione.json` vero, con le barre doppie: la prova
-   legge la stessa library Kernel e non ci scrive niente.
+   **Senza la riga `kernel`** (corretto il 09/10). Lo script usa allora `C:\NFR_Prova\pacchetto\01_Kernel`, che
+   ha lo stesso contenuto della library Kernel (passo B2), e scrive le spiegazioni per A7 in
+   `C:\NFR_Prova\Archivio\Spiegazioni`. Con la riga `kernel` della configurazione vera, dal 07/10 (D-72)
+   `trimestrale` e `valida` della prova riscriverebbero `Kernel\Spiegazioni` della library vera, e A7
+   spiegherebbe il registro di prova.
 3. Aprire un **nuovo** Prompt dei comandi e scrivere `cd C:\NFR_Prova\pacchetto\07_Senza_Studio`.
 
 ### 2.2 Registro di prova e baseline

@@ -27,7 +27,7 @@
 > riapertura e straordinario; trappola 101. Prima, 07/10 notte: **tassonomia interna della Banca** (D-74): le
 > nove categorie in perimetro (9.1 Condotta, 9.4 Legale, 9.5 Fiscale, 9.6 Tecnologico,
 > 9.7 Sicurezza informatica, 9.8 Sicurezza fisica, 9.9 Terze parti, 9.11 Employer,
-> 9.13 Processo, da `01_Kernel/Tassonomia dei Rischi.csv`) sostituiscono i sette
+> 9.13 Processo, da `Tassonomia dei Rischi.csv`, dal 09/10 in `04_Riferimenti`) sostituiscono i sette
 > event type di Basilea ovunque (radar a nove settori, nove intensita' delle notizie,
 > colonne `Imp_9_n`); A1 riclassifica i codici di Basilea della baseline
 > (Osservazione C1) o segna FP i rischi fuori perimetro (da motivare, poi
@@ -42,7 +42,8 @@
 > `segnali_a3`). **Un documento solo per uso e avvio**: il piano di deploy e' la
 > sezione "Avvio del progetto" della guida (`Piano_deploy.md` non c'e' piu').
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
-> app Python unica, Copilot Studio nei vincoli). Trappole 93-98. Prima, 07/10 sera:
+> app Python unica, Copilot Studio nei vincoli; **dal 09/10 tre strade**,
+> `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente). Trappole 93-98. Prima, 07/10 sera:
 > **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
@@ -601,7 +602,7 @@ Dopo ogni modifica si ricompone e si misura.
 
 Nove categorie della tassonomia interna della Banca (D-74, codici `9.1`, `9.4`,
 `9.5`, `9.6`, `9.7`, `9.8`, `9.9`, `9.11`, `9.13`, descrizioni riassunte dal file
-`Tassonomia dei Rischi.csv` per stare nei prompt; i nomi interni restano
+`04_Riferimenti/Tassonomia dei Rischi.csv` (fonte documentale, non la legge nessun componente) per stare nei prompt; i nomi interni restano
 `event_type`, `Event_Type`, `codiciL1`) + otto driver emergenti DRV-CYB, TPR, AI,
 CLI, CON, GEO, TEC, HUM (PERCHE' e' emergente). Un rischio: UNA categoria, UNO O
 PIU' driver; `FP` solo per un rischio esistente fuori perimetro; regola di
@@ -1425,7 +1426,10 @@ openpyxl (solo per il file delle schede). Moduli:
   Capacita' del Piano_azioni controllata prima della scrittura
   (`capienzaPianoAzioni`). Comandi:
   - `precontrollo --payload A1.json [--baseline file]` (D-69): vedi
-    `precontrolla` sopra; prima di A5, senza Excel.
+    `precontrolla` sopra; prima di A5, senza Excel. **Facoltativo, si puo'
+    saltare**: `trimestrale` fa gli stessi controlli e, se ferma, scrive lo
+    stesso messaggio per A1. Guida, LEGGIMI, workflow, help del comando e
+    messaggio dello straordinario lo dicono (09/10, richiesta dell'utente).
   - `baseline`: esporta `Baseline_corrente.json` **e .txt** e l'allegato di A1
     `Input_A1_<ciclo>.txt` (D-69; stampa "Allegato per A1: ...") (input di A1, A3,
     A4, A5: rischi con impatto, velocity — null se non valutata —, prossimita,
@@ -2781,6 +2785,31 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     template crea basso va passato da `adatta_altezze` in `prepara_report` (ora anche `fenomeniUscite`); il controllo
     vero e' guardare il foglio esportato.
 
+108. **Il riquadro di prova di Copilot Studio non e' Teams** (09/10, prova K0, D-70). Nel riquadro di prova A1 con il
+    code interpreter funzionava; pubblicato in Teams rispondeva spesso con errori. Il flusso di salvataggio funzionava
+    lanciato da solo, ma dall'agente in Teams il file finiva nel OneDrive personale (risolto dall'utente lo stesso giorno; poi impronta uguale: il JSON passa intero per il flusso). Teams ha limiti suoi:
+    - messaggi fino a circa 100 KB contati in UTF-16, quindi un JSON di A1 di 40-60 KB nel messaggio non passa;
+    - consenso alle connessioni;
+    - solo la versione pubblicata;
+    - file della chat conservati nel OneDrive di chi chatta.
+
+    La causa del OneDrive era il protocollo: in Create file vanno scelte le variabili del flusso, cioe' gli
+    input del trigger, non nomi scritti come testo. Inoltre la descrizione dello strumento deve limitarlo a
+    un comando esplicito (`Scrivi_JSON`): l'orchestrazione generativa chiama uno strumento ogni volta che la
+    descrizione sembra adatta, quindi un'azione che scrive va legata a un comando e provata anche al
+    negativo. Ogni passo per Copilot Studio va provato nel canale vero. In un protocollo si chiedono il codice dell'errore, la
+    cronologia delle esecuzioni del flusso e la scheda Activity, non solo "funziona / non funziona". Nella prova in
+    Banca l'opzione 2, cioe' la nuova esperienza, non c'e'.
+
+109. **Una prova che legge il kernel vero ci puo' anche scrivere** (09/10, trovata scrivendo le prove della CS-1).
+    La prova senza Copilot Studio faceva copiare nella configurazione di `C:\NFR_Prova` la riga `kernel` di quella
+    vera, "la prova legge la stessa library Kernel e non ci scrive niente". Dal 07/10 (D-72) pero' `trimestrale`,
+    `valida` e `dismetti` scrivono `Kernel\Spiegazioni`, la knowledge di A7: la prova avrebbe sostituito le
+    spiegazioni del registro vero con quelle del registro di prova. Ora la configurazione di prova e' senza
+    `kernel`: si usa `01_Kernel` del pacchetto e le spiegazioni vanno nella cartella di uscita
+    (`cartella_spiegazioni`). Ogni volta che un comando comincia a scrivere in una cartella nuova, vanno riletti i
+    protocolli di prova che puntano a quella cartella.
+
 ## STRUTTURA DEI FILE DA PRODURRE
 
 ```
@@ -2801,12 +2830,12 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
 07_Senza_Studio/  README_variante_locale.md  esegui_ciclo_locale.py  raccogli_notizie.py  fonti.py
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  configurazione_esempio.json
-09_Copilot_Studio/  Prova_con_Copilot_Studio.md  prepara_kit.py  precontrollo-nfr/SKILL.md
+09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
                     Da_caricare/ precontrollo-nfr.zip  precontrollo-nfr_senza_cartella.zip
                                  precontrollo_nfr.txt (generati)  Messaggi_da_incollare.txt
 99_Collaudo/  LEGGIMI_collaudo.md  esegui_collaudo.py  comune.py  test_mappatura.py  test_controlli.py
-              test_fonti.py  verifica_riferimenti.py  run_catena.py  confronta.py
+              test_fonti.py  verifica_riferimenti.py  run_catena.py  confronta.py  osserva_cartella.py
               dati/ baseline_2026Q3.json  run1_A1_2026Q3.json  run2_A1_2026Q3.json  run_A5_2026Q3.json
                     run_A3_2026-10-12.json  baseline_2026Q4.json  run3_A1_2026Q4.json  run_A5_2026Q4.json
                     decisioni_validatore_2026Q3.json  decisioni_validatore_2026-10-12.json

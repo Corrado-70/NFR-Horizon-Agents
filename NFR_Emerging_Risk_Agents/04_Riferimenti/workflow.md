@@ -78,7 +78,7 @@ in `News_Inbox`.
    correzione per A1, e si torna al punto 3. Codice 1 con punti che
    fermerebbero la scrittura, 0 altrimenti. I controlli sono gli stessi del
    punto 5.2: il precontrollo li anticipa (prima di A5, se lo si usa) senza
-   scrivere niente.
+   scrivere niente. Se non serve si salta e si va al punto 4 o 5.
 4. [Piattaforma] **Facoltativo** (D-71): esegue A5 passando SOLO l'output di A1
    e la baseline (nessuna knowledge, nessuna notizia); salva l'output in un
    file. **Quando**: dopo A1 e prima della scrittura, e di nuovo ogni volta che

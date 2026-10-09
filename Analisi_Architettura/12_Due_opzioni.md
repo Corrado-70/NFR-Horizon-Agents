@@ -1,5 +1,8 @@
 # 12. Le due opzioni architetturali
 
+> **Dal 09/10/2026 superato in parte da `14_Tre_strade.md`**: le strade sono tre (A, CS-1, CS-2 senza PC). Le
+> descrizioni dell'opzione 1 (12.3) e della CS-1 (12.4) restano valide e il 14 le richiama.
+
 Data: 07/10/2026. Su richiesta dell'utente l'analisi architetturale tiene **due sole opzioni**:
 
 1. un'**app Python unica** sul PC degli utenti, che automatizza tutto cio' che si puo';
@@ -142,7 +145,10 @@ esercizio": non si propone.
 | 8.000 caratteri per istruzioni | uguale ad Agent Builder | i sotto-agenti permettono di dividere A1 se serve |
 
 **Esplorazione a passi.** Ogni prova ha un esito che decide se si va avanti. Riprende il protocollo
-`NFR_Emerging_Risk_Agents/09_Copilot_Studio/Prova_con_Copilot_Studio.md`.
+`NFR_Emerging_Risk_Agents/09_Copilot_Studio/Prova_con_Copilot_Studio.md`. Il 09/10, dopo la prima tornata di K0, l'utente ha
+scelto di procedere con K6 nella forma "argomento a passi fissi": i passi li decide l'argomento, non il modello, e il JSON
+passa solo per i flussi, mai nei messaggi. Protocollo in `09_Copilot_Studio/Prova_K6_Operatore.md`; si scrive solo in
+`Archivio_Cicli\In_arrivo`.
 
 | Prova | Che cosa | Se riesce | Se no |
 |---|---|---|---|

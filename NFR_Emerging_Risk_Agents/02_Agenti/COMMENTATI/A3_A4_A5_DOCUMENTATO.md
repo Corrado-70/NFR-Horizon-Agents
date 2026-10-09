@@ -143,7 +143,7 @@ in `01_Kernel/controlli_A5.md`, e `componi_prompt.py` lo inserisce al posto di
 prima di rispondere. Il prompt composto di A5 e' identico a prima, salvo la
 frase nuova di C8. A5 non perde indipendenza: non vede la knowledge ne' la
 chat di A1, e giudica cio' che A1 consegna. Gli errori meccanici gli arrivano
-piu' di rado, perche' il precontrollo dello script li ferma prima.
+piu' di rado, perche' il precontrollo dello script, quando lo si usa, li ferma prima.
 
 ### C1 — Completezza
 Un rischio mancante, scritto a meta', sul radar si legge come un crollo. Un

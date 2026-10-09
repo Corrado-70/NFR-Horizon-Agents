@@ -2490,8 +2490,8 @@ def comando_baseline(arg, conf):
               f"{rischi_straordinario(decisione)}; data di riferimento {decisione['data_riferimento']}.\n"
               f"Decisione archiviata: {archivio}\n"
               f"Prossimi passi: A8 Evento critico con l'allegato Input_A1_{decisione['periodo']}.txt e i documenti "
-              f"sull'evento (D-77), poi python esegui_ciclo_locale.py precontrollo --payload A8_{decisione['periodo']}.json "
-              f"e trimestrale --payload A8_{decisione['periodo']}.json, poi la validazione (solo i rischi rivalutati e "
+              f"sull'evento (D-77), poi (facoltativo) python esegui_ciclo_locale.py precontrollo --payload "
+              f"A8_{decisione['periodo']}.json e trimestrale --payload A8_{decisione['periodo']}.json, poi la validazione (solo i rischi rivalutati e "
               "quelli nuovi).")
     if pendenti:
         print(f"ATTENZIONE: il ciclo {dati['ciclo_precedente']} ha ancora {righe_griglia(pendenti)} righe da validare nel foglio "
@@ -2929,7 +2929,7 @@ def main(argv=None):
     b.add_argument("--motivo", help="l'evento critico e perche' non puo' aspettare il trimestre (almeno 20 caratteri)")
     b.add_argument("--decisore", help="chi decide lo straordinario: una funzione o un comitato")
     b.add_argument("--data", help="data di riferimento dello straordinario, AAAA-MM-GG (default: oggi)")
-    pc = sub.add_parser("precontrollo", help="controlla l'output di A1 prima di A5 (senza Excel) e scrive il messaggio di correzione")
+    pc = sub.add_parser("precontrollo", help="facoltativo: controlla l'output di A1 prima di A5 (senza Excel) e scrive il messaggio di correzione")
     pc.add_argument("--payload", required=True)
     pc.add_argument("--baseline", help="baseline da usare (default: Baseline_corrente.json nella cartella di uscita)")
     v = sub.add_parser("valida", help="applica la griglia del foglio Validazione per un ciclo o una settimana")

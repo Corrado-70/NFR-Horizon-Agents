@@ -6,7 +6,7 @@
 > JSON, nelle formule e nelle liste, e devono combaciare al carattere.
 >
 > Dal 07/10/2026 (D-74) la classificazione e' la **tassonomia interna dei rischi
-> della Banca** (`Tassonomia dei Rischi.csv`, famiglia "Rischi Non Finanziari -
+> della Banca** (`04_Riferimenti/Tassonomia dei Rischi.csv`, famiglia "Rischi Non Finanziari -
 > Rischi Operativi"): solo le nove categorie marcate SI, con il loro codice.
 > Sostituiscono i sette event type di Basilea (L1-01..L1-07) ovunque: classifica
 > dei rischi, settori del radar, intensita' delle notizie di A3 e A4, foglio

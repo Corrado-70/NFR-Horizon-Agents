@@ -22,7 +22,8 @@
 > riapertura della validazione: 2-unvicies; **A8 Evento critico, D-77, e proposta della scala unica: sezione
 > 2-duovicies**; **08/10: KRI in A8, analisi della scala unica, documenti in 04_Riferimenti, collaudo in
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
-> 2026-10-09: sezione 2-quattuorvicies**).
+> 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
+> 2-quinquevicies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -906,7 +907,7 @@ applicata subito (eccezione a D-05); lista di osservazione nel piano.
   Comando `baseline --straordinario`; `Periodo_Valutazione` nel RiskRegister; periodi delle viste scritti dallo
   script (`dataRiferimento`); dati `run4_A1_2026Q4-S1.json`; catena: passi 7b e 8s (271/272 prima della
   tassonomia; l'unico KO era la migrazione di un registro senza `tblSintesi`, corretta con `_righe_o_niente`).
-- **Tassonomia interna della Banca (D-74)**: l'utente ha fornito `01_Kernel/Tassonomia dei Rischi.csv` e scelto:
+- **Tassonomia interna della Banca (D-74)**: l'utente ha fornito `01_Kernel/Tassonomia dei Rischi.csv` (dal 09/10 in `04_Riferimenti`: non la legge nessun componente) e scelto:
   le nove categorie SI sostituiscono del tutto Basilea; radar a nove settori; A1 riclassifica o segna FP.
   Schemi (A1 con FP, A3 a nove impatti), mappa (`Imp_9_n`, `Imp_L1_0x` dismesse), generatore (Parametri, radar,
   Notizie, Osservazione), controlli (C1 riclassificazione = Osservazione, FP = da motivare), fonti.md (temi),
@@ -1057,6 +1058,35 @@ osservazione** (al massimo 20). Sostituisce la lista di osservazione della D-73.
   PROMPT_MASTER (trappole 103-107), analisi 13.8, demo.
 - Sul PC della Banca: pacchetto completo, kernel nella library Kernel, reincollare A1, A3, A5, A7, A8,
   `aggiorna-registro` (le voci della lista diventano rischi in osservazione, A1 li rivaluta al primo ciclo).
+
+## 2-quinquevicies. 09/10: prova K0, precontrollo facoltativo, tre strade, prove della CS-1
+
+- **Prova K0** (prima tornata dell'utente, file in parte disallineati):
+  - in Banca c'e' solo l'opzione 1 (esperienza standard con code interpreter): T1.1 e T1.2 funzionano, T1.3 e'
+    andato una volta in errore, T1.4 e' rifiutata;
+  - in Teams l'agente risponde spesso con errori; causa probabile, il limite di circa 100 KB in UTF-16 dei messaggi;
+  - l'agent flow salvava nel OneDrive; l'utente l'ha corretto: variabili del flusso in Create file e strumento
+    limitato al comando `Scrivi_JSON`. Ora salva in SharePoint con **impronta uguale**: B3 superato;
+  - protocollo aggiornato con risultati, cause, prova negativa; trappola 108.
+- **Precontrollo FACOLTATIVO**, richiesta dell'utente: lo dicono guida, LEGGIMI, workflow, documenti commentati,
+  help del comando e messaggio dello straordinario.
+- **Prova K6** (`09_Copilot_Studio/Prova_K6_Operatore.md`): un Operatore con un argomento a passi fissi.
+  - Sequenza: `Leggi_Input` da SharePoint, sotto-agente A1 con input e output, `Salva_JSON` in
+    `Archivio_Cicli\In_arrivo`, l'unica cartella in cui scrive Copilot Studio.
+  - Gli strumenti non partono da soli.
+- **Direzione dell'utente**: a regime nessun Python sul PC, "solo via agenti copilot studio"; poi "tieni CS-1 e
+  approfondisci i pro e contro delle 3".
+  - Analisi `Analisi_Architettura/14_Tre_strade.md`: A, CS-1, CS-2 (logica Python nel code interpreter, Office
+    Scripts per il registro), piu' utenti, collaudo, prove, decisioni toccate.
+  - La CS-2 contraddice D-02 ("niente Office Scripts") e tocca D-01, D-10, D-11.
+- **Prove di fattibilita' della CS-1** (`09_Copilot_Studio/Prove_CS1.md`; TODO B5, dopo B1-B4):
+  - D1 e D2, domande all'IT e alla DPO;
+  - K6, K4 qualita' di A1, K11 piu' utenti, K12 A7, K7a sincronizzazione (nuovo `99_Collaudo/osserva_cartella.py`),
+    K7b Excel senza nessuno davanti.
+- **Correzione**: la configurazione della prova senza Copilot Studio non ha piu' la riga `kernel`, che avrebbe
+  fatto scrivere le spiegazioni di prova nella library Kernel vera (trappola 109).
+- Prima, in mattinata: `Tassonomia dei Rischi.csv` spostato in `04_Riferimenti` e parametri del radar nella rubrica
+  (sezione 7).
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

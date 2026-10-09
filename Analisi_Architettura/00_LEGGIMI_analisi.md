@@ -1,4 +1,9 @@
-# Analisi dell'architettura — due opzioni
+# Analisi dell'architettura — tre strade
+
+**Dal 09/10/2026 le strade sono tre: `14_Tre_strade.md`** (A tutto sul PC, CS-1 ibrida, CS-2 tutto in Copilot
+Studio), dopo la direzione dell'utente "nessun Python sul PC, solo via agenti Copilot Studio" e la richiesta di
+tenere la CS-1 e confrontare le tre. Raccomandazione: puntare alla CS-2 a tappe, decidendo A-15 sugli esiti delle
+prove K6, K8, K9 (14.7). Il testo qui sotto e' l'indice del 07/10, con due opzioni.
 
 Aggiornato il 07/10/2026, su richiesta dell'utente: l'analisi tiene **due sole opzioni**.
 
@@ -17,6 +22,7 @@ motore `esegui_ciclo_locale.py` che resta l'unico a scrivere (D-10).
 
 | Documento | Tema | Stato |
 |---|---|---|
+| `14_Tre_strade.md` | tre strade per l'automazione: A, CS-1, CS-2 senza PC (code interpreter per la logica Python, Office Scripts per il registro); pro e contro, confronto, gate, stima, tappe | 09/10/2026: in attesa delle prove K6, K8, K9 e della decisione A-15 |
 | `13_Scala_unica.md` | scala unica per rischi e fenomeni in osservazione (TODO P10): opzione A, la lista sulla scala della rubrica; opzione B, un registro con due stati e una regola calcolata | 08/10/2026: scelta la B dall'utente, anteprima approvata, fatta la sera (D-79, registro unico, struttura 2026-10-09; 13.8) |
 
 ## Archivio

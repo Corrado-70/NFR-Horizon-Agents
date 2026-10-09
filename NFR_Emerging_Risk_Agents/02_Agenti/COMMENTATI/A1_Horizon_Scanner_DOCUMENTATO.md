@@ -170,7 +170,7 @@ propone solo se una fonte le sostiene, entrambe; altrimenti null e le fissa la
 Banca in validazione (stato "Soglie da definire"). Se A1 ripropone un KRI
 senza soglie, restano quelle in vigore. Il 29/09 A1 aveva proposto 21 KRI,
 tutti con soglie inventate. C9. "Mai il kri_id di un altro rischio" e' uscito
-dal passo il 02/10 (D-69): lo dice C9 nell'allegato e lo ferma il precontrollo.
+dal passo il 02/10 (D-69): lo dice C9 nell'allegato e lo segnala lo script (il precontrollo, se lo si usa, o `trimestrale`).
 
 ### Passo 9 — Rilettura dei KRI del ciclo precedente
 A livello ciclo, non dentro il rischio: riguarda gli indicatori in vigore anche
@@ -186,13 +186,13 @@ rispettate; nessun campo in piu'", e A1 non conosceva le regole esatte con cui
 A5 e lo script l'avrebbero controllato. Ora le ha nell'allegato, con le stesse
 parole del prompt di A5. Serve a ridurre gli arresti del ciclo, non a
 sostituire i controlli: un modello che rilegge il proprio output tende a
-confermarlo. Per questo c'e' anche il **precontrollo** dello script prima di A5
+confermarlo. Per questo c'e' anche il **precontrollo** dello script prima di A5, facoltativo
 (`esegui_ciclo_locale.py precontrollo`), che applica la parte meccanizzabile e
 scrive il messaggio di correzione da incollare nella chat di A1.
 
 "Nessun campo in piu'" era tornato il 30/09 (dopo la semplificazione A1 tendeva
 a riscrivere i campi tolti, esito e gap_controlli); dal 02/10 lo copre lo
-scheletro dell'Output e lo ferma il precontrollo in pochi secondi. Fino al 02/10
+scheletro dell'Output e lo ferma lo script (il precontrollo, facoltativo, in pochi secondi). Fino al 02/10
 il passo chiedeva anche riferimenti senza i codici interni dello strumento di
 ricerca di Copilot (`turn1search17` e simili): la frase e' tolta per fare spazio
 al razionale in parti (D-68), perche' lo script li toglie comunque quando scrive
