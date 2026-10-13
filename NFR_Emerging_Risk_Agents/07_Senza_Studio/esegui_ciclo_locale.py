@@ -2978,6 +2978,9 @@ def main(argv=None):
         print(f"FERMATO — il workbook non e' stato modificato.\n{e}")
         return 1
     except Exception as e:
+        if os.environ.get("NFR_DEBUG"):              # NFR_DEBUG=1: dove e' nato l'errore tecnico (per chi mantiene il pacchetto)
+            import traceback
+            traceback.print_exc()
         if SALVATO["registro"]:                      # errore DOPO il salvataggio: il registro e' gia' scritto
             print(f"ERRORE TECNICO DOPO IL SALVATAGGIO — il registro {SALVATO['registro']} E' STATO SCRITTO E SALVATO "
                   f"(stato prima: {SALVATO['backup']}). NON rilanciare lo stesso comando.\n"

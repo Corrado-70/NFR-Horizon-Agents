@@ -11,11 +11,11 @@ Sezioni:
 1. ordine di lavoro;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
 3. processi (P1, P2, P4, P5, P6, P7, P9);
-4. automazione del processo (AU1-AU6);
+4. automazione del processo (AU1-AU7);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
-8. questioni aperte emerse dal lavoro;
+8. questioni aperte emerse dal lavoro (compresa la revisione della procedura);
 9. fatto;
 10. in riserva.
 
@@ -27,7 +27,7 @@ che migliora quel ciclo.
 | Passo | Voci | Perche' qui | Giorni |
 |---|---|---|---|
 | 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati (B1-B4); poi le **prove della CS-1** (B5) | tutto il resto si appoggia su un'installazione allineata al pacchetto; le prove decidono la A-15 | 1-2 per B1-B4; 1-2 per le prove, piu' le attese (in Banca) |
-| 1 | **P4** rapporti di scenario e **P9** temi da verificare | piccole, e migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1 |
+| 1 | **AU7** baseline in input ad A3 e A4 (non piu' nella knowledge); **P4** rapporti di scenario e **P9** temi da verificare | AU7 toglie un passo manuale a ogni ciclo e a ogni settimana, e l'errore "Baseline mancante" visto il 13/10; P4 e P9 sono piccole e migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1,5 |
 | 2 | **AU1, solo la parte "scrittura robusta"** (Salvataggio automatico spento, copia di lavoro del registro) | protegge il registro vero da scritture a meta' con OneDrive (rischio visto il 27/09); conviene averla prima del primo ciclo reale | circa 1 |
 | 3 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale (quale rischio e quale dimensione sono sotto pressione) | 2-3 |
 | 4 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 |
@@ -323,6 +323,29 @@ Punti fermi:
   rilanciata; il primo ciclo vero passa dal doppio run e dalla validazione.
 - **Impegno**: 13-15 giorni, piu' l'ombra della raccolta.
 
+### AU7. Baseline in input agli agenti, non nella base di conoscenza (richiesta del 13/10/2026) — IMPORTANTE
+
+- **Perche'**: oggi A3 e A4 leggono la baseline dal file singolo `Kernel/Baseline_corrente.txt` messo nella knowledge
+  (guida, 0.2: tabella delle knowledge). A ogni `baseline` il file va ricopiato nella library `Kernel` e, se Copilot non
+  lo ha ancora indicizzato o se in Agent Builder il file singolo salta, l'agente risponde "Baseline mancante" (visto il
+  13/10 su A3). E' un passo manuale ripetuto a ogni ciclo e a ogni settimana, con una causa di errore silenziosa:
+  l'agente puo' lavorare su una baseline vecchia senza accorgersene. A1, A5 e A6 la ricevono gia' come allegato alla
+  chat (D-69), e per questo non hanno il problema.
+- **Cosa fare**: la baseline arriva ad A3 e A4 **come input del messaggio**, come per A1. Strada piu' piccola: lo script
+  scrive, accanto a `Input_A1_<ciclo>.txt`, un allegato per A3 (`Input_A3_<lunedi'>.txt`: baseline + istruzioni di
+  consegna) e uno per A4 (la sola baseline), che si allegano alla chat; si toglie `Baseline_corrente.txt` dalla
+  knowledge di A3 e A4. Le istruzioni di A3 e A4 gia' ammettono "baseline allegata o in knowledge": va tolto solo il
+  ramo "in knowledge" e resta il controllo "Baseline mancante" se l'allegato non c'e'. Dentro l'allegato, l'intestazione
+  riporta ciclo e data di riferimento, e le istruzioni dicono di confrontarli con quelli del messaggio. A7 resta com'e'
+  (la sua knowledge `Kernel/Spiegazioni` e' la cartella che lo script riscrive, non un file da ricopiare).
+- **Tocca**: `esegui_ciclo_locale.py` (comando `baseline`), `input_a1.py` (o un modulo gemello per A3 e A4),
+  `02_Agenti/modelli/A3.md` e `A4.md` e i file composti (`componi_prompt.py`, controllo lunghezza), guida (0.2, tabella
+  delle knowledge; sezioni 1 e 5, passo "copiare Baseline_corrente.txt"; messaggi base di A3 e A4), DECISIONI, collaudo.
+- **Fatto quando**: da `baseline` escono gli allegati di A3 e A4; A3 e A4 non hanno piu' `Baseline_corrente.txt` nella
+  knowledge e rispondono con la baseline allegata; il messaggio "Baseline mancante" compare senza allegato; il passo di
+  copia in `Kernel` esce dalla guida (per A3 e A4).
+- **Impegno**: circa mezza giornata, piu' il reincollo dei due agenti sul PC della Banca.
+
 ## 5. Quantificazione per i rischi piu' rilevanti
 
 ### Q1. Nota di metodo e prototipo di probabilita' e impatto quantitativi
@@ -421,6 +444,25 @@ Piccole, da decidere quando capita l'occasione:
   prima;
 - `sogliaDelta` colora solo il Delta; il nome `rmPxI` non e' usato;
 - i flag di A3 citano "il descrittore", che A3 non ha nel prompt (si risolve con P1).
+
+### Revisione dell'intera procedura per ridurne la complessita' (richiesta del 13/10/2026) — IMPORTANTE, dopo aver risolto l'installazione
+
+- **Perche'**: il 13/10 l'allineamento al pacchetto ha richiesto molti giri a vuoto: script e kernel di versioni diverse
+  (messaggi "e' della versione ..."), `configurazione.json` perso alla sostituzione della cartella, registro che risultava
+  vuoto e poi con i dati di esempio del template, baseline lette da posti diversi (`trimestrale` la ricostruisce dal registro,
+  `precontrollo` la legge da un file), baseline da ricopiare nella knowledge (AU7), raccolta notizie scritta fuori da
+  `News_Inbox`, errori tecnici senza indicazione del punto. Ogni passo manuale e' una possibile deriva fra file.
+- **Cosa fare** (analisi, non ancora sviluppo): a) elencare ogni passo manuale e ogni file che deve coincidere fra PC,
+  SharePoint e Agent Builder, e togliere quelli eliminabili; b) un solo comando di verifica (`verifica`) che controlli
+  versione dello script, kernel, template, registro (ciclo, numero di rischi, assenza dei dati di esempio), percorsi di
+  `configurazione.json`, esistenza dei file di input, e dica cosa correggere; c) un solo pacchetto con manifest e
+  impronte, e un installatore che non tocchi `configurazione.json`; d) un controllo che rifiuti un registro con gli id di
+  esempio; e) mostrare nei messaggi di `baseline` e `trimestrale` quale registro e quale ciclo stanno usando; f) valutare
+  se il giro A1 → precontrollo → A5 → trimestrale → validazione possa avere meno passaggi a mano (si collega ad AU2, AU4,
+  AU7).
+- **Fatto quando**: una persona che parte da un PC pulito arriva al primo `trimestrale` senza consultare piu' di una
+  pagina di istruzioni e senza passaggi manuali di allineamento fra file.
+- **Impegno**: analisi circa 1 giorno, poi le voci che ne escono.
 
 ## 9. Fatto
 
