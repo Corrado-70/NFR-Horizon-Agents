@@ -23,7 +23,8 @@
 > 2-duovicies**; **08/10: KRI in A8, analisi della scala unica, documenti in 04_Riferimenti, collaudo in
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
-> 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**).
+> 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1115,6 +1116,24 @@ e vincoli, con la preferenza per meno componenti e piu' standard. Analisi in `An
 - **Percorso**: adattatore del registro, esecutore in Office Script con la CS-1b (PC senza Excel), prove K8, K9, K10,
   K13, poi la V2.
 - PROMPT_MASTER: trappola 110.
+
+## 2-septvicies. 13/10: ramo di un'altra sessione unito, frase uniforme sulla ricerca file
+
+Un'altra sessione di Claude ha lavorato il 13/10 sul ramo `claude/lucid-goldberg-t2k23p`, a partire da `424d795`, mentre
+la copia locale aveva l'analisi 15 non ancora salvata. Il ramo, fino al commit `675c66d`, porta:
+- **prompt di A1, A3, A4, A7, A8**: una frase uniforme sullo strumento di ricerca file; A1 senza "Ragiona con cura" e con
+  il passo 10 accorciato; A1 e A8 con l'Input riformulato (allegato distinto dalla knowledge);
+- **`esegui_ciclo_locale.py`**: `NFR_DEBUG=1` stampa il traceback di un errore tecnico;
+- **TODO**: AU7, la baseline come allegato ad A3 e A4 invece che in knowledge (errore "Baseline mancante" visto su A3 il
+  13/10); revisione dell'intera procedura per ridurne la complessita', dopo i giri a vuoto dell'allineamento del 13/10.
+
+Unione del 13/10, senza conflitti, con tre correzioni:
+- "la strumento" diventa "lo strumento di ricerca file";
+- la frase uniforme e' accorciata in "...aziendale per accedere ai file della knowledge.", perche' A8 superava gli 8.000
+  caratteri (8.003); ora A8 ha 7.993 caratteri e A1 7.980;
+- documenti commentati di A1 e A3-A5 e PROMPT_MASTER allineati.
+
+In Banca vanno reincollati A1, A3, A4, A7 e A8.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

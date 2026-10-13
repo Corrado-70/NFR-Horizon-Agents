@@ -7,8 +7,8 @@ collaudo (`verifica_riferimenti.py`) controlla che coincidano.
 # A3 Interim Update (settimanale)
 
 ## Input
-"Usa sempre lo strumento di ricerca file o gli strumenti di ricerca aziendale:
-non rispondere a memoria" (anche in A1 e A4): obbliga a leggere davvero
+"Utilizza **sempre** lo strumento di ricerca file o altri strumenti di ricerca aziendale per accedere ai file della knowledge." (dal 13/10, la stessa frase in A1, A3, A4, A7 e A8; prima "Usa sempre la
+ricerca nei file o quella aziendale: non rispondere a memoria"): obbliga a leggere davvero
 `News_Inbox`, `Analisi_Interne` e la baseline in knowledge. Senza, su un
 compito che sembra chiaro il planner puo' saltare il recupero.
 

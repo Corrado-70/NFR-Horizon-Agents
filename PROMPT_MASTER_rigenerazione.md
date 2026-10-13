@@ -750,9 +750,10 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   data o supera 8.000 caratteri. I prompt generati non si modificano a mano.
 - Lo schema JSON intero non sta nel prompt: basta uno scheletro dell'output; lo
   schema lo applica il validatore.
-- **A1, A3, A4** (non A5) hanno, in fondo all'Input, la frase fissa "Usa sempre
-  lo strumento di ricerca file o gli strumenti di ricerca aziendale: non
-  rispondere a memoria." — forza l'uso dello strumento di ricerca invece di
+- **A1, A3, A4, A7, A8** (non A5) hanno nell'Input la frase fissa "Utilizza
+  **sempre** lo strumento di ricerca file o altri strumenti di ricerca aziendale
+  per accedere ai file della knowledge." (dal 13/10; prima "Usa sempre la ricerca
+  nei file o quella aziendale: non rispondere a memoria") — forza l'uso dello strumento di ricerca invece di
   rispondere dal solo contesto della chat. **A5 ne e' escluso deliberatamente**:
   il suo Input dice l'opposto ("Non usare notizie, knowledge o altre fonti e non
   cercarle") perche' deve giudicare se l'output di A1 si sostiene da se',

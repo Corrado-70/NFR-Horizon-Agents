@@ -17,8 +17,8 @@ dal workbook. Lo score composito non e' nominato nel ruolo perche' la regola
 arriva dal kernel (rubrica, sezione Dimensioni): una sola formulazione, nessuna
 ripetizione da tenere allineata.
 
-"Ragiona con cura: prima di valutare analizza nel dettaglio ogni fonte" (01/10,
-D-64): richiesta del responsabile, che vale per tutta la valutazione e non
+"Prima di valutare analizza nel dettaglio ogni fonte" (01/10, D-64; fino al 13/10
+precedeva "Ragiona con cura", tolto per far posto alla frase sulla ricerca file): richiesta del responsabile, che vale per tutta la valutazione e non
 solo per i KRI. Sta nel ruolo, non in un passo, perche' riguarda ogni passo:
 il rischio che corregge e' una valutazione costruita sul titolo o sull'estratto
 di una fonte invece che sul suo contenuto.
@@ -180,8 +180,8 @@ ricopiato mostra uno stato che nessuno ha misurato. C7 ferma solo un KRI
 sconosciuto o riletto due volte.
 
 ### Passo 10 — Autocontrollo
-"Prima di rispondere verifica ogni rischio con controlli e guida dell'allegato
-e correggi" (02/10, D-69): fino ad allora il passo diceva solo "regole
+"Verifica con controlli e guida dell'allegato e correggi" (02/10, D-69; dal 13/10
+senza "Prima di rispondere", per lo spazio): fino ad allora il passo diceva solo "regole
 rispettate; nessun campo in piu'", e A1 non conosceva le regole esatte con cui
 A5 e lo script l'avrebbero controllato. Ora le ha nell'allegato, con le stesse
 parole del prompt di A5. Serve a ridurre gli arresti del ciclo, non a
