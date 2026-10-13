@@ -196,7 +196,10 @@ Punti fermi:
   decisione aperta A-15, da prendere con AU4. Dal 09/10 l'analisi ha **tre strade**
   (`Analisi_Architettura/14_Tre_strade.md`): A, app Python sul PC (AU1-AU5); CS-1, ibrida con un PC esecutore (AU6);
   CS-2, tutto in Copilot Studio senza Python sul PC, che e' l'obiettivo dichiarato dall'utente il 09/10. Si
-  decide dopo le prove K6, K8 (Office Scripts) e K9 (code interpreter su compiti lunghi).
+  decide dopo le prove K6, K8 (Office Scripts) e K9 (code interpreter su compiti lunghi). Dall'11/10 la CS-2 e'
+  approfondita in `Analisi_Architettura/15_CS2_approfondita.md`: raccomandata la variante V2 ("Python decide, Excel
+  esegue"), a tappe dopo la CS-1. Le tappe sono: adattatore del registro nel motore, esecutore in Office Script
+  (prova K8), motore nel prompt con code interpreter (K9) e PDF (K10).
 - **Separare chi chiede da chi esegue**: nella strada A la richiesta la scrive il menu, nella CS-1 un flusso di
   Copilot Studio; tutto cio' che sta dietro la richiesta e' identico.
 - Qualunque strada: nel registro scrive solo il motore, dopo i controlli (D-10); kernel, schemi, controlli,

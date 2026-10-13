@@ -22,6 +22,7 @@ motore `esegui_ciclo_locale.py` che resta l'unico a scrivere (D-10).
 
 | Documento | Tema | Stato |
 |---|---|---|
+| `15_CS2_approfondita.md` | CS-2 approfondita: parti del Python che non girano in Copilot Studio; che cosa offrono code interpreter, prompt, Office Scripts, connettori e flussi; ruolo dell'XML; varianti V1 (Office Scripts), V2 ("Python decide, Excel esegue") e V3 (XML del file); cancello, costi, vincoli, percorso dopo la CS-1, prove K8, K9, K10, K13 | 11/10/2026: raccomandata la V2, a tappe; si decide dopo le prove |
 | `14_Tre_strade.md` | tre strade per l'automazione: A, CS-1, CS-2 senza PC (code interpreter per la logica Python, Office Scripts per il registro); pro e contro, confronto, gate, stima, tappe | 09/10/2026: in attesa delle prove K6, K8, K9 e della decisione A-15 |
 | `13_Scala_unica.md` | scala unica per rischi e fenomeni in osservazione (TODO P10): opzione A, la lista sulla scala della rubrica; opzione B, un registro con due stati e una regola calcolata | 08/10/2026: scelta la B dall'utente, anteprima approvata, fatta la sera (D-79, registro unico, struttura 2026-10-09; 13.8) |
 

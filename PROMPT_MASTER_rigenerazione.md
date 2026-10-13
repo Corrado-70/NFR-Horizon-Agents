@@ -43,7 +43,8 @@
 > sezione "Avvio del progetto" della guida (`Piano_deploy.md` non c'e' piu').
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
 > app Python unica, Copilot Studio nei vincoli; **dal 09/10 tre strade**,
-> `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente). Trappole 93-98. Prima, 07/10 sera:
+> `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente; **l'11/10 la CS-2
+> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110). Trappole 93-98. Prima, 07/10 sera:
 > **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
@@ -2809,6 +2810,26 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     `kernel`: si usa `01_Kernel` del pacchetto e le spiegazioni vanno nella cartella di uscita
     (`cartella_spiegazioni`). Ogni volta che un comando comincia a scrivere in una cartella nuova, vanno riletti i
     protocolli di prova che puntano a quella cartella.
+
+110. **Nel cloud il problema non sono le librerie, ma chi esegue il codice** (11/10, analisi 15). Quasi tutte le regole
+    del pacchetto sono gia' libreria standard e girano nel sandbox di Copilot Studio. In Copilot Studio pero' gira
+    codice nostro solo in due modi:
+    - il code interpreter, perche' il modello decide di eseguirlo;
+    - gli Office Scripts, deterministici, dentro Excel.
+
+    Ne seguono tre regole:
+    - prima di scegliere una libreria va chiarito chi esegue il codice e che cosa succede se non lo fa;
+    - un esito prodotto da un modello si accetta solo se porta l'impronta del motore vero, che il flusso confronta con
+      quella attesa: a prova di guasto, senza esito verificato non si scrive;
+    - il registro lo scrive solo codice deterministico dentro Excel, che ricalcola e cerca gli errori. Un `.xlsx`
+      riscritto fuori da Excel ha i valori delle formule vecchi.
+
+    Limiti che hanno deciso il disegno:
+    - i prompt accettano un solo file Office in ingresso e restituiscono un solo file;
+    - i prompt hanno 100 secondi;
+    - i flussi estraggono uno zip ma non lo creano;
+    - il connettore Excel Online puo' bloccare il file per 6 minuti;
+    - gli Office Scripts lanciati da un flusso non aggiornano Power Query.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 

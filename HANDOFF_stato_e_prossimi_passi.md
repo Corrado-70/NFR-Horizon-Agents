@@ -23,7 +23,7 @@
 > 2-duovicies**; **08/10: KRI in A8, analisi della scala unica, documenti in 04_Riferimenti, collaudo in
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
-> 2-quinquevicies**).
+> 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1087,6 +1087,34 @@ osservazione** (al massimo 20). Sostituisce la lista di osservazione della D-73.
   fatto scrivere le spiegazioni di prova nella library Kernel vera (trappola 109).
 - Prima, in mattinata: `Tassonomia dei Rischi.csv` spostato in `04_Riferimenti` e parametri del radar nella rubrica
   (sezione 7).
+
+## 2-sexvicies. 11/10: CS-2 approfondita
+
+Richiesta dell'utente: rianalizzare la CS-2, cioe' tutto in Copilot Studio dopo la CS-1. Domande: quali parti del
+Python non girano, quali alternative ci sono (agent flow, librerie, XML per "macro di compilazione"), costi, benefici
+e vincoli, con la preferenza per meno componenti e piu' standard. Analisi in `Analisi_Architettura/15_CS2_approfondita.md`.
+
+- **Non girano cosi' come sono**:
+  - Excel via COM (`excel_com.py` e le funzioni del motore che lo usano), compreso il PDF;
+  - il disco del PC;
+  - la rete del PC (`raccogli_notizie.py` con pypac).
+
+  Le regole (circa 1.900 righe) sono gia' libreria standard: le schede usano openpyxl, che il sandbox ha.
+- **Il motore e' gia' quasi separato da Excel**: `Scrittore` e circa 50 letture di celle con nome.
+- **Fatti verificati su Learn**:
+  - prompt con code interpreter negli agent flow: un solo file Office in ingresso, un file in uscita in base64, codice
+    eseguito e log nella risposta, 100 secondi, input senza istruzioni;
+  - Office Scripts: standard, salvabili in SharePoint, 120 secondi, nessun aggiornamento di Power Query dai flussi;
+  - connettore Excel Online: blocco fino a 6 minuti, righe duplicate per i tentativi;
+  - "Convert file" in PDF; nessuna creazione di zip nei flussi;
+  - Power Query nel web si aggiorna solo a mano.
+- **XML**: utile solo per scrivere il `.xlsx` in Python con la libreria standard (V3). Non nei flussi; mappe XML e
+  VBA non esistono nel cloud.
+- **Varianti**: V1 tutto in Office Scripts (8-11 settimane); **V2 "Python decide, Excel esegue"** (6-8 settimane,
+  raccomandata); V3 XML del file (sconsigliata).
+- **Percorso**: adattatore del registro, esecutore in Office Script con la CS-1b (PC senza Excel), prove K8, K9, K10,
+  K13, poi la V2.
+- PROMPT_MASTER: trappola 110.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

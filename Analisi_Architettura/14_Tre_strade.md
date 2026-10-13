@@ -119,6 +119,16 @@ o pronta; oppure come tappa verso la CS-2.
 
 ## 14.5 CS-2 — Tutto in Copilot Studio
 
+> **11/10/2026: approfondita in `15_CS2_approfondita.md`**, che sostituisce le stime e il disegno di questa sezione.
+> - Che cosa del Python non gira in Copilot Studio, e perche': Excel via COM, disco e rete del PC, e soprattutto
+>   chi esegue il codice.
+> - Tre varianti: V1 tutto in Office Scripts; **V2 "Python decide, Excel esegue"**, raccomandata, con le regole in
+>   Python nel code interpreter e un unico Office Script generico che scrive; V3 Python che scrive l'XML del file.
+> - Il ruolo dell'XML.
+> - Le prove K8, K9, K10, K13.
+>
+> Il testo qui sotto resta come prima formulazione.
+
 ### Come funziona
 
 Il motore di oggi, `esegui_ciclo_locale.py` (circa 3.000 righe), mescola due cose:
