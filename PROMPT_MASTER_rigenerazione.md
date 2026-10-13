@@ -2081,6 +2081,8 @@ scoperta, storia di due KRI); poi una settimana in cui A3 propone un **ciclo
 straordinario**, la decisione (`baseline --straordinario`), lo straordinario
 `AAAAQn-S1` su un rischio, scritto e validato (D-75), con Radar_Mosca e Storico
 esportati di nuovo.
+`Demo_W1_W2/Archivio_Cicli/` (registri congelati, backup, PDF, baseline) non si versiona
+(`.gitignore`, richiesta dell'utente del 13/10: era l'84% dello zip): lo ricrea la demo.
 `REPORT_demo.md`: cosa produce ogni agente e cosa decide il validatore, con
 tabelle e immagini, dichiarando cosa e' simulato e cosa e' eseguito davvero.
 

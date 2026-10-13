@@ -1,2 +1,0 @@
-SPIEGAZIONI DEL REGISTRO NFR — Rischio 18 — ciclo 2026Q4-S1: POSTO LIBERO, nessun rischio in questo posto dell'anagrafica.
-Scritto da esegui_ciclo_locale.py il 2026-10-08.

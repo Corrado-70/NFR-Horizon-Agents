@@ -383,7 +383,7 @@ Demo_W1_W2/
   1_Input_agenti/                       output simulati degli agenti (A1, A3, A5, A8), decisioni simulate del validatore,
                                         baseline date agli agenti, allegati Input_A1 del 2026Q3, 2026Q4 e 2026Q4-S1
   A4_parere_esempio.md                  parere di A4
-  Archivio_Cicli/
+  Archivio_Cicli/                       NON nel repository ne' nello zip (dal 13/10): lo ricrea esegui_demo.py a ogni run
     Baseline_corrente.json / .txt       input degli agenti per il prossimo run (valori validati, rischi in osservazione,
                                         regola del radar)
     Input_A1_2027Q1.txt                 allegato di A1 per il prossimo ciclo
