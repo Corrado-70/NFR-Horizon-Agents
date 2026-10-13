@@ -15,7 +15,7 @@ Sezioni:
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
-8. questioni aperte emerse dal lavoro;
+8. questioni aperte emerse dal lavoro (compresa la revisione della procedura);
 9. fatto;
 10. in riserva.
 
@@ -441,6 +441,25 @@ Piccole, da decidere quando capita l'occasione:
   prima;
 - `sogliaDelta` colora solo il Delta; il nome `rmPxI` non e' usato;
 - i flag di A3 citano "il descrittore", che A3 non ha nel prompt (si risolve con P1).
+
+### Revisione dell'intera procedura per ridurne la complessita' (richiesta del 13/10/2026) — IMPORTANTE, dopo aver risolto l'installazione
+
+- **Perche'**: il 13/10 l'allineamento al pacchetto ha richiesto molti giri a vuoto: script e kernel di versioni diverse
+  (messaggi "e' della versione ..."), `configurazione.json` perso alla sostituzione della cartella, registro che risultava
+  vuoto e poi con i dati di esempio del template, baseline lette da posti diversi (`trimestrale` la ricostruisce dal registro,
+  `precontrollo` la legge da un file), baseline da ricopiare nella knowledge (AU7), raccolta notizie scritta fuori da
+  `News_Inbox`, errori tecnici senza indicazione del punto. Ogni passo manuale e' una possibile deriva fra file.
+- **Cosa fare** (analisi, non ancora sviluppo): a) elencare ogni passo manuale e ogni file che deve coincidere fra PC,
+  SharePoint e Agent Builder, e togliere quelli eliminabili; b) un solo comando di verifica (`verifica`) che controlli
+  versione dello script, kernel, template, registro (ciclo, numero di rischi, assenza dei dati di esempio), percorsi di
+  `configurazione.json`, esistenza dei file di input, e dica cosa correggere; c) un solo pacchetto con manifest e
+  impronte, e un installatore che non tocchi `configurazione.json`; d) un controllo che rifiuti un registro con gli id di
+  esempio; e) mostrare nei messaggi di `baseline` e `trimestrale` quale registro e quale ciclo stanno usando; f) valutare
+  se il giro A1 → precontrollo → A5 → trimestrale → validazione possa avere meno passaggi a mano (si collega ad AU2, AU4,
+  AU7).
+- **Fatto quando**: una persona che parte da un PC pulito arriva al primo `trimestrale` senza consultare piu' di una
+  pagina di istruzioni e senza passaggi manuali di allineamento fra file.
+- **Impegno**: analisi circa 1 giorno, poi le voci che ne escono.
 
 ## 9. Fatto
 
