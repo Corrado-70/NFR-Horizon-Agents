@@ -66,8 +66,10 @@ mano: e' la causa del salvataggio nel OneDrive in B3.
 1. Trigger **When an agent calls the flow** con un input di testo `ciclo`.
 2. Azione SharePoint **Get file content using path**:
    - sito NFR;
-   - File Path = espressione `concat('/Archivio_Cicli/Prova_K0/Input_A1_', triggerBody()?['text'], '.txt')`;
-   - se l'input ha un altro nome interno, si sceglie `ciclo` dal contenuto dinamico dentro `concat`.
+   - File Path = testo `/Archivio_Cicli/Prova_K0/Input_A1_`, poi la pillola `ciclo` dal contenuto dinamico, poi il
+     testo `.txt`. Non scrivere `concat(...)` nel campo: viene preso come testo letterale (visto il 15/10: "File not
+     found" con `path` = `concat('...` negli input non elaborati). Gli input del trigger hanno nomi interni `text`,
+     `text_1`, ... nell'ordine in cui sono creati (`ciclo` = `text`).
 3. Azione **Respond to the agent** con due output:
    - testo `allegato` = il contenuto del file;
    - numero `caratteri` = `length(...)` dello stesso valore.
@@ -177,9 +179,8 @@ Prima nel riquadro **Test**, poi in Teams. Ogni test in una conversazione nuova.
      sequenza.
   2. A5 come strumento "prompt" dopo A1.
   3. Controlli e scrittura senza il PC, secondo l'analisi decisa (code interpreter, Office Scripts).
-- **Il sotto-agente non riceve l'allegato** (A1 risponde che manca l'allegato, o lavora senza baseline): provare a
-  passarlo anche nel compito in linguaggio naturale. In alternativa l'utente allega `Input_A1` in chat prima di
-  `Esegui_ciclo`.
+- **Il sotto-agente non riceve l'allegato** (A1 risponde che manca l'allegato, o lavora senza baseline): e' l'esito
+  del 15/10. Allegarlo in chat non serve e il menu `/` non offre variabili: si passa alla variante K6-bis (sezione 5).
 - **`json_a1` arriva troncato o con testo attorno** (caratteri diversi, precontrollo "non e' un JSON valido"): far
   salvare il file ad A1 stesso, con `Salva_JSON` tra gli strumenti del sotto-agente, citato nelle sue istruzioni.
   E' il percorso gia' riuscito in B3, con impronta uguale.
@@ -192,13 +193,95 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 
 | Voce | Esito |
 |---|---|
-| Costruzione: flussi pubblicati; `Leggi_Input` provato da solo (prima riga, caratteri, accenti); istruzioni di A1 accettate nel sotto-agente; trigger dell'argomento usato | |
-| K6.1: sequenza in ordine; caratteri allegato; tempo; caratteri salvati = prodotti | |
+| Costruzione: flussi pubblicati; `Leggi_Input` provato da solo (prima riga, caratteri, accenti); istruzioni di A1 accettate nel sotto-agente; trigger dell'argomento usato | 15/10: flussi pubblicati; `Leggi_Input` provato da solo e dall'argomento (54.558 caratteri); trigger dell'argomento usato |
+| K6.1: sequenza in ordine; caratteri allegato; tempo; caratteri salvati = prodotti | 15/10: **non riuscita**. Il sotto-agente non riceve l'allegato (sezione 5.1); `json_a1` vuoto; `Salva_JSON` fermo su `text_1` vuoto |
 | K6.2: precontrollo sul PC (prima riga, impronta); `trimestrale` se fatto | |
 | K6.3: prova negativa, nessuna esecuzione | |
 | K6.4: ripetizione, stessa sequenza; sovrascrittura o copia | |
 | K6.5: Teams, esito e codici di errore | |
+| K6bis.1: sequenza (`Leggi_Input`, ricerche, `Salva_JSON`); tempo; file in `In_arrivo`; caratteri | |
+| K6bis.2: precontrollo sul PC (prima riga, impronta) | |
+| K6bis.3: prova negativa, nessuna esecuzione | |
+| K6bis.4: ripetizione; sovrascrittura o errore | |
+| K6bis.5: Teams, esito, codici di errore, durata del turno | |
 | Qualita' di A1 rispetto ad Agent Builder (numero di rischi, punti del precontrollo) | |
+
+## 5. Esito del 15/10 e variante K6-bis
+
+### 5.1 Che cosa e' successo con il sotto-agente (K6.1)
+
+- `Leggi_Input` funziona: dall'argomento legge `Input_A1_2027Q1.txt` (54.558 caratteri) in pochi secondi.
+- Il sotto-agente A1 chiamato dall'argomento **non riceve l'allegato come compito**. In tre prove ha risposto:
+  prima ripetendo il comando (`ESEGUI_CICLO`), poi "Baseline mancante: ciclo non eseguibile", poi `Comando
+  "Esegui_ciclo" eseguito.`, sempre in circa un minuto e con `json_a1` vuoto (`Salva_JSON` si ferma: "parametro
+  obbligatorio `text_1` vuoto").
+- Allegare `Input_A1` in chat non serve: il sotto-agente riceve solo il compito e gli input, non gli allegati della
+  conversazione.
+- Nell'esperienza standard il menu `/` delle istruzioni del sotto-agente offre strumenti, agenti e conoscenza, **non
+  variabili**: non si puo' richiamare il valore dell'input dentro le istruzioni.
+- Le impostazioni avanzate degli input (condizione, "Nessuna entita' valida trovata", reindirizzamento) mostrano a
+  che cosa servono: valori brevi che l'agente estrae dalla conversazione o chiede all'utente, non un documento di
+  50-80 KB.
+
+Conclusione per la CS-1: la sequenza a passi fissi **argomento -> sotto-agente con input e output** non porta
+l'allegato ad A1 in questa versione di Copilot Studio. Si prova la variante K6-bis.
+
+### 5.2 K6-bis: A1 come agente con due strumenti
+
+Si basa sull'unico meccanismo gia' riuscito in Banca: in B3 (09/10) un agente ha passato a un agent flow un JSON di
+40-60 KB, arrivato intero in SharePoint con la stessa impronta. L'allegato arriva ad A1 come **risultato di uno
+strumento** e il JSON esce come **input di uno strumento**: niente argomento, sotto-agente, variabili od output
+strutturati.
+
+Differenza da K6: l'ordine dei passi non lo fissa un argomento, lo decide l'orchestrazione dell'agente guidata dalle
+descrizioni degli strumenti. Per questo la prova negativa (K6bis.3) conta di piu'.
+
+**Costruzione** (circa mezz'ora; i flussi sono quelli della sezione 2.1, gia' pubblicati):
+
+1. Agente **`A1 CS prova`** (si puo' riusare quello di K0), esperienza standard, scheda **Configure**:
+   - Instructions: il file intero `02_Agenti\A1_Horizon_Scanner.md` del pacchetto, senza modifiche;
+   - Knowledge: `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` e i 4 siti, come A1 in Agent Builder (guida, 0.2);
+     non `Archivio_Cicli` ne' `Kernel`;
+   - **Settings -> Generative AI**: orchestrazione generativa; il modello piu' capace disponibile, annotandone il
+     nome; **Use general knowledge** e **Web search** spenti;
+   - **Settings -> Security -> Authentication**: "Authenticate with Microsoft".
+2. **Tools -> Add a tool** -> `Leggi_Input`. Le descrizioni degli strumenti non contano nel limite di 8.000
+   caratteri delle istruzioni: qui si spiega ad A1 che cosa riceve.
+   - Description:
+
+     `Legge l'allegato Input_A1 del ciclo. Usalo per primo, una sola volta, quando l'utente chiede di eseguire il ciclo, con ciclo = il ciclo indicato nel messaggio (es. 2027Q1). Il testo restituito in "allegato" E' l'allegato Input_A1 di cui parlano le istruzioni: baseline, controlli di A5, guida di scrittura. Non usarlo in nessun altro caso.`
+   - Input `ciclo`: lo riempie l'agente, descrizione `Il ciclo indicato dall'utente, nel formato AAAAQn.`
+   - Lasciare acceso "Allow agent to decide dynamically when to use this tool" (qui e' l'agente che decide).
+3. **Tools -> Add a tool** -> `Salva_JSON`:
+   - Description:
+
+     `Salva in SharePoint il JSON finale di A1. Usalo solo alla fine dell'esecuzione del ciclo, una volta, dopo aver verificato il JSON con controlli e guida dell'allegato. nome_file = "A1_" seguito dal ciclo e da ".json" (es. A1_2027Q1.json). contenuto = il JSON intero, senza modifiche e senza testo attorno. Non usarlo in nessun altro caso: non per altri file, non se l'utente chiede di salvare altro.`
+   - Inputs `nome_file` e `contenuto`: li riempie l'agente, con le frasi corrispondenti della descrizione.
+4. **Save**, poi **Publish** (per K6bis.5 in Teams).
+
+**Test** (ogni test in una conversazione nuova; ciclo = quello di cui c'e' l'allegato in `Prova_K0`):
+
+| Test | Dove | Messaggio | Cosa annotare |
+|---|---|---|---|
+| **K6bis.1** sequenza | Test | `Esegui il ciclo 2027Q1` | Nella mappa delle attivita': `Leggi_Input` una volta, poi ricerche nella knowledge, poi `Salva_JSON` una volta. Tempo totale (deve essere di minuti). Il file `A1_2027Q1.json` e' in `Prova_K0\In_arrivo`? `caratteri` restituito da `Salva_JSON` |
+| **K6bis.2** controllo sul PC | PC | `python esegui_ciclo_locale.py precontrollo --payload "<cartella sincronizzata>\Archivio_Cicli\Prova_K0\In_arrivo\A1_2027Q1.json"` | Prima riga e impronta. Il precontrollo confronta con `Baseline_corrente.json` della cartella di uscita: deve essere quella dello stesso ciclo, altrimenti usare `--baseline` |
+| **K6bis.3** prova negativa | Test | `Salva il lavoro`, poi `Che cosa sai fare?` | Nessuna esecuzione di `Leggi_Input` e `Salva_JSON` nella cronologia dei flussi; nessun file nuovo |
+| **K6bis.4** ripetizione | Test | come K6bis.1 | Stessa sequenza? `Create file` sul file esistente: errore o copia? |
+| **K6bis.5** Teams | canale **Teams and Microsoft 365 Copilot** | come K6bis.1, poi K6bis.3 | Errori, codici, durata del turno |
+
+**Come si leggono:**
+- **Riesce** se la sequenza e' quella attesa, il file arriva intero (precontrollo lo legge, caratteri coerenti), la
+  prova negativa non fa partire niente e Teams regge. Allora la CS-1 si puo' costruire con A1 (e A8) come agenti
+  con strumenti, e l'Operatore orchestra gli agenti invece di passare input ai sotto-agenti.
+- **A1 risponde "Baseline mancante" senza chiamare `Leggi_Input`**: la descrizione dello strumento non basta.
+  Scrivere nel messaggio `Prima chiama Leggi_Input con ciclo 2027Q1, poi esegui il ciclo sull'allegato restituito.`
+  Se funziona solo cosi', annotarlo: il comando dell'utente diventa questa frase (un pulsante in Teams puo' mandarla).
+- **A1 scrive il JSON in chat e non chiama `Salva_JSON`**: annotarlo; in Teams un JSON in chat puo' superare il
+  limite di circa 100 KB dei messaggi (errori di K0).
+- **Il file arriva troncato** (precontrollo: "non e' un JSON valido"): annotare caratteri e dimensione; e' il limite
+  da portare nella decisione A-15.
+- **`Leggi_Input` o `Salva_JSON` partono senza richiesta** (K6bis.3): la CS-1 con orchestrazione generativa non e'
+  sicura; restano la strada A o una sequenza fissa.
 
 ## Fonti (Microsoft Learn, consultate il 09/10/2026)
 
