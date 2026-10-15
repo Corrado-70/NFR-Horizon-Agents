@@ -180,7 +180,8 @@ Prima nel riquadro **Test**, poi in Teams. Ogni test in una conversazione nuova.
   2. A5 come strumento "prompt" dopo A1.
   3. Controlli e scrittura senza il PC, secondo l'analisi decisa (code interpreter, Office Scripts).
 - **Il sotto-agente non riceve l'allegato** (A1 risponde che manca l'allegato, o lavora senza baseline): e' l'esito
-  del 15/10. Allegarlo in chat non serve e il menu `/` non offre variabili: si passa alla variante K6-bis (sezione 5).
+  del 15/10. Allegarlo in chat non serve, e nemmeno richiamare l'input nelle istruzioni con `/`: si passa alla variante
+  K6-bis (sezione 5).
 - **`json_a1` arriva troncato o con testo attorno** (caratteri diversi, precontrollo "non e' un JSON valido"): far
   salvare il file ad A1 stesso, con `Salva_JSON` tra gli strumenti del sotto-agente, citato nelle sue istruzioni.
   E' il percorso gia' riuscito in B3, con impronta uguale.
@@ -194,7 +195,7 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | Voce | Esito |
 |---|---|
 | Costruzione: flussi pubblicati; `Leggi_Input` provato da solo (prima riga, caratteri, accenti); istruzioni di A1 accettate nel sotto-agente; trigger dell'argomento usato | 15/10: flussi pubblicati; `Leggi_Input` provato da solo e dall'argomento (54.558 caratteri); trigger dell'argomento usato |
-| K6.1: sequenza in ordine; caratteri allegato; tempo; caratteri salvati = prodotti | 15/10: **non riuscita**. Il sotto-agente non riceve l'allegato (sezione 5.1); `json_a1` vuoto; `Salva_JSON` fermo su `text_1` vuoto |
+| K6.1: sequenza in ordine; caratteri allegato; tempo; caratteri salvati = prodotti | 15/10: **non riuscita**. Il sotto-agente non riceve l'allegato, ne' come input ne' come variabile `/` nelle istruzioni (sezione 5.1); `json_a1` vuoto; `Salva_JSON` fermo su `text_1` vuoto |
 | K6.2: precontrollo sul PC (prima riga, impronta); `trimestrale` se fatto | |
 | K6.3: prova negativa, nessuna esecuzione | |
 | K6.4: ripetizione, stessa sequenza; sovrascrittura o copia | |
@@ -217,14 +218,20 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
   obbligatorio `text_1` vuoto").
 - Allegare `Input_A1` in chat non serve: il sotto-agente riceve solo il compito e gli input, non gli allegati della
   conversazione.
-- Nell'esperienza standard il menu `/` delle istruzioni del sotto-agente offre strumenti, agenti e conoscenza, **non
-  variabili**: non si puo' richiamare il valore dell'input dentro le istruzioni.
+- Il menu `/` delle istruzioni del sotto-agente offre anche **Variabile** (in fondo al testo delle istruzioni:
+  variabili `System.` e l'input `Input_A1`). Prova finale: input `Input_A1` = `allegato` (54.558 caratteri) nel nodo
+  dell'argomento, e in fondo alle istruzioni una riga `# Allegato Input_A1` seguita dalla variabile `Input_A1`
+  inserita con `/`. A1 risponde comunque "Baseline mancante: ciclo non eseguibile". Non si sa se il valore resti
+  vuoto nel sotto-agente o sia escluso per la dimensione: Copilot Studio non lo mostra e la documentazione non lo dice.
+- Tra le variabili disponibili c'e' `System.LastMessage.Text`, l'ultimo messaggio dell'utente: e' probabilmente il
+  testo su cui il sotto-agente ha lavorato (`Esegui_ciclo`, `2027Q1`).
 - Le impostazioni avanzate degli input (condizione, "Nessuna entita' valida trovata", reindirizzamento) mostrano a
   che cosa servono: valori brevi che l'agente estrae dalla conversazione o chiede all'utente, non un documento di
   50-80 KB.
 
 Conclusione per la CS-1: la sequenza a passi fissi **argomento -> sotto-agente con input e output** non porta
-l'allegato ad A1 in questa versione di Copilot Studio. Si prova la variante K6-bis.
+l'allegato ad A1 in questa versione di Copilot Studio, ne' come input ne' come variabile richiamata nelle istruzioni.
+Si prova la variante K6-bis.
 
 ### 5.2 K6-bis: A1 come agente con due strumenti
 
