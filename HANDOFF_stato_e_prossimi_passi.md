@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1134,6 +1134,48 @@ Unione del 13/10, senza conflitti, con tre correzioni:
 - documenti commentati di A1 e A3-A5 e PROMPT_MASTER allineati.
 
 In Banca vanno reincollati A1, A3, A4, A7 e A8.
+
+## 2-octovicies. 14/10: report HTML al posto delle viste di Excel (variante V4), anteprima
+
+Domande dell'utente: passare da Excel come base a report e grafici HTML, pubblicabili anche su un server HTTP; poi
+"prepara anteprima HTML e analisi di dettaglio dello scenario", con tutti i fogli dell'Excel e le schede di tutti i
+rischi. Analisi in `Analisi_Architettura/16_Report_HTML.md`; anteprima in `Analisi_Architettura/16_Anteprima_HTML/`
+(aprire `index.html`), generata da `Analisi_Architettura/16_genera_anteprima_html.py` sul registro della demo.
+
+- **Excel fa tre lavori**: archivio dei dati, posto dove si scrive (griglia, parametri), vista. L'HTML sostituisce la
+  vista; i dati vanno in un file senza formule scritto con openpyxl (in CS-2 resta `.xlsx` perche' il code interpreter
+  non accetta JSON); la griglia di validazione resta Excel, in un file a parte generato e riletto da Python.
+- **Variante V4**, valida in tutte le strade: nella strada A il motore non apre piu' Excel desktop; nella CS-1 il PC
+  esecutore puo' girare come servizio; nella CS-2 niente Office Scripts (al posto della V2), con zip in uscita dal
+  prompt e "Convert file" su HTML per il PDF (limite 2 MB).
+- **Anteprima**: un report per ciclo (2025Q4 ... 2026Q4-S1) e l'indice; 17 viste, 16 schede (13 radar, 3 osservazione),
+  tabelle dati con filtro e CSV; grafici SVG, navigazione senza JavaScript, stampa A4 (59 pagine per il 2026Q4-S1),
+  tema scuro. Le viste sono ricalcolate in Python dalle sole tabelle dati: per il ciclo corrente **118 numeri su 118
+  uguali a Excel**. `schede.input_schede` gira invariata con un lettore di 40 righe al posto della sessione COM.
+- **Trappola 111** (PROMPT_MASTER): `round()` di Python non e' `ROUND` di Excel (1,25 -> 1,2 contro 1,3).
+- **Lacuna emersa**: attenzione del supervisore e presidio dei controlli non sono storicizzati (solo anagrafica di oggi).
+- **Pubblicazione**: SharePoint Online scarica sempre gli HTML (nessuna impostazione del tenant); PDF accanto
+  all'HTML; server interno con accesso autenticato o Azure Static Web Apps con Entra ID, decisione dell'IT.
+- **Decisione aperta A-16** (DECISIONI.md); prova **K14** (apertura in Banca, "Convert file", zip dal code
+  interpreter, knowledge di A7). Stima: strada A con V4 15-20 giorni; CS-2 con V4 28-38.
+- Il pacchetto non cambia finche' A-16 non e' decisa.
+
+## 2-novovicies. 16/10: presentazione del lavoro (PowerPoint)
+
+Chiesta dall'utente: una presentazione che racconti tutto il lavoro. File in `Presentazione/`:
+- `Horizon_Scan_NFR_presentazione.pptx`, 68 slide in cinque parti: il sistema in breve; gli agenti uno per slide
+  (che cosa fanno, quando si usano, quale comando Python li precede e li segue, che cosa non fanno), con precontrollo e
+  scrittura, comandi e cicli; le schede dei rischi (a che cosa servono, impostazione, significato e importanza di ogni
+  informazione, NFR-01 e NFR-11 come due AGIRE ORA diversi); il report trimestrale dal Quadro a ogni foglio del
+  registro, gruppo per gruppo; i parametri (gerarchia di rischio, tassonomia e driver, scale, pesi, fonti, regole di
+  variazione, KRI, notizie, Mosca, livello di allerta, registro unico, valori ammessi e codici).
+- `genera_presentazione.py`, che la rifa: copia il registro della demo in una cartella temporanea, lancia `report
+  --con-lavoro` e `schede` su quella copia, esporta gli altri fogli con Excel desktop, rende le pagine in PNG (PyMuPDF)
+  e costruisce il pptx (python-pptx). `--solo-pptx` riusa le immagini. Le immagini sono pagine vere dell'Excel della
+  demo (ciclo 2026Q4-S1); la griglia di validazione viene da `Demo_W1_W2/Grafici/Validazione_2026Q3.pdf`.
+
+Da tenere allineata: se cambiano agenti, comandi, fogli o parametri, aggiornare i testi in `genera_presentazione.py` e
+rilanciarlo (con il registro della demo rigenerato, se cambia la struttura). Non entra nel pacchetto di deploy.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

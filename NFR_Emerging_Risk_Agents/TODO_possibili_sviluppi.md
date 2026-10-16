@@ -64,6 +64,7 @@ Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzi
 | B5.7 | **K7a** sincronizzazione SharePoint <-> PC (`99_Collaudo/osserva_cartella.py`), con e senza "Mantieni sempre su questo dispositivo"; conflitto con il registro aperto sul web | tempi e sicurezza della scrittura | da fare |
 | B5.8 | **K7b** Excel senza nessuno davanti: schermo bloccato, avvio automatico, senza accesso, Excel gia' aperto | PC esecutore | da fare |
 | B5.9 | Facoltativo, per la CS-2: prova K0 ripetuta con file allineati (`09_Copilot_Studio/Prova_con_Copilot_Studio.md`: T1.2 con l'impronta, T1.3). Prima tornata del 09/10: opzione 1 funziona (T1.1, T1.2, T1.4 rifiutata), T1.3 una volta in errore, opzione 2 non disponibile in Banca, salvataggio in SharePoint riuscito con impronta uguale | D-70; CS-2 | parziale |
+| B5.10 | Facoltativo, per A-16: **K14** report HTML (`Analisi_Architettura/16_Report_HTML.md`, 16.9): apertura da SharePoint in Edge, "Convert file" su HTML, zip dal code interpreter, report nella knowledge di A7. Si usano i file di `Analisi_Architettura/16_Anteprima_HTML/` | A-16 | da fare |
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
 
@@ -199,7 +200,10 @@ Punti fermi:
   decide dopo le prove K6, K8 (Office Scripts) e K9 (code interpreter su compiti lunghi). Dall'11/10 la CS-2 e'
   approfondita in `Analisi_Architettura/15_CS2_approfondita.md`: raccomandata la variante V2 ("Python decide, Excel
   esegue"), a tappe dopo la CS-1. Le tappe sono: adattatore del registro nel motore, esecutore in Office Script
-  (prova K8), motore nel prompt con code interpreter (K9) e PDF (K10).
+  (prova K8), motore nel prompt con code interpreter (K9) e PDF (K10). Dal 14/10 c'e' la variante **V4**
+  (`Analisi_Architettura/16_Report_HTML.md`, decisione aperta A-16): report HTML generato da Python al posto delle viste
+  di Excel e registro come file di dati senza formule; vale in tutte le strade e nella CS-2 sostituirebbe la V2 (niente
+  Office Scripts). Si decide dopo la prova K14 (B5.10) e la tappa T2.
 - **Separare chi chiede da chi esegue**: nella strada A la richiesta la scrive il menu, nella CS-1 un flusso di
   Copilot Studio; tutto cio' che sta dietro la richiesta e' identico.
 - Qualunque strada: nel registro scrive solo il motore, dopo i controlli (D-10); kernel, schemi, controlli,

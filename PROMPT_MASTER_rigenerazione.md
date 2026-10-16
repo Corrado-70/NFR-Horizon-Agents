@@ -44,7 +44,7 @@
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
 > app Python unica, Copilot Studio nei vincoli; **dal 09/10 tre strade**,
 > `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente; **l'11/10 la CS-2
-> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110). Trappole 93-98. Prima, 07/10 sera:
+> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110; **il 14/10 la variante V4**, `16_Report_HTML.md`: report HTML generato da Python al posto delle viste di Excel, anteprima in `Analisi_Architettura/16_Anteprima_HTML/`, decisione aperta A-16, trappola 111; il pacchetto non cambia finche' A-16 non e' decisa). Trappole 93-98. Prima, 07/10 sera:
 > **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
@@ -2833,6 +2833,15 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     - i flussi estraggono uno zip ma non lo creano;
     - il connettore Excel Online puo' bloccare il file per 6 minuti;
     - gli Office Scripts lanciati da un flusso non aggiornano Power Query.
+
+    Nella variante V4 (analisi 16) il file dei dati non ha formule: la terza regola non si applica, perche' manca la
+    premessa (niente da ricalcolare); le prime due restano.
+
+111. **`round()` di Python non e' `ROUND` di Excel** (14/10, anteprima dell'analisi 16). Python arrotonda la meta' al
+    pari e lavora in binario: `round(1.25, 1)` da' 1,2, Excel da' 1,3. Ricalcolando in Python le viste del registro
+    della demo, "Margine 1,3 anni" di NFR-09 diventava "Margine 1,2 anni": l'unico valore diverso su 118. Ogni formula di
+    Excel riscritta in Python (viste della V4, adattatore della V2, testi con `FIXED`) arrotonda con
+    `Decimal(str(x)).quantize(..., ROUND_HALF_UP)`, e il collaudo confronta i testi, non solo i numeri.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 

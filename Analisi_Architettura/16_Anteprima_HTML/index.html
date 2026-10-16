@@ -1,0 +1,219 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Horizon Scan NFR archivio</title><style>
+:root{color-scheme:light;--th:#1f3864;--th-2:#2f5597;--bg:#f3f4f6;--surface:#ffffff;--surface-2:#f7f8fa;--ink:#1c2230;--ink-2:#4a5263;--muted:#6b7385;
+--rule:#e1e4ea;--rule-2:#cdd2db;--brand:#1f3864;--brand-2:#2f5597;--brand-soft:#e3ecf7;--link:#2459a6;
+--att:#e06666;--att-ink:#ffffff;--attz:#f6c342;--attz-ink:#1c2230;--mon:#93c47d;--mon-ink:#1c2230;
+--att-soft:#fbe5e5;--attz-soft:#fff2cc;--mon-soft:#e2efda;
+--agire:#c00000;--agire-ink:#ffffff;--entro:#ffc000;--entro-ink:#1c2230;--margine:#a6a6a6;--margine-ink:#1c2230;
+--rosso:#c00000;--ambra:#ffc000;--verde:#70ad47;--nr:#d9d9d9;
+--d1:#f2f2f2;--d2:#fce4d6;--d3:#f8cbad;--d4:#f4b183;--d5:#c55a11;--d5-ink:#ffffff;
+--su:#c00000;--giu:#2e75b6;--x:#b8bcc4;--y-entro:#ed7d31;--y-oltre:#c00000;--z:#1f3864;
+--i1:#fbe0cf;--i2:#f4b183;--i3:#c55a11;--linea:#1f3864;--soglia-att:#bf9000;--soglia-all:#c00000;
+--fascia-verde:#e2efda;--fascia-ambra:#fff2cc;--fascia-rosso:#f8d7d7;--calore-1:#deebf7;--calore-2:#9dc3e6;--calore-3:#2e75b6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--th:#2a3a57;--th-2:#33476b;--bg:#111318;--surface:#1b1e25;
+--surface-2:#22262e;--ink:#eceef2;--ink-2:#b9bfcb;--muted:#9097a5;--rule:#2d323c;--rule-2:#3b414d;--brand:#9cb8e6;
+--brand-2:#7fa3dc;--brand-soft:#253247;--link:#8fb4f0;--att:#d9605f;--attz:#d9aa2f;--mon:#7aa866;--att-soft:#3a2425;
+--attz-soft:#3a3220;--mon-soft:#24321f;--agire:#e05252;--entro:#d9a400;--margine:#7c818b;--margine-ink:#eceef2;
+--d1:#2b2f37;--d2:#4a3427;--d3:#6b4630;--d4:#93603a;--d5:#c55a11;--d1-ink:#eceef2;--su:#e05252;--giu:#5b9bd5;--x:#5f6570;
+--y-entro:#e07b35;--y-oltre:#e05252;--z:#9cb8e6;--i1:#4a3427;--i2:#93603a;--i3:#d06a1c;--linea:#9cb8e6;
+--soglia-att:#d9aa2f;--soglia-all:#e05252;--fascia-verde:#24321f;--fascia-ambra:#3a3220;--fascia-rosso:#3a2425;
+--calore-1:#22344a;--calore-2:#2f5b8a;--calore-3:#4a86c5}}
+:root[data-theme="dark"]{color-scheme:dark;--th:#2a3a57;--th-2:#33476b;--bg:#111318;--surface:#1b1e25;
+--surface-2:#22262e;--ink:#eceef2;--ink-2:#b9bfcb;--muted:#9097a5;--rule:#2d323c;--rule-2:#3b414d;--brand:#9cb8e6;
+--brand-2:#7fa3dc;--brand-soft:#253247;--link:#8fb4f0;--att:#d9605f;--attz:#d9aa2f;--mon:#7aa866;--att-soft:#3a2425;
+--attz-soft:#3a3220;--mon-soft:#24321f;--agire:#e05252;--entro:#d9a400;--margine:#7c818b;--margine-ink:#eceef2;
+--d1:#2b2f37;--d2:#4a3427;--d3:#6b4630;--d4:#93603a;--d5:#c55a11;--d1-ink:#eceef2;--su:#e05252;--giu:#5b9bd5;--x:#5f6570;
+--y-entro:#e07b35;--y-oltre:#e05252;--z:#9cb8e6;--i1:#4a3427;--i2:#93603a;--i3:#d06a1c;--linea:#9cb8e6;
+--soglia-att:#d9aa2f;--soglia-all:#e05252;--fascia-verde:#24321f;--fascia-ambra:#3a3220;--fascia-rosso:#3a2425;
+--calore-1:#22344a;--calore-2:#2f5b8a;--calore-3:#4a86c5}
+*{box-sizing:border-box}html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",Aptos,Calibri,system-ui,sans-serif}
+a{color:var(--link)}code{font-size:.92em}
+.testata{background:#1f3864;color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+.testata h1{margin:0;font-size:20px;font-weight:600}.testata .etichetta{font-size:14px;opacity:.9}
+.testata a{color:#cfe0ff;font-size:13px;margin-left:auto}
+.impianto{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0;min-height:calc(100vh - 56px)}
+.menu{background:var(--surface);border-right:1px solid var(--rule);padding:12px 0;position:sticky;top:0;align-self:start;
+max-height:100vh;overflow:auto}
+.menu h2{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 18px 4px}
+.menu a{display:block;padding:5px 18px;color:var(--ink-2);text-decoration:none;border-left:3px solid transparent;font-size:14px}
+.menu a:hover{background:var(--surface-2);color:var(--ink)}
+.menu .conta{color:var(--muted);font-size:12px}
+main{padding:20px 24px 60px;min-width:0}
+.tab{display:none}.tab:target{display:block}
+body:not(:has(.tab:target)) #quadro{display:block}
+.tab-testa{margin-bottom:14px}.tab-testa h2{margin:0;font-size:24px;color:var(--brand);font-weight:600}
+.gruppo{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.come{max-width:980px;color:var(--ink-2);margin:6px 0 0}
+.pannello{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin:0 0 16px;min-width:0}
+.pannello h3,.scheda h3{margin:0 0 10px;font-size:16px;color:var(--brand);font-weight:600}
+.pannello h4{margin:12px 0 4px;font-size:14px}
+.centro{text-align:center}
+.griglia-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.griglia-2.larga-sx{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}.griglia-2.larga-dx{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.griglia-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.tiles.stretti{grid-template-columns:repeat(2,minmax(0,320px))}
+.tile{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--brand-2);border-radius:8px;padding:10px 14px}
+.tile-allerta{border-top-color:var(--att)}.tile-ok{border-top-color:var(--mon)}.tile-attesa{border-top-color:var(--attz)}
+.tile-et{margin:0;font-size:13px;color:var(--ink-2)}.tile-val{margin:2px 0;font-size:30px;font-weight:600;line-height:1.15}
+.tile-sotto{margin:0;font-size:12.5px;color:var(--muted)}
+.riquadro{background:var(--brand-soft);border-radius:8px;padding:10px 14px;margin:0 0 16px}
+.riquadro.avviso{background:var(--attz-soft)}.riquadro.ok{background:var(--mon-soft)}
+.nota,.piccolo{font-size:12.5px;color:var(--muted)}.nota{margin:8px 0 0}
+.tenue{color:var(--muted)}.forte{font-weight:600}.rosso{color:var(--rosso)}
+.legenda,.limiti{font-size:12px;color:var(--muted);max-width:1100px;margin:8px 0 0}
+.tab-scorre{overflow-x:auto;max-width:100%}.tab-scorre.alta{max-height:520px;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{background:var(--th);color:#fff;font-weight:600;text-align:left;padding:6px 8px;font-size:12.5px;vertical-align:bottom}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+table.compatta td{padding:4px 7px}
+table.chiave-valore th{display:none}table.chiave-valore td:first-child{color:var(--ink-2)}
+table.testo td:first-child{font-weight:600;width:200px;color:var(--brand)}table.testo th{background:var(--th-2)}
+table.dati{font-size:12px}table.dati td{min-width:80px;max-width:300px}
+table.dati .cella{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+table.dati thead th{position:sticky;top:0}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600;white-space:nowrap;line-height:1.6}
+.liv-attivazione{background:var(--att);color:var(--att-ink)}.liv-attenzione{background:var(--attz);color:var(--attz-ink)}
+.liv-monitoraggio{background:var(--mon);color:var(--mon-ink)}
+td.liv-fondo.liv-attivazione,p.liv-fondo.liv-attivazione{background:var(--att-soft);color:var(--ink)}
+td.liv-fondo.liv-attenzione,p.liv-fondo.liv-attenzione{background:var(--attz-soft);color:var(--ink)}
+td.liv-fondo.liv-monitoraggio,p.liv-fondo.liv-monitoraggio{background:var(--mon-soft);color:var(--ink)}
+td.liv-fondo{border-left:4px solid var(--rule-2)}td.liv-fondo.liv-attivazione{border-left-color:var(--att)}
+td.liv-fondo.liv-attenzione{border-left-color:var(--attz)}td.liv-fondo.liv-monitoraggio{border-left-color:var(--mon)}
+.urg-agire{background:var(--agire);color:var(--agire-ink)}.urg-entro{background:var(--entro);color:var(--entro-ink)}
+.urg-margine{background:var(--margine);color:var(--margine-ink)}
+.kri-rosso{background:var(--rosso);color:#fff}.kri-ambra{background:var(--ambra);color:#1c2230}.kri-verde{background:var(--verde);color:#fff}
+.kri-non-rilevato,.kri-nd,.kri-soglie-da-definire{background:var(--nr);color:#1c2230}
+.stato-oss{background:var(--brand-soft);color:var(--brand)}
+td.dim{text-align:center;width:44px}.dim-v{display:inline-block;min-width:26px;padding:1px 4px;border-radius:4px;
+font-weight:600;font-variant-numeric:tabular-nums}
+.dim-1{background:var(--d1)}.dim-2{background:var(--d2)}.dim-3{background:var(--d3)}.dim-4{background:var(--d4)}
+.dim-5{background:var(--d5);color:var(--d5-ink)}.dim-nv{color:var(--muted);font-weight:400}
+.ril{padding:1px 6px;border-radius:4px;font-size:12px}.ril-3{background:var(--calore-2)}.ril-2{background:var(--calore-1)}.ril-1{background:var(--d1)}
+.id,.nowrap,td a[href^="#kri-"]{font-weight:600;white-space:nowrap}
+.tend{white-space:nowrap}table.registro td:nth-child(2){min-width:190px}table.registro{font-size:13px}.sup{color:#7f6000;font-weight:600}
+.barretta{display:inline-block;width:90px;height:10px;background:var(--surface-2);border-radius:5px;vertical-align:middle;overflow:hidden}
+.barretta span{display:block;height:100%;border-radius:0 5px 5px 0}
+span.b-urg-agire{background:var(--agire)}span.b-urg-entro{background:var(--entro)}span.b-urg-margine{background:var(--margine)}
+.legenda-chip{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12.5px;color:var(--ink-2);margin:0 0 8px}
+.conteggi{font-size:14px;margin-bottom:14px}
+.sw{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:middle}
+.sw-x{background:var(--x)}.sw-y-entro{background:var(--y-entro)}.sw-y-oltre{background:var(--y-oltre)}
+.sw-z{width:auto;height:auto;color:var(--z);background:none}.sw-su{background:var(--su)}.sw-giu{background:var(--giu)}
+.sw-int1{background:var(--i1)}.sw-int2{background:var(--i2)}.sw-int3{background:var(--i3)}
+.matrice{width:auto;border-collapse:separate;border-spacing:3px}.matrice td{width:96px;height:64px;text-align:center;
+vertical-align:middle;border:0;border-radius:4px;font-size:12.5px;font-weight:600}.matrice.piccola td{width:52px;height:38px}
+.matrice th{background:none;color:var(--ink-2);font-weight:400;text-align:right;font-size:12px;vertical-align:middle}
+.matrice th.col-i{text-align:center;vertical-align:top}.matrice a{display:inline-block;margin:1px 3px;color:var(--ink);text-decoration:none}
+.fascia-verde{background:var(--fascia-verde)}.fascia-ambra{background:var(--fascia-ambra)}.fascia-rosso{background:var(--fascia-rosso)}
+.asse-matrice{font-size:12px;color:var(--muted);margin:0 0 4px}
+.incrocio td{text-align:center;width:44px}.incrocio th{font-size:12px}
+.calore-1{background:var(--calore-1)}.calore-2{background:var(--calore-2)}.calore-3{background:var(--calore-3);color:#fff}
+dl.commento{display:grid;grid-template-columns:190px 1fr;gap:6px 14px;margin:0}dl.commento dt{font-weight:600;color:var(--brand)}
+dl.commento dd{margin:0}
+ul.elenco-rischi{list-style:none;padding:0;margin:0;columns:1}ul.elenco-rischi li{padding:3px 0;border-bottom:1px solid var(--rule)}
+ul.elenco-rischi .chip{min-width:96px;text-align:center}
+table.segnalati td:nth-child(3),table.segnalati td:nth-child(4){font-size:13px}
+.multipli{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+figure.multiplo{margin:0;border:1px solid var(--rule);border-radius:6px;padding:8px 10px;background:var(--surface)}
+figure.multiplo figcaption{font-size:13px;margin-bottom:4px}
+.stato-az{font-weight:600}.stato-respinta,.stato-annullata{color:var(--muted)}.stato-completata{color:var(--verde)}
+.strumenti{display:flex;gap:8px;margin:0 0 8px}.strumenti input{flex:1;max-width:360px;padding:6px 10px;border:1px solid var(--rule-2);
+border-radius:6px;background:var(--surface);color:var(--ink);font:inherit}
+.strumenti button{padding:6px 12px;border:1px solid var(--brand-2);background:var(--surface);color:var(--brand);border-radius:6px;
+font:inherit;cursor:pointer}
+.indice-dati{font-size:14px}
+/* schede */
+.scheda{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:0 22px 18px;max-width:1100px}
+.scheda-testa{margin:0 -22px 16px;padding:14px 22px;background:#1f3864;color:#fff;border-radius:10px 10px 0 0;border-bottom:6px solid var(--rule-2)}
+.scheda-testa.liv-bordo-attivazione{border-bottom-color:var(--att)}.scheda-testa.liv-bordo-attenzione{border-bottom-color:var(--attz)}
+.scheda-testa.liv-bordo-monitoraggio{border-bottom-color:var(--mon)}.scheda-testa.oss{background:#2f5597}
+.scheda-testa h2{margin:2px 0 6px;font-size:22px;color:#fff}.scheda-pos{margin:0;font-size:12.5px;opacity:.85}
+.scheda-numeri{margin:0 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.scheda-numeri .grande{font-size:30px;font-weight:600;line-height:1}.freccia{opacity:.9}
+.meta{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0;font-size:13px;opacity:.92}.scheda-testa .sup{color:#ffd966}
+.scheda h3{margin-top:18px}
+table.dimensioni td:first-child{width:120px}
+tr.perche td{background:var(--surface-2);font-size:12.5px;display:table-cell}tr.perche span{display:inline-block;width:49%;vertical-align:top;padding-right:10px}
+.andamento{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.andamento .tab-scorre{flex:0 1 420px}
+.barra-mosca{position:relative;display:flex;height:16px;max-width:520px;background:var(--surface-2);border-radius:4px;margin:6px 0 14px}
+.barra-mosca span{display:block;height:100%}.barra-mosca span+span{border-left:2px solid var(--surface)}
+.segno-z{position:absolute;top:-4px;transform:translateX(-50%);color:var(--z);font-style:normal;font-size:16px}
+.nav-schede{display:flex;justify-content:space-between;margin-top:22px;padding-top:12px;border-top:1px solid var(--rule);font-size:14px}
+/* grafici */
+svg.grafico{width:100%;height:auto;max-width:860px;display:block;margin:0 auto;overflow:visible}
+svg.radar{max-width:720px}.pannello svg.radar{max-width:520px}#radar svg.radar{max-width:760px}
+svg.kri{max-width:none}svg.spark{display:block}
+svg text{fill:var(--ink-2);font-size:12px}
+svg .et-cat{fill:var(--ink);font-size:12.5px}svg .et-cat .id{font-weight:600}svg .et-val{fill:var(--ink);font-weight:600;font-size:12.5px}
+svg .et-asse{fill:var(--muted);font-size:11.5px}svg .tenue{fill:var(--muted)}
+svg .et-settore{fill:var(--brand);font-size:12.5px}svg .et-settore .cod{font-weight:700}
+svg .et-bolla{fill:#1c2230;font-weight:700;font-size:11.5px;pointer-events:none;paint-order:stroke;
+stroke:rgba(255,255,255,.7);stroke-width:3px;stroke-linejoin:round}
+svg .et-anello{fill:var(--muted);font-size:11px}svg .et-mosca{fill:var(--agire);font-weight:700;font-size:12px}
+svg .et-leg{fill:var(--ink-2);font-size:12.5px}
+svg .asse{stroke:var(--rule);stroke-width:1}svg .griglia{stroke:var(--rule);stroke-width:1}svg .asse-base{stroke:var(--ink-2);stroke-width:1}
+svg .anello{fill:none;stroke:var(--rule-2);stroke-width:1.5}svg .anello.tratto{stroke-dasharray:5 4}
+svg .mosca{fill:none;stroke:var(--agire);stroke-width:3}
+svg .bolla{fill-opacity:.82;stroke:var(--surface);stroke-width:2}
+svg .bolla.liv-attivazione{fill:var(--att)}svg .bolla.liv-attenzione{fill:var(--attz)}svg .bolla.liv-monitoraggio{fill:var(--mon)}
+svg .campione{fill:var(--brand-soft);stroke:var(--brand-2);stroke-width:1}
+svg .b-urg-agire{fill:var(--agire)}svg .b-urg-entro{fill:var(--entro)}svg .b-urg-margine{fill:var(--margine)}
+svg .b-x{fill:var(--x)}svg .b-y-entro{fill:var(--y-entro)}svg .b-y-oltre{fill:var(--y-oltre)}svg .rombo{fill:var(--z);stroke:var(--surface);stroke-width:2}
+svg .b-su{fill:var(--su)}svg .b-giu{fill:var(--giu)}
+svg .b-int1{fill:var(--i1)}svg .b-int2{fill:var(--i2)}svg .b-int3{fill:var(--i3)}
+svg .linea{fill:none;stroke:var(--linea);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+svg .soglia-att{fill:none;stroke:var(--soglia-att);stroke-width:1.5;stroke-dasharray:5 4}
+svg .soglia-all{fill:none;stroke:var(--soglia-all);stroke-width:1.5;stroke-dasharray:5 4}
+svg .pallino{fill:var(--linea);stroke:var(--surface);stroke-width:2}svg .pallino-fine{fill:var(--linea);stroke:var(--surface);stroke-width:2}
+svg .hit{fill:transparent}svg .pallino-hover{fill:var(--linea);opacity:0}
+svg .punto:hover .pallino-hover{opacity:1}
+svg .punto:hover .bolla,svg .punto:focus .bolla{fill-opacity:1;stroke:var(--ink);stroke-width:2}
+svg .punto:hover path,svg .punto:focus path{filter:brightness(1.08)}
+svg .punto:hover .hit{fill:var(--brand-soft);fill-opacity:.45}
+svg a{cursor:pointer}svg a:focus{outline:none}svg a:focus-visible .hit{fill:var(--brand-soft);fill-opacity:.6}
+#tip{position:fixed;z-index:10;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--rule-2);
+border-radius:6px;padding:6px 9px;font-size:12.5px;line-height:1.4;max-width:360px;box-shadow:0 4px 14px rgba(0,0,0,.18);
+white-space:pre-line;display:none}
+@media (max-width:1000px){.impianto{display:block}.menu{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--rule);
+display:flex;flex-wrap:wrap;gap:0 4px;padding:6px 10px}.menu h2{width:100%;margin:8px 6px 2px}.menu a{border-left:0;padding:3px 8px}
+.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.griglia-2,.griglia-2.larga-sx,.griglia-2.larga-dx,.griglia-3{grid-template-columns:minmax(0,1fr)}
+main{padding:16px}dl.commento{grid-template-columns:1fr}.scheda{padding:0 16px 16px}.scheda-testa{margin:0 -16px 14px;padding:12px 16px}
+tr.perche span{width:100%}}
+@media print{.menu,.testata a,.no-stampa,.nav-schede,.strumenti{display:none!important}.impianto{display:block}main{padding:0}
+.tab{display:block!important;break-before:page}#quadro{break-before:auto}.pannello{break-inside:avoid;border-color:#ccc}
+body{background:#fff;font-size:10pt}.scheda{border:0;max-width:none}.tab.no-stampa{display:none!important}
+.tab-scorre.alta{max-height:none}svg.radar{max-width:560px}#radar svg.radar{max-width:600px}
+main{zoom:.62}.griglia-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.griglia-2.larga-sx{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.griglia-2.larga-dx{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}.griglia-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}dl.commento{grid-template-columns:190px 1fr}tr.perche span{width:49%}
+.tab-scorre{overflow:visible}@page{size:A4;margin:10mm}}
+main{max-width:1300px;margin:0 auto}</style></head><body><header class="testata"><h1>Horizon Scan NFR</h1><span class="etichetta">Archivio dei cicli · Uso interno</span></header><main><section class="tab" id="indice" style="display:block"><header class="tab-testa"><p class="gruppo">Archivio</p><h2>I report dei cicli</h2></header><p class="come">Un report per ciclo, ognuno in un file che si apre nel browser e si conserva come evidenza. L'ultimo ciclo e' il <a href="Horizon_Scan_2026Q4-S1.html">2026Q4-S1</a>.</p><div class="pannello"><div class="tab-scorre"><table><thead><tr><th>Ciclo</th><th>Tipo</th><th>Dati al</th><th>Validazione</th><th class="num">Nel radar</th><th class="num">In osservazione</th><th>In attivazione</th><th class="num">KRI in rosso</th><th>Messaggio di A1</th></tr></thead><tbody><tr><td><a class="id" href="Horizon_Scan_2026Q4-S1.html">2026Q4-S1</a></td><td>Straordinario</td><td>20/01/2027</td><td>✓ validato</td><td class="num">13</td><td class="num">3</td><td>NFR-01, NFR-11</td><td class="num">3</td><td class="piccolo">Ciclo straordinario deciso dopo il primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027). Si rivaluta solo NFR-01: la Probabilita sale da 4 a 5 per il caso documentato; gli altri rischi restano quelli validati nel 2026Q4.</td></tr><tr><td><a class="id" href="Horizon_Scan_2026Q4.html">2026Q4</a></td><td>Trimestrale</td><td>31/12/2026</td><td>✓ validato</td><td class="num">13</td><td class="num">3</td><td>NFR-01, NFR-11</td><td class="num">3</td><td class="piccolo">Nel quarto trimestre 2026 entra nel radar il rischio sui rapporti di impiego (NFR-16), in osservazione dal 2026Q3: la vertenza nazionale del settore e la carenza di tecnici in ruoli IT critici, segnalate dall&#x27;aggiornamento settimanale, hanno ora un riscontro…</td></tr><tr><td><a class="id" href="Horizon_Scan_2026Q3.html">2026Q3</a></td><td>Trimestrale</td><td>30/09/2026</td><td>✓ validato</td><td class="num">12</td><td class="num">4</td><td>NFR-01</td><td class="num">0</td><td class="piccolo">Nel terzo trimestre 2026 il profilo complessivo resta stabile. Peggiora la prossimita&#x27; del rischio di greenwashing (NFR-03) dopo la sanzione a una banca comparabile. Su due rischi l&#x27;evidenza e&#x27; piu&#x27; solida: la exit strategy dal fornitore cloud critico e&#x27; ora…</td></tr><tr><td><a class="id" href="Horizon_Scan_2026Q2.html">2026Q2</a></td><td>Trimestrale</td><td>30/06/2026</td><td>✓ validato</td><td class="num">12</td><td class="num">3</td><td>NFR-01</td><td class="num">3</td><td class="piccolo">Trimestre con quattro rischi variati. Peggiorano le frodi su pagamenti istantanei (NFR-01, impatto da 3 a 4 per importi medi triplicati) e gli errori operativi sui bonifici istantanei (NFR-12, primi casi interni); l&#x27;alluvione di maggio avvicina il rischio cli…</td></tr><tr><td><a class="id" href="Horizon_Scan_2026Q1.html">2026Q1</a></td><td>Trimestrale</td><td>31/03/2026</td><td>✓ validato</td><td class="num">12</td><td class="num">2</td><td>NFR-05, NFR-11</td><td class="num">7</td><td class="piccolo">Entrano tre rischi nuovi legati all&#x27;intelligenza artificiale e alle sanzioni (NFR-06, NFR-09, NFR-10). Sale la prossimita&#x27; delle frodi con voce sintetica (NFR-01) dopo i primi casi in banche comparabili. Priorita&#x27;: NFR-02, NFR-07 e NFR-01. Decisione richiesta…</td></tr><tr><td><a class="id" href="Horizon_Scan_2025Q4.html">2025Q4</a></td><td>Trimestrale</td><td>31/12/2025</td><td>✓ validato</td><td class="num">9</td><td class="num">0</td><td>NFR-11</td><td class="num">3</td><td class="piccolo">Primo registro dei rischi emergenti: nove rischi su sei categorie. Le priorita&#x27; sono la concentrazione sul fornitore cloud critico (NFR-02), il ransomware presso il fornitore del gateway di pagamento (NFR-07) e la migrazione del core banking (NFR-05), per ser…</td></tr></tbody></table></div></div><div class="pannello"><h3>Score composito piu' alto per ciclo</h3><svg class="spark" viewBox="0 0 520 90" width="520" height="90" role="img" aria-label="andamento"><line class="griglia" x1="0" y1="86" x2="520" y2="86"/><path class="linea" d="M4.0,29.6 L106.4,29.6 L208.8,20.4 L311.2,20.4 L413.6,16.3 L516.0,11.2"/><g class="punto"><title>2025Q4: 3,75</title><rect class="hit" x="-4.0" y="0" width="16" height="90"/><circle class="pallino-hover" cx="4.0" cy="29.6" r="3.5"/></g><g class="punto"><title>2026Q1: 3,75</title><rect class="hit" x="98.4" y="0" width="16" height="90"/><circle class="pallino-hover" cx="106.4" cy="29.6" r="3.5"/></g><g class="punto"><title>2026Q2: 4,20</title><rect class="hit" x="200.8" y="0" width="16" height="90"/><circle class="pallino-hover" cx="208.8" cy="20.4" r="3.5"/></g><g class="punto"><title>2026Q3: 4,20</title><rect class="hit" x="303.2" y="0" width="16" height="90"/><circle class="pallino-hover" cx="311.2" cy="20.4" r="3.5"/></g><g class="punto"><title>2026Q4: 4,40</title><rect class="hit" x="405.6" y="0" width="16" height="90"/><circle class="pallino-hover" cx="413.6" cy="16.3" r="3.5"/></g><g class="punto"><title>2026Q4-S1: 4,65</title><rect class="hit" x="508.0" y="0" width="16" height="90"/><circle class="pallino-fine" cx="516.0" cy="11.2" r="4"/></g></svg></div><p class="legenda">Anteprima dell'analisi 16 con i dati della demo (Demo_W1_W2). Generata da Analisi_Architettura/16_genera_anteprima_html.py.</p></section></main><div id="tip" role="tooltip"></div><script>
+(function(){
+  var tip=document.getElementById('tip');
+  document.querySelectorAll('svg title').forEach(function(t){
+    var g=t.parentNode; g.setAttribute('data-tip',t.textContent); g.setAttribute('tabindex', g.closest('a')?'-1':'0'); t.remove();
+  });
+  function mostra(e,el){tip.textContent=el.getAttribute('data-tip');tip.style.display='block';
+    var x=(e.clientX||el.getBoundingClientRect().right)+14,y=(e.clientY||el.getBoundingClientRect().top)+14;
+    var w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=innerWidth-w-8;if(y+h>innerHeight-8)y=y-h-28;
+    tip.style.left=x+'px';tip.style.top=y+'px';}
+  document.addEventListener('pointermove',function(e){var el=e.target.closest&&e.target.closest('[data-tip]');
+    if(el)mostra(e,el);else tip.style.display='none';});
+  document.addEventListener('focusin',function(e){var el=e.target.closest&&(e.target.closest('[data-tip]')||
+    (e.target.querySelector&&e.target.querySelector('[data-tip]')));if(el)mostra({},el);});
+  document.addEventListener('focusout',function(){tip.style.display='none';});
+  document.querySelectorAll('[data-filtra]').forEach(function(inp){
+    var righe=document.getElementById(inp.getAttribute('data-filtra')).tBodies[0].rows;
+    inp.addEventListener('input',function(){var q=inp.value.toLowerCase();
+      for(var i=0;i<righe.length;i++){righe[i].style.display=righe[i].textContent.toLowerCase().indexOf(q)<0?'none':'';}});
+  });
+  document.querySelectorAll('[data-csv]').forEach(function(b){b.addEventListener('click',function(){
+    var t=document.getElementById(b.getAttribute('data-csv')),out=[];
+    Array.prototype.forEach.call(t.rows,function(r){if(r.style.display==='none')return;
+      out.push(Array.prototype.map.call(r.cells,function(c){return '"'+c.textContent.replace(/"/g,'""')+'"';}).join(';'));});
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+out.join('\r\n')],{type:'text/csv'}));
+    a.download=b.getAttribute('data-nome')+'.csv';a.click();});});
+})();
+</script></body></html>
