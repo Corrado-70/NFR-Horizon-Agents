@@ -55,6 +55,15 @@ Interi 1-5, 5 = peggiore: scegli il descrittore piu' aderente all'evidenza, non 
 
 4-5 solo se la Banca e' esposta.
 
+> D-81 (19/10/2026, analisi 17, 17.10): A1 non conosce l'esposizione interna
+> (D-49) e, nel dubbio, sceglieva in silenzio il valore piu' basso: i rischi
+> nuovi entravano tutti con Probabilita 3 o meno. Ora, se le fonti non dicono se
+> la Banca e' esposta, A1 scrive il valore senza esposizione e la frase
+> "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" (guida di
+> scrittura); il controllo C5 la porta in validazione e decide il validatore.
+> La frase sta nel razionale, non in un campo: l'esposizione decisa non resta
+> registrata (variante 3b dell'analisi, da fare se la nota si ripete).
+>
 > D-65 (30/09/2026 sera): un fenomeno diffuso non e' probabile per una Banca
 > che non ha il bersaglio (il prodotto, il processo o il fornitore colpito).
 > I livelli 2 e 3 lo dicevano gia' ("Banca poco esposta", "Banca esposta");
@@ -127,6 +136,15 @@ Facoltativo (null se non serve): anni di un adeguamento strutturale della Banca 
 > (Parametri, colonna M), dove resta correggibile a mano. E' la Y minima di
 > Mosca (sezione 8). Una proposta null non cancella un valore gia' in
 > anagrafica.
+>
+> Rischi in osservazione (analisi 17, 17.10, 19/10/2026): A1 stima gli anni
+> di adeguamento anche per i rischi in osservazione con Impatto 4-5 (guida di
+> scrittura, allegato di A1). Il valore validato resta nella riga del
+> RiskRegister (l'anagrafica e' il radar) e conta nel margine di Mosca della
+> regola del radar: con X + Y > Z il rischio e' AGIRE ORA ed entra nel radar
+> anche con Prossimita 1. Senza, il margine usa la Y di riserva (1 anno) e un
+> rischio lontano a mitigazione lunga, il caso della crittografia
+> post-quantistica, non puo' risultare urgente.
 
 > Formula (D-50, in vigore dal template del 30/09/2026): media pesata delle
 > dimensioni valutate, 0,35 x Impatto + 0,25 x Probabilita + 0,20 x

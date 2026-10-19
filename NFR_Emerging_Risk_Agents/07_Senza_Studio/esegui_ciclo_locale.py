@@ -94,6 +94,11 @@ Comandi:
       azioni). Il ciclo deve essere validato. Scrive
       Cicli/<ciclo>/Report_comitato_<ciclo>.pdf (la versione precedente resta
       con la data e l'ora nel nome). Non modifica l'Excel.
+  diagnosi
+      solo lettura (analisi 17, 17.10): valori all'ingresso dei rischi nuovi,
+      verso delle rettifiche del validatore sulle dimensioni, rischi lontani
+      (Prossimita 1) con Impatto alto e senza anni di adeguamento. Stampa e
+      scrive Cicli/<ciclo>/Diagnosi_valutazioni_<ciclo>.txt (diagnosi.py).
 
 Ogni comando (tranne inizializza e aggiorna-registro, e precontrollo che non
 apre il registro) si ferma su un registro creato con un template di versione
@@ -2614,6 +2619,25 @@ def comando_report(arg, conf):
           + (f"\nVersione precedente conservata: {precedente}" if precedente else ""))
 
 
+def comando_diagnosi(arg, conf):
+    """Analisi 17 (17.10): misura le asimmetrie della valutazione sul registro com'e', senza scrivere nel registro."""
+    import diagnosi
+    from excel_com import SessioneExcel
+    mappa = carica_mappa(conf)
+    with SessioneExcel(conf["workbook"], sola_lettura=True) as s:
+        controlla_versione(s)
+        s.ricalcola()
+        scr = Scrittore(s, mappa)
+        ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
+        if not ciclo or not scr.righe("tblRegister"):
+            raise Fermo("Nessun ciclo nel registro: la diagnosi si fa dopo il primo ciclo trimestrale.")
+        d = diagnosi.diagnosi(scr.righe("tblRegister"), scr.righe("tblValidazione"), ciclo, regola_radar(s))
+    testo = diagnosi.testo(d)
+    file = _cartella(conf, "Cicli", ciclo) / f"Diagnosi_valutazioni_{ciclo}.txt"
+    file.write_text(testo, encoding="utf-8")
+    print(testo + f"\nScritto anche in: {file}")
+
+
 def comando_schede_input(arg, conf):
     from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
@@ -2951,6 +2975,7 @@ def main(argv=None):
     d.add_argument("--motivazione", required=True, help="perche' il rischio esce (almeno 10 caratteri)")
     d.add_argument("--decisore", required=True, help="chi ha deciso: una funzione o un comitato")
     sub.add_parser("schede-input", help="dopo la validazione: input dell'agente A6 per le schede dei rischi")
+    sub.add_parser("diagnosi", help="solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani (analisi 17)")
     sc = sub.add_parser("schede", help="dopo la validazione: file delle schede dei rischi (con l'output di A6 o senza)")
     sc.add_argument("--payload", help="output di A6 (A6_<ciclo>.json); senza, testi di A1 dal registro")
     r = sub.add_parser("report", help="rigenera il PDF del report al comitato dall'Excel, dopo modifiche manuali")
@@ -2972,7 +2997,8 @@ def main(argv=None):
                   "valida": comando_valida, "griglia": comando_griglia, "riapri": comando_riapri,
                   "inizializza": comando_inizializza, "dismetti": comando_dismetti,
                   "aggiorna-registro": comando_aggiorna_registro, "schede-input": comando_schede_input,
-                  "schede": comando_schede, "report": comando_report}[arg.comando](arg, conf)
+                  "schede": comando_schede, "report": comando_report,
+                  "diagnosi": comando_diagnosi}[arg.comando](arg, conf)
         return codice or 0
     except Fermo as e:
         print(f"FERMATO — il workbook non e' stato modificato.\n{e}")

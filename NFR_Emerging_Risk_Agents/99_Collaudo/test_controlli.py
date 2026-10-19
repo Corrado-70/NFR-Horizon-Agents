@@ -1044,6 +1044,91 @@ def test_spiegazioni(e):
                    "knowledge di A7: nella library Kernel; con la 01_Kernel del pacchetto (collaudo) nella cartella di uscita")
 
 
+def test_diagnosi(e):
+    """Analisi 17 (17.10): diagnosi delle valutazioni (valori all'ingresso, verso delle rettifiche, rischi lontani) e
+    istruzione di A1 sugli anni di adeguamento dei rischi in osservazione."""
+    import diagnosi
+    import input_a1
+    rr = lambda ciclo, rid, esito, i, p, pr, v=None, stato="Radar", anni=None, orizz=None: {
+        "Ciclo": ciclo, "ID_Rischio": rid, "Nome": rid, "Esito": esito, "Impatto": i, "Probabilita": p, "Prossimita": pr,
+        "Velocity": v, "Stato": stato, "Anni_Adeguamento": anni, "Orizzonte_Anni": orizz}
+    registro = [rr("2026Q3", "NFR-01", "Nuovo", 4, 3, 3), rr("2026Q3", "NFR-02", "Nuovo", 5, 1, 1, stato="Osservazione",
+                                                                  orizz=8),
+                rr("2026Q4", "NFR-01", "Variato", 4, 4, 3), rr("2026Q4", "NFR-02", "Confermato", 5, 1, 1,
+                                                               stato="Osservazione", orizz=8),
+                rr("2026Q4", "NFR-03", "Nuovo", 3, 2, 2), rr("2026Q4", "NFR-04", "Nuovo", 5, 1, 1, stato="Osservazione",
+                                                            anni=5.0, orizz=6)]
+    sv = lambda periodo, rid, campo, prop, dec, val: {"Periodo": periodo, "Oggetto": "Rischio", "ID": rid, "Campo": campo,
+                                                      "Proposta_Agente": prop, "Decisione": dec, "Valore_Validato": val}
+    storico = [sv("2026Q3", "NFR-01", "Probabilita", 3, "Rettificato", 4), sv("2026Q4", "NFR-03", "Probabilita", 2,
+                                                                                 "Rettificato", 3),
+               sv("2026Q4", "NFR-01", "Impatto", 4, "Rettificato (riapertura)", 3),
+               sv("2026Q4", "NFR-01", "Probabilita", 4, "Accettato", 4),
+               sv("2026Q4", "NFR-01", "Velocity", None, "Rettificato", 3),
+               {"Periodo": "2026Q4", "Oggetto": "KRI", "ID": "NFR-01-K1", "Campo": "Valore_Corrente",
+                "Proposta_Agente": 1, "Decisione": "Rettificato", "Valore_Validato": 9}]
+    d = diagnosi.diagnosi(registro, storico, "2026Q4")
+    e.verifica(d["rischi_nuovi"] == 4 and d["ingresso"]["probabilita"][3] == 1 and d["ingresso"]["probabilita"][1] == 2
+               and d["ingresso"]["velocity"][diagnosi.NV] == 4,
+               "diagnosi: valori all'ingresso contati sui soli rischi nuovi, Velocity vuota = n.v.", d["ingresso"])
+    r = d["rettifiche"]
+    e.verifica(r["probabilita"]["nuovi"]["su"] == 2 and r["impatto"]["riapertura"]["giu"] == 1
+               and not r["velocity"]["nuovi"] and not r["velocity"]["altri"] and d["accettati"]["probabilita"] == 1,
+               "diagnosi: verso delle rettifiche per rischi nuovi e riapertura; da n.v. nessun verso; KRI esclusi", r)
+    lont = {x["id"]: x for x in d["lontani"]}
+    e.verifica(set(lont) == {"NFR-02", "NFR-04"} and lont["NFR-02"]["margine"] == 2.25 and lont["NFR-04"]["margine"] == -1.75,
+               "diagnosi: rischi lontani con il margine di Mosca (Y di riserva senza anni, AGIRE ORA con 5 anni)", lont)
+    e.verifica(any("NFR-02" in x and "anni di adeguamento" in x for x in d["letture"])
+               and not any("NFR-04" in x for x in d["letture"]) and "nessuno con 4 o 5" in " ".join(d["letture"]),
+               "diagnosi: segnala il rischio lontano con Impatto alto senza anni di adeguamento, non quello che li ha",
+               d["letture"])
+    e.verifica("3. Rischi lontani" in diagnosi.testo(d) and "NFR-04" in diagnosi.testo(d), "diagnosi: testo del rapporto")
+    guida = (KERNEL / "guida_scrittura_A1.md").read_text(encoding="utf-8")
+    allegato, _ = input_a1.componi(BASE_Q3, KERNEL, "2026-10-19")
+    e.verifica("Rischi in osservazione con Impatto 4 o 5: stima anche anni_adeguamento" in guida
+               and "Rischi in osservazione con Impatto 4 o 5" in allegato,
+               "guida di scrittura di A1: anni di adeguamento dei rischi in osservazione con Impatto 4-5, nell'allegato (17.10)")
+
+
+def test_esposizione(e):
+    """D-81 (analisi 17, 17.10): l'esposizione della Banca non nota alle fonti va in validazione con i due valori."""
+    import diagnosi
+    import input_a1
+    esp = lambda rilievi: [x for x in rilievi if x["controllo"] == "C5" and ("D-81" in x["descrizione"]
+                                                                          or "ESPOSIZIONE NON NOTA" in x["descrizione"])]
+    e.verifica(not esp(controlli_a5.controlla(RUN1, BASE_Q3)["rilievi"]), "esposizione: nessuna segnalazione senza la frase (run1)")
+    run = copy.deepcopy(RUN1)
+    x = run["rischi"][0]
+    p, prec = x["probabilita"], next(b for b in BASE_Q3["rischi"] if b["id_rischio"] == x["id_rischio"])
+    n = min(5, p + 2)
+    x["razionale"] += f" ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe {n}."
+    trovati = esp(controlli_a5.controlla(run, BASE_Q3)["rilievi"])
+    e.verifica(len(trovati) == 1 and trovati[0]["gravita"] == controlli_a5.DA_MOTIVARE and trovati[0]["id_rischio"] == x["id_rischio"]
+               and f"Probabilita {p} proposta, {n} con l'esposizione documentata" in trovati[0]["descrizione"]
+               and f"al massimo {min(5, prec['probabilita'] + 1)}" in trovati[0]["descrizione"],
+               "esposizione: la frase porta i due valori in validazione (Da motivare), con il limite di un punto per un "
+               "rischio gia' nel registro", trovati)
+    conta_b = lambda rr: sum(1 for r in rr if r["gravita"] == controlli_a5.BLOCCANTE)
+    e.verifica(conta_b(controlli_a5.controlla(run, BASE_Q3)["rilievi"]) == conta_b(controlli_a5.controlla(RUN1, BASE_Q3)["rilievi"]),
+               "esposizione: la segnalazione non ferma il ciclo (nessun Bloccante in piu')")
+    x["razionale"] = x["razionale"].replace(f"sarebbe {n}.", f"sarebbe {p}.")
+    trovati = esp(controlli_a5.controlla(run, BASE_Q3)["rilievi"])
+    e.verifica(len(trovati) == 1 and trovati[0]["gravita"] == controlli_a5.OSSERVAZIONE,
+               "esposizione: un valore non maggiore della Probabilita proposta e' solo un'Osservazione sulla forma", trovati)
+    righe = [{"Ciclo": "2026Q4", "ID_Rischio": "NFR-01", "Esito": "Nuovo", "Probabilita": 4, "Prossimita": 3, "Stato": "Radar",
+              "Razionale": "PROBABILITA: 3. ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe 4."},
+             {"Ciclo": "2026Q4", "ID_Rischio": "NFR-02", "Esito": "Confermato", "Probabilita": 3, "Prossimita": 3,
+              "Stato": "Radar", "Razionale": "PROBABILITA: 3."}]
+    d = diagnosi.diagnosi(righe, [], "2026Q4")
+    e.verifica(d["esposizioni"] == [{"id": "NFR-01", "probabilita": 4, "se_esposta": 4, "nuovo": True}]
+               and any("Esposizione non nota in 1 rischi su 2" in t and "in 1." in t for t in d["letture"])
+               and "4. Esposizione non nota" in diagnosi.testo(d),
+               "diagnosi: conta le note di esposizione e quante volte il validatore ha dato il valore se esposta", d["letture"])
+    allegato, _ = input_a1.componi(BASE_Q3, KERNEL, "2026-10-19")
+    e.verifica("ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N." in allegato,
+               "guida di scrittura di A1 nell'allegato: la frase dell'esposizione non nota (D-81)")
+
+
 def main():
     e = Esito("Validatore, controlli A5, dati di esempio, consistenza")
     test_validatore(e)
@@ -1059,6 +1144,8 @@ def main():
     test_kit_copilot_studio(e)
     test_schede(e)
     test_spiegazioni(e)
+    test_diagnosi(e)
+    test_esposizione(e)
     return 0 if e.stampa() else 1
 
 

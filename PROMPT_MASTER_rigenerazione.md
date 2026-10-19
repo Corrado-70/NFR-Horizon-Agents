@@ -44,7 +44,7 @@
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
 > app Python unica, Copilot Studio nei vincoli; **dal 09/10 tre strade**,
 > `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente; **l'11/10 la CS-2
-> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110; **il 14/10 la variante V4**, `16_Report_HTML.md`: report HTML generato da Python al posto delle viste di Excel, anteprima in `Analisi_Architettura/16_Anteprima_HTML/`, decisione aperta A-16, trappola 111; il pacchetto non cambia finche' A-16 non e' decisa). Trappole 93-98. Prima, 07/10 sera:
+> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110; **il 14/10 la variante V4**, `16_Report_HTML.md`: report HTML generato da Python al posto delle viste di Excel, anteprima in `Analisi_Architettura/16_Anteprima_HTML/`, decisione aperta A-16, trappola 111; il pacchetto non cambia finche' A-16 non e' decisa; **il 19/10 il contraddittorio "decimo uomo"**, `17_Decimo_uomo.md`: agente separato A9 proposto, decisione aperta A-17, prova K15; il pacchetto non cambia finche' A-17 non e' decisa; nella stessa analisi, 17.10, **ancoraggio e asimmetrie**: fatti il comando `diagnosi` e gli anni di adeguamento dei rischi in osservazione con Impatto 4-5, D-80, trappola 112, e l'esposizione "non nota" decisa dal validatore, D-81). Trappole 93-98. Prima, 07/10 sera:
 > **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
@@ -724,7 +724,10 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   considerati e non censiti", D-72, e "Radar e osservazione", D-79: la regola dalla
   baseline, `rischi` contro `rischi_in_osservazione`, riscrivere un rischio in
   osservazione solo con evidenza nuova, orizzonte e segnale, notizie e flag di A3,
-  KRI e azioni per chi entra): come A1 scrive la descrizione (3-5 frasi:
+  KRI e azioni per chi entra; dal 19/10, D-80, gli anni di adeguamento anche dei rischi in osservazione con
+  Impatto 4-5, riscrivendo senza evidenza nuova chi non li ha, perche' con X + Y > Z entrino nel radar; dal 19/10, D-81,
+  la frase "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" nella parte PROBABILITA quando le fonti
+  non dicono se la Banca e' esposta): come A1 scrive la descrizione (3-5 frasi:
   meccanismo causa-evento-danno, dove tocca la Banca, perche' emergente; niente
   punteggi), il razionale in parti (per ogni valore: descrittore, fatto con
   documento e data, **perche' non il valore vicino**, da/a o fonti ancora
@@ -1594,6 +1597,16 @@ openpyxl (solo per il file delle schede). Moduli:
     "Invariato / Rettificato / Respinto (riapertura)". Un'azione riaperta di
     un ciclo prima si trova per ID (`riga_dato`). `baseline` senza `--uscita`
     riscrive anche la knowledge di A7 (dopo i testi corretti a mano).
+  - `diagnosi` (D-80, analisi 17, 17.10): sola lettura del registro; `diagnosi.py` (solo libreria standard, collaudato
+    su righe finte) misura i valori all'ingresso dei rischi nuovi (Esito "Nuovo" di qualunque ciclo), il verso delle
+    rettifiche sulle quattro dimensioni nello storico (proposta contro valore validato; rischi nuovi, altri, riapertura;
+    da o verso n.v. nessun verso) e i rischi con Prossimita 1 con il margine di `radar.margine`; segnala quelli con
+    Impatto 4-5 senza anni di adeguamento; conta le note di esposizione non nota (D-81) con la Probabilita validata.
+    Stampa e scrive `Cicli/<ciclo>/Diagnosi_valutazioni_<ciclo>.txt`.
+  - Esposizione non nota (D-81), in `controlli_a5.py` (C5): `esposizione_non_nota(razionale)` restituisce (dichiarata,
+    N); con N maggiore della Probabilita proposta un rilievo "Da motivare" con i due valori e, per un rischio della
+    baseline, il massimo ammesso in validazione (un punto); frase senza valore maggiore = Osservazione. Nessun campo
+    nuovo: la frase sta nel razionale.
 - Codici di uscita: 0 eseguito; 1 fermato (registro intatto); 2 errore tecnico,
   distinguendo **prima** del salvataggio (nulla scritto) da **dopo** (registro
   scritto, baseline gia' aggiornata: "NON rilanciare").
@@ -2842,6 +2855,13 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     della demo, "Margine 1,3 anni" di NFR-09 diventava "Margine 1,2 anni": l'unico valore diverso su 118. Ogni formula di
     Excel riscritta in Python (viste della V4, adattatore della V2, testi con `FIXED`) arrotonda con
     `Decimal(str(x)).quantize(..., ROUND_HALF_UP)`, e il collaudo confronta i testi, non solo i numeri.
+112. **Mosca non vede un rischio lontano di cui nessuno stima la mitigazione** (19/10, analisi 17, 17.10). La regola
+    del radar vuole Prossimita almeno 2, ma un rischio AGIRE ORA entra comunque: per un rischio in osservazione il
+    margine usa gli anni di adeguamento della sua riga, e senza quelli la Y di riserva (1 anno). NFR-13 della demo
+    (crittografia post-quantistica, Impatto 5, Prossimita 1) aveva margine 2,25 e restava fuori: proprio il caso per
+    cui Mosca ha scritto la disuguaglianza. La guida di A1 chiede gli anni anche per i rischi in osservazione con
+    Impatto 4-5 (D-80); il comando `diagnosi` segnala chi non li ha. Non mettere gli anni di adeguamento solo
+    nell'anagrafica: per i rischi in osservazione vivono nella riga del RiskRegister.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -2862,7 +2882,7 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
                        Prova_A7.md (copione di prova di A7)
 07_Senza_Studio/  README_variante_locale.md  esegui_ciclo_locale.py  raccogli_notizie.py  fonti.py
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
-                  precontrollo.py  configurazione_esempio.json
+                  precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  configurazione_esempio.json
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
                     Da_caricare/ precontrollo-nfr.zip  precontrollo-nfr_senza_cartella.zip

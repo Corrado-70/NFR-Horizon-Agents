@@ -46,7 +46,7 @@ errori tipici: **sezione 9**.
 
 Nella stessa cartella ci sono altri file `.py` (`excel_com.py`,
 `controlli_a5.py`, `valida_output.py`, `fonti.py`, `input_a1.py`, `precontrollo.py`,
-`schede.py`, `spiegazioni.py`): **non si lanciano**, li usano i due programmi. Non spostarli e non rinominarli.
+`schede.py`, `spiegazioni.py`, `diagnosi.py`): **non si lanciano**, li usano i due programmi. Non spostarli e non rinominarli.
 
 Nel pacchetto ci sono anche programmi che **tu non usi**: `componi_prompt.py`
 (rigenera il testo dei prompt quando cambiano le regole), `genera_dashboard.py`
@@ -146,6 +146,7 @@ registro chiuso.
 | Ciclo straordinario: `python esegui_ciclo_locale.py baseline --straordinario [--rischi NFR-nn] --motivo "..." --decisore "..."`, A8 "Esegui il ciclo straordinario" con i documenti dell'evento, `precontrollo` (facoltativo), `trimestrale`, `valida` | rivaluta subito i rischi toccati da un evento critico o censisce quelli nuovi che crea (proposto da A3 o A4, o di tua iniziativa) | sezione 2-bis |
 | `python esegui_ciclo_locale.py dismetti --rischio NFR-nn --motivazione "..." --decisore "..."` | toglie un rischio dal registro, la storia resta | sezione 3-bis |
 | `python esegui_ciclo_locale.py griglia` | ricostruisce il foglio Validazione rovinato a mano | sezione 3 |
+| `python esegui_ciclo_locale.py diagnosi` | dopo la validazione, ogni tanto: i rischi nuovi entrano tutti bassi? il validatore alza (o abbassa) sempre le stesse dimensioni? ci sono rischi lontani con Impatto alto senza anni di adeguamento? Solo lettura | sezione 9 |
 | `python esegui_ciclo_locale.py aggiorna-registro` | porta il registro su un template nuovo, dopo un aggiornamento del pacchetto | sezione 0-bis |
 
 ## Avvio del progetto (responsabile, funzioni di controllo, manutentore — una volta)
@@ -687,7 +688,7 @@ Si fa nei primi giorni dopo la fine del trimestre. Esempio per il `2026Q3`.
 | 6 | A5 | **Facoltativo** (D-71). Agente **A5 Challenger**: allegare SOLO `A1_2026Q3.json` e `Baseline_corrente.json`, scrivere `Esegui i nove controlli`, salvare come `A5_2026Q3.json`. I suoi rilievi non fermano il ciclo: vanno nella colonna Segnalazioni del foglio Validazione (un suo Bloccante rende obbligatoria la Motivazione). Se lo usi, va rifatto ogni volta che A1 viene rifatto (vale solo per l'output esaminato); mai per le settimane, per A4 o dopo la validazione. | Solo JSON con `"ciclo":"2026Q3"` e `"esito":"Approvato"` o `"Da rivedere"`. |
 | 7 | tu | `python esegui_ciclo_locale.py trimestrale --payload A1_2026Q3.json` e, se hai usato A5, `--challenger A5_2026Q3.json` | `Ciclo 2026Q3 scritto: 12/12 rischi, zero errori di formula.`, `A5: usato` o `non usato (facoltativo)`, se ce ne sono `SEGNALAZIONI DA MOTIVARE: N su M rischi` (punto 8-bis), `Registro unico (D-79): nel radar N rischi su 15 posti; in osservazione M; entrati nel radar ...; usciti ...` e `Excel di output: ...Cicli\2026Q3\NFR_Registro_2026Q3.xlsx`. Se compare "ATTENZIONE: l'anagrafica ha N posti liberi", avvisare chi mantiene il pacchetto. |
 | 8 | tu | Se invece compare **FERMATO** con "Ciclo da rivedere": l'output di A1 ha un difetto che renderebbe incoerente il registro (C1 un rischio mancante o con un'altra categoria, C2 variazioni che non tornano, C7 o C9 un KRI con un identificativo sbagliato). Aprire il file `Cicli\2026Q3\Correzione_A1_2026Q3.txt` indicato, copiarlo tutto nella chat di A1, salvare la nuova risposta (punto 5) e ripetere il punto 7 (e A5, se lo usi, sul nuovo file). | Il registro non e' stato toccato: si puo' ripetere quante volte serve. |
-| 8-bis | tu | **Segnalazioni da motivare**: non si rilancia niente. Sono le regole di metodo non rispettate (C3: evidenza fuori finestra o generica, salto di piu' di un punto; C5: fonte datata dopo la data di riferimento; C9: KRI senza la coppia Esposizione/Evoluzione o soglie invertite) e i rilievi Bloccanti di A5. Si decidono in validazione (sezione 3). Se preferisci farle correggere ad A1 prima di scrivere, usa il precontrollo (punto 5-bis). | Nel foglio Validazione quei rischi hanno ⚑ davanti al nome e il testo nella colonna **Segnalazioni dei controlli**; il Quadro dice quante sono (riga "Segnalazioni da motivare"). |
+| 8-bis | tu | **Segnalazioni da motivare**: non si rilancia niente. Sono le regole di metodo non rispettate (C3: evidenza fuori finestra o generica, salto di piu' di un punto; C5: fonte datata dopo la data di riferimento, oppure esposizione della Banca non nota alle fonti, con la Probabilita proposta e quella "se esposta" (D-81); C9: KRI senza la coppia Esposizione/Evoluzione o soglie invertite) e i rilievi Bloccanti di A5. Si decidono in validazione (sezione 3). Se preferisci farle correggere ad A1 prima di scrivere, usa il precontrollo (punto 5-bis). | Nel foglio Validazione quei rischi hanno ⚑ davanti al nome e il testo nella colonna **Segnalazioni dei controlli**; il Quadro dice quante sono (riga "Segnalazioni da motivare"). |
 | 9 | validatore | **Validare il ciclo**: sezione 3, con `--periodo 2026Q3`. Finche' non e' fatto, il trimestre dopo non parte. | Registro riga 4: "Ciclo validato". |
 | 10 | tu | Copiare in `Archivio_Cicli\Cicli\2026Q3\` il testo dei prompt in uso (i file di `02_Agenti`). | — |
 | 11 | tu | **Schede dei rischi**, dati per A6: `python esegui_ciclo_locale.py schede-input` | `Input delle schede del ciclo 2026Q3 (12 rischi): ...Cicli\2026Q3\Schede_input_2026Q3.json`. Se compare "righe da validare", il ciclo non e' ancora validato (punto 9). |
@@ -804,6 +805,13 @@ sono la raccolta che servira' per insegnare agli agenti.
      sulle sue azioni; sopra la colonna, quelle che riguardano il ciclo intero.
      **⚑ davanti al nome** = almeno una segnalazione DA MOTIVARE: la Motivazione e'
      obbligatoria anche se non cambi nulla.
+   - **Esposizione non nota** (segnalazione C5, D-81): A1 non sa se la Banca ha il
+     prodotto, il processo o il fornitore colpito, e ha proposto la Probabilita senza
+     l'esposizione; la segnalazione dice anche il valore "se esposta". Tu lo sai, o lo
+     chiedi all'owner: se la Banca e' esposta scrivi quel valore nella cella gialla
+     della Probabilita (per un rischio gia' nel registro al massimo un punto dal ciclo
+     prima; oltre, dopo la validazione, con `riapri`), altrimenti lascia la proposta e
+     scrivi perche' nella Motivazione.
    - In fondo alle righe dei rischi, **Score composito** e **Margine di Mosca**
      si ricalcolano mentre scrivi, con i valori gialli e le azioni non respinte
      (rosso AGIRE ORA, giallo entro l'anno, verde con margine; tra parentesi il
@@ -1492,6 +1500,21 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 - Quando: dopo la validazione e dopo ogni correzione a mano delle celle gialle
   (sezione 2, punto 13; sezione 6).
 - Errori tipici: "righe da validare" (il ciclo deve essere validato).
+
+### esegui_ciclo_locale.py diagnosi
+
+`python esegui_ciclo_locale.py diagnosi`
+
+- Cosa fa (D-80, analisi 17, 17.10): solo lettura, nessun dato cambia. Misura sul registro tre asimmetrie della
+  valutazione e le scrive anche in `Cicli\<ciclo>\Diagnosi_valutazioni_<ciclo>.txt`:
+  1. quanti rischi nuovi sono entrati con ogni valore, per dimensione (per esempio: nessuno con Probabilita 4 o 5);
+  2. quante volte il validatore ha alzato o abbassato una dimensione proposta dall'agente, per i rischi nuovi, gli altri
+     e in riapertura (molte rettifiche nello stesso verso = proposte sistematicamente basse o alte);
+  3. i rischi lontani (Prossimita 1) con il margine di Mosca; quelli con Impatto 4-5 senza anni di adeguamento sono
+     segnalati, perche' il margine usa la Y di riserva e non possono risultare AGIRE ORA.
+- Quando: dopo la validazione di un ciclo, quando si vuole capire se le valutazioni pendono da una parte; utile da
+  portare alla taratura di descrittori e soglie (A-12).
+- Errori tipici: "Nessun ciclo nel registro" (prima del primo trimestrale).
 
 ### esegui_ciclo_locale.py dismetti
 

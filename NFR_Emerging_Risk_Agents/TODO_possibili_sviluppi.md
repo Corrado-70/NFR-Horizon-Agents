@@ -67,6 +67,7 @@ Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzi
 | B5.10 | Facoltativo, per A-16: **K14** report HTML (`Analisi_Architettura/16_Report_HTML.md`, 16.9): apertura da SharePoint in Edge, "Convert file" su HTML, zip dal code interpreter, report nella knowledge di A7. Si usano i file di `Analisi_Architettura/16_Anteprima_HTML/` | A-16 | da fare |
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
+| B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore | A-17 | da fare |
 
 ## 3. Processi: cosa manca rispetto al disegno atteso
 
@@ -94,6 +95,8 @@ Decisioni dell'utente che fanno da cornice:
 | Evento con piu' meccanismi di perdita | c'e' la regola (D-42); manca il collegamento fra le righe | **P5**, P6 |
 | Spostamento nel tempo dei rischi | in parte: Storico, Delta, schede; il radar e' una fotografia | **P2** |
 | Cadenza mensile | in parte: la finestra di 4 settimane lo e' di fatto | **P7** |
+| Contraddittorio sulla valutazione ("decimo uomo"): letture opposte, rischi mancanti, ipotesi, combinazioni | manca: A5 controlla la coerenza dell'output di A1, non la sua completezza ne' le letture alternative | **P12** |
+| Valutazioni senza asimmetrie: rischi nuovi non tutti bassi, rischi lontani a mitigazione lunga visibili all'urgenza | in parte: diagnosi e anni di adeguamento dei rischi in osservazione (D-80), esposizione non nota (D-81) fatti; restano salto con evidenza forte, taratura | **P13** |
 
 ### P4. Canale "rapporti di scenario" per A1
 
@@ -122,6 +125,42 @@ Decisioni dell'utente che fanno da cornice:
   i rischi ne' fra i fenomeni non censiti.
 - **Fatto quando**: allegato con la parte 4, controllo nel collaudo, guida (sezione 2, punto 4).
 - **Impegno**: circa mezza giornata.
+
+### P12. Contraddittorio sulla valutazione trimestrale, "decimo uomo" (proposta del 19/10/2026, A-17)
+
+- **Perche'**: le regole (conferma di default, un punto per ciclo) proteggono dall'inflazione ma favoriscono lo status
+  quo; A5 non usa la knowledge (D-09) e non cerca cio' che A1 non ha visto. Manca chi sostenga la tesi opposta.
+- **Cosa fare**: analisi `Analisi_Architettura/17_Decimo_uomo.md`. Opzione 1 raccomandata: agente A9 Contraddittore
+  dopo A1, con la knowledge di A1 e una ricerca propria; JSON senza numeri (tesi in entrambi i versi sui rischi
+  principali, rischi mancanti, ipotesi critiche, combinazioni); `trimestrale --contraddittore`: tesi nella colonna
+  Segnalazioni come Osservazioni, sintesi in Sintesi_Cicli e nel Quadro, rischi mancanti come temi da verificare (P9).
+  Prima la prova K15 senza codice (B8).
+- **Tocca**: schema nuovo, modello del prompt, script, template (versione nuova), collaudo, guida,
+  `controlli_e_model_risk.md` (rischio "ancoraggio alla valutazione precedente").
+- **Fatto quando**: K15 dice che le tesi servono e la catena del collaudo porta un A9 di prova fino al Quadro.
+- **Impegno**: prova mezza giornata; integrazione circa 3-4 giorni. Dopo P9.
+
+### P13. Ancoraggio e asimmetrie della valutazione (proposta del 19/10/2026)
+
+- **Perche'**: analisi `Analisi_Architettura/17_Decimo_uomo.md`, 17.10. Le regole che frenano l'inflazione (conferma di
+  default, un punto per ciclo, valori di prima nella baseline, accettazione senza gesti) fanno anche restare basso un
+  rischio entrato basso; i descrittori di Probabilita 4-5 chiedono casi gia' osservati e l'esposizione della Banca, che A1
+  non conosce: nella demo 7 rischi nuovi su 7 sono entrati con Probabilita 3 o meno. I rischi oltre i 3 anni restano in
+  osservazione e, senza anni di adeguamento, Mosca non li vede mai urgenti.
+- **Cosa fare**, in ordine:
+  1. **fatto (D-80)**: comando `diagnosi` (valori all'ingresso, verso delle rettifiche, rischi lontani); da lanciare sul
+     ciclo 2026Q4 vero dopo la validazione;
+  2. **fatto (D-80)**: anni di adeguamento anche per i rischi in osservazione con Impatto 4-5 (guida di scrittura di A1);
+  3. **fatto (D-81), variante leggera 3a**: esposizione "non nota" scritta da A1 nel razionale con il valore "se
+     esposta", segnalazione da motivare in validazione, decide il validatore. Resta la variante 3b (esposizione
+     registrata nell'anagrafica, circa 3 giorni, template nuovo), da fare se la nota torna sugli stessi rischi;
+  4. un salto di piu' di un punto in validazione con evidenza di rilevanza alta datata nel ciclo (tocca la regola 2 della
+     rubrica: decisione della funzione di rischio);
+  5. contraddittorio, tesi "sottovalutato" (P12, A-17);
+  6. taratura dei descrittori di Probabilita con la Banca (A-12).
+- **Fatto quando**: la diagnosi del 2026Q4 e' letta con la funzione di rischio e i punti 3-6 sono decisi (fatti o
+  scartati).
+- **Impegno**: variante 3b circa 3 giorni (esposizione nell'anagrafica, template nuovo), 17.10; punto 4 circa 1 giorno dopo la decisione.
 
 ### P1. Segnali qualitativi per dimensione e pressione sul radar (settimanale e spot)
 
@@ -487,6 +526,8 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | M2 | Regola su quando rigenerare la demo | 07/10 | — | PROMPT_MASTER, sezione DEMO |
 | M3, M5 | Cartella `Anteprima_S1`, zip superati e script temporanei eliminati | 07/10 | — | — |
 | M4 (documenti) | Documenti di riferimento in `04_Riferimenti` | 08/10 | D-78 | 00_LEGGIMI |
+| P13 (1, 2) | Comando `diagnosi`; anni di adeguamento dei rischi in osservazione con Impatto 4-5 | 19/10 | D-80 | guida, sezione 9; guida di scrittura di A1; analisi 17, 17.10 |
+| P13 (3a) | Esposizione della Banca "non nota": nota di A1 nel razionale, segnalazione C5 da motivare, decide il validatore | 19/10 | D-81 | guida, sezione 3; guida di scrittura di A1; analisi 17, 17.10 |
 | P10 | Registro unico: nel radar i primi (Prossimita e Probabilita almeno 2, capienza 15 fino a 20, eccezioni), gli altri in osservazione; un solo modulo per la regola | 08/10 | D-79 | rubrica sezione 9, Parametri righe 65-75, guida; analisi `13_Scala_unica.md` |
 
 ## 10. In riserva (non pianificate)

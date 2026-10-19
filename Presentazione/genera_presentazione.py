@@ -607,7 +607,7 @@ def agenti():
 
 def comandi():
     s = nuova("I comandi Python, uno per azione")
-    tabella(s, 0.5, 1.35, 12.33, ["Comando", "Quando", "Che cosa fa"], [
+    fondo = tabella(s, 0.5, 1.35, 12.33, ["Comando", "Quando", "Che cosa fa"], [
         ["raccogli_notizie.py", "ogni lunedì (automatico)", "scarica i feed delle fonti approvate in News_Inbox\\<lunedì>\\"],
         ["baseline [--straordinario]", "inizio trimestre / straordinario", "fotografia del registro validato + allegato di A1 (baseline, controlli, guida)"],
         ["precontrollo", "dopo A1, facoltativo", "controlli senza Excel, messaggio di correzione per A1"],
@@ -618,10 +618,11 @@ def comandi():
         ["schede-input · schede", "dopo la validazione", "dati per A6 · controlli su A6 e Schede_<ciclo>.xlsx"],
         ["report [--con-lavoro]", "dopo la validazione", "PDF del report al comitato dall'Excel com'è ora"],
         ["dismetti", "decisione della funzione di rischio", "toglie un rischio dal registro; la storia resta"],
-        ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"]],
-        [2.7, 2.7, 6.9], 12, 0.42)
+        ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"],
+        ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"]],
+        [2.7, 2.7, 6.9], 12, 0.38)
     nota_fondo(s, ["Prima di ogni scrittura lo script controlla il formato e le regole, fa una copia di sicurezza, scrive, "
-                   "ricalcola Excel, verifica che non ci siano errori di formula, salva e archivia una copia con nome proprio."], 6.45)
+                   "ricalcola Excel, verifica che non ci siano errori di formula, salva e archivia una copia con nome proprio."], fondo + 0.1)
 
 
 def cicli():
@@ -1129,7 +1130,8 @@ def parametri():
         ["5", "**Quasi certa**: già osservato presso istituzioni finanziarie o la loro filiera, o rapida accelerazione"]],
         [0.4, 5.6], 12, 0.5)
     nota_fondo(s, ["Si sceglie il descrittore più aderente all'evidenza, senza interpolare. Probabilità 4-5 solo se la Banca è esposta "
-                   "(ha il prodotto, il processo o il fornitore colpito). Probabilità dice QUANTO è plausibile; Prossimità dice QUANDO. "
+                   "(ha il prodotto, il processo o il fornitore colpito); se le fonti non lo dicono, A1 scrive «esposizione non nota» "
+                   "con il valore «se esposta» e decide il validatore (D-81). Probabilità dice QUANTO è plausibile; Prossimità dice QUANDO. "
                    "Probabilità × Impatto è la magnitudo (area nel radar, cella della matrice)."], max(f1, f2) + 0.2, 12)
 
     s = nuova("Scale: Prossimità (con la Z di Mosca) e Velocity")
@@ -1148,7 +1150,7 @@ def parametri():
         "- **Z** = metà della fascia (per «oltre 3 anni», 3,5): è il tempo disponibile di Mosca."], 11.5)
     testo(s, 6.78, f1 + 0.2, 6.05, 6.95 - f1 - 0.2, [
         "- Velocity **facoltativa**: vuota (n.v.) se nessuna fonte ne documenta i tempi; da n.v. entra con qualunque valore.",
-        "- **Anni di adeguamento** (0-30, facoltativi): durata di un adeguamento strutturale oltre le azioni; li stima A1, li decide il validatore; sono la **Y minima** di Mosca. Non entrano nello score."], 11.5)
+        "- **Anni di adeguamento** (0-30, facoltativi): durata di un adeguamento strutturale oltre le azioni; li stima A1, li decide il validatore; sono la **Y minima** di Mosca, anche per i rischi in osservazione con Impatto 4-5 (con X + Y > Z entrano nel radar). Non entrano nello score."], 11.5)
 
     s = nuova("Score composito: pesi e calcolo")
     tabella(s, 0.5, 1.4, 6.0, ["Dimensione", "Peso", "Senza Velocity"], [

@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1176,6 +1176,38 @@ Chiesta dall'utente: una presentazione che racconti tutto il lavoro. File in `Pr
 
 Da tenere allineata: se cambiano agenti, comandi, fogli o parametri, aggiornare i testi in `genera_presentazione.py` e
 rilanciarlo (con il registro della demo rigenerato, se cambia la struttura). Non entra nel pacchetto di deploy.
+
+## 2-tricesies. 19/10: contraddittorio sulla valutazione ("decimo uomo"), analisi 17
+
+L'utente ha notato che A5 controlla la solidita' dei numeri di A1 e ha chiesto se abbia senso un "decimo uomo" che
+valuti altri rischi e letture diverse, in entrambi i versi. Analisi `Analisi_Architettura/17_Decimo_uomo.md`:
+- non dentro A5: A5 non usa la knowledge per indipendenza (D-09) e il suo prompt e' a 7.990 caratteri;
+- opzione 1, agente separato A9 Contraddittore, con ricerca propria e JSON senza numeri; opzione 2, contraddittorio
+  dentro A1 (campo nel JSON o secondo messaggio nella stessa chat), scartata come raccomandazione perche' un modello che
+  rilegge il proprio output tende a confermarlo (D-69) e cerca negli stessi documenti;
+- raccomandata l'opzione 1 a due tappe: prova K15 senza codice sul ciclo 2026Q4 (TODO B8), poi integrazione (TODO P12,
+  circa 3-4 giorni, dopo P9); decisione aperta A-17.
+
+Il pacchetto non cambia finche' A-17 non e' decisa.
+
+Lo stesso giorno, su un'osservazione dell'utente (i rischi nuovi entrano con Probabilita al massimo 3, i rischi oltre i
+3 anni restano fuori), sezione **17.10, ancoraggio e asimmetrie**, con sei rimedi (TODO **P13**). Fatti subito i primi
+due (**D-80**):
+- comando `diagnosi` (`07_Senza_Studio/diagnosi.py`, solo lettura): sul registro della demo 7 rischi nuovi su 7 con
+  Probabilita 3 o meno, NFR-13 e NFR-14 lontani senza anni di adeguamento (margine 2,25);
+- guida di scrittura di A1: anni di adeguamento anche per i rischi in osservazione con Impatto 4-5. Nessun codice da
+  cambiare: margine, baseline ed entrata nel radar li usavano gia'.
+Rischi "ancoraggio" e "rischio lontano mai urgente" aggiunti a `controlli_e_model_risk.md`; trappola 112. Collaudo
+completo verde dopo D-80 e D-81 (catena con Excel 364/364 in 60 minuti, test senza Excel 283/283). In Banca: copiare `01_Kernel`
+e `07_Senza_Studio`. La demo non e' rigenerata: i suoi output di A1 sono del 08/10, prima della regola nuova.
+Presentazione rigenerata (`--solo-pptx`): `diagnosi` nella tabella dei comandi, anni di adeguamento dei rischi in
+osservazione nella slide delle scale.
+
+Poi, sempre il 19/10, il punto 3 nella variante leggera (**D-81**): l'utente sa che nel 2026Q4 il validatore ha alzato
+spesso la Probabilita. A1 scrive "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" quando le fonti non
+dicono se la Banca e' esposta; la parte meccanizzata di C5 la porta in validazione come "Da motivare" con i due
+valori; `diagnosi` conta le note. Kit di Copilot Studio rigenerato. Resta la variante 3b (esposizione nell'anagrafica)
+se la nota torna sugli stessi rischi.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

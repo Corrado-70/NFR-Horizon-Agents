@@ -16,6 +16,11 @@
 > Bloccanti di A5 sono "Da motivare": colonna Segnalazioni del foglio
 > Validazione, Motivazione obbligatoria.
 
+> D-81 (19/10/2026): la parte meccanizzata di C5 legge anche la frase "ESPOSIZIONE NON NOTA: con l'esposizione
+> documentata sarebbe N" che A1 scrive nella parte PROBABILITA del razionale (guida di scrittura) e la porta in
+> validazione come "Da motivare", con i due valori: decide il validatore. Il testo di C5 qui sotto non cambia (il
+> prompt di A5 e' a 7.990 caratteri).
+
 - C1 Completezza: ogni rischio di "rischi" della baseline (il radar) e' valutato, con la stessa categoria; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline.
 - C2 Variazioni: una voce per ogni valore cambiato rispetto alla baseline e solo per quelli; nessuna per un rischio nuovo.
 - C3 Evidenza delle variazioni: data_evidenza dopo data_riferimento_precedente e non dopo data_riferimento; evidenza specifica, non una frase generica; nessun valore cambiato di piu' di un punto (una velocity prima null puo' entrare con qualunque valore).

@@ -4,7 +4,10 @@ Stessi nove controlli (C1-C9) del prompt 02_Agenti/A5_Challenger.md, nella
 parte esprimibile come regola. Copertura DICHIARATA, non sottintesa:
   - C1, C2, C3, C7, C9: per intero (C3 = date, frasi generiche, max 1 punto).
   - C5: date delle fonti per intero (Da motivare, D-71); fonte di rilevanza 3 per le
-    valutazioni alte e fonti perse come Osservazioni (D-58).
+    valutazioni alte e fonti perse come Osservazioni (D-58); dal 19/10/2026 (D-81)
+    l'esposizione della Banca non nota alle fonti: la frase "ESPOSIZIONE NON NOTA: con
+    l'esposizione documentata sarebbe N" nel razionale porta i due valori in validazione
+    (Da motivare), dove decide il validatore.
   - C6, C8: euristica a stringhe, solo "Osservazione" (C8 dal 30/09/2026,
     D-54: il controllo dell'owner "persona" e' passato alla validazione; dal
     02/10/2026, D-69, anche un'azione uguale a un'azione aperta).
@@ -52,6 +55,22 @@ TIPI_KRI = ["Esposizione", "Evoluzione"]          # D-64: esattamente un KRI per
 CATEGORIE = ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]
 FUORI_PERIMETRO = "FP"
 BLOCCANTE, DA_MOTIVARE, OSSERVAZIONE = "Bloccante", "Da motivare", "Osservazione"     # D-71
+
+# D-81 (analisi 17, 17.10): A1 non conosce l'esposizione interna della Banca (D-49) e la Probabilita 4-5 vale solo con la
+# Banca esposta (D-65). Invece di scegliere in silenzio il valore piu' basso, A1 lo scrive nel razionale con il valore che
+# darebbe se l'esposizione fosse documentata; il validatore, che l'esposizione la conosce, sceglie fra i due.
+ETICHETTA_ESPOSIZIONE = "ESPOSIZIONE NON NOTA"
+_ESPOSIZIONE = re.compile(r"ESPOSIZIONE NON NOTA\s*:[^.;\n]*?sarebbe\D{0,25}?([1-5])\b", re.IGNORECASE)
+
+
+def esposizione_non_nota(razionale):
+    """(dichiarata, N): se il razionale dice che l'esposizione della Banca non e' nota e con quale Probabilita N sarebbe
+    valutato il rischio con l'esposizione documentata (N None se la frase non ha un valore leggibile)."""
+    testo = str(razionale or "")
+    if ETICHETTA_ESPOSIZIONE.lower() not in testo.lower():
+        return False, None
+    m = _ESPOSIZIONE.search(testo)
+    return True, (int(m.group(1)) if m else None)
 
 # Frasi che non sono evidenza (rubrica, regola di variazione 3). Confronto
 # in minuscolo, per sottostringa. Estendere qui se in esercizio ne emergono altre.
@@ -264,6 +283,20 @@ def controlla(payload, baseline):
         if prec is not None and len(fonti) < len(prec.get("fonti", [])) and not any(_diversi(x.get(v), prec.get(v)) for v in VALORI):
             r.append(_rilievo("C5", rid, O, f"Fonti scese da {len(prec['fonti'])} a {len(fonti)} con i valori invariati: "
                                             "verificare che restino sostenuti (regola di variazione 5)."))
+        dichiarata, n_esp = esposizione_non_nota(x.get("razionale"))
+        p_prop = x.get("probabilita")
+        if dichiarata and isinstance(p_prop, int) and n_esp is not None and n_esp > p_prop:
+            limite = ("" if prec is None else
+                      f" (rischio gia' nel registro: in validazione al massimo {min(5, int(prec.get('probabilita') or 0) + 1)}, "
+                      "cioe' un punto dal ciclo prima; oltre, dopo la validazione, con riapri)")
+            r.append(_rilievo("C5", rid, M, f"Esposizione della Banca non nota alle fonti (D-81): Probabilita {p_prop} proposta, "
+                                            f"{n_esp} con l'esposizione documentata. Decide il validatore: se la Banca e' esposta "
+                                            f"(ha il prodotto, il processo o il fornitore colpito) scrivere {n_esp} nella cella "
+                                            f"gialla{limite}; altrimenti motivare {p_prop}."))
+        elif dichiarata:
+            r.append(_rilievo("C5", rid, O, "ESPOSIZIONE NON NOTA senza un valore maggiore della Probabilita proposta: la frase "
+                                            "va scritta \"con l'esposizione documentata sarebbe N\", con N maggiore di "
+                                            f"{p_prop} (guida di scrittura, D-81)."))
 
         # ---------------- D-79 Registro unico: KRI e azioni solo per chi sara' nel radar
         if not nel_radar(rid):
