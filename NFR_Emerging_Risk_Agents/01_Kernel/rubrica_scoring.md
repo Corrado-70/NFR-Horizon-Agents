@@ -31,7 +31,7 @@
 
 Interi 1-5, 5 = peggiore: scegli il descrittore piu' aderente all'evidenza, non interpolare.
 
-### Impatto — danno se il rischio si manifesta
+### Impatto — danno se il rischio si manifesta ipotizzando sulla capogruppo (si escludono valutazioni di impatto su società del gruppo di dimensione inferiore)
 | Score | Descrittore |
 |---|---|
 | 1 | Limitato: nessun cliente toccato, perdita entro 100.000 euro. |
@@ -44,14 +44,16 @@ Interi 1-5, 5 = peggiore: scegli il descrittore piu' aderente all'evidenza, non 
 > registro, fogli, controlli). Un registro nato prima si aggiorna con
 > `aggiorna-registro`, che copia la colonna Severity nella colonna Impatto.
 
-### Probabilita — plausibilita' per la Banca
+### Probabilita — plausibilita' per la Banca per una unica cross rischio
 | Score | Descrittore |
 |---|---|
-| 1 | Remota: solo teorica, nessun caso noto. |
-| 2 | Improbabile: casi solo in altri settori o paesi, o Banca poco esposta. |
-| 3 | Possibile: casi in altri settori anche non finanziari; Banca esposta. |
-| 4 | Probabile: casi ripetuti in aziende strutturate o banche, o crescita del fenomeno documentata. |
-| 5 | Quasi certa: gia' osservato presso istituzioni finanziarie o la loro filiera, anche di fornitori, o fenomeno in rapida accelerazione. |
+| 1 | Bassa: solo teorica |
+| 2 | Medio Bassa: nessun caso noto  |
+| 3 | Media: casi in altri settori anche non finanziari; esposizione banca non nota |
+| 4 | Medio Alta:  casi in altri settori anche non finanziari; Banca esposta. |
+| 5 | Alta: casi ripetuti in aziende strutturate o banche, o crescita del fenomeno documentata. |
+| 6 | Molto Alta:  osservato presso istituzioni finanziarie o la loro filiera, anche di fornitori, o fenomeno in rapida accelerazione. |
+
 
 4-5 solo se la Banca e' esposta.
 
@@ -81,11 +83,12 @@ Interi 1-5, 5 = peggiore: scegli il descrittore piu' aderente all'evidenza, non 
 ### Prossimita — quando puo' manifestarsi
 | Score | Descrittore |
 |---|---|
-| 1 | Oltre 3 anni. |
-| 2 | Da 2 a 3 anni. |
-| 3 | Da 1 a 2 anni. |
-| 4 | Entro 12 mesi. |
-| 5 | In corso o imminente presso la Banca, la sua filiera o aziende ampie e complesse. |
+| 1 | Oltre 5 anni. |
+| 2 | da 3 a 5 anni. |
+| 3 | Da 2 a 3 anni. |
+| 4 | Da 1 a 2 anni. |
+| 5 | Entro 12 mesi. |
+| 6 | In corso o imminente presso la Banca, la sua filiera o aziende ampie e complesse. |
 
 4-5 solo con casi documentati (banca comparabile, fornitore, quasi-incidente in aziende complesse) o un evento certo; deroga, dichiarata nel razionale, per fenomeni ad altissimo impatto (es. nuovo Mythos, GenAI imprevista, superintelligenza).
 
