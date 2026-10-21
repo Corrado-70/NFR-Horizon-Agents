@@ -45,12 +45,15 @@ Un rischio ha UNA sola categoria (il tipo di rischio in cui ricade la perdita pe
 |---|---|---|
 | DRV-CYB | Cyber | nuove tecniche d'attacco, vulnerabilita' diffuse. |
 | DRV-TPR | Terze parti | fornitori ICT critici, concentrazione cloud. |
-| DRV-AI | Intelligenza artificiale | uso interno di modelli, attacchi abilitati da AI. |
+| DRV-AI | Intelligenza artificiale | uso interno di modelli, attacchi abilitati da AI, trasformazioni che impattano sul capitale umano e i processi interni ed esterni alla banca. Limitata regolamentazione e assenza di meccanismi condivisi di guard railing sul tema. Proprietà intellettuale di artefatti generati dall'IA. |
 | DRV-CLI | Clima e ambiente | eventi fisici estremi, transizione. |
 | DRV-CON | Condotta | pratiche commerciali, greenwashing. |
 | DRV-GEO | Geopolitica | sanzioni, conflitti, catene di fornitura. |
 | DRV-TEC | Debito tecnologico | sistemi obsoleti, migrazioni. |
 | DRV-HUM | Capitale umano | carenza di competenze, turnover in ruoli chiave. |
+| DRV-SOV | Sovranità digitale | carenza o limitato controllo su infrastrutture, servizi e dati gestiti dalla banca attraverso fornitori non UE |
+| DRV-PQC | Quantum Readyness | evoluzione tecniche crittografia quantistica, migrazione  ad algoritmi resistenti a tecniche di decrittazione quantistica |
+| DRV-NOR | Frammentazione Normativa | continue nuove normative in parte sovrapposti da molteplici enti nazionali e sovranazionali su temi di pertinenza Non Financial Risk |
 
 ## Fuori perimetro
 Rischi finanziari, strategici, reputazionali e di modello; frode, financial crime, non conformita', qualita' dei dati; eventi gia' accaduti; temi senza un meccanismo di perdita per la Banca.
