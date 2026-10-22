@@ -481,6 +481,10 @@ Dopo una correzione `Global.json_a1` contiene il JSON corretto, quindi un second
    - Scrivendo `Topic.json_corretto.` la formula propone i campi del record: se il testo e' in un campo con un altro
      nome, usare quello.
    - `Global.json_a1` e' di tipo testo: assegnarle il record intero da' errore di tipo.
+   - **Variante piu' semplice**: se fra gli output del nodo `Correggi_A1` c'e' un campo di tipo testo (per esempio
+     `text`), assegnarlo direttamente a `Global.json_a1` e togliere questo passo. Il prezzo: se il prompt sbaglia,
+     `Global.json_a1` perde il JSON di prima nella conversazione. L'originale resta comunque nel file
+     `A1_<ciclo>.json`.
 6. **Add a tool** -> `Salva_JSON`:
    - `nome_file` = formula `"A1_" & Global.ciclo & "_corretto.json"`;
    - `contenuto` = `Global.json_a1`;
