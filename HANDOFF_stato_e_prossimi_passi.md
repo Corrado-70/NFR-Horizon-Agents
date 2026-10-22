@@ -1252,11 +1252,17 @@ se la nota torna sugli stessi rischi.
   - Giro di correzione (K6ter.3) **non riuscito**: il messaggio di correzione incollato nella stessa conversazione
     non fa partire niente (A1 "non sa quali azioni fare"). Su proposta dell'utente, la correzione passa da un
     argomento dedicato, `Correzione A1` (`Prova_K6_Operatore.md`, 5.5):
-    - legge allegato e JSON da SharePoint (`Leggi_Input`, nuovo flusso `Leggi_Output`);
+    - versione minima, nella conversazione del lancio: prende `Global.allegato` e `Global.json_a1` (con `ciclo`
+      resa globale);
     - fa correggere i punti a un prompt `Correggi_A1`;
     - salva `A1_<ciclo>_corretto.json` con `Salva_JSON`.
 
-    Non dipende dalla memoria della chat. Da provare (K6ter.3-bis).
+    Da provare (K6ter.3-bis). In una conversazione nuova servira' un flusso `Leggi_Output`.
+  - Passi minimi delle prove successive, richiesti dall'utente il 22/10 sera:
+    - 5.6, Python in Copilot Studio (K6ter.6): agente separato `NFR Precontrollo prova` con il code interpreter,
+      lo script `precontrollo_nfr.txt` allegato; prima riga e impronta uguali al PC;
+    - 5.7, Teams (K6ter.5): JSON fuori dalla chat (Completamento senza risposta), Publish, canale Teams, stessa
+      prova.
 - Fuori dal pacchetto, per l'utente:
   - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
     rigenerato se serve;

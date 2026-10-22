@@ -212,6 +212,8 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | K6ter.3: giro di correzione nella stessa conversazione; il file viene sovrascritto, va in errore o ne nasce una copia | 22/10: **non riuscita**. Messaggio di correzione incollato nella stessa conversazione: A1 risponde che non sa quali azioni fare, nessun JSON. Si passa all'argomento `Correzione A1` (5.5) |
 | K6ter.3-bis: argomento `Correzione A1`; sequenza dei nodi; caratteri letti e salvati; tempo; modello del prompt | |
 | K6ter.3-bis: precontrollo su `A1_<ciclo>_corretto.json` (prima riga, impronta) | |
+| K6ter.6: precontrollo nel code interpreter: script partito; prima riga e impronta uguali al PC; file di correzione | |
+| K6ter.6: ripetizione, stesse due righe | |
 | K6ter.4: prova negativa, nessuna esecuzione | |
 | K6ter.5: Teams (il JSON passa in chat: limite di circa 100 KB), esito, codici di errore, durata | |
 | K6ter: come si riempie `Global.allegato` | 22/10: nell'argomento di lancio, nodo **Azione** `Leggi_Input` con `ciclo` = variabile `ciclo`; output `allegato` -> `Global.allegato`, `caratteri` -> `char_input`. Poi nodo **Agente** `A1 Horizon Scanner`, output `output` -> `Global.json_a1` |
@@ -395,17 +397,8 @@ Si lavora come il 22/10: stessi flussi, stesse variabili, stessa cartella `Prova
 
    Poi copiare il file in `C:\NFR_Prova\A1_CS_run1.json`.
 
-**B. K6ter.3: giro di correzione.** Nella **stessa conversazione** di A, senza chiuderla, e solo se il precontrollo
-ha trovato punti:
-1. Aprire `Archivio_Cicli\Cicli\2027Q1\Correzione_A1_2027Q1.txt` con Blocco note, poi Ctrl+A e Ctrl+C.
-2. Incollarlo nella conversazione e inviarlo.
-3. Annotare:
-   - se A1 risponde con il JSON intero o dice che gli manca l'output o la baseline;
-   - se `Salva_JSON` parte;
-   - che cosa succede al file, come al passo A5.
-4. Precontrollo di nuovo. Atteso: 0 punti da correggere e un'impronta diversa da quella di A.
-
-   Se A1 non ritrova il suo output, anche la correzione deve passare da una variabile: annotarlo.
+**B. K6ter.3: giro di correzione.** Incollato in chat, il 22/10 non e' andato: ora passa dall'argomento
+`Correzione A1`, passi in 5.5.
 
 **C. K6ter.4: prova negativa** (riquadro Test, **nuova conversazione**):
 1. Scrivere `Salva il lavoro`, poi `Che cosa sai fare?`.
@@ -414,49 +407,32 @@ ha trovato punti:
    - Atteso: nessuna esecuzione nuova e nessun file nuovo in `In_arrivo`.
    - A1 non deve partire con una valutazione.
 
-**D. K6ter.5: Teams.**
-1. Dopo il Publish della preparazione: **Channels** -> **Teams and Microsoft 365 Copilot** -> attivare, poi **See
-   agent in Teams** (o **Open**).
-2. In Teams, nuova chat con l'agente (al primo uso puo' chiedere l'accesso), poi lanciare A1 come in A.
-3. Annotare:
-   - la durata del turno;
-   - ogni messaggio di errore, con codice e ora;
-   - se il file arriva in `In_arrivo`.
-
-   Precontrollo come in A6. Il JSON passa in chat: con circa 30.000 caratteri dovrebbe stare sotto il limite di circa
-   100 KB dei messaggi, ma e' il punto da verificare.
-4. Facoltativo: C anche in Teams.
+**D. K6ter.5: Teams.** Passi in 5.7.
 
 Gli esiti vanno nella tabella dei risultati, righe K6ter.
 
 ### 5.5 Argomento "Correzione A1" (K6ter.3-bis)
 
 Il 22/10 il messaggio di correzione incollato nella stessa conversazione non e' andato: A1 risponde che non sa quali
-azioni fare. Le istruzioni di A1 e le descrizioni dei flussi prevedono solo il lancio del ciclo; inoltre, in una
-conversazione con un allegato di 54.000 caratteri e un JSON di 27.000, A1 puo' non ritrovare per intero il suo output.
+azioni fare. Le istruzioni di A1 prevedono solo il lancio del ciclo, e nessun argomento raccoglie quel messaggio.
 
-La correzione passa quindi da un **argomento dedicato**, con una sequenza fissa che non dipende dalla memoria della
-chat:
-- legge da SharePoint l'allegato e il JSON gia' controllato dal precontrollo;
-- fa correggere i punti a un prompt;
-- salva il risultato in un file nuovo.
+La correzione passa quindi da un **argomento dedicato**, con una sequenza fissa. Non estende l'argomento di lancio:
+ha un trigger diverso e lascia intatto il lancio, che funziona.
 
-Un argomento separato e' meglio di un ramo in quello di lancio, se c'e': ha un trigger diverso e lascia intatto il
-lancio, che funziona. I nodi di lettura sono gli stessi.
+Versione minima: usa le variabili globali gia' riempite dal lancio, quindi si fa **nella stessa conversazione del
+lancio**.
+- `Global.allegato` e' l'allegato;
+- `Global.json_a1` e' il JSON salvato da `Salva_JSON`, lo stesso su cui gira il precontrollo.
 
-**Preparazione** (nell'agente A1 di K6-ter):
-1. **Flusso `Leggi_Output`**: **Tools** -> **Add a tool** -> **New agent flow**, come `Leggi_Input` (2.1).
-   - Trigger **When an agent calls the flow**, input di testo `ciclo`.
-   - **Get file content using path**, sito NFR, File Path = testo `/Archivio_Cicli/Prova_K0/In_arrivo/A1_`, pillola
-     `ciclo`, testo `.json`.
-   - **Respond to the agent**: testo `json_a1` = contenuto del file; numero `caratteri` = `length(...)` dello stesso
-     valore. Se arriva in base64, come per `Leggi_Input`.
-   - Salvare, pubblicare, provarlo da solo con `ciclo` = `2027Q1`: `json_a1` comincia con `{` e `caratteri` e'
-     vicino a 27.529.
-2. **Prompt `Correggi_A1`**: **Tools** -> **Add a tool** -> **New tool** -> **Prompt**.
-   - Tre input di testo: `correzione`, `json_a1`, `allegato`.
-   - Modello: il piu' capace disponibile; annotarlo.
-   - Istruzioni (gli input si inseriscono con **Add content** al posto delle parentesi quadre):
+Dopo una correzione `Global.json_a1` contiene il JSON corretto, quindi un secondo giro funziona allo stesso modo.
+
+**Preparazione**
+1. **Variabile `ciclo` globale.** Nell'argomento di lancio: clic sulla variabile `ciclo` -> **Variable properties**
+   -> **Global (any topic can access)**. Diventa `Global.ciclo`; il nodo `Leggi_Input` la usa come prima.
+2. **Prompt `Correggi_A1`**: **Tools** -> **Add a tool** -> **New tool** -> **Prompt**, nome `Correggi_A1`.
+   - Modello: lo stesso di A1 (GPT-5 reasoning), se il prompt lo offre; annotarlo.
+   - Istruzioni da incollare. Le tre parole fra parentesi quadre si sostituiscono con tre input di testo, creati con
+     **Add content** -> **Text**: `correzione`, `json_a1`, `allegato`.
 
      ```
      Sei A1 Horizon Scanner. JSON_A1 e' il tuo output del ciclo; il precontrollo dello script vi ha trovato i punti in CORREZIONE.
@@ -470,67 +446,135 @@ lancio, che funziona. I nodi di lettura sono gli stessi.
      JSON_A1: [json_a1]
      ALLEGATO: [allegato]
      ```
-   - Output: testo.
-3. Nei dettagli di `Leggi_Output` e `Correggi_A1` togliere "Allow agent to decide dynamically when to use this tool":
-   li chiama solo l'argomento.
+   - Output: testo. **Save**.
+   - Nei dettagli dello strumento togliere "Allow agent to decide dynamically when to use this tool": lo chiama solo
+     l'argomento.
 
 **L'argomento**: **Topics** -> **Add a topic** -> **From blank**, nome `Correzione A1`.
 1. **Trigger**: **A message is received**, con **Condition** in formula:
 
-   `Or(StartsWith(System.Activity.Text, "Il precontrollo dello script"), StartsWith(Lower(System.Activity.Text), "correzione"))`
+   `StartsWith(System.Activity.Text, "Il precontrollo dello script")`
 
-   Se quel trigger non c'e', "The agent chooses" con la descrizione `Solo quando l'utente incolla il messaggio che
-   inizia con "Il precontrollo dello script ha trovato questi punti" o scrive "Correzione" seguito da un ciclo. Mai
-   per eseguire il ciclo, salvare o rispondere ad altre domande.`; annotarlo.
-2. **Set a variable value**: `Topic.correzione` = `System.Activity.Text`.
-3. **Set a variable value**: `Topic.ciclo` = formula `Match(System.Activity.Text, "\d{4}Q[1-4]").FullMatch`.
-   - Il messaggio di correzione contiene "del ciclo 2027Q1".
-4. **Condition** `IsBlank(Topic.ciclo)`: **Question** `Quale ciclo? (per esempio 2027Q1)`, User's entire response,
-   in `Topic.ciclo`.
-5. **Condition** `Not(StartsWith(Topic.correzione, "Il precontrollo dello script"))`: **Question** `Incolla il
-   contenuto di Correzione_A1_{Topic.ciclo}.txt`, User's entire response, in `Topic.correzione`.
-6. **Call an action** -> `Leggi_Input`, `ciclo` = `Topic.ciclo`, come nell'argomento di lancio: output `allegato`
-   -> `Global.allegato`, `caratteri` -> `Topic.caratteri_input`. Si puo' copiare il nodo da li'.
-7. **Call an action** -> `Leggi_Output`, `ciclo` = `Topic.ciclo`; output in `Topic.json_a1` e
-   `Topic.caratteri_json`.
-8. **Message**: `Correzione del ciclo {Topic.ciclo}: allegato di {Topic.caratteri_input} caratteri, JSON da correggere di {Topic.caratteri_json}. Puo' servire qualche minuto.`
-9. **Call an action** -> `Correggi_A1`: `correzione` = `Topic.correzione`, `json_a1` = `Topic.json_a1`,
-   `allegato` = `Global.allegato`; output in `Topic.json_corretto`.
-10. **Set a variable value**: `Global.json_a1` = `Topic.json_corretto` (la variabile dell'output di A1 nel lancio).
-11. **Call an action** -> `Salva_JSON`:
-    - `nome_file` = formula `"A1_" & Topic.ciclo & "_corretto.json"`;
-    - `contenuto` = `Topic.json_corretto`;
-    - output in `Topic.esito` e `Topic.caratteri_salvati`.
-12. **Message**: `Correzione salvata. {Topic.esito}: Archivio_Cicli/Prova_K0/In_arrivo/A1_{Topic.ciclo}_corretto.json, {Topic.caratteri_salvati} caratteri salvati su {Len(Topic.json_corretto)} prodotti. Ora sul PC: precontrollo su questo file.`
-13. **End all topics**. **Save**, poi **Publish**.
+   Se quel trigger non c'e', usare quello predefinito, "The agent chooses", con la descrizione `Solo quando l'utente
+   incolla il messaggio che inizia con "Il precontrollo dello script ha trovato questi punti". Mai in altri casi.`;
+   annotarlo.
+2. **Condition** `IsBlank(Global.json_a1)`:
+   - ramo vero: **Message** `Nessun output di A1 in questa conversazione: la correzione si fa nella conversazione in cui hai lanciato A1.`, poi **End all topics**;
+   - ramo "All other conditions": si prosegue.
+3. **Message**: `Correzione del ciclo {Global.ciclo} su {Len(Global.json_a1)} caratteri. Puo' servire qualche minuto.`
+4. **Add a tool** -> `Correggi_A1`:
+   - `correzione` = `System.Activity.Text`;
+   - `json_a1` = `Global.json_a1`;
+   - `allegato` = `Global.allegato`;
+   - output in `Topic.json_corretto`.
+5. **Set a variable value**: `Global.json_a1` = `Topic.json_corretto`.
+6. **Add a tool** -> `Salva_JSON`:
+   - `nome_file` = formula `"A1_" & Global.ciclo & "_corretto.json"`;
+   - `contenuto` = `Global.json_a1`;
+   - output come nell'argomento di lancio (esito, caratteri).
+7. **Message**: `Correzione salvata in Archivio_Cicli/Prova_K0/In_arrivo/A1_{Global.ciclo}_corretto.json: {Len(Global.json_a1)} caratteri. Ora il precontrollo su questo file.`
+8. **End all topics**. **Save**, poi **Publish**.
 
-Nessun messaggio contiene il JSON. Il file corretto ha un nome nuovo: l'originale resta per il confronto e non si
-dipende da come `Salva_JSON` tratta un file esistente.
+Il JSON non va in chat. Il file corretto ha un nome nuovo: l'originale resta per il confronto e non si dipende da come
+`Salva_JSON` tratta un file esistente.
 
-**Prova K6ter.3-bis**:
-1. In una conversazione qualunque, anche nuova, incollare il contenuto di
-   `Archivio_Cicli\Cicli\2027Q1\Correzione_A1_2027Q1.txt`.
+**Prova K6ter.3-bis** (riquadro Test, nella conversazione del lancio):
+1. Incollare il contenuto di `Correzione_A1_2027Q1.txt`, dal PC o dalla prova 5.6.
 2. Annotare:
-   - la sequenza nella mappa delle attivita': `Leggi_Input`, `Leggi_Output`, `Correggi_A1`, `Salva_JSON`, una volta
-     ciascuno, nessuna ricerca nella knowledge;
-   - i caratteri dei due messaggi e il tempo;
-   - se `Correggi_A1` restituisce il JSON intero (caratteri salvati vicini a quelli letti).
-3. Sul PC: `python esegui_ciclo_locale.py precontrollo --payload "<cartella sincronizzata>\Archivio_Cicli\Prova_K0\In_arrivo\A1_2027Q1_corretto.json"`.
-   - Atteso: 0 punti da correggere e un'impronta diversa da quella del file letto.
-   - I punti "da verificare" possono restare se il razionale spiega la conferma.
-4. Prova negativa: `Salva il lavoro` e `Che cosa sai fare?` non fanno partire l'argomento.
+   - se parte `Correzione A1` e non A1;
+   - la sequenza `Correggi_A1`, `Salva_JSON`, una volta ciascuno;
+   - i caratteri prima e dopo, e il tempo.
+3. Precontrollo su `A1_2027Q1_corretto.json`, sul PC o con la prova 5.6. Atteso: 0 punti da correggere e un'impronta
+   diversa dalla prima. I punti "da verificare" possono restare se il razionale spiega la conferma.
+4. Prova negativa, in una conversazione nuova: `Salva il lavoro` e `Che cosa sai fare?` non fanno partire
+   l'argomento.
 
 **Come si leggono:**
-- **Il trigger non parte** e risponde ancora A1: usare "The agent chooses" con la descrizione del passo 1.
-- **`Topic.ciclo` vuoto con il messaggio incollato**: la formula `Match` non e' accettata. Lasciare che lo chieda la
-  domanda del passo 4.
-- **`Correggi_A1` taglia o va in errore**: annotare i caratteri dei tre input. Puo' essere un limite del prompt sugli
-  input lunghi, e allora l'allegato si riduce alla baseline e ai controlli.
-- **Senza `Leggi_Output`**: nella stessa conversazione del lancio il JSON e' gia' in `Global.json_a1` e il passo 7
-  si puo' saltare (`json_a1` = `Global.json_a1`). Il file resta preferibile: e' quello controllato dal precontrollo
-  e funziona anche in una conversazione nuova.
-- **Secondo giro**: l'argomento legge sempre `A1_<ciclo>.json`. Per correggere il file corretto, rinominarlo prima
-  in `A1_<ciclo>.json` (tenendo una copia dell'originale sul PC).
+- **Risponde ancora A1** invece dell'argomento: usare "The agent chooses" con la descrizione del passo 1.
+- **"Nessun output di A1"** nella conversazione del lancio: `Global.json_a1` non e' globale o e' stato azzerato;
+  annotarlo.
+- **`Correggi_A1` taglia o va in errore**: annotare i caratteri degli input (allegato circa 54.000, JSON circa
+  27.000). Puo' essere un limite del prompt sugli input lunghi.
+- **In una conversazione nuova**: le variabili sono vuote. Per correggere anche li' serve leggere il JSON da
+  SharePoint con un flusso `Leggi_Output`, come `Leggi_Input` ma sul file `In_arrivo/A1_<ciclo>.json`: e' il passo
+  successivo, non la prova minima.
+
+### 5.6 Python in Copilot Studio: il precontrollo nel code interpreter (K6ter.6)
+
+Domanda: lo script del precontrollo gira in Copilot Studio, cosi' com'e', sull'output della catena che funziona, con
+lo stesso esito del PC? Il 09/10 (T1.2) lo script e' partito; la ripetizione e' andata una volta in errore.
+
+Si usa un **agente separato** e non A1. Il code interpreter acceso su A1 lo lascerebbe libero di eseguire codice suo
+durante il ciclo (sui cinque agenti e' spento).
+
+**Preparazione**:
+1. Copilot Studio, esperienza standard: **Create** -> **New agent** -> scheda **Configure**.
+   - Name: `NFR Precontrollo prova`.
+   - Instructions:
+
+     `Sei il precontrollo NFR. Fai solo questo: quando l'utente allega l'output di A1 (A1_<ciclo>.json), l'allegato Input_A1_<ciclo>.txt e lo script precontrollo_nfr.txt, esegui con il code interpreter lo script cosi' com'e', senza riscriverlo, ridurlo o imitarlo: python precontrollo_nfr.txt <output di A1> <Input_A1>. Riporta le righe stampate dallo script fino a "Messaggio di correzione", copiate senza cambiarle. Se lo script ha scritto Correzione_A1_<ciclo>.txt, consegnalo come file scaricabile. Non correggere il JSON e non valutare i rischi. Se lo script non parte, riporta l'errore com'e' e non dichiarare un esito che lo script non ha stampato.`
+   - Nessuna knowledge.
+2. **Settings -> Generative AI**:
+   - **Use general knowledge** e **Web search** spenti;
+   - **File processing capabilities**: **File uploads** e **Code interpreter** accesi;
+   - **Save**.
+3. **Settings -> Security -> Authentication**: "Authenticate with Microsoft".
+4. Sul PC, tre file:
+   - `A1_2027Q1.json` da `Archivio_Cicli\Prova_K0\In_arrivo` (cartella sincronizzata);
+   - `Input_A1_2027Q1.txt` da `Archivio_Cicli\Prova_K0`;
+   - `09_Copilot_Studio\Da_caricare\precontrollo_nfr.txt` del pacchetto aggiornato.
+5. Sul PC, precontrollo sullo stesso file `A1_2027Q1.json`: annotare prima riga e impronta.
+
+**Prova** (riquadro Test, conversazione nuova):
+1. Allegare i tre file. Se `.json` viene rifiutato, rinominarlo `A1_2027Q1.json.txt`: lo script lo legge lo stesso.
+2. Messaggio: `Esegui il precontrollo sui file allegati.`
+3. Nella stessa conversazione: `Rieseguilo sugli stessi file, senza modificarli, e riportami le prime due righe.`
+
+**Cosa annotare**:
+- se lo script e' partito (nei passaggi della risposta si vede `python precontrollo_nfr.txt ...`), il tempo e gli
+  errori;
+- la prima riga e l'impronta: devono essere **uguali a quelle del PC**. L'impronta e' la prova che lo script ha letto
+  lo stesso JSON;
+- se `Correzione_A1_2027Q1.txt` e' scaricabile e uguale a quello del PC;
+- la ripetizione: stesse due righe?
+
+**Come si legge**:
+- **Uguale al PC due volte su due**: il precontrollo puo' stare in Copilot Studio. Il passo dopo e' collegarlo alla
+  catena senza allegati a mano.
+- **Codice riscritto dal modello** (righe diverse, impronta assente o diversa): il code interpreter non e' un
+  controllo ripetibile; il precontrollo resta sul PC.
+- **Errore**: annotarne il testo; si ripete una volta in una conversazione nuova.
+
+### 5.7 Teams (K6ter.5)
+
+Teams usa solo la versione **pubblicata** dell'agente: ogni modifica va pubblicata di nuovo.
+
+**Preparazione** (nell'agente A1 di K6-ter):
+1. **Il JSON fuori dalla chat.** In Teams un messaggio ha un limite di circa 100 KB (gli errori di K0). I 27.529
+   caratteri di oggi passerebbero, ma un A1 di 40-60.000 caratteri no.
+   - Nel sotto-agente A1, sezione **Completamento**: scegliere di non rispondere all'utente ("Don't respond").
+     L'output `output` resta e riempie `Global.json_a1`.
+   - Nell'argomento di lancio, dopo `Salva_JSON`, un **Message**: `A1 finito: A1_{Global.ciclo}.json, {Len(Global.json_a1)} caratteri.`
+   - Prova veloce nel riquadro Test: il file arriva come prima e in chat c'e' solo il messaggio.
+2. **Publish** (in alto a destra), e attendere la conferma.
+3. **Channels** -> **Teams and Microsoft 365 Copilot** -> **Add channel**. La spunta su Microsoft 365 Copilot si
+   puo' lasciare spenta. Poi **Add**.
+4. **See agent in Teams**: si apre Teams (web o app) con la scheda dell'agente -> **Add** (o **Open**). Si apre la
+   chat con l'agente.
+   - Se Teams dice che l'app non e' consentita o serve l'approvazione dell'amministratore, annotare il messaggio: e'
+     una domanda per l'IT, e la prova si ferma qui.
+
+**Prova** (chat dell'agente in Teams):
+1. Lanciare A1 con lo stesso messaggio del riquadro Test. Al primo uso puo' chiedere l'accesso.
+2. Annotare:
+   - la durata;
+   - i messaggi che arrivano;
+   - ogni errore, con codice e ora;
+   - se `A1_2027Q1.json` arriva in `In_arrivo` (data di modifica).
+3. Precontrollo sul file (PC o 5.6).
+4. Nella stessa chat, la correzione (5.5) incollando il messaggio di correzione.
+5. Per ricominciare da zero: scrivere `Start over` o `Ricomincia`. Dopo una nuova pubblicazione possono servire
+   alcuni minuti prima che Teams usi la versione nuova.
 
 ## Fonti (Microsoft Learn, consultate il 09/10/2026)
 
