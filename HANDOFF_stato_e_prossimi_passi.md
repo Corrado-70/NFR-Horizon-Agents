@@ -1223,6 +1223,9 @@ se la nota torna sugli stessi rischi.
   l'allegato; l'utente ha usato due variabili globali citate nelle istruzioni:
   - `Global.allegato` = allegato;
   - A1 risponde solo con il JSON, che va anche in `Global.json_a1`, salvato da `Salva_JSON`.
+  - Percorso completo (5.3, "Il percorso che funziona"): argomento di lancio -> `Leggi_Input` (`allegato` ->
+    `Global.allegato`) -> nodo Agente A1, che nel Completamento ha un output solo JSON, senza i link alle fonti
+    aggiunti da Copilot Studio (essenziale) -> `Global.json_a1` -> `Salva_JSON`.
 
   Risultati:
   - `A1_2027Q1.json`, 27.529 caratteri, in circa 1 minuto con GPT-5 reasoning;

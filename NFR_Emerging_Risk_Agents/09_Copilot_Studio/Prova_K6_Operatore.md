@@ -309,6 +309,28 @@ istruzioni di A1.
 - **Scrittura**: nello stesso argomento, nodo **Agente** `A1 Horizon Scanner` (output `output` ->
   `Global.json_a1`). A1 risponde solo con il JSON e la stessa risposta va in `Global.json_a1`, da cui `Salva_JSON` la
   scrive in `Prova_K0\In_arrivo`.
+- **Output del sotto-agente** (A1, sezione **Completamento**): un output `output` con descrizione `tutto l'output
+  generato dall'agente senza aggiungere o togliere testo o caratteri. Solo JSON, togli ad esempio eventuali link a
+  fonti aggiunti in fondo al testo della chat`.
+  - **La rimozione dei link e' essenziale.** Con la knowledge, Copilot Studio aggiunge in fondo alla risposta i link
+    alle fonti consultate. Nel file renderebbero il JSON illeggibile per il precontrollo ("non e' un JSON valido").
+  - Variante della descrizione, senza la doppia indicazione "non togliere" e "togli", da provare se un run porta
+    ancora testo fuori dal JSON: `Il JSON prodotto dall'agente, identico carattere per carattere, dalla prima { all'ultima }. Escludi tutto cio' che sta fuori: link e citazioni delle fonti, note, testo aggiunto in fondo alla chat.`
+  - Da controllare a ogni run: segni di citazione dentro i testi del JSON (per esempio `[1]` nei razionali). Il
+    JSON resta valido, ma sono rumore nelle schede.
+
+**Il percorso che funziona** (riferimento per gli altri agenti in Copilot Studio):
+1. Argomento di lancio. Il ciclo e' nella variabile `ciclo`.
+2. Nodo **Azione** `Leggi_Input`: input `ciclo`, output `allegato` -> `Global.allegato`, `caratteri` -> `char_input`.
+3. Nodo **Agente** `A1 Horizon Scanner`, sotto-agente:
+   - le istruzioni citano `Global.allegato` (inserita con `/`) come allegato Input_A1;
+   - nella sezione **Completamento**, l'output `output` e' solo il JSON, senza i link alle fonti in fondo;
+   - nel nodo, `output` -> `Global.json_a1`.
+4. Nodo **Azione** `Salva_JSON`: `contenuto` = `Global.json_a1`, file `A1_<ciclo>.json` in `Prova_K0\In_arrivo`.
+5. Sul PC: precontrollo sul file.
+
+Le variabili globali sostituiscono il passaggio di input al sotto-agente, che in K6 arrivava vuoto. La correzione
+segue lo stesso schema con un argomento suo (5.5).
 
 Istruzioni: `Da_caricare/A1_Horizon_Scanner_CS.md`, generate da `genera_A1_CS.py` a partire dall'A1 attuale. Le
 differenze sono solo le frasi di Input e Output; inoltre gli elenchi perdono il trattino e la frase sulla ricerca
