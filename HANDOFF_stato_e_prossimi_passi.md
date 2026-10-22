@@ -1240,6 +1240,12 @@ se la nota torna sugli stessi rischi.
   - Collaudo: `test_a1_copilot_studio` controlla che il file corrisponda all'A1 attuale; test_controlli 285/285,
     verifica_riferimenti 31/31.
   - **Dopo ogni modifica ad A1 rilanciare `genera_A1_CS.py`.**
+  - Sera del 22/10, richiesta dell'utente: nella versione Copilot Studio, analisi a fondo e rianalisi.
+    - Input: piu' ricerche per rischio, ogni fonte analizzata prima di valutare.
+    - Passo 10: rianalisi mirata su fonti della baseline, variazioni e un punto.
+    - Spazio: titoli piu' corti e modelli dei razionali ai puntini; 7.932 caratteri, margine 60.
+
+    Passi esatti delle prove successive: `Prova_K6_Operatore.md`, 5.4. L'A1 di Agent Builder non cambia.
 - Fuori dal pacchetto, per l'utente:
   - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
     rigenerato se serve;

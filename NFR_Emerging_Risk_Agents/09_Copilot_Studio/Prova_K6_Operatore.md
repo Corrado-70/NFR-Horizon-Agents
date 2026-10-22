@@ -208,6 +208,7 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | Qualita' di A1 rispetto ad Agent Builder (numero di rischi, punti del precontrollo) | |
 | **K6ter.1**: A1 con variabili globali; file in `In_arrivo`; tempo; modello | 22/10: **riuscita**. `A1_2027Q1.json` in `Prova_K0\In_arrivo`, 27.529 caratteri, in circa 1 minuto; modello GPT-5 reasoning |
 | **K6ter.2**: precontrollo sul PC (prima riga, impronta) | 22/10: **JSON valido**, impronta `cdfc636c3659`; 1 punto da correggere (NFR-02, C2), 5 da verificare (NFR-02 C3; NFR-03, 04, 05, 08 C5 fonti perse) |
+| K6ter.1-bis: istruzioni con analisi a fondo e rianalisi; tempo; ricerche; file sovrascritto, copia o errore; punti del precontrollo rispetto al 22/10 | |
 | K6ter.3: giro di correzione nella stessa conversazione; il file viene sovrascritto, va in errore o ne nasce una copia | |
 | K6ter.4: prova negativa, nessuna esecuzione | |
 | K6ter.5: Teams (il JSON passa in chat: limite di circa 100 KB), esito, codici di errore, durata | |
@@ -319,13 +320,87 @@ all'A1 attuale.
   rileggere la knowledge su tutti i rischi: la qualita' va confrontata con Agent Builder sullo stesso allegato (Prove
   CS-1, K4).
 
-**Prossime prove**:
-- K6ter.3, il giro di correzione: il messaggio `Correzione_A1_<ciclo>.txt` incollato nella stessa conversazione.
-  Annotare se A1 ha ancora il suo output e se il file viene sovrascritto, va in errore o ne nasce una copia. Se A1
-  non ha piu' l'output, anche la correzione deve passare da una variabile.
-- K6ter.4, la prova negativa.
-- K6ter.5, Teams: qui il JSON passa in chat, quindi va verificato il limite di circa 100 KB dei messaggi che ha dato
-  errori in K0.
+**Istruzioni di A1 dal 22/10 sera**: oltre alle variabili, analisi a fondo e rianalisi, in prova solo qui.
+- Input: "piu' ricerche per rischio (nome, meccanismo, fonti della baseline); leggi e analizza nel dettaglio ogni
+  fonte prima di valutare". La frase del ruolo (D-64) e' spostata qui.
+- Passo 10: "Rianalizza tutto con controlli e guida (fonti valide della baseline riprese, una voce in variazioni per
+  valore cambiato, max un punto); correggi".
+
+  Mira ai rilievi del primo run. Un modello che rilegge il proprio output tende pero' a confermarlo (D-69): il
+  controllo affidabile resta il precontrollo.
+- Per fare spazio:
+  - due titoli piu' corti;
+  - modelli dei razionali ridotti ai puntini (struttura ed esempi sono nella guida di scrittura dell'allegato).
+
+  7.932 caratteri con i segnaposto, margine 60.
+
+### 5.4 Passi delle prossime prove (K6ter.1-bis, .3, .4, .5)
+
+Si lavora come il 22/10: stessi flussi, stesse variabili, stessa cartella `Prova_K0`.
+
+**Preparazione** (10 minuti):
+1. **Copia del primo output.** Sul PC copiare `Archivio_Cicli\Prova_K0\In_arrivo\A1_2027Q1.json` in
+   `C:\NFR_Prova\A1_CS_run0.json`. E' una cartella non sincronizzata: la copia resta per il confronto (K4) e per
+   vedere se il file in SharePoint viene sovrascritto.
+2. **Istruzioni nuove.**
+   - Aprire `09_Copilot_Studio\Da_caricare\A1_Horizon_Scanner_CS.md` del pacchetto aggiornato con Blocco note,
+     poi Ctrl+A e Ctrl+C.
+   - In Copilot Studio: agente A1, **Overview** -> **Instructions** -> **Edit**. Cancellare tutto e incollare.
+   - Cancellare il testo `{Global.InputA1}`; nello stesso punto premere `/`, scegliere **Variable** e la variabile
+     globale dell'allegato. Fare lo stesso per `{Global.OutputA1}` con quella dell'output.
+   - Controllare il contatore: sotto 8.000. **Save**, poi **Publish**.
+
+**A. K6ter.1-bis: run con le istruzioni nuove** (riquadro Test):
+1. **Nuova conversazione**: icona di aggiornamento in alto nel riquadro Test.
+2. Lanciare A1 come il 22/10: stesso messaggio, stesso modo di riempire `Global.InputA1`. Annotare l'ora di inizio e
+   quella della risposta.
+3. Nella mappa delle attivita' annotare:
+   - quante ricerche nella knowledge fa;
+   - se `Salva_JSON` parte una volta.
+4. In chat deve esserci solo il JSON.
+5. In SharePoint, cartella `Prova_K0\In_arrivo`, annotare l'esito:
+   - `A1_2027Q1.json` ha la data di modifica nuova (sovrascritto);
+   - oppure e' nata una copia (es. `A1_2027Q1 1.json`);
+   - oppure il flusso e' in errore (cronologia del flusso).
+6. Sul PC, precontrollo sul file nuovo (sulla copia, se e' nata una copia). Annotare:
+   - prima riga e impronta;
+   - punti da correggere e da verificare, da confrontare con il 22/10 (1 e 5).
+
+   Poi copiare il file in `C:\NFR_Prova\A1_CS_run1.json`.
+
+**B. K6ter.3: giro di correzione.** Nella **stessa conversazione** di A, senza chiuderla, e solo se il precontrollo
+ha trovato punti:
+1. Aprire `Archivio_Cicli\Cicli\2027Q1\Correzione_A1_2027Q1.txt` con Blocco note, poi Ctrl+A e Ctrl+C.
+2. Incollarlo nella conversazione e inviarlo.
+3. Annotare:
+   - se A1 risponde con il JSON intero o dice che gli manca l'output o la baseline;
+   - se `Salva_JSON` parte;
+   - che cosa succede al file, come al passo A5.
+4. Precontrollo di nuovo. Atteso: 0 punti da correggere e un'impronta diversa da quella di A.
+
+   Se A1 non ritrova il suo output, anche la correzione deve passare da una variabile: annotarlo.
+
+**C. K6ter.4: prova negativa** (riquadro Test, **nuova conversazione**):
+1. Scrivere `Salva il lavoro`, poi `Che cosa sai fare?`.
+2. Controllare la cronologia delle esecuzioni dei flussi: Power Automate -> **My flows** -> `Salva_JSON` (e
+   `Leggi_Input`, se lo usi).
+   - Atteso: nessuna esecuzione nuova e nessun file nuovo in `In_arrivo`.
+   - A1 non deve partire con una valutazione.
+
+**D. K6ter.5: Teams.**
+1. Dopo il Publish della preparazione: **Channels** -> **Teams and Microsoft 365 Copilot** -> attivare, poi **See
+   agent in Teams** (o **Open**).
+2. In Teams, nuova chat con l'agente (al primo uso puo' chiedere l'accesso), poi lanciare A1 come in A.
+3. Annotare:
+   - la durata del turno;
+   - ogni messaggio di errore, con codice e ora;
+   - se il file arriva in `In_arrivo`.
+
+   Precontrollo come in A6. Il JSON passa in chat: con circa 30.000 caratteri dovrebbe stare sotto il limite di circa
+   100 KB dei messaggi, ma e' il punto da verificare.
+4. Facoltativo: C anche in Teams.
+
+Gli esiti vanno nella tabella dei risultati, righe K6ter.
 
 ## Fonti (Microsoft Learn, consultate il 09/10/2026)
 
