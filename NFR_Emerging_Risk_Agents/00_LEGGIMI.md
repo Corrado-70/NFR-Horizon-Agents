@@ -136,7 +136,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 09_Copilot_Studio/Da_caricare/precontrollo-nfr_senza_cartella.zip  la stessa skill con SKILL.md alla radice dello zip, se la prima e' rifiutata (generato)
 09_Copilot_Studio/Da_caricare/precontrollo_nfr.txt     lo script della skill in .txt, da allegare in chat con il Code interpreter (opzione 1; generato)
 09_Copilot_Studio/Da_caricare/Messaggi_da_incollare.txt  i messaggi di ogni test della prova di Copilot Studio
-09_Copilot_Studio/Da_caricare/A1_Horizon_Scanner_CS.md  istruzioni di A1 per Copilot Studio: allegato letto da {Global.allegato}, JSON anche in {Global.OutputA1} (K6-ter, 22/10; generato)
+09_Copilot_Studio/Da_caricare/A1_Horizon_Scanner_CS.md  istruzioni di A1 per Copilot Studio: allegato letto da {Global.allegato}, JSON anche in {Global.json_a1} (K6-ter, 22/10; generato)
 99_Collaudo/LEGGIMI_collaudo.md                        cosa verifica la suite e con quali dati
 99_Collaudo/esegui_collaudo.py                         lancia tutta la suite (catena in tre processi; --mirato la salta se non e' cambiato niente che la riguardi)
 99_Collaudo/comune.py                                  percorsi e utilita' della suite

@@ -214,7 +214,7 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | K6ter.3-bis: precontrollo su `A1_<ciclo>_corretto.json` (prima riga, impronta) | |
 | K6ter.4: prova negativa, nessuna esecuzione | |
 | K6ter.5: Teams (il JSON passa in chat: limite di circa 100 KB), esito, codici di errore, durata | |
-| K6ter: come si riempie `Global.allegato` | 22/10: nell'argomento di lancio, nodo **Azione** `Leggi_Input` con `ciclo` = variabile `ciclo`; output `allegato` -> `Global.allegato`, `caratteri` -> `char_input`. Nome della variabile dell'output da annotare (qui `Global.OutputA1`) |
+| K6ter: come si riempie `Global.allegato` | 22/10: nell'argomento di lancio, nodo **Azione** `Leggi_Input` con `ciclo` = variabile `ciclo`; output `allegato` -> `Global.allegato`, `caratteri` -> `char_input`. Poi nodo **Agente** `A1 Horizon Scanner`, output `output` -> `Global.json_a1` |
 
 ## 5. Esito del 15/10 e variante K6-bis
 
@@ -306,13 +306,14 @@ istruzioni di A1.
 - **Lettura**: le istruzioni dicono che l'allegato Input_A1 e' il valore di `Global.allegato`. La riempie
   l'argomento di lancio: nodo **Azione** `Leggi_Input`, output `allegato` -> `Global.allegato`, `caratteri` ->
   `char_input`.
-- **Scrittura**: A1 risponde solo con il JSON e la stessa risposta va in `Global.OutputA1`, da cui `Salva_JSON` la
+- **Scrittura**: nello stesso argomento, nodo **Agente** `A1 Horizon Scanner` (output `output` ->
+  `Global.json_a1`). A1 risponde solo con il JSON e la stessa risposta va in `Global.json_a1`, da cui `Salva_JSON` la
   scrive in `Prova_K0\In_arrivo`.
 
 Istruzioni: `Da_caricare/A1_Horizon_Scanner_CS.md`, generate da `genera_A1_CS.py` a partire dall'A1 attuale. Le
 differenze sono solo le frasi di Input e Output; inoltre gli elenchi perdono il trattino e la frase sulla ricerca
 file e' accorciata, per restare sotto 8.000 caratteri. In Copilot Studio i due segnaposto `{Global.allegato}` e
-`{Global.OutputA1}` si sostituiscono con le variabili inserite con `/`. Il collaudo verifica che il file corrisponda
+`{Global.json_a1}` si sostituiscono con le variabili inserite con `/`. Il collaudo verifica che il file corrisponda
 all'A1 attuale.
 
 **Esito del 22/10** (tabella dei risultati, righe K6ter):
@@ -351,7 +352,7 @@ Si lavora come il 22/10: stessi flussi, stesse variabili, stessa cartella `Prova
      poi Ctrl+A e Ctrl+C.
    - In Copilot Studio: agente A1, **Overview** -> **Instructions** -> **Edit**. Cancellare tutto e incollare.
    - Cancellare il testo `{Global.allegato}`; nello stesso punto premere `/`, scegliere **Variable** e la variabile
-     globale dell'allegato. Fare lo stesso per `{Global.OutputA1}` con quella dell'output.
+     globale dell'allegato. Fare lo stesso per `{Global.json_a1}` con quella dell'output.
    - Controllare il contatore: sotto 8.000. **Save**, poi **Publish**.
 
 **A. K6ter.1-bis: run con le istruzioni nuove** (riquadro Test):
@@ -473,7 +474,7 @@ lancio, che funziona. I nodi di lettura sono gli stessi.
 8. **Message**: `Correzione del ciclo {Topic.ciclo}: allegato di {Topic.caratteri_input} caratteri, JSON da correggere di {Topic.caratteri_json}. Puo' servire qualche minuto.`
 9. **Call an action** -> `Correggi_A1`: `correzione` = `Topic.correzione`, `json_a1` = `Topic.json_a1`,
    `allegato` = `Global.allegato`; output in `Topic.json_corretto`.
-10. **Set a variable value**: la variabile globale dell'output usata nel lancio (qui `Global.OutputA1`) = `Topic.json_corretto`.
+10. **Set a variable value**: `Global.json_a1` = `Topic.json_corretto` (la variabile dell'output di A1 nel lancio).
 11. **Call an action** -> `Salva_JSON`:
     - `nome_file` = formula `"A1_" & Topic.ciclo & "_corretto.json"`;
     - `contenuto` = `Topic.json_corretto`;
@@ -503,6 +504,9 @@ dipende da come `Salva_JSON` tratta un file esistente.
   domanda del passo 4.
 - **`Correggi_A1` taglia o va in errore**: annotare i caratteri dei tre input. Puo' essere un limite del prompt sugli
   input lunghi, e allora l'allegato si riduce alla baseline e ai controlli.
+- **Senza `Leggi_Output`**: nella stessa conversazione del lancio il JSON e' gia' in `Global.json_a1` e il passo 7
+  si puo' saltare (`json_a1` = `Global.json_a1`). Il file resta preferibile: e' quello controllato dal precontrollo
+  e funziona anche in una conversazione nuova.
 - **Secondo giro**: l'argomento legge sempre `A1_<ciclo>.json`. Per correggere il file corretto, rinominarlo prima
   in `A1_<ciclo>.json` (tenendo una copia dell'originale sul PC).
 

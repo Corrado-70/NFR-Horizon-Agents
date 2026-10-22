@@ -1222,7 +1222,7 @@ se la nota torna sugli stessi rischi.
 - **K6-ter riuscita** (`09_Copilot_Studio/Prova_K6_Operatore.md`, 5.3). Il sotto-agente di K6 non riceveva
   l'allegato; l'utente ha usato due variabili globali citate nelle istruzioni:
   - `Global.allegato` = allegato;
-  - A1 risponde solo con il JSON, che va anche in `Global.OutputA1`, salvato da `Salva_JSON`.
+  - A1 risponde solo con il JSON, che va anche in `Global.json_a1`, salvato da `Salva_JSON`.
 
   Risultati:
   - `A1_2027Q1.json`, 27.529 caratteri, in circa 1 minuto con GPT-5 reasoning;

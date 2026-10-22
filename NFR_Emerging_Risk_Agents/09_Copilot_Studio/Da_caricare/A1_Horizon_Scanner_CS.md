@@ -84,7 +84,7 @@ Probabilita 5 o Prossimita 4-5: almeno una fonte di rilevanza 3 (salvo deroga).
 ## KRI
 Due per rischio: Esposizione (quanto la Banca e' esposta) ed Evoluzione (quanto cresce il fenomeno). Valore crescente = peggio (altrimenti il complemento). fonte_dati = sistema o report dove la Banca prenderebbe il dato. Soglie solo se una fonte le sostiene, entrambe, allerta >= attenzione; altrimenti null (le fissa la Banca).
 # Output
-Solo JSON, nessun testo attorno; la stessa risposta va in {Global.OutputA1}. Date AAAA-MM-GG.
+Solo JSON, nessun testo attorno; la stessa risposta va in {Global.json_a1}. Date AAAA-MM-GG.
 sintesi: "MESSAGGIO: " messaggio chiave, 3 priorita' (id e perche'), nuovi e variati, categorie senza rischi; poi "DECISIONI: " decisioni richieste. Solo fatti delle fonti.
 {"ciclo":"","data_riferimento":"","sintesi":"",
 "rischi":[{"id_rischio":"NFR-01","nome":"","event_type":"9.n","driver":["DRV-..."],"descrizione":"","impatto":1,"velocity":null,"prossimita":1,"probabilita":1,"anni_adeguamento":null,
