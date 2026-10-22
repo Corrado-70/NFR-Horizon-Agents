@@ -214,7 +214,7 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | K6ter.3-bis: precontrollo su `A1_<ciclo>_corretto.json` (prima riga, impronta) | |
 | K6ter.4: prova negativa, nessuna esecuzione | |
 | K6ter.5: Teams (il JSON passa in chat: limite di circa 100 KB), esito, codici di errore, durata | |
-| K6ter: come si riempie `Global.InputA1` | da annotare |
+| K6ter: come si riempie `Global.allegato` | 22/10: nell'argomento di lancio, nodo **Azione** `Leggi_Input` con `ciclo` = variabile `ciclo`; output `allegato` -> `Global.allegato`, `caratteri` -> `char_input`. Nome della variabile dell'output da annotare (qui `Global.OutputA1`) |
 
 ## 5. Esito del 15/10 e variante K6-bis
 
@@ -303,13 +303,15 @@ descrizioni degli strumenti. Per questo la prova negativa (K6bis.3) conta di piu
 
 Prova fatta dall'utente il 22/10 dopo K6: l'allegato e il JSON passano da **due variabili globali**, citate nelle
 istruzioni di A1.
-- **Lettura**: le istruzioni dicono che l'allegato Input_A1 e' il valore di `Global.InputA1`.
+- **Lettura**: le istruzioni dicono che l'allegato Input_A1 e' il valore di `Global.allegato`. La riempie
+  l'argomento di lancio: nodo **Azione** `Leggi_Input`, output `allegato` -> `Global.allegato`, `caratteri` ->
+  `char_input`.
 - **Scrittura**: A1 risponde solo con il JSON e la stessa risposta va in `Global.OutputA1`, da cui `Salva_JSON` la
   scrive in `Prova_K0\In_arrivo`.
 
 Istruzioni: `Da_caricare/A1_Horizon_Scanner_CS.md`, generate da `genera_A1_CS.py` a partire dall'A1 attuale. Le
 differenze sono solo le frasi di Input e Output; inoltre gli elenchi perdono il trattino e la frase sulla ricerca
-file e' accorciata, per restare sotto 8.000 caratteri. In Copilot Studio i due segnaposto `{Global.InputA1}` e
+file e' accorciata, per restare sotto 8.000 caratteri. In Copilot Studio i due segnaposto `{Global.allegato}` e
 `{Global.OutputA1}` si sostituiscono con le variabili inserite con `/`. Il collaudo verifica che il file corrisponda
 all'A1 attuale.
 
@@ -348,13 +350,13 @@ Si lavora come il 22/10: stessi flussi, stesse variabili, stessa cartella `Prova
    - Aprire `09_Copilot_Studio\Da_caricare\A1_Horizon_Scanner_CS.md` del pacchetto aggiornato con Blocco note,
      poi Ctrl+A e Ctrl+C.
    - In Copilot Studio: agente A1, **Overview** -> **Instructions** -> **Edit**. Cancellare tutto e incollare.
-   - Cancellare il testo `{Global.InputA1}`; nello stesso punto premere `/`, scegliere **Variable** e la variabile
+   - Cancellare il testo `{Global.allegato}`; nello stesso punto premere `/`, scegliere **Variable** e la variabile
      globale dell'allegato. Fare lo stesso per `{Global.OutputA1}` con quella dell'output.
    - Controllare il contatore: sotto 8.000. **Save**, poi **Publish**.
 
 **A. K6ter.1-bis: run con le istruzioni nuove** (riquadro Test):
 1. **Nuova conversazione**: icona di aggiornamento in alto nel riquadro Test.
-2. Lanciare A1 come il 22/10: stesso messaggio, stesso modo di riempire `Global.InputA1`. Annotare l'ora di inizio e
+2. Lanciare A1 come il 22/10: stesso messaggio, stesso modo di riempire `Global.allegato`. Annotare l'ora di inizio e
    quella della risposta.
 3. Nella mappa delle attivita' annotare:
    - quante ricerche nella knowledge fa;
@@ -464,14 +466,14 @@ lancio, che funziona. I nodi di lettura sono gli stessi.
    in `Topic.ciclo`.
 5. **Condition** `Not(StartsWith(Topic.correzione, "Il precontrollo dello script"))`: **Question** `Incolla il
    contenuto di Correzione_A1_{Topic.ciclo}.txt`, User's entire response, in `Topic.correzione`.
-6. **Call an action** -> `Leggi_Input`, `ciclo` = `Topic.ciclo`; output in `Topic.allegato` e
-   `Topic.caratteri_input`. Poi **Set a variable value**: `Global.InputA1` = `Topic.allegato`.
+6. **Call an action** -> `Leggi_Input`, `ciclo` = `Topic.ciclo`, come nell'argomento di lancio: output `allegato`
+   -> `Global.allegato`, `caratteri` -> `Topic.caratteri_input`. Si puo' copiare il nodo da li'.
 7. **Call an action** -> `Leggi_Output`, `ciclo` = `Topic.ciclo`; output in `Topic.json_a1` e
    `Topic.caratteri_json`.
 8. **Message**: `Correzione del ciclo {Topic.ciclo}: allegato di {Topic.caratteri_input} caratteri, JSON da correggere di {Topic.caratteri_json}. Puo' servire qualche minuto.`
 9. **Call an action** -> `Correggi_A1`: `correzione` = `Topic.correzione`, `json_a1` = `Topic.json_a1`,
-   `allegato` = `Topic.allegato`; output in `Topic.json_corretto`.
-10. **Set a variable value**: `Global.OutputA1` = `Topic.json_corretto`.
+   `allegato` = `Global.allegato`; output in `Topic.json_corretto`.
+10. **Set a variable value**: la variabile globale dell'output usata nel lancio (qui `Global.OutputA1`) = `Topic.json_corretto`.
 11. **Call an action** -> `Salva_JSON`:
     - `nome_file` = formula `"A1_" & Topic.ciclo & "_corretto.json"`;
     - `contenuto` = `Topic.json_corretto`;

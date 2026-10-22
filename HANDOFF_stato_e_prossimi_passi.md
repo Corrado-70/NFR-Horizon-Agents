@@ -1221,7 +1221,7 @@ se la nota torna sugli stessi rischi.
   enum dei driver, lunghezza di A1. Prompt ricomposti identici a quelli in uso.
 - **K6-ter riuscita** (`09_Copilot_Studio/Prova_K6_Operatore.md`, 5.3). Il sotto-agente di K6 non riceveva
   l'allegato; l'utente ha usato due variabili globali citate nelle istruzioni:
-  - `Global.InputA1` = allegato;
+  - `Global.allegato` = allegato;
   - A1 risponde solo con il JSON, che va anche in `Global.OutputA1`, salvato da `Salva_JSON`.
 
   Risultati:

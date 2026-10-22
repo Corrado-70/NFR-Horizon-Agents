@@ -5,7 +5,7 @@ Per chi mantiene il pacchetto, come componi_prompt.py: rilanciarlo dopo ogni mod
 generato non corrisponde all'A1 attuale.
 
 Parte dalle istruzioni di A1 per Microsoft 365 e cambia solo:
-  Input    l'allegato Input_A1 e' il valore della variabile globale {Global.InputA1};
+  Input    l'allegato Input_A1 e' il valore della variabile globale {Global.allegato};
   Output   la risposta e' solo il JSON e la stessa risposta va nella variabile globale {Global.OutputA1}
            (schema riuscito in Banca il 22/10);
   analisi  piu' ricerche nella knowledge per ogni rischio e rianalisi finale mirata (fonti della baseline,
@@ -31,7 +31,7 @@ SORGENTE = QUI.parent / "02_Agenti" / "A1_Horizon_Scanner.md"
 USCITA = QUI / "Da_caricare" / "A1_Horizon_Scanner_CS.md"
 LIMITE = 8000
 MARGINE = 60                      # caratteri lasciati alle variabili inserite con "/" (segnaposto di 16-17)
-VAR_IN, VAR_OUT = "{Global.InputA1}", "{Global.OutputA1}"
+VAR_IN, VAR_OUT = "{Global.allegato}", "{Global.OutputA1}"
 
 SOSTITUZIONI = [
     # Variabili globali (K6-ter, 22/10)
