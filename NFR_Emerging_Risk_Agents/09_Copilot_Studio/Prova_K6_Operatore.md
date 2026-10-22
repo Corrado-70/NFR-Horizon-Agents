@@ -206,6 +206,12 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | K6bis.4: ripetizione; sovrascrittura o errore | |
 | K6bis.5: Teams, esito, codici di errore, durata del turno | |
 | Qualita' di A1 rispetto ad Agent Builder (numero di rischi, punti del precontrollo) | |
+| **K6ter.1**: A1 con variabili globali; file in `In_arrivo`; tempo; modello | 22/10: **riuscita**. `A1_2027Q1.json` in `Prova_K0\In_arrivo`, 27.529 caratteri, in circa 1 minuto; modello GPT-5 reasoning |
+| **K6ter.2**: precontrollo sul PC (prima riga, impronta) | 22/10: **JSON valido**, impronta `cdfc636c3659`; 1 punto da correggere (NFR-02, C2), 5 da verificare (NFR-02 C3; NFR-03, 04, 05, 08 C5 fonti perse) |
+| K6ter.3: giro di correzione nella stessa conversazione; il file viene sovrascritto, va in errore o ne nasce una copia | |
+| K6ter.4: prova negativa, nessuna esecuzione | |
+| K6ter.5: Teams (il JSON passa in chat: limite di circa 100 KB), esito, codici di errore, durata | |
+| K6ter: come si riempie `Global.InputA1` | da annotare |
 
 ## 5. Esito del 15/10 e variante K6-bis
 
@@ -289,6 +295,37 @@ descrizioni degli strumenti. Per questo la prova negativa (K6bis.3) conta di piu
   da portare nella decisione A-15.
 - **`Leggi_Input` o `Salva_JSON` partono senza richiesta** (K6bis.3): la CS-1 con orchestrazione generativa non e'
   sicura; restano la strada A o una sequenza fissa.
+
+### 5.3 K6-ter: A1 con variabili globali (22/10)
+
+Prova fatta dall'utente il 22/10 dopo K6: l'allegato e il JSON passano da **due variabili globali**, citate nelle
+istruzioni di A1.
+- **Lettura**: le istruzioni dicono che l'allegato Input_A1 e' il valore di `Global.InputA1`.
+- **Scrittura**: A1 risponde solo con il JSON e la stessa risposta va in `Global.OutputA1`, da cui `Salva_JSON` la
+  scrive in `Prova_K0\In_arrivo`.
+
+Istruzioni: `Da_caricare/A1_Horizon_Scanner_CS.md`, generate da `genera_A1_CS.py` a partire dall'A1 attuale. Le
+differenze sono solo le frasi di Input e Output; inoltre gli elenchi perdono il trattino e la frase sulla ricerca
+file e' accorciata, per restare sotto 8.000 caratteri. In Copilot Studio i due segnaposto `{Global.InputA1}` e
+`{Global.OutputA1}` si sostituiscono con le variabili inserite con `/`. Il collaudo verifica che il file corrisponda
+all'A1 attuale.
+
+**Esito del 22/10** (tabella dei risultati, righe K6ter):
+- A1 ha prodotto `A1_2027Q1.json` (27.529 caratteri) in circa 1 minuto, con GPT-5 reasoning.
+- Il precontrollo sul PC lo legge per intero: e' la prima volta che la catena **allegato da SharePoint -> A1 in
+  Copilot Studio -> JSON in SharePoint** arriva fino al precontrollo.
+- I rilievi sono di qualita' della valutazione, come per A1 in Agent Builder. Una Probabilita salita di 2 punti senza
+  la voce in `variazioni` (C2, C3) e quattro rischi con meno fonti a valori invariati (C5). Un minuto e' poco per
+  rileggere la knowledge su tutti i rischi: la qualita' va confrontata con Agent Builder sullo stesso allegato (Prove
+  CS-1, K4).
+
+**Prossime prove**:
+- K6ter.3, il giro di correzione: il messaggio `Correzione_A1_<ciclo>.txt` incollato nella stessa conversazione.
+  Annotare se A1 ha ancora il suo output e se il file viene sovrascritto, va in errore o ne nasce una copia. Se A1
+  non ha piu' l'output, anche la correzione deve passare da una variabile.
+- K6ter.4, la prova negativa.
+- K6ter.5, Teams: qui il JSON passa in chat, quindi va verificato il limite di circa 100 KB dei messaggi che ha dato
+  errori in K0.
 
 ## Fonti (Microsoft Learn, consultate il 09/10/2026)
 

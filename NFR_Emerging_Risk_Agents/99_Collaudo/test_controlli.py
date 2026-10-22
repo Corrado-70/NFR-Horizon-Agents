@@ -814,6 +814,22 @@ def test_kit_copilot_studio(e):
                    "kit: --verifica elenca l'impronta di ogni modulo e dello schema", out[:300])
 
 
+def test_a1_copilot_studio(e):
+    """K6-ter (22/10): l'A1 per Copilot Studio con variabili globali e' l'A1 attuale con le sole sostituzioni di
+    genera_A1_CS.py e resta sotto il limite, con il margine per le variabili inserite con "/"."""
+    from comune import RADICE
+    sys.path.insert(0, str(RADICE / "09_Copilot_Studio"))
+    import genera_A1_CS as cs
+
+    atteso = cs.versione_cs(cs.SORGENTE.read_text(encoding="utf-8"))
+    e.verifica(cs.USCITA.exists() and cs.USCITA.read_text(encoding="utf-8") == atteso,
+               "A1 Copilot Studio: Da_caricare/A1_Horizon_Scanner_CS.md corrisponde all'A1 attuale (se no: python "
+               "09_Copilot_Studio/genera_A1_CS.py)")
+    e.verifica(len(atteso) <= cs.LIMITE - cs.MARGINE and atteso.count(cs.VAR_IN) == 1 and atteso.count(cs.VAR_OUT) == 1,
+               "A1 Copilot Studio: sotto il limite con il margine per le variabili, un segnaposto per variabile",
+               f"{len(atteso)} caratteri")
+
+
 MOTIVAZIONI_NFR01 = {"impatto": "Grave: importi medi triplicati nel Report trimestrale frodi.",
                      "probabilita": "Probabile: casi ripetuti in banche UE secondo l'Analisi interna.",
                      "prossimita": "Entro dodici mesi: casi documentati nel Report trimestrale frodi.",
@@ -1142,6 +1158,7 @@ def main():
     test_versione_mappa(e)
     test_precontrollo(e)
     test_kit_copilot_studio(e)
+    test_a1_copilot_studio(e)
     test_schede(e)
     test_spiegazioni(e)
     test_diagnosi(e)

@@ -129,12 +129,14 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 09_Copilot_Studio/Prova_K6_Operatore.md                prova K6 (CS-1, 09/10): un Operatore con un argomento a passi fissi legge l'allegato di A1 da SharePoint, lo passa al sotto-agente A1 e salva il JSON in Archivio_Cicli\In_arrivo con un agent flow; cartelle di lettura e scrittura; tabella dei risultati
 09_Copilot_Studio/Prove_CS1.md                         prove di fattibilita' della CS-1 dopo l'allineamento (TODO B5): domande all'IT e alla DPO, K6, K4 qualita' di A1, K11 piu' utenti, K12 A7, K7a sincronizzazione, K7b Excel senza nessuno davanti; tabella dei risultati
 09_Copilot_Studio/prepara_kit.py                       per chi mantiene il pacchetto: compone lo script della skill dai moduli del pacchetto e i file da caricare
+09_Copilot_Studio/genera_A1_CS.py                      per chi mantiene il pacchetto: compone l'A1 per Copilot Studio con variabili globali (K6-ter) dall'A1 attuale
 09_Copilot_Studio/precontrollo-nfr/SKILL.md            istruzioni della skill precontrollo-nfr (scritte a mano)
 09_Copilot_Studio/precontrollo-nfr/scripts/precontrollo_nfr.py  script unico della skill (generato da prepara_kit.py: precontrollo, controlli, validatore, parti del razionale, schema di A1)
 09_Copilot_Studio/Da_caricare/precontrollo-nfr.zip     la skill da caricare nella nuova esperienza (opzione 2), cartella precontrollo-nfr alla radice (generato)
 09_Copilot_Studio/Da_caricare/precontrollo-nfr_senza_cartella.zip  la stessa skill con SKILL.md alla radice dello zip, se la prima e' rifiutata (generato)
 09_Copilot_Studio/Da_caricare/precontrollo_nfr.txt     lo script della skill in .txt, da allegare in chat con il Code interpreter (opzione 1; generato)
 09_Copilot_Studio/Da_caricare/Messaggi_da_incollare.txt  i messaggi di ogni test della prova di Copilot Studio
+09_Copilot_Studio/Da_caricare/A1_Horizon_Scanner_CS.md  istruzioni di A1 per Copilot Studio: allegato letto da {Global.InputA1}, JSON anche in {Global.OutputA1} (K6-ter, 22/10; generato)
 99_Collaudo/LEGGIMI_collaudo.md                        cosa verifica la suite e con quali dati
 99_Collaudo/esegui_collaudo.py                         lancia tutta la suite (catena in tre processi; --mirato la salta se non e' cambiato niente che la riguardi)
 99_Collaudo/comune.py                                  percorsi e utilita' della suite

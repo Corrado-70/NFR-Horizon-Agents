@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1208,6 +1208,42 @@ spesso la Probabilita. A1 scrive "ESPOSIZIONE NON NOTA: con l'esposizione docume
 dicono se la Banca e' esposta; la parte meccanizzata di C5 la porta in validazione come "Da motivare" con i due
 valori; `diagnosi` conta le note. Kit di Copilot Studio rigenerato. Resta la variante 3b (esposizione nell'anagrafica)
 se la nota torna sugli stessi rischi.
+
+## 2-untricesies. 22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter)
+
+- **Revisione di Bologna in sospeso** (richiesta dell'utente: tornare alla versione del PC con la Probabilita a 5
+  valori). Tolte dal kernel le modifiche del 21/10:
+  - rubrica: Probabilita e Prossimita a 6 livelli, titolo dell'Impatto sulla capogruppo;
+  - tassonomia: DRV-SOV, DRV-PQC, DRV-NOR e la descrizione estesa di DRV-AI.
+
+  Il testo e cio' che va allineato prima di riattivarla sono in `Revisione_Bologna_2026-10-21_in_sospeso.md`, alla
+  radice: schema, controlli, Matrice e soglie P x I, Z di Mosca, soglia del radar, conversione degli score storici,
+  enum dei driver, lunghezza di A1. Prompt ricomposti identici a quelli in uso.
+- **K6-ter riuscita** (`09_Copilot_Studio/Prova_K6_Operatore.md`, 5.3). Il sotto-agente di K6 non riceveva
+  l'allegato; l'utente ha usato due variabili globali citate nelle istruzioni:
+  - `Global.InputA1` = allegato;
+  - A1 risponde solo con il JSON, che va anche in `Global.OutputA1`, salvato da `Salva_JSON`.
+
+  Risultati:
+  - `A1_2027Q1.json`, 27.529 caratteri, in circa 1 minuto con GPT-5 reasoning;
+  - il precontrollo sul PC lo legge per intero (impronta `cdfc636c3659`): 1 punto da correggere (NFR-02, Probabilita
+    da 2 a 4 senza variazione) e 5 da verificare (C3; C5 fonti perse su quattro rischi).
+
+  E' la prima catena completa SharePoint -> A1 in Copilot Studio -> SharePoint. Restano K6ter.3 (giro di correzione,
+  sovrascrittura del file), K6ter.4 (prova negativa), K6ter.5 (Teams: il JSON passa in chat, limite di circa 100 KB)
+  e il confronto di qualita' con Agent Builder (un minuto e' poco per rileggere la knowledge).
+- **Codice**:
+  - `09_Copilot_Studio/genera_A1_CS.py` genera `Da_caricare/A1_Horizon_Scanner_CS.md` dall'A1 attuale. Cambiano solo
+    Input e Output; gli elenchi perdono il trattino e la frase sulla ricerca file e' accorciata, per restare sotto
+    8.000 caratteri con 100 di margine per le variabili. In Copilot Studio i segnaposto si sostituiscono con le
+    variabili inserite con `/`.
+  - Collaudo: `test_a1_copilot_studio` controlla che il file corrisponda all'A1 attuale; test_controlli 285/285,
+    verifica_riferimenti 31/31.
+  - **Dopo ogni modifica ad A1 rilanciare `genera_A1_CS.py`.**
+- Fuori dal pacchetto, per l'utente:
+  - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
+    rigenerato se serve;
+  - una mail sui fogli del workbook.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
