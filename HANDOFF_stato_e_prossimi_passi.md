@@ -1246,6 +1246,14 @@ se la nota torna sugli stessi rischi.
     - Spazio: titoli piu' corti e modelli dei razionali ai puntini; 7.932 caratteri, margine 60.
 
     Passi esatti delle prove successive: `Prova_K6_Operatore.md`, 5.4. L'A1 di Agent Builder non cambia.
+  - Giro di correzione (K6ter.3) **non riuscito**: il messaggio di correzione incollato nella stessa conversazione
+    non fa partire niente (A1 "non sa quali azioni fare"). Su proposta dell'utente, la correzione passa da un
+    argomento dedicato, `Correzione A1` (`Prova_K6_Operatore.md`, 5.5):
+    - legge allegato e JSON da SharePoint (`Leggi_Input`, nuovo flusso `Leggi_Output`);
+    - fa correggere i punti a un prompt `Correggi_A1`;
+    - salva `A1_<ciclo>_corretto.json` con `Salva_JSON`.
+
+    Non dipende dalla memoria della chat. Da provare (K6ter.3-bis).
 - Fuori dal pacchetto, per l'utente:
   - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
     rigenerato se serve;
