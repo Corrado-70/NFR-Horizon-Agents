@@ -427,8 +427,16 @@ lancio**.
 Dopo una correzione `Global.json_a1` contiene il JSON corretto, quindi un secondo giro funziona allo stesso modo.
 
 **Preparazione**
-1. **Variabile `ciclo` globale.** Nell'argomento di lancio: clic sulla variabile `ciclo` -> **Variable properties**
-   -> **Global (any topic can access)**. Diventa `Global.ciclo`; il nodo `Leggi_Input` la usa come prima.
+1. **Variabile `ciclo` globale**, nell'argomento di lancio. Dipende da dove nasce `ciclo`:
+   - **da una domanda** (nodo **Question**, "Save user response as" `ciclo`) o da un **Set a variable value**: clic
+     sulla pillola `ciclo` nel nodo, oppure **Variables** nella barra in alto dell'argomento e poi `ciclo`. Nel
+     pannello **Variable properties**, sotto **Usage**, scegliere **Global (any topic can access)**. Il nome diventa
+     `Global.ciclo` ovunque nell'argomento, anche nel nodo `Leggi_Input`. **Save**;
+   - **da un input dell'argomento** (**Details** -> **Inputs**, riempito dall'orchestrazione): un input resta
+     dell'argomento. Subito dopo il trigger aggiungere **Set a variable value** -> **Create a new variable**,
+     rinominarla `ciclo`, renderla globale come sopra e darle il valore `Topic.ciclo`.
+
+   Controllo: in un altro argomento, inserendo una variabile con `/`, `Global.ciclo` compare nell'elenco.
 2. **Prompt `Correggi_A1`**: **Tools** -> **Add a tool** -> **New tool** -> **Prompt**, nome `Correggi_A1`.
    - Modello: lo stesso di A1 (GPT-5 reasoning), se il prompt lo offre; annotarlo.
    - Istruzioni da incollare. Le tre parole fra parentesi quadre si sostituiscono con tre input di testo, creati con
