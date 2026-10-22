@@ -474,8 +474,13 @@ Dopo una correzione `Global.json_a1` contiene il JSON corretto, quindi un second
    - `correzione` = `System.Activity.Text`;
    - `json_a1` = `Global.json_a1`;
    - `allegato` = `Global.allegato`;
-   - output in `Topic.json_corretto`.
-5. **Set a variable value**: `Global.json_a1` = `Topic.json_corretto`.
+   - output in `Topic.json_corretto`. E' l'unico modo di avere il JSON corretto: `Correggi_A1` e' un prompt, non
+     il sotto-agente A1, e non scrive niente in chat. Il prompt restituisce un **record** (tipo record va bene), con
+     il testo in un campo, di solito `text`.
+5. **Set a variable value**: `Global.json_a1` = formula `Topic.json_corretto.text`.
+   - Scrivendo `Topic.json_corretto.` la formula propone i campi del record: se il testo e' in un campo con un altro
+     nome, usare quello.
+   - `Global.json_a1` e' di tipo testo: assegnarle il record intero da' errore di tipo.
 6. **Add a tool** -> `Salva_JSON`:
    - `nome_file` = formula `"A1_" & Global.ciclo & "_corretto.json"`;
    - `contenuto` = `Global.json_a1`;
