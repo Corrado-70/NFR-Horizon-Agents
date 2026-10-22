@@ -210,7 +210,7 @@ Gli esiti si riportano nella tabella qui sotto e nella decisione A-15 (TODO, AU4
 | **K6ter.2**: precontrollo sul PC (prima riga, impronta) | 22/10: **JSON valido**, impronta `cdfc636c3659`; 1 punto da correggere (NFR-02, C2), 5 da verificare (NFR-02 C3; NFR-03, 04, 05, 08 C5 fonti perse) |
 | K6ter.1-bis: istruzioni con analisi a fondo e rianalisi; tempo; ricerche; file sovrascritto, copia o errore; punti del precontrollo rispetto al 22/10 | |
 | K6ter.3: giro di correzione nella stessa conversazione; il file viene sovrascritto, va in errore o ne nasce una copia | 22/10: **non riuscita**. Messaggio di correzione incollato nella stessa conversazione: A1 risponde che non sa quali azioni fare, nessun JSON. Si passa all'argomento `Correzione A1` (5.5) |
-| K6ter.3-bis: argomento `Correzione A1`; sequenza dei nodi; caratteri letti e salvati; tempo; modello del prompt | |
+| K6ter.3-bis: argomento `Correzione A1`; sequenza dei nodi; caratteri letti e salvati; tempo; modello del prompt | 22/10, primo tentativo in una conversazione nuova, con `Correzione_A1_2027Q1.txt` (408 byte) allegato: l'argomento parte e risponde "Nessun output di A1 in questa conversazione", come previsto dal passo 2. Da rifare nella conversazione del lancio, con il testo incollato, oppure con la versione completa |
 | K6ter.3-bis: precontrollo su `A1_<ciclo>_corretto.json` (prima riga, impronta) | |
 | K6ter.6: precontrollo nel code interpreter: script partito; prima riga e impronta uguali al PC; file di correzione | |
 | K6ter.6: ripetizione, stesse due righe | |
@@ -495,9 +495,33 @@ Il JSON non va in chat. Il file corretto ha un nome nuovo: l'originale resta per
   annotarlo.
 - **`Correggi_A1` taglia o va in errore**: annotare i caratteri degli input (allegato circa 54.000, JSON circa
   27.000). Puo' essere un limite del prompt sugli input lunghi.
-- **In una conversazione nuova**: le variabili sono vuote. Per correggere anche li' serve leggere il JSON da
-  SharePoint con un flusso `Leggi_Output`, come `Leggi_Input` ma sul file `In_arrivo/A1_<ciclo>.json`: e' il passo
-  successivo, non la prova minima.
+- **"Nessun output di A1" in una conversazione nuova** (22/10): e' il comportamento previsto della versione minima.
+- **Il messaggio va incollato come testo**, non allegato come file: l'argomento legge il testo del messaggio
+  (`System.Activity.Text`), non gli allegati.
+
+**Versione completa: correzione anche in una conversazione nuova.** E' il caso normale: si lancia A1, si fa il
+precontrollo sul PC e si torna piu' tardi, quando la conversazione del lancio e' chiusa o scaduta.
+1. **Flusso `Leggi_Output`**: **Tools** -> **Add a tool** -> **New agent flow**, come `Leggi_Input` (2.1).
+   - Trigger **When an agent calls the flow**, input di testo `ciclo`.
+   - **Get file content using path**, sito NFR, File Path = testo `/Archivio_Cicli/Prova_K0/In_arrivo/A1_`, pillola
+     `ciclo`, testo `.json`.
+   - **Respond to the agent**: testo `json_a1` = contenuto del file; numero `caratteri` = `length(...)` dello stesso
+     valore. Se arriva in base64, come per `Leggi_Input`.
+   - Salvare, pubblicare, provarlo da solo con `ciclo` = `2027Q1`: `json_a1` comincia con `{`.
+   - Nei dettagli dello strumento togliere "Allow agent to decide dynamically".
+2. Nell'argomento, nel ramo vero della **Condition** `IsBlank(Global.json_a1)`, al posto del messaggio e di **End all
+   topics**:
+   1. **Set a variable value**: `Global.ciclo` = formula `Match(System.Activity.Text, "\d{4}Q[1-4]").FullMatch` (il
+      messaggio di correzione contiene "del ciclo 2027Q1"). Se la formula non e' accettata: **Question** `Quale
+      ciclo? (per esempio 2027Q1)`, User's entire response, in `Global.ciclo`.
+   2. **Add a tool** -> `Leggi_Input`, `ciclo` = `Global.ciclo`: output `allegato` -> `Global.allegato`.
+   3. **Add a tool** -> `Leggi_Output`, `ciclo` = `Global.ciclo`: output `json_a1` -> `Global.json_a1`.
+
+   Poi si prosegue con il passo 3, come nell'altro ramo.
+3. Prova: conversazione nuova, incollare il testo di `Correzione_A1_2027Q1.txt`. Atteso: `Leggi_Input`,
+   `Leggi_Output`, `Correggi_A1`, `Salva_JSON`, una volta ciascuno; poi il precontrollo su `A1_2027Q1_corretto.json`.
+
+Il file letto e' `A1_<ciclo>.json`: deve essere lo stesso su cui e' stato fatto il precontrollo (stessa impronta).
 
 ### 5.6 Python in Copilot Studio: il precontrollo nel code interpreter (K6ter.6)
 
