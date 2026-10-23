@@ -56,9 +56,11 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 
 | Stato | Voce | Dove si verifica |
 |---|---|---|
-| [x] | AU7: `baseline` scrive `Input_A3.txt` e `Input_A4.txt` (`input_a1.scrivi_allegati_baseline`) | catena `piu_analisti` (7/7) |
-| [x] | Prompt di A3 e A4: baseline solo dall'allegato (A3 7.688 caratteri, A4 5.708) | `componi_prompt.py --verifica` |
-| [~] | A3 e A4 reincollati in Agent Builder; `Baseline_corrente.txt` tolto dalla knowledge e dalla library Kernel | in Banca, B5-bis |
+| [x] | AU7: `baseline` scrive l'allegato di A3 e A4 (`input_a1.scrivi_allegato_a3_a4`; dal 23/10 sera un file solo, `Input_A3_A4.txt`, D-84) | catena `piu_analisti` (7/7) |
+| [x] | Prompt di A3 e A4: baseline solo dall'allegato (A3 7.691 caratteri, A4 5.711) | `componi_prompt.py --verifica` |
+| [x] | Nomi degli allegati unificati (D-84): `Input_A1_<ciclo>`, `Input_A8_<periodo>`, `Input_A3_A4`, `Input_A5_<ciclo>` (dal precontrollo), `Input_A6_<ciclo>`; prompt di A3, A4, A5 (7.994 caratteri), A6, A8 | `test_controlli.py`, `test_app.py`; catena 375/375 e demo rigenerata (23/10 sera) |
+| [~] | Il ramo `copilot-studio-pieno` con i nomi nuovi: `genera_CS.py` (frasi sostituite in A3, A5, A6, A8) e argomenti YAML | al merge di `main` nel ramo |
+| [~] | A3, A4, A5, A6 e A8 reincollati in Agent Builder (D-84); `Baseline_corrente.txt` tolto dalla knowledge e dalla library Kernel | in Banca, B5-bis |
 | [x] | `trimestrale` archivia i prompt in `Cicli/<ciclo>/Prompt_in_uso/` | catena `piu_analisti` |
 | [x] | `valida` del ciclo corrente rigenera il report; `--senza-report` | catena `catena` 178/178 e `riapertura` 28/28 (rilanciate il 23/10) |
 | [x] | Il PDF di `valida` entra nell'archivio solo dopo la sostituzione del registro e dopo `Validazione_<ciclo>.json` (`esporta_pdf`, `pubblica_report`) | catena `catena`, `riapertura` |
@@ -121,6 +123,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | `app_nfr.py`: stato, prossimo passo, pulsanti, passo in corso, log colorato; processi in un thread, chiamate alla finestra da una coda | prova di avvio con un archivio finto (immagine controllata) |
 | [x] | Nitida con la scala di Windows oltre il 100%; finestra in proporzione allo schermo | prova di avvio |
 | [x] | Schermi 1920x1080 con la scala al 100, 125 e 150%: si apre ingrandita, uscita del motore leggibile | simulazione dello schermo |
+| [x] | Divisore trascinabile fra passo in corso e uscita; riquadro della risposta alto e visibile dopo l'incolla; riga dell'esito sotto il riquadro (richiesta dell'utente del 23/10) | simulazione a 100% e 150% |
 | [x] | `NFR.cmd`: ASCII, cartella dello script, UTF-8, `pyw`/`pythonw`/`python` | `test_app.py` |
 | [~] | Uso vero: un trimestre di prova dall'app, con gli agenti in Agent Builder e il registro di prova | in Banca, B5-bis |
 | [~] | Link degli agenti da "Copia collegamento" che aprono la chat (V-A) | in Banca, B5-bis |

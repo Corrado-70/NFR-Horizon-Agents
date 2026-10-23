@@ -1334,6 +1334,16 @@ con `link_agenti`.
 - Collaudo: catena completa 375/375 in 61 minuti (13 gruppi, compreso `piu_analisti`); `test_app.py` 49/49; rilancio
   dei gruppi `catena` (178/178), `riapertura` (28/28), `piu_analisti` (7/7) dopo la correzione della pubblicazione del report; demo rigenerata e `REPORT_demo.md` riallineato.
 
+**Nomi degli allegati (D-84, sera del 23/10, richiesta dell'utente)**: sempre `Input_<agente>`. `Input_A1_<ciclo>.txt`,
+`Input_A8_<periodo>.txt` (straordinario), `Input_A3_A4.txt` (un file solo per A3 e A4), `Input_A5_<ciclo>.txt` (output
+di A1 e baseline, scritto dal precontrollo, che con A5 diventa necessario), `Input_A6_<ciclo>.json` (prima
+`Schede_input_`). Prompt di A3, A4, A5, A6, A8 da reincollare. Intestazione degli allegati di A3 e A4: "dopo il ciclo",
+non "ciclo validato". Il ramo `copilot-studio-pieno` riceve tutto con il merge: da adeguare `genera_CS.py` (le frasi che
+sostituisce in A3, A5, A6 e A8) e gli argomenti YAML che leggono `Baseline_corrente.json` per A3 e i file di A5 e A6.
+Collaudo: catena con Excel 375/375 (il gruppo `catena` rilanciato dopo un nome vecchio rimasto in un test), test senza
+Excel verdi, demo rigenerata (messaggio di correzione di A8 con `Input_A8`). Nella finestra: divisore trascinabile, riquadro
+della risposta alto e visibile dopo l'incolla, riga dell'esito.
+
 **Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
 (report HTML).
 

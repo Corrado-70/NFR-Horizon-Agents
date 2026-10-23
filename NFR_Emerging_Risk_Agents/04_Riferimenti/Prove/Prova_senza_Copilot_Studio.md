@@ -223,7 +223,7 @@ messaggio `Correzione_A1_2026Q4.txt`, di nuovo `trimestrale`, e A5 se lo si usa)
 python esegui_ciclo_locale.py schede-input
 ```
 
-1. Agente **A6**: allegare SOLO `C:\NFR_Prova\Archivio\Cicli\2026Q4\Schede_input_2026Q4.json`,
+1. Agente **A6**: allegare SOLO `C:\NFR_Prova\Archivio\Cicli\2026Q4\Input_A6_2026Q4.json`,
    scrivere `Scrivi le schede`, salvare la risposta come `A6_2026Q4.json`.
 2. Generare le schede:
 

@@ -295,7 +295,7 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    lo toglie e lo registra; con un lucchetto scaduto `griglia` scrive dalla copia di
    lavoro (nessun file accanto al registro, cartella di lavoro vuota alla fine); con il
    registro aperto in esclusiva da un programma del PC si ferma prima di scrivere;
-   `baseline` scrive `Input_A3.txt` e `Input_A4.txt` con la baseline del `.json` (AU7);
+   `baseline` scrive `Input_A3_A4.txt` con la baseline del `.json` (AU7);
    `trimestrale` archivia i prompt del pacchetto in `Prompt_in_uso/`.
 11c. Aggiornamento di un registro del template 2026-10-08b (lista di osservazione,
    `dati/registro_template_2026-10-08b.xlsx`): le tre voci in osservazione diventano

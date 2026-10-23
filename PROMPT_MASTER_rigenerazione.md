@@ -406,7 +406,7 @@ Conseguenze di progetto, obbligatorie:
   sole sezioni che servono a ciascun agente (vedi "Prompt");
 - tutto cio' che un agente deve leggere come knowledge o allegato si scrive **anche in
   .txt** (la raccolta notizie; la baseline arriva come allegato: `Input_A1_<ciclo>.txt` ad
-  A1 e A8, dal 23/10 `Input_A3.txt` e `Input_A4.txt` ad A3 e A4, AU7: mai dalla knowledge,
+  A1, `Input_A8_<periodo>.txt` ad A8, `Input_A3_A4.txt` ad A3 e A4 (AU7), `Input_A5_<ciclo>.txt` ad A5, `Input_A6_<ciclo>.json` ad A6 (D-84): mai dalla knowledge,
   che si indicizza in ritardo o salta un file singolo);
 - l'elenco delle fonti va **nelle istruzioni** di A3; come knowledge web solo i
   quattro siti marcati; "Search all websites" spento;
@@ -468,17 +468,17 @@ Conseguenze di progetto, obbligatorie:
 - **A3 Interim Update** (settimanale): integra le notizie dei tre canali; per
   ogni notizia l'impatto su tutti e sette gli event type, il rischio collegato,
   il segnale, il **codice fonte**; propone flag; non modifica score. Baseline solo
-  dall'allegato `Input_A3.txt` (AU7, D-83).
+  dall'allegato `Input_A3_A4.txt` (AU7, D-83).
 - **A4 News Assessor** (su richiesta): parere su una notizia, ancorato alla
   valutazione deliberata; mai una cifra, mai una persona, non scrive. Baseline solo
-  dall'allegato `Input_A4.txt` (AU7, D-83).
+  dall'allegato `Input_A3_A4.txt` (AU7, D-83).
 - **A5 Challenger** (trimestrale, dopo A1, **facoltativo** dal 06/10, D-71):
   nove controlli C1-C9 su input ristretto (output di A1 + baseline, mai le
   notizie); i suoi rilievi non fermano il ciclo: vanno nella colonna
   Segnalazioni della griglia e un suo Bloccante chiede la Motivazione. Ferma
   solo lo script, per l'integrita' del registro.
 - **A6 Schede dei rischi** (trimestrale, DOPO la validazione, D-40): un solo
-  allegato, `Schede_input_<ciclo>.json` (dati validati preparati dallo
+  allegato, `Input_A6_<ciclo>.json` (dati validati preparati dallo
   script), nessuna knowledge; scrive per ogni rischio descrizione estesa (il
   fenomeno in termini di rischio), spiegazione di ognuna delle quattro
   dimensioni (Impatto, Probabilita, Prossimita, Velocity) a partire dalle
@@ -492,7 +492,7 @@ Conseguenze di progetto, obbligatorie:
   osservazione) distinguendo registrato, calcolato e sua lettura; knowledge
   scritta dallo script (cartella `Spiegazioni`); non propone valori e non scrive.
 - **A8 Evento critico** (nel ciclo straordinario deciso dalla funzione di rischio,
-  D-75, D-77): stesso allegato `Input_A1_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
+  D-75, D-77): stesso allegato `Input_A8_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
   i documenti dell'evento; analizza a fondo l'evento (campo `analisi_evento`),
   rivaluta TUTTI e SOLO i rischi indicati e censisce i nuovi che l'evento crea
   (almeno uno se lo straordinario e' di solo censimento); rilegge ogni KRI in
@@ -848,7 +848,7 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   sconosciuti o ripetuti; C8 "sempre Osservazione"; C9 due KRI, uno per tipo (D-64), soglie
   entrambe o nessuna. A4 (la riga dei nomi delle dimensioni, senza Gap): sezioni fisse del
   parere (e non promette che la notizia compaia nel foglio Notizie).
-- **A6**: ruolo (spiega, non valuta), input = solo `Schede_input_<ciclo>.json`
+- **A6**: ruolo (spiega, non valuta), input = solo `Input_A6_<ciclo>.json`
   (niente notizie, knowledge o ricerche: come A5, la frase "usa sempre lo
   strumento di ricerca" NON c'e'), sette regole (una scheda per rischio; valori
   intoccabili; **ogni numero deve stare nei dati del rischio o nella
@@ -1320,8 +1320,12 @@ openpyxl (solo per il file delle schede). Moduli:
   verifica ogni rischio con questi controlli e correggi...") e i controlli,
   "=== 3. GUIDA DI SCRITTURA ==="; un file del kernel mancante toglie la sua
   parte e non ferma niente. `scrivi(cartella, ...)` scrive il file e toglie gli
-  `Input_A1_<AAAAQn>.txt` degli altri cicli (solo quelli con quel nome; un file
-  aperto resta). `_scrivi_baseline` lo chiama a ogni baseline scritta
+  `Input_A1_<AAAAQn>.txt` e `Input_A8_<AAAAQn-Sk>.txt` degli altri periodi (solo quelli con quel nome; un file
+  aperto resta). **Nomi degli allegati (D-84)**: sempre `Input_<agente>`; `Input_A8_<periodo>.txt` per lo
+  straordinario (intestazione "INPUT DI A8"); `Input_A3_A4.txt` unico per A3 e A4 (`scrivi_allegato_a3_a4`, toglie
+  i vecchi `Input_A3.txt` e `Input_A4.txt`); `Input_A5_<ciclo>.txt` (`componi_a5`, `leggi_a5`: "=== 1. OUTPUT DI A1
+  ===" e "=== 2. BASELINE ===") scritto da `precontrollo` quando nessun punto e' da correggere e tolto quando ce ne
+  sono; `Input_A6_<ciclo>.json` in `Cicli/<ciclo>/` (`NOME_A6`, prima `Schede_input_`). `_scrivi_baseline` lo chiama a ogni baseline scritta
   (`baseline`, `trimestrale`, `valida`, `dismetti`) e avvisa se mancano file
   del kernel; con `baseline --uscita` no.
 - `input_a1.leggi_baseline(testo)` (D-70): il JSON della parte 1
@@ -1568,7 +1572,7 @@ openpyxl (solo per il file delle schede). Moduli:
     `pesoSeverity` se c'erano, e le colonne rinominate e tolte. Rilanciato su un
     registro gia' aggiornato: fermo "niente da aggiornare".
   - `schede-input` (D-40): sola lettura; si ferma se il ciclo corrente ha
-    decisioni "Da decidere"; scrive `Cicli/<ciclo>/Schede_input_<ciclo>.json`
+    decisioni "Da decidere"; scrive `Cicli/<ciclo>/Input_A6_<ciclo>.json`
     e dice come proseguire con A6.
   - `schede [--payload A6_<ciclo>.json]`: sola lettura del registro; con
     `--payload` valida lo schema e `controlla_a6` (un problema = fermo, nessun
@@ -1633,7 +1637,7 @@ openpyxl (solo per il file delle schede). Moduli:
   copia `02_Agenti/A*.md` in `Cicli/<ciclo>/Prompt_in_uso/` (`archivia_prompt`); `schede` esporta anche
   `Schede_<ciclo>.pdf` (avviso se non riesce); `riapri` scrive `Cicli/<ciclo>/Riapertura_<ciclo>.json`, `valida` la
   chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
-  `Input_A3.txt` e `Input_A4.txt` (`input_a1.scrivi_allegati_baseline`: intestazione con ciclo e data, poi la baseline
+  `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
   dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
 - **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
   poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
@@ -1673,6 +1677,10 @@ openpyxl (solo per il file delle schede). Moduli:
     originale `<nome>_<ora>_<origine>.txt`; nota in `Stato/<periodo>.json`; nome del parere di A4) e sceglie il link.
     `estrai_json` legge anche il JSON dentro un campo di testo (record di un prompt di Copilot Studio, campo `text`) e
     ignora i link alle fonti in coda.
+  - **Divisore trascinabile** (ttk.PanedWindow, 60% passo in corso e 40% uscita all'avvio) fra il passo in corso e
+    l'uscita dei comandi; il riquadro della risposta e' alto e resta visibile dopo l'incolla (un nuovo Ctrl+V lo
+    sostituisce); sotto, la riga dell'esito scritta da `flussi.esito` (`esito_risposta` dell'Ambiente, se c'e'):
+    ricevuto con agente, caratteri e file, oppure risposta tagliata, di un altro agente, fuori schema.
   - **Schermi 1920x1080**: con un'altezza dello schermo fino a 1200 pixel la finestra si apre ingrandita (`zoomed`);
     stato su due righe, riquadro per incollare di tre righe; provata con la scala al 100, 125 e 150%.
   - **Documentazione dell'uso**: guida, sezione "L'app NFR: uso passo per passo" (finestra, i tre gesti con un agente,
@@ -1685,12 +1693,12 @@ openpyxl (solo per il file delle schede). Moduli:
 - **Archivio** (`Archivio_Cicli`): `Baseline_corrente.json/.txt`;
   `Cicli/<ciclo>/` (Excel di output `NFR_Registro_<ciclo>.xlsx`, versione
   `_validato`, output di A1 e A5, baseline usata, esito dei controlli,
-  `Righe_liste_<ciclo>.json`, validazione, `Schede_input_<ciclo>.json`,
+  `Righe_liste_<ciclo>.json`, validazione, `Input_A6_<ciclo>.json`,
   `A6_<ciclo>.json`, `Schede_<ciclo>.xlsx` e `.pdf`, `Report_comitato_<ciclo>.pdf`,
   `Prompt_in_uso/`, `Riapertura_<ciclo>.json` finche' la riapertura e' aperta);
   `Cicli/<ciclo>/tentativo_<ora>/` per OGNI tentativo, anche fermato;
   `Settimane/<lunedi'>/`; `Backup/`; `_Lucchetto/` (registro.json, sblocchi.log; D-83);
-  accanto alla baseline `Input_A1_<ciclo>.txt`, `Input_A3.txt`, `Input_A4.txt`.
+  accanto alla baseline `Input_A1_<ciclo>.txt`, `Input_A3_A4.txt`.
 - Dopo il salvataggio: prima la baseline, per ultima la copia dell'Excel (e'
   quella che fallisce se qualcuno ha aperto un file dell'archivio).
 - `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto
@@ -2966,7 +2974,7 @@ solo se l'utente decide di unire il ramo.)
     minuto a ogni validazione), ma in una cartella temporanea: entra nell'archivio solo dopo la sostituzione del
     registro, altrimenti un fermo "registro cambiato" lascerebbe un report di dati mai salvati.
 126. **Un prompt schedulato non porta allegati** (23/10, AU7). Dal momento in cui A3 legge la baseline solo
-    dall'allegato `Input_A3.txt`, il prompt schedulato del lunedi' risponde "Baseline mancante": A3 si lancia a mano
+    dall'allegato `Input_A3_A4.txt`, il prompt schedulato del lunedi' risponde "Baseline mancante": A3 si lancia a mano
     (o dall'app). Togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel, altrimenti un
     agente potrebbe ancora leggerne una vecchia.
 127. **tkinter si tocca solo dal suo thread** (23/10, app). Il motore impiega minuti: i processi girano in un thread,

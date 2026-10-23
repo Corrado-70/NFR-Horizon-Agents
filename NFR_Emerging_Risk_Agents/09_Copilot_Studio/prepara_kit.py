@@ -47,7 +47,7 @@ Contiene, copiati senza modifiche, i moduli {elenco} di 07_Senza_Studio e lo sch
 che la Banca lancia sul PC (D-69, D-70).
 
 Uso:
-    python precontrollo_nfr.py <output di A1, A1_<ciclo>.json> <Input_A1_<ciclo>.txt oppure Baseline_corrente.json>
+    python precontrollo_nfr.py <output di A1, A1_<ciclo>.json> <Input_A1_<ciclo>.txt, Input_A8_<periodo>.txt oppure Baseline_corrente.json>
     python precontrollo_nfr.py --verifica      versione e impronta di ogni modulo contenuto
 Stampa l'esito (prima riga) e l'impronta dell'output di A1 (seconda riga, la stessa del comando sul PC); se trova
 qualcosa scrive accanto all'output Correzione_A1_<ciclo>.txt, il messaggio di correzione per A1. Codice di uscita:

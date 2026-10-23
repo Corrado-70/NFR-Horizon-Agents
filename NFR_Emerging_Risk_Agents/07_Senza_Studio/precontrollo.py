@@ -80,7 +80,7 @@ def messaggio_correzione(ciclo, esito):
     di correzione, con le parole dei controlli (le stesse dell'allegato di A1)."""
     righe = [f"Il precontrollo dello script ha trovato questi punti nel tuo output del ciclo {ciclo}. Correggili e "
              "restituisci di nuovo l'intero JSON, solo JSON, senza cambiare cio' che non e' citato. I controlli sono "
-             "quelli della parte 2 dell'allegato Input_A1, la forma dei testi e' nella parte 3."]
+             f"quelli della parte 2 dell'allegato Input_{agente(ciclo)}, la forma dei testi e' nella parte 3."]   # D-84
 
     def blocco(titolo, voci):
         if voci:

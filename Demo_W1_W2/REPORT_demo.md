@@ -383,13 +383,13 @@ Demo_W1_W2/
   NFR_Registro.xlsx                     registro VIVO: cresce a ogni run
   News_Inbox/<lunedi'>/                 raccolta REALE dai feed, della settimana in cui gira la demo
   1_Input_agenti/                       output simulati degli agenti (A1, A3, A5, A8), decisioni simulate del validatore,
-                                        baseline date agli agenti, allegati Input_A1 del 2026Q3, 2026Q4 e 2026Q4-S1
+                                        baseline date agli agenti, allegati Input_A1 del 2026Q3 e 2026Q4, Input_A8 del 2026Q4-S1 (D-84)
   A4_parere_esempio.md                  parere di A4
   Archivio_Cicli/                       NON nel repository ne' nello zip (dal 13/10): lo ricrea esegui_demo.py a ogni run
     Baseline_corrente.json / .txt       input degli agenti per il prossimo run (valori validati, rischi in osservazione,
                                         regola del radar)
     Input_A1_2027Q1.txt                 allegato di A1 per il prossimo ciclo
-    Input_A3.txt, Input_A4.txt          allegati di A3 e A4: la baseline (AU7, dal 23/10)
+    Input_A3_A4.txt          allegati di A3 e A4: la baseline (AU7, dal 23/10)
     _Lucchetto/                         lucchetto del registro, vuoto a fine demo (D-83)
     Spiegazioni/                        knowledge di A7: Ciclo.txt e Rischio_01..20.txt
     Cicli/2026Q3/                       registro scritto e validato, output degli agenti, baseline usata, esito dei

@@ -459,13 +459,13 @@ def agenti_panoramica():
         ["A4 News Assessor", "parere su UNA notizia rispetto al registro, senza numeri nuovi", "su richiesta",
          "la notizia (testo, link, file)", "parere in sei sezioni, in chat"],
         ["A5 Challenger", "nove controlli C1-C9 sull'output di A1", "trimestre, facoltativo",
-         "A1_<ciclo>.json e Baseline_corrente.json", "JSON → A5_<ciclo>.json"],
+         "Input_A5_<ciclo>.txt (output di A1 e baseline)", "JSON → A5_<ciclo>.json"],
         ["A6 Schede dei rischi", "testi delle schede sui dati validati, per chi non conosce il tema", "dopo la validazione",
-         "solo Schede_input_<ciclo>.json", "JSON → A6_<ciclo>.json"],
+         "solo Input_A6_<ciclo>.json", "JSON → A6_<ciclo>.json"],
         ["A7 Assistente del registro", "spiega il perché di valori, urgenza, livello, temi non censiti", "su richiesta",
          "niente: legge Kernel\\Spiegazioni", "risposte in chat; sintesi per il Quadro"],
         ["A8 Evento critico", "analisi dell'evento, rivaluta i rischi indicati, censisce i nuovi", "ciclo straordinario",
-         "allegato Input_A1_<AAAAQn-Sk>.txt e documenti dell'evento", "JSON → A8_<AAAAQn-Sk>.json"]],
+         "allegato Input_A8_<AAAAQn-Sk>.txt e documenti dell'evento", "JSON → A8_<AAAAQn-Sk>.json"]],
         [1.9, 4.0, 1.5, 2.9, 2.0], 11.5, 0.5)
     nota_fondo(s, ["Regole per tutti: il messaggio aggiunge indicazioni per quella volta, non cambia le regole dell'agente; per "
                    "rifare una valutazione si apre una chat nuova; gli agenti JSON rispondono solo con il JSON. Ogni prompt sta "
@@ -525,7 +525,7 @@ def agenti():
         "- **C6 Deriva**: aumenti dallo stesso fatto ripetuto o su più di metà dei rischi senza fonti nuove.",
         "- **C7 Rilettura KRI** · **C8 Azioni** (owner = funzione, pertinente, non ripetuta) · **C9 KRI** (coppia esposizione/evoluzione, soglie, fonte dati).",
         "- Esito Approvato o Da rivedere, con i rilievi Bloccante / Osservazione."],
-        ["Dopo A1, chat nuova, allegati SOLO **A1_<ciclo>.json** e **Baseline_corrente.json**: «Esegui i nove controlli».",
+        ["Dopo A1, chat nuova, allegato SOLO **Input_A5_<ciclo>.txt** (output di A1 e baseline, dal precontrollo): «Esegui i nove controlli».",
          "Va rifatto ogni volta che A1 viene rifatto; mai per le settimane."],
         ["- Prima: (facoltativo) **precontrollo**, che segnala già la parte meccanizzabile.",
          "- Dopo: **trimestrale --challenger A5_<ciclo>.json**: i rilievi vanno nella colonna Segnalazioni della griglia; un Bloccante rende obbligatoria la Motivazione.",
@@ -540,7 +540,7 @@ def agenti():
         "- **Flag proposti** quando un descrittore potrebbe non essere più quello vigente (o un rischio in osservazione realizza il suo segnale).",
         "- **Proposta di ciclo straordinario** solo con la regola del segnale critico.",
         "- **Sintesi** della settimana: notizie rilevanti, aree non presidiate, direzioni per categoria."],
-        ["Chat nuova, allegato **Input_A3.txt** (la baseline): «Esegui l'aggiornamento settimanale». Senza allegato: «Baseline mancante».",
+        ["Chat nuova, allegato **Input_A3_A4.txt** (la baseline): «Esegui l'aggiornamento settimanale». Senza allegato: «Baseline mancante».",
          "Variazioni: correzione dopo un fermo, insistere su un rischio."],
         ["- **Prima: raccogli_notizie.py** (lunedì alle 7, Utilità di pianificazione) → News_Inbox\\<lunedì>\\Raccolta_<data>.txt; a mano i file in Manuali.",
          "- **Dopo: settimanale --payload A3_<lunedì>.json** → NewsLog senza duplicati, Sintesi_Settimane, segnali netti, aree non presidiate, proposta di straordinario a video.",
@@ -556,7 +556,7 @@ def agenti():
         "- **5. Cosa suggerisco** — verifiche per la funzione di rischio; in testa «PROPOSTA DI CICLO STRAORDINARIO» se vale la regola del segnale critico.",
         "- **6. Limiti del parere** — che cosa non sa, quali fonti mancano.",
         "Distingue il fatto dalla propria interpretazione; non nomina persone."],
-        ["Allegato **Input_A4.txt** (la baseline) e la notizia: «Dammi il parere su questa notizia: [testo o link]».",
+        ["Allegato **Input_A3_A4.txt** (la baseline) e la notizia: «Dammi il parere su questa notizia: [testo o link]».",
          "Variazioni: rispetto a un rischio preciso [NFR-nn]; con attenzione a una categoria [9.n]."],
         ["- **Nessun passo Python**: il parere resta in chat, non entra nel registro.",
          "- Se la notizia è rilevante deve entrare nel prossimo aggiornamento settimanale (A3 + settimanale).",
@@ -571,9 +571,9 @@ def agenti():
         "- Non valuta: spiega i valori che il validatore ha già deciso.",
         "## Senza A6",
         "- Le schede escono lo stesso con i testi di A1 dal registro (il razionale è già diviso in parti, D-68): A6 è un miglioramento della leggibilità, non un passo obbligato."],
-        ["Agente A6, allegato SOLO **Schede_input_<ciclo>.json**: «Scrivi le schede».",
+        ["Agente A6, allegato SOLO **Input_A6_<ciclo>.json**: «Scrivi le schede».",
          "Variazione: correzione dopo un fermo del comando schede."],
-        ["- **Prima: schede-input** → Schede_input_<ciclo>.json (si ferma se il ciclo non è validato).",
+        ["- **Prima: schede-input** → Input_A6_<ciclo>.json (si ferma se il ciclo non è validato).",
          "- **Dopo: schede --payload A6_<ciclo>.json** → controlla stessi rischi, quattro dimensioni, stesse fonti, **nessun numero fuori dai dati**; poi produce Schede_<ciclo>.xlsx.",
          "- Senza A6: **schede** senza payload."],
         ["Non cambia valori, fonti o urgenza; un numero che non sta nei dati del rischio ferma il comando."])
@@ -597,7 +597,7 @@ def agenti():
         "- Rilegge i valori dei KRI dei rischi rivalutati.",
         "- Un rischio vicino che l'evento tocca ma non è indicato lo segnala al validatore: non lo riscrive.",
         "- Il periodo si chiama come il trimestre chiuso più -S1, -S2… (es. 2026Q4-S1) e conta come ciclo: il trimestre dopo parte dai suoi valori."],
-        ["Chat nuova, allegato **Input_A1_<AAAAQn-Sk>.txt** e i documenti dell'evento: «Esegui il ciclo straordinario».",
+        ["Chat nuova, allegato **Input_A8_<AAAAQn-Sk>.txt** e i documenti dell'evento: «Esegui il ciclo straordinario».",
          "Lo propongono A3 o A4 (segnale critico) o l'analista; decide la funzione di rischio."],
         ["- **Prima: baseline --straordinario --rischi NFR-.. --motivo \"…\" --decisore \"…\"** → decisione archiviata e allegato.",
          "- **Dopo**: precontrollo (facoltativo), **trimestrale --payload A8_<…>.json**, validazione e **valida**; poi schede e report come nel trimestre.",
@@ -630,7 +630,7 @@ def app_nfr():
     IMG.mkdir(parents=True, exist_ok=True)
     shutil.copy2(QUI / "app_finestra.png", IMG / "app_finestra.png")
     s = nuova("L'app NFR: un doppio clic, il prossimo passo")
-    _, _, hh = immagine(s, "app_finestra", 0.5, 1.35, 7.9, 3.2, taglio=(0, 0, 1, 0.6))
+    _, _, hh = immagine(s, "app_finestra", 0.5, 1.35, 7.9, 3.3, taglio=(0, 0, 1, 0.75))
     scheda(s, 0.5, 1.35 + hh + 0.15, 7.9, 5.95 - hh - 0.15, "Che cosa fa (e che cosa no)", [
         "- **Stato e prossimo passo** letti dall'archivio condiviso: uguali per tutti i colleghi.",
         "- Un pulsante per processo: settimana, trimestre, straordinario, validazione, schede, report, riapertura…",
@@ -652,7 +652,7 @@ def cicli():
     s = nuova("Il trimestre passo per passo: chi fa che cosa")
     tabella(s, 0.5, 1.35, 7.7, ["#", "Chi", "Passo"], [
         ["1", "analista", "Registro, riga 4: il trimestre prima è «Ciclo validato»"],
-        ["2", "Python", "baseline → Input_A1_<ciclo>.txt, Input_A3.txt, Input_A4.txt"],
+        ["2", "Python", "baseline → Input_A1_<ciclo>.txt, Input_A3_A4.txt"],
         ["3", "—", "niente da copiare nel Kernel: A3 e A4 hanno l'allegato (AU7)"],
         ["4", "A1", "«Esegui il ciclo» con l'allegato → A1_<ciclo>.json"],
         ["5", "Python · A5", "precontrollo e A5, entrambi facoltativi"],
@@ -664,7 +664,7 @@ def cicli():
     scheda(s, 8.45, 1.35, 4.38, 2.6, "Ogni lunedì (≈ 20 minuti)", [
         "- raccogli_notizie.py (automatico alle 7)",
         "- file a mano in Manuali",
-        "- A3 con Input_A3.txt → A3_<lunedì>.json",
+        "- A3 con Input_A3_A4.txt → A3_<lunedì>.json",
         "- settimanale → notizie nel registro",
         "- facoltativo: valida le notizie",
         "> Nessuno score cambia di settimana in settimana."], VERDE, 12)

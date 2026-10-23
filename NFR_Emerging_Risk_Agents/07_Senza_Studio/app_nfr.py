@@ -74,6 +74,9 @@ class AmbienteTk:
     def copia(self, testo):
         self._main(self.app.metti_negli_appunti, testo)
 
+    def esito_risposta(self, testo, tipo="info"):
+        self.app.coda.put(lambda: self.app.esito_risposta(testo, tipo))
+
     def mostra(self, testo, tipo="info"):
         self.app.coda.put(lambda: self.app.mostra(testo, tipo))
 
@@ -178,17 +181,22 @@ class App:
         altro["menu"] = menu
         altro.pack(side="left", padx=12)
 
-        self.passo = ttk.LabelFrame(self.root, text="Passo in corso", padding=8)
-        self.passo.pack(fill="x", padx=10, pady=8)
+        # Passo in corso e uscita del motore divisi da un divisore trascinabile (richiesta dell'utente del 23/10).
+        divisore = ttk.PanedWindow(self.root, orient="vertical")
+        divisore.pack(fill="both", expand=True, padx=10, pady=(8, 10))
+        self.passo = ttk.LabelFrame(divisore, text="Passo in corso", padding=8)
         self.istruzioni = ttk.Label(self.passo, text="Nessun processo in corso.", justify="left", font=("Segoe UI", 10))
         self.istruzioni.pack(anchor="w", fill="x")
         self.passo.bind("<Configure>", lambda ev: self.istruzioni.config(wraplength=max(300, ev.width - 30)))
-        ttk.Label(self.passo, text="Risposta dell'agente: copiala dalla chat e incollala qui (Ctrl+V)").pack(anchor="w", pady=(6, 0))
-        self.incolla = tk.Text(self.passo, height=3, font=("Consolas", 9), wrap="char")
-        self.incolla.pack(fill="x", pady=(2, 0))
-        self.incolla.bind("<<Paste>>", lambda ev: self.root.after(150, self.usa_incollato))
         bottoni = ttk.Frame(self.passo)
-        bottoni.pack(anchor="w", pady=(6, 0))
+        bottoni.pack(side="bottom", anchor="w", pady=(6, 0))
+        self.esito_incolla = tk.Label(self.passo, text="", font=("Segoe UI", 10, "bold"), anchor="w", justify="left")
+        self.esito_incolla.pack(side="bottom", fill="x", pady=(4, 0))
+        ttk.Label(self.passo, text="Risposta dell'agente: copiala dalla chat e incollala qui (Ctrl+V)").pack(anchor="w", pady=(6, 0))
+        self.incolla = scrolledtext.ScrolledText(self.passo, height=10, font=("Consolas", 9), wrap="char")
+        self.incolla.pack(fill="both", expand=True, pady=(2, 0))
+        self.incolla.bind("<<Paste>>", self.prima_di_incollare)
+        self.consegnato = False                      # il testo nel riquadro e' gia' stato consegnato al processo
         self.b_usa = ttk.Button(bottoni, text="Usa il testo incollato", command=self.usa_incollato)
         self.b_appunti = ttk.Button(bottoni, text="Leggi gli appunti adesso", command=self.leggi_appunti_adesso)
         self.b_file = ttk.Button(bottoni, text="Scegli file...", command=self.scegli_file)
@@ -198,10 +206,14 @@ class App:
             b.pack(side="left", padx=(0, 6))
         self.mostra_bottoni()
 
-        self.fascia = tk.Label(self.root, text="", font=("Segoe UI", 11, "bold"), fg="white", bg="#FFFFFF", anchor="w", padx=10)
-        self.fascia.pack(fill="x", padx=10)
-        self.log = scrolledtext.ScrolledText(self.root, font=("Consolas", 9), height=18, wrap="word")
-        self.log.pack(fill="both", expand=True, padx=10, pady=(4, 10))
+        uscita = ttk.Frame(divisore)
+        self.fascia = tk.Label(uscita, text="", font=("Segoe UI", 11, "bold"), fg="white", bg="#FFFFFF", anchor="w", padx=10)
+        self.fascia.pack(fill="x")
+        self.log = scrolledtext.ScrolledText(uscita, font=("Consolas", 9), height=8, wrap="word")
+        self.log.pack(fill="both", expand=True, pady=(4, 0))
+        divisore.add(self.passo, weight=2)
+        divisore.add(uscita, weight=3)
+        self.root.after(300, lambda: divisore.sashpos(0, int(divisore.winfo_height() * 0.6)))
         self.log.tag_configure("comando", foreground="#1F3864", font=("Consolas", 9, "bold"))
         for tipo, colore in COLORI.items():
             self.log.tag_configure(tipo, foreground=colore, font=("Segoe UI", 10, "bold"))
@@ -326,8 +338,25 @@ class App:
         self.testo_risposta, self.attesa = testo, None
         self.mostra_bottoni()
         if testo is not None:
+            if self.incolla.get("1.0", "end").strip() != testo.strip():      # dagli appunti o da un file: si vede
+                self.incolla.delete("1.0", "end")
+                self.incolla.insert("1.0", testo)
+            self.consegnato = True
+            self.esito_risposta(f"Risposta di {agente} in lettura: {len(testo):,} caratteri...".replace(",", "."), "info")
             self.scrivi_log(f"(risposta di {agente} ricevuta: {len(testo)} caratteri)", "info")
         evento.set()
+
+    def esito_risposta(self, testo, tipo="info"):
+        """La riga sotto il riquadro: che cosa e' stato riconosciuto e salvato (o perche' no)."""
+        self.esito_incolla.config(text=testo, fg=COLORI.get(tipo, COLORI["info"]))
+
+    def prima_di_incollare(self, evento):
+        """Ctrl+V nel riquadro: se c'e' il testo di una risposta gia' consegnata si toglie, cosi' la nuova lo sostituisce;
+        poi, a incolla finita, la risposta passa al processo."""
+        if self.consegnato:
+            self.incolla.delete("1.0", "end")
+            self.consegnato = False
+        self.root.after(150, self.usa_incollato)
 
     def prendi_risposta(self):
         return self.testo_risposta
@@ -345,8 +374,9 @@ class App:
         if not self.attesa or not testo:
             return
         if "{" not in testo and self.attesa[0] != "A4":
+            self.esito_risposta("Il testo incollato non contiene un JSON: copia la risposta intera (pulsante Copia sotto la "
+                                "risposta).", "avviso")
             return                                   # incollato a meta' o testo sbagliato: si aspetta il pulsante
-        self.incolla.delete("1.0", "end")
         self.consegna(testo)
 
     def leggi_appunti_adesso(self):

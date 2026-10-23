@@ -26,15 +26,17 @@ Comandi:
       settimana corrente -> ricalcola, verifica, salva -> archivia in
       Settimane/<lunedi'>/ l'Excel di output e l'output di A3.
   baseline     [--uscita file.json]
-      esporta la baseline corrente (input di A1, A3, A4, A5) e, accanto,
-      l'allegato di A1 Input_A1_<ciclo>.txt: baseline, controlli di A5 e guida
-      di scrittura (D-69; lo riscrive ogni comando che aggiorna la baseline).
+      esporta la baseline corrente e, accanto, gli allegati degli agenti (D-84):
+      Input_A1_<ciclo>.txt (Input_A8_<periodo>.txt per uno straordinario) con
+      baseline, controlli di A5 e guida di scrittura (D-69), Input_A3_A4.txt con
+      la sola baseline (AU7). Li riscrive ogni comando che aggiorna la baseline.
   precontrollo --payload A1.json [--baseline file.json]
       facoltativo, prima di A5 se lo si usa; senza Excel e senza aprire il registro: schema, controlli
       meccanizzati (gli stessi di trimestrale) e parti del razionale (D-68)
       dell'output di A1 rispetto a Baseline_corrente.json; se trova qualcosa
       scrive Cicli/<ciclo>/Correzione_A1_<ciclo>.txt, il messaggio da incollare
-      nella chat di A1 (D-69). Codice 1 se un punto fermerebbe il ciclo.
+      nella chat di A1 (D-69). Codice 1 se un punto fermerebbe il ciclo; se no
+      scrive l'allegato di A5, Input_A5_<ciclo>.txt (output di A1 e baseline, D-84).
   valida       --periodo 2026Q3|2026-10-12 --validatore "Comitato Rischi" [--senza-report]
       legge la griglia del foglio Validazione (una riga per rischio, KRI,
       azione, notizia, D-67): valore giallo uguale alla proposta = Accettato,
@@ -70,7 +72,7 @@ Comandi:
       la storia resta. Archivia Dismissioni/<rischio>_<data>.json.
   schede-input
       dopo la validazione del ciclo corrente: scrive Cicli/<ciclo>/
-      Schede_input_<ciclo>.json, l'unico allegato dell'agente A6 (valori
+      Input_A6_<ciclo>.json, l'unico allegato dell'agente A6 (D-84; valori
       validati, urgenza, variazioni, fonti, azioni, KRI, storia per rischio).
       Non modifica il registro.
   schede       [--payload A6_<ciclo>.json]
@@ -1924,13 +1926,13 @@ def _scrivi_json(percorso, dati):
 def _scrivi_baseline(conf, dati):
     """Baseline_corrente in due copie identiche: .json per lo script e per gli
     allegati, .txt per chi la legge a mano. Accanto, gli allegati degli agenti:
-    Input_A1_<ciclo>.txt con baseline, controlli di A5 e guida di scrittura (D-69),
-    Input_A3.txt e Input_A4.txt con la sola baseline (AU7, 23/10/2026: non piu'
-    dalla knowledge). Un file del kernel mancante non ferma niente (la baseline
+    Input_A1_<ciclo>.txt (Input_A8_<periodo>.txt per uno straordinario) con baseline,
+    controlli di A5 e guida di scrittura (D-69), Input_A3_A4.txt con la sola baseline
+    (AU7: non piu' dalla knowledge; nomi D-84). Un file del kernel mancante non ferma niente (la baseline
     basta ad A1): avviso."""
     percorso = _scrivi_json(_cartella(conf) / "Baseline_corrente.json", dati)
     shutil.copy2(percorso, percorso.with_suffix(".txt"))
-    input_a1.scrivi_allegati_baseline(_cartella(conf), dati, dt.date.today().isoformat())   # AU7: allegati di A3 e A4
+    input_a1.scrivi_allegato_a3_a4(_cartella(conf), dati, dt.date.today().isoformat())   # AU7: allegato di A3 e A4
     allegato, mancanti = input_a1.scrivi(_cartella(conf), dati, conf["kernel"], dt.date.today().isoformat())
     if mancanti:
         print(f"Avviso: nel kernel ({conf['kernel']}) mancano {', '.join(mancanti)}: l'allegato di A1 {allegato.name} ha "
@@ -2066,11 +2068,16 @@ def comando_precontrollo(arg, conf):
     da_correggere, da_verificare = conta(esito)
     file = conf["cartella_uscita"] / "Cicli" / ciclo / f"Correzione_A1_{ciclo}.txt"
     firma = f"Impronta dell'output di {agente_di(ciclo)}: {impronta(payload)}"
+    # D-84: con nessun punto da correggere l'output e' quello che A5 (facoltativo) puo' esaminare: il suo allegato.
+    allegato_a5 = (input_a1.scrivi_a5(conf["cartella_uscita"], payload, baseline, dt.date.today().isoformat())
+                   if not da_correggere else None)
+    if da_correggere:
+        input_a1.togli_a5(conf["cartella_uscita"], ciclo)
     if not da_correggere and not da_verificare:
         if file.exists():
             file.unlink()                            # messaggio di un output precedente: non vale piu'
         print(f"{riga_esito(ciclo, esito)} Ora il comando trimestrale; se si usa A5 (facoltativo), prima allegargli "
-              f"l'output di {agente_di(ciclo)} e Baseline_corrente.json e scrivere \"Esegui i nove controlli\".\n{firma}")
+              f"{allegato_a5.name} e scrivere \"Esegui i nove controlli\".\n{firma}")
         return 0
     testo = messaggio_correzione(ciclo, esito)
     _cartella(conf, "Cicli", ciclo)
@@ -2081,7 +2088,8 @@ def comando_precontrollo(arg, conf):
           + (f"Dopo la risposta di {agente_di(ciclo)}: salvarla di nuovo e ripetere il precontrollo. Il registro non e' stato toccato."
              if da_correggere else
              "Nessun punto ferma il ciclo: si puo' lanciare trimestrale (questi punti andranno nella colonna Segnalazioni "
-             f"del foglio Validazione), oppure chiedere prima ad {agente_di(ciclo)} di rivederli."))
+             f"del foglio Validazione), oppure chiedere prima ad {agente_di(ciclo)} di rivederli. Allegato per A5, se lo "
+             f"usi: {allegato_a5}"))
     return 1 if da_correggere else 0
 
 
@@ -2110,7 +2118,7 @@ def comando_trimestrale(arg, conf):
         if not file_dec.exists():
             raise Fermo(f"{ciclo} e' un ciclo straordinario, ma non c'e' la decisione ({file_dec}). Prima: python "
                         "esegui_ciclo_locale.py baseline --straordinario --rischi NFR-nn,... --motivo \"...\" --decisore \"...\", "
-                        "poi A1 con l'allegato Input_A1 di quel periodo.")
+                        "poi A8 con l'allegato Input_A8 di quel periodo.")
         decisione = carica_json(file_dec)
     # Baseline letta dal workbook in sola lettura: nessun byte scritto finche'
     # i controlli non sono superati.
@@ -2639,7 +2647,7 @@ def comando_baseline(arg, conf):
         print(f"CICLO STRAORDINARIO {decisione['periodo']} deciso da {decisione['decisore']} (D-75): "
               f"{rischi_straordinario(decisione)}; data di riferimento {decisione['data_riferimento']}.\n"
               f"Decisione archiviata: {archivio}\n"
-              f"Prossimi passi: A8 Evento critico con l'allegato Input_A1_{decisione['periodo']}.txt e i documenti "
+              f"Prossimi passi: A8 Evento critico con l'allegato Input_A8_{decisione['periodo']}.txt e i documenti "
               f"sull'evento (D-77), poi (facoltativo) python esegui_ciclo_locale.py precontrollo --payload "
               f"A8_{decisione['periodo']}.json e trimestrale --payload A8_{decisione['periodo']}.json, poi la validazione (solo i rischi rivalutati e "
               "quelli nuovi).")
@@ -2652,7 +2660,7 @@ def comando_baseline(arg, conf):
     if not arg.uscita:
         print(f"Allegato per {agente_di(dati.get('ciclo_da_valutare'))}: {uscita.parent / input_a1.nome_file(dati)} "
               "(baseline, controlli di A5 e guida di scrittura)")
-        print("Allegati per A3 e A4 (AU7): " + ", ".join(str(uscita.parent / n) for n in input_a1.ALLEGATI_BASELINE.values()))
+        print(f"Allegato per A3 e A4 (AU7): {uscita.parent / input_a1.FILE_A3_A4}")
 
 
 def _input_schede(s, mappa):
@@ -2807,7 +2815,7 @@ def comando_schede_input(arg, conf):
         s.ricalcola()
         dati = _input_schede(s, mappa)
     ciclo = dati["ciclo"]
-    uscita = _scrivi_json(_cartella(conf, "Cicli", ciclo) / f"Schede_input_{ciclo}.json", dati)
+    uscita = _scrivi_json(_cartella(conf, "Cicli", ciclo) / input_a1.NOME_A6.format(ciclo=ciclo), dati)
     print(f"Input delle schede del ciclo {ciclo} ({len(dati['rischi'])} rischi): {uscita}\n"
           f"Allegarlo, da solo, all'agente A6; salvarne l'output come A6_{ciclo}.json e lanciare:\n"
           f"  python esegui_ciclo_locale.py schede --payload A6_{ciclo}.json")
@@ -2832,7 +2840,7 @@ def comando_schede(arg, conf):
         if problemi:
             raise Fermo("Output di A6 non coerente con i dati validati (nessun file scritto):\n  - " + "\n  - ".join(problemi))
     cartella = _cartella(conf, "Cicli", ciclo)
-    _scrivi_json(cartella / f"Schede_input_{ciclo}.json", dati)
+    _scrivi_json(cartella / input_a1.NOME_A6.format(ciclo=ciclo), dati)
     if uscita_a6:
         _scrivi_json(cartella / f"A6_{ciclo}.json", uscita_a6)
     file = schede.scrivi_file_schede(dati, uscita_a6, cartella / f"Schede_{ciclo}.xlsx",

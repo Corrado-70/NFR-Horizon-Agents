@@ -358,14 +358,15 @@ def test_flussi(e):
 
         # settimanale: fermo, correzione per A3, poi scritta
         a3 = carica(DATI / "run_A3_2026-10-12.json")
-        _scrivi(u / "Input_A3.txt", "allegato di A3")
+        _scrivi(u / "Input_A3_A4.txt", "allegato di A3 e A4")
         amb = AmbienteFinto(u, risposte=[json.dumps(a3), json.dumps(a3)], conferme=[True, False],
                             esiti={"raccogli_notizie": [(0, "Raccolta scritta")],
                                    "settimanale": [(1, "FERMATO — il workbook non e' stato modificato.\nid_notizia ripetuti: ['N-1']"),
                                                    (0, "Settimana scritta")]})
         flussi.Flussi(amb, dict(conf, raccolta_su_questo_pc=True), cartella_allegati=Path(tmp) / "allegati").settimanale()
         e.verifica([c[0] for c in amb.comandi] == ["raccogli_notizie", "settimanale", "settimanale"]
-                   and any("id_notizia ripetuti" in a for a in amb.appunti) and amb.appunti[0] == "Esegui l'aggiornamento settimanale",
+                   and any("id_notizia ripetuti" in a for a in amb.appunti) and amb.appunti[0] == "Esegui l'aggiornamento settimanale"
+                   and (Path(tmp) / "allegati" / "A3" / "Input_A3_A4.txt").exists(),
                    "flusso settimanale: raccolta, A3 con l'allegato, fermo con la correzione per A3, poi scritta",
                    f"{amb.comandi}\n{amb.appunti}")
 

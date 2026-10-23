@@ -219,7 +219,7 @@ in `News_Inbox`.
     modificano nell'interfaccia senza traccia).
 11. [Piattaforma, facoltativo ma consigliato] **Schede dei rischi** (D-40):
     `esegui_ciclo_locale.py schede-input` scrive
-    `Cicli/<ciclo>/Schede_input_<ciclo>.json` dal registro validato (si ferma
+    `Cicli/<ciclo>/Input_A6_<ciclo>.json` dal registro validato (si ferma
     se il ciclo ha ancora decisioni da prendere); lo si allega, da solo,
     all'agente **A6**; il suo output si salva come `A6_<ciclo>.json` e
     `esegui_ciclo_locale.py schede --payload A6_<ciclo>.json` lo controlla

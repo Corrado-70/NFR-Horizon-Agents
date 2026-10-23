@@ -67,6 +67,12 @@ class Flussi:
         self.allegati = Path(cartella_allegati or Path(os.environ.get("USERPROFILE") or Path.home()) / "NFR_Da_allegare")
 
     # ------------------------------------------------------------ mattoni
+    def esito(self, testo, tipo):
+        """La riga sotto il riquadro della risposta (se l'Ambiente la ha: la finestra si', il collaudo no)."""
+        funzione = getattr(self.amb, "esito_risposta", None)
+        if funzione:
+            funzione(testo, tipo)
+
     def motore(self, *argomenti, script=None):
         """Lancia un comando; mostra l'esito; restituisce il dict dell'esecutore."""
         esito = self.amb.esegui([str(a) for a in argomenti], script)
@@ -120,16 +126,21 @@ class Flussi:
             r = ingresso.ricevi(ingresso.unisci(parti) if len(parti) > 1 else testo, self.schemi, self.uscita, atteso,
                                 self.origine)
             if r["stato"] == ingresso.TRONCATA:
+                self.esito(f"Risposta tagliata ({sum(len(p) for p in parti):,} caratteri finora): nella stessa chat scrivi "
+                           "\"continua\" (e' negli appunti) e incolla qui il resto.".replace(",", "."), "avviso")
                 self.amb.copia("continua")
                 istruzioni = (f"La risposta di {atteso} e' tagliata: scrivi \"continua\" nella stessa chat (e' negli appunti), "
                               "poi premi Copia sotto il resto della risposta.")
                 continue
             if r["agente"] != atteso:
+                self.esito(r["avviso"] or f"Non e' la risposta di {atteso}.", "avviso")
                 self.amb.mostra(r["avviso"] or f"Non e' la risposta di {atteso}.", "avviso")
                 parti = []
                 continue
             if r["errori"] and atteso not in ("A1", "A8"):     # A1 e A8: lo schema lo guarda il precontrollo
                 self.amb.copia(ingresso.messaggio_correzione(atteso, r["errori"]))
+                self.esito(f"Risposta di {atteso} salvata ma non rispetta lo schema ({len(r['errori'])} punti): il "
+                           "messaggio di correzione e' negli appunti.", "avviso")
                 self.amb.mostra(f"La risposta di {atteso} non rispetta lo schema ({len(r['errori'])} punti): il messaggio "
                                 "di correzione e' negli appunti.", "avviso")
                 parti = []
@@ -137,6 +148,9 @@ class Flussi:
                               "Poi premi Copia sotto la risposta.")
                 continue
             stato.segna(self.uscita, periodo, f"{atteso} ricevuto", self.conf.get("utente"), f"{r['file']} ({self.origine})")
+            lunghezza = len(ingresso.unisci(parti) if len(parti) > 1 else testo)
+            self.esito(f"Ricevuto: {atteso} ({self.origine}), {lunghezza:,} caratteri, salvato in ".replace(",", ".")
+                       + (f"{Path(r['file']).parent.name}\\{Path(r['file']).name}" if r.get("file") else "In_arrivo"), "ok")
             return r
 
     def gia_copiata(self, agente, nome):
@@ -174,7 +188,7 @@ class Flussi:
             r = self.chiedi_ad_agente(agente, [], "", periodo, nuova_chat=False)
         a5 = None
         if con_a5:
-            a5 = self.chiedi_ad_agente("A5", [r["file"], self.uscita / "Baseline_corrente.json"], MESSAGGI["A5"], periodo)
+            a5 = self.chiedi_ad_agente("A5", [self.uscita / f"Input_A5_{periodo}.txt"], MESSAGGI["A5"], periodo)
         while True:
             argomenti = ["trimestrale", "--payload", r["file"]] + (["--challenger", a5["file"]] if a5 else [])
             es = self.motore(*argomenti)
@@ -183,7 +197,7 @@ class Flussi:
             self.amb.copia(self.correzione_a1(periodo).read_text(encoding="utf-8"))
             r = self.chiedi_ad_agente(agente, [], "", periodo, nuova_chat=False)
             if a5:
-                a5 = self.chiedi_ad_agente("A5", [r["file"], self.uscita / "Baseline_corrente.json"], MESSAGGI["A5"], periodo)
+                a5 = self.chiedi_ad_agente("A5", [self.uscita / f"Input_A5_{periodo}.txt"], MESSAGGI["A5"], periodo)
 
     def trimestrale(self, con_a5=False):
         s = stato.leggi(self.conf)
@@ -193,7 +207,7 @@ class Flussi:
         if self.motore("baseline")["fascia"] != "OK":
             return None
         ciclo = stato.leggi(self.conf)["da_valutare"]
-        es = self.valutazione(ciclo, "A1", [self.uscita / f"Input_A1_{ciclo}.txt"], con_a5)
+        es = self.valutazione(ciclo, "A1", [self.uscita / f"Input_A1_{ciclo}.txt"], con_a5)   # nomi: input_a1, D-84
         if es["fascia"] == "OK" and self.amb.conferma(f"Ciclo {ciclo} scritto. Passare alla validazione adesso?"):
             return self.validazione()
         return es
@@ -211,8 +225,8 @@ class Flussi:
         if self.motore(*argomenti)["fascia"] != "OK":
             return None
         periodo = stato.leggi(self.conf)["da_valutare"]
-        self.amb.mostra(f"Per A8 servono anche i documenti dell'evento: trascinali nella chat insieme a Input_A1_{periodo}.txt.", "info")
-        es = self.valutazione(periodo, "A8", [self.uscita / f"Input_A1_{periodo}.txt"], con_a5)
+        self.amb.mostra(f"Per A8 servono anche i documenti dell'evento: trascinali nella chat insieme a Input_A8_{periodo}.txt.", "info")
+        es = self.valutazione(periodo, "A8", [self.uscita / f"Input_A8_{periodo}.txt"], con_a5)
         if es["fascia"] == "OK" and self.amb.conferma(f"Straordinario {periodo} scritto. Passare alla validazione adesso?"):
             return self.validazione()
         return es
@@ -245,7 +259,7 @@ class Flussi:
         ciclo = stato.leggi(self.conf)["ciclo_corrente"]
         if self.amb.conferma("Usare A6 per i testi delle schede? (No = schede con i testi di A1 dal registro)"):
             r = (self.gia_copiata("A6", f"A6_{ciclo}.json")
-                 or self.chiedi_ad_agente("A6", [self.uscita / "Cicli" / ciclo / f"Schede_input_{ciclo}.json"], MESSAGGI["A6"], ciclo))
+                 or self.chiedi_ad_agente("A6", [self.uscita / "Cicli" / ciclo / f"Input_A6_{ciclo}.json"], MESSAGGI["A6"], ciclo))
             while True:
                 es = self.motore("schede", "--payload", r["file"])
                 if es["fascia"] != "FERMATO":
@@ -284,7 +298,7 @@ class Flussi:
                                  "Si' per proseguire con A3."):
             return None
         r = (self.gia_copiata("A3", f"A3_{lun}.json")
-             or self.chiedi_ad_agente("A3", [self.uscita / "Input_A3.txt"], MESSAGGI["A3"], lun))
+             or self.chiedi_ad_agente("A3", [self.uscita / "Input_A3_A4.txt"], MESSAGGI["A3"], lun))
         while True:
             es = self.motore("settimanale", "--payload", r["file"])
             if es["fascia"] != "FERMATO":
@@ -320,7 +334,7 @@ class Flussi:
                            "--decisore", dati["decisore"])
 
     def parere_a4(self):
-        r = self.chiedi_ad_agente("A4", [self.uscita / "Input_A4.txt"], MESSAGGI["A4"], f"A4_{dt.date.today():%Y%m%d}")
+        r = self.chiedi_ad_agente("A4", [self.uscita / "Input_A3_A4.txt"], MESSAGGI["A4"], f"A4_{dt.date.today():%Y%m%d}")
         self.amb.mostra(f"Parere archiviato: {r['file']}", "ok")
         if ingresso.proposta_straordinario(Path(r["file"]).read_text(encoding="utf-8")):
             self.amb.mostra("A4 propone un CICLO STRAORDINARIO: decide la funzione di rischio (pulsante Straordinario).", "avviso")
@@ -356,7 +370,7 @@ class Flussi:
     def _riprendi_straordinario(self):
         """Uno straordinario gia' deciso (baseline --straordinario fatto): da A8 in poi."""
         periodo = stato.leggi(self.conf)["da_valutare"]
-        es = self.valutazione(periodo, "A8", [self.uscita / f"Input_A1_{periodo}.txt"])
+        es = self.valutazione(periodo, "A8", [self.uscita / f"Input_A8_{periodo}.txt"])
         if es["fascia"] == "OK" and self.amb.conferma(f"Straordinario {periodo} scritto. Passare alla validazione adesso?"):
             return self.validazione()
         return es

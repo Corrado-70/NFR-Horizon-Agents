@@ -247,7 +247,7 @@ def main():
               "Primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027).",
               "--decisore", "Comitato Rischi", "--data", "2027-01-20")
     shutil.copy2(ARCHIVIO / "Baseline_corrente.json", AGENTI / "Baseline_per_2026Q4-S1.json")
-    shutil.copy2(ARCHIVIO / "Input_A1_2026Q4-S1.txt", AGENTI / "Input_A1_2026Q4-S1.txt")
+    shutil.copy2(ARCHIVIO / "Input_A8_2026Q4-S1.txt", AGENTI / "Input_A8_2026Q4-S1.txt")   # D-84: allegato di A8
     print("=== Ciclo straordinario 2026Q4-S1: precontrollo, scrittura (A8 rivaluta solo NFR-01 e scrive l'analisi dell'evento, senza A5), validazione")
     strumento("precontrollo", "--payload", AGENTI / "A8_2026Q4-S1.json")
     strumento("trimestrale", "--payload", AGENTI / "A8_2026Q4-S1.json")

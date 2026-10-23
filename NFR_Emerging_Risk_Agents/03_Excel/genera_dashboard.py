@@ -3950,7 +3950,7 @@ def foglio_guida(wb):
     testo("QUANDO SI LANCIANO A5 E A6", "trimestrale")
     for t in [
         "A5 (challenger), facoltativo (D-71): se lo si usa, dopo A1 e prima del comando trimestrale, allegando SOLO l'output "
-        "di A1 e Baseline_corrente.json, e di nuovo ogni volta che A1 viene rifatto (vale solo per l'output esaminato). I "
+        "di A1 e la baseline (Input_A5_<ciclo>.txt, D-84), e di nuovo ogni volta che A1 viene rifatto (vale solo per l'output esaminato). I "
         "suoi rilievi non fermano il ciclo: vanno nella colonna Segnalazioni del foglio Validazione, e un suo Bloccante "
         "rende obbligatoria la Motivazione del rischio. Lo script ferma solo i difetti di integrita' del registro. Non si "
         "lancia per le settimane, per A4 ne' dopo la validazione.",

@@ -441,7 +441,7 @@ def schede_a6(e, b, s):
     from openpyxl import load_workbook
     prima = sha(b.wb)
     codice, out = b.esegui("schede-input")
-    percorso = b.uscita / "Cicli" / "2026Q3" / "Schede_input_2026Q3.json"
+    percorso = b.uscita / "Cicli" / "2026Q3" / "Input_A6_2026Q3.json"
     ingresso = carica(percorso) if percorso.exists() else {"rischi": []}
     ordine = [x[0] for x in s["classifica"]]
     r01 = next((r for r in ingresso["rischi"] if r["id_rischio"] == "NFR-01"), {})
@@ -1205,10 +1205,10 @@ def piu_analisti(e):
         codice, out = b.esegui("baseline")
         base = carica(b.uscita / "Baseline_corrente.json")
         import input_a1
-        a3, a4 = (b.uscita / "Input_A3.txt").read_text(encoding="utf-8"), (b.uscita / "Input_A4.txt").read_text(encoding="utf-8")
-        e.verifica(codice == 0 and input_a1.leggi_baseline(a3) == base and input_a1.leggi_baseline(a4) == base
-                   and a3.startswith("INPUT DI A3") and a4.startswith("INPUT DI A4") and "Input_A3.txt" in out,
-                   "15. baseline scrive gli allegati di A3 e A4 (AU7) con la stessa baseline del .json", out)
+        a3_a4 = (b.uscita / "Input_A3_A4.txt").read_text(encoding="utf-8")
+        e.verifica(codice == 0 and input_a1.leggi_baseline(a3_a4) == base and a3_a4.startswith("INPUT DI A3 E A4")
+                   and "Input_A3_A4.txt" in out and not (b.uscita / "Input_A3.txt").exists(),
+                   "15. baseline scrive l'allegato unico di A3 e A4 (AU7, D-84) con la stessa baseline del .json", out)
         codice, out = b.esegui("trimestrale", "--payload", DATI / "run1_A1_2026Q3.json", "--challenger", DATI / "run_A5_2026Q3.json")
         prompt = b.uscita / "Cicli" / "2026Q3" / "Prompt_in_uso"
         e.verifica(codice == 0 and sorted(f.name for f in prompt.glob("A*.md")) == sorted(f.name for f in (CAMPO.parent / "02_Agenti").glob("A*.md")),
@@ -1406,11 +1406,11 @@ def straordinario(e, b):
                            "--decisore", "Comitato Rischi", "--data", "2027-01-20")
     base = carica(b.uscita / "Baseline_corrente.json")
     decisione = b.uscita / "Cicli" / "2026Q4-S1" / "Straordinario_2026Q4-S1.json"
-    allegato = b.uscita / "Input_A1_2026Q4-S1.txt"
+    allegato = b.uscita / "Input_A8_2026Q4-S1.txt"            # D-84: l'allegato dello straordinario e' di A8
     e.verifica(codice == 0 and decisione.exists() and base["ciclo_da_valutare"] == "2026Q4-S1"
                and base["data_riferimento"] == "2027-01-20" and base["straordinario"]["rischi_da_rivalutare"] == ["NFR-01"]
                and allegato.exists() and "CICLO STRAORDINARIO 2026Q4-S1" in allegato.read_text(encoding="utf-8"),
-               "8s. baseline --straordinario: periodo 2026Q4-S1, decisione archiviata, baseline e allegato di A1 con i rischi "
+               "8s. baseline --straordinario: periodo 2026Q4-S1, decisione archiviata, baseline e allegato di A8 con i rischi "
                "da rivalutare", out)
     run4 = carica(DATI / "run4_A1_2026Q4-S1.json")
     estraneo = json.loads(json.dumps(run4))
@@ -1481,7 +1481,7 @@ def censimento_a8(e, b):
                            "Attacco a un fornitore di servizi di firma digitale usato da molte banche italiane.",
                            "--decisore", "Comitato Rischi", "--data", "2027-02-10")
     base = carica(b.uscita / "Baseline_corrente.json")
-    allegato = (b.uscita / "Input_A1_2026Q4-S2.txt").read_text(encoding="utf-8")
+    allegato = (b.uscita / "Input_A8_2026Q4-S2.txt").read_text(encoding="utf-8")   # D-84: allegato di A8
     e.verifica(codice == 0 and base["straordinario"]["rischi_da_rivalutare"] == [] and "solo censimento" in out
                and "censisci SOLO i rischi nuovi" in allegato and "A8 Evento critico" in out,
                "8a. baseline --straordinario senza --rischi: censimento, allegato che lo dice in testa, prossimo passo A8", out)
@@ -1728,7 +1728,7 @@ def catena(e):
                        and r["Periodo_Valutazione"] == "2026Q3"),   # i riportati (D-79) sono gia' validati
                    "2b. Registro e RiskRegister dicono che il ciclo non e' validato", s["f8"])
         codice, out = b.esegui("schede-input")
-        e.verifica(codice == 1 and "righe da validare" in out and not (b.uscita / "Cicli" / "2026Q3" / "Schede_input_2026Q3.json").exists(),
+        e.verifica(codice == 1 and "righe da validare" in out and not (b.uscita / "Cicli" / "2026Q3" / "Input_A6_2026Q3.json").exists(),
                    "2b. le schede non si fanno su un ciclo non validato (schede-input fermo)", out)
         codice, out = b.esegui("report")
         e.verifica(codice == 1 and "righe da validare" in out and not (b.uscita / "Cicli" / "2026Q3" / "Report_comitato_2026Q3.pdf").exists(),

@@ -63,10 +63,10 @@ che riscriverebbe le istruzioni).
 | Agente | Istruzioni (incollare il file intero) | Knowledge | Capability | Modalita' |
 |---|---|---|---|---|
 | A1 Horizon Scanner | `02_Agenti/A1_Horizon_Scanner.md` | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox`, i siti `sito_agente: si` di `fonti.md` | nessuna: **spegnere** "Create documents, charts, and code" e "Create images" | Think deeper |
-| A3 Interim Update | `02_Agenti/A3_Interim_Update.md` | `News_Inbox`, `Analisi_Interne`, `Analisi_Esterne`, i siti `sito_agente: si` di `fonti.md` (la baseline arriva come allegato `Input_A3.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
-| A4 News Assessor | `02_Agenti/A4_News_Assessor.md` | nessuna (la baseline arriva come allegato `Input_A4.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
+| A3 Interim Update | `02_Agenti/A3_Interim_Update.md` | `News_Inbox`, `Analisi_Interne`, `Analisi_Esterne`, i siti `sito_agente: si` di `fonti.md` (la baseline arriva come allegato `Input_A3_A4.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
+| A4 News Assessor | `02_Agenti/A4_News_Assessor.md` | nessuna (la baseline arriva come allegato `Input_A3_A4.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
 | A5 Challenger (facoltativo) | `02_Agenti/A5_Challenger.md` | **nessuna** (riceve solo gli allegati) | nessuna (spegnere entrambi) | Think deeper |
-| A6 Schede dei rischi | `02_Agenti/A6_Schede.md` | **nessuna** (riceve solo `Schede_input_<ciclo>.json`) | nessuna (spegnere entrambi) | Think deeper |
+| A6 Schede dei rischi | `02_Agenti/A6_Schede.md` | **nessuna** (riceve solo `Input_A6_<ciclo>.json`) | nessuna (spegnere entrambi) | Think deeper |
 | A7 Assistente del registro | `02_Agenti/A7_Assistente_registro.md` | `Kernel/Spiegazioni` (scritta da `trimestrale`, `valida`, `dismetti`), `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | nessuna (spegnere entrambi) | Think deeper |
 
 **Capability**: il code interpreter e' acceso di default. Con la configurazione
@@ -83,7 +83,7 @@ per l'elenco delle fonti: codici e nomi sono nelle istruzioni di A3
 citerebbe fonti fuori elenco (che la scrittura poi rifiuta).
 
 A3: niente prompt schedulato (dal 23/10/2026, AU7: la baseline arriva solo come
-allegato `Input_A3.txt`, che un prompt schedulato non porta); si lancia dall'app o a
+allegato `Input_A3_A4.txt`, che un prompt schedulato non porta); si lancia dall'app o a
 mano. Per ogni agente copiare il link ("..." -> Copia collegamento) in
 `configurazione.json`, `link_agenti`: l'app apre l'agente giusto. A4: condividere l'agente solo con il
 gruppo della funzione di rischio. A6: condividerlo con chi prepara il report
@@ -148,7 +148,7 @@ library `Kernel`: le regole non sono copiate qui.
 ## Procedura trimestrale
 
 1. `python esegui_ciclo_locale.py baseline`. Accanto alla baseline lo script
-   scrive gli allegati `Input_A3.txt` e `Input_A4.txt` per A3 e A4 (AU7, D-83:
+   scrive l'allegato `Input_A3_A4.txt` per A3 e A4 (AU7, D-83:
    non si copia piu' niente nella library `Kernel`) e `Input_A1_<ciclo>.txt` (D-69):
    baseline, controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo
    delle istruzioni di A5) e guida di scrittura (`01_Kernel/guida_scrittura_A1.md`).
@@ -165,7 +165,7 @@ library `Kernel`: le regole non sono copiate qui.
    fermerebbero il ciclo, 0 altrimenti (anche con soli punti da verificare).
    Stampa anche l'impronta dell'output controllato (D-70), la stessa che
    stampa la skill di Copilot Studio sullo stesso output.
-3. Facoltativo (D-71), in A5: allegare `A1_<ciclo>.json` e `Baseline_corrente.json`,
+3. Facoltativo (D-71), in A5: allegare `Input_A5_<ciclo>.txt` (output di A1 e baseline, scritto dal precontrollo),
    scrivere "Esegui i nove controlli". Salvare la risposta come `A5_<ciclo>.json`.
 4. `python esegui_ciclo_locale.py trimestrale --payload A1_<ciclo>.json [--challenger A5_<ciclo>.json]`
    - codice 1: fermato, workbook intatto. Ferma solo un difetto di integrita'
@@ -211,7 +211,7 @@ library `Kernel`: le regole non sono copiate qui.
 6. Archiviare in `Archivio_Cicli` il testo dei prompt in uso.
 7. **Schede dei rischi** (D-40): `python esegui_ciclo_locale.py schede-input`
    (si ferma se il ciclo non e' validato) scrive
-   `Cicli/<ciclo>/Schede_input_<ciclo>.json`; in A6 allegarlo, da solo, e
+   `Cicli/<ciclo>/Input_A6_<ciclo>.json`; in A6 allegarlo, da solo, e
    scrivere "Scrivi le schede"; salvare la risposta come `A6_<ciclo>.json`;
    `python esegui_ciclo_locale.py schede --payload A6_<ciclo>.json` controlla
    l'output (schema; stessi rischi, quattro dimensioni, fonti identiche, nessun
@@ -226,7 +226,7 @@ library `Kernel`: le regole non sono copiate qui.
 ## Ciclo straordinario (su decisione della funzione di rischio, D-75)
 
 `python esegui_ciclo_locale.py baseline --straordinario [--rischi NFR-nn[,NFR-mm]] --motivo "..." --decisore "<chi>" [--data AAAA-MM-GG]`
-archivia la decisione e scrive baseline e `Input_A1_<AAAAQn-Sk>.txt`; A8 Evento critico (D-77),
+archivia la decisione e scrive baseline e `Input_A8_<AAAAQn-Sk>.txt`; A8 Evento critico (D-77),
 con l'allegato e i documenti dell'evento, "Esegui il ciclo straordinario" rivaluta solo quei rischi,
 censisce i nuovi creati dall'evento (senza `--rischi`: solo censimento) e scrive `analisi_evento`;
 poi `precontrollo` (facoltativo) e `trimestrale --payload A8_<AAAAQn-Sk>.json` (riporta gli altri rischi dal
@@ -248,7 +248,7 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
 0. La raccolta automatica (`raccogli_notizie.py`) ha scritto la
    `Raccolta_<data>.txt` della settimana; gli analisti salvano in `Manuali/`
    cio' che viene dai siti senza feed e dalle fonti a licenza.
-1. A3, chat nuova, con l'allegato `Input_A3.txt` (la baseline, AU7): "Esegui
+1. A3, chat nuova, con l'allegato `Input_A3_A4.txt` (la baseline, AU7): "Esegui
    l'aggiornamento settimanale". Il prompt schedulato non porta l'allegato e
    risponde "Baseline mancante". Salvare il JSON della risposta come
    `A3_<AAAA-MM-GG>.json`.

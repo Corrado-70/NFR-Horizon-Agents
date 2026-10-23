@@ -6,7 +6,7 @@ Contiene, copiati senza modifiche, i moduli valida_output.py, radar.py, controll
 che la Banca lancia sul PC (D-69, D-70).
 
 Uso:
-    python precontrollo_nfr.py <output di A1, A1_<ciclo>.json> <Input_A1_<ciclo>.txt oppure Baseline_corrente.json>
+    python precontrollo_nfr.py <output di A1, A1_<ciclo>.json> <Input_A1_<ciclo>.txt, Input_A8_<periodo>.txt oppure Baseline_corrente.json>
     python precontrollo_nfr.py --verifica      versione e impronta di ogni modulo contenuto
 Stampa l'esito (prima riga) e l'impronta dell'output di A1 (seconda riga, la stessa del comando sul PC); se trova
 qualcosa scrive accanto all'output Correzione_A1_<ciclo>.txt, il messaggio di correzione per A1. Codice di uscita:
@@ -20,7 +20,7 @@ import sys
 import types
 from pathlib import Path
 
-VERSIONE = "13c0ee35bae8"
+VERSIONE = "3ce622e0d019"
 
 SCHEMA_A1 = r'''{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1608,7 +1608,15 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
     wb.save(percorso)
     return percorso
 ''',
-    "input_a1": r'''"""Allegato di A1: baseline, controlli di A5 e guida di scrittura in un file solo.
+    "input_a1": r'''"""Allegati degli agenti: Input_<agente> (D-84, 23/10/2026).
+
+  Input_A1_<ciclo>.txt     A1: baseline, controlli di A5 e guida di scrittura (D-69);
+  Input_A8_<periodo>.txt   A8, ciclo straordinario AAAAQn-Sk: lo stesso contenuto, con il blocco dello straordinario;
+  Input_A3_A4.txt          A3 e A4: la sola baseline (AU7);
+  Input_A5_<ciclo>.txt     A5: l'output di A1 (o A8) e la baseline, scritto dal precontrollo;
+  Input_A6_<ciclo>.json    A6: i dati validati del ciclo (comando schede-input, schede.py).
+Tutti accanto a Baseline_corrente.json nella cartella di uscita, tranne quello di A6 (cartella del ciclo); di ogni
+tipo resta solo quello giusto: i vecchi si tolgono.
 
 D-69 (02/10/2026). Le istruzioni di A1 sono al limite degli 8.000 caratteri:
 i controlli che A5 applichera' al suo output (01_Kernel/controlli_A5.md) e la
@@ -1631,6 +1639,7 @@ from pathlib import Path
 FILE_CONTROLLI = "controlli_A5.md"
 FILE_GUIDA = "guida_scrittura_A1.md"
 PREFISSO = "Input_A1"
+PREFISSO_STRAORDINARIO = "Input_A8"                  # D-84: l'allegato dello straordinario e' di A8 (D-77)
 INIZIO_BASELINE = "=== 1. BASELINE ==="
 
 
@@ -1645,9 +1654,13 @@ def testo_controlli(kernel):
     return testo_kernel(Path(kernel) / FILE_CONTROLLI)
 
 
+def prefisso(ciclo):
+    return PREFISSO_STRAORDINARIO if "-S" in str(ciclo or "") else PREFISSO
+
+
 def nome_file(baseline):
     ciclo = baseline.get("ciclo_da_valutare")
-    return f"{PREFISSO}_{ciclo}.txt" if ciclo else f"{PREFISSO}.txt"
+    return f"{prefisso(ciclo)}_{ciclo}.txt" if ciclo else f"{PREFISSO}.txt"
 
 
 def componi(baseline, kernel, oggi):
@@ -1657,7 +1670,8 @@ def componi(baseline, kernel, oggi):
     kernel = Path(kernel)
     mancanti = [n for n in (FILE_CONTROLLI, FILE_GUIDA) if not (kernel / n).exists()]
     ciclo = baseline.get("ciclo_da_valutare") or "da valutare"
-    parti = [f"INPUT DI A1 PER IL CICLO {ciclo}: scritto da esegui_ciclo_locale.py il {oggi}, da non modificare a mano.",
+    agente = prefisso(baseline.get("ciclo_da_valutare")).split("_")[1]
+    parti = [f"INPUT DI {agente} PER IL CICLO {ciclo}: scritto da esegui_ciclo_locale.py il {oggi}, da non modificare a mano.",
              "Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se usato) applicano al tuo "
              "output; 3. GUIDA DI SCRITTURA.",
              "", INIZIO_BASELINE, json.dumps(baseline, ensure_ascii=False, indent=2)]
@@ -1681,8 +1695,8 @@ def componi(baseline, kernel, oggi):
 
 
 def leggi_baseline(testo):
-    """La baseline dal testo di un allegato Input_A1 (il JSON della parte 1): la skill di Copilot Studio riceve solo
-    l'allegato (D-70). ValueError se il testo non e' un allegato di A1."""
+    """La baseline dal testo di un allegato Input_A1, Input_A8 o Input_A3_A4 (il JSON della parte 1): la skill di
+    Copilot Studio riceve solo l'allegato (D-70). ValueError se il testo non e' un allegato con la baseline."""
     inizio = testo.find(INIZIO_BASELINE)
     graffa = testo.find("{", inizio) if inizio >= 0 else -1
     if graffa < 0:
@@ -1692,27 +1706,86 @@ def leggi_baseline(testo):
 
 # AU7 (23/10/2026): A3 e A4 ricevono la baseline come allegato della chat, come A1, e non piu' dal file
 # Baseline_corrente.txt nella knowledge (indicizzazione lenta, file singolo saltato: "Baseline mancante" del 13/10).
-ALLEGATI_BASELINE = {"A3": "Input_A3.txt", "A4": "Input_A4.txt"}
+# D-84: un file solo per i due agenti, perche' il contenuto e' lo stesso.
+FILE_A3_A4 = "Input_A3_A4.txt"
+VECCHI_A3_A4 = ("Input_A3.txt", "Input_A4.txt")          # nomi fino alla sera del 23/10/2026: si tolgono
 
 
-def componi_baseline(baseline, agente, oggi):
-    """Allegato di A3 o A4: intestazione con ciclo e data di riferimento, poi la baseline (JSON)."""
+def componi_baseline(baseline, oggi):
+    """Allegato di A3 e A4: intestazione con ciclo e data di riferimento, poi la baseline (JSON)."""
     prec = baseline.get("ciclo_precedente") or "nessuno"
     data = baseline.get("data_riferimento_precedente") or "n.d."
-    return (f"INPUT DI {agente}: baseline del registro NFR, ciclo validato {prec} (data di riferimento {data}), scritta da "
+    # "dopo il ciclo", non "ciclo validato": la baseline si riscrive anche dopo trimestrale, prima della validazione.
+    return (f"INPUT DI A3 E A4: baseline del registro NFR dopo il ciclo {prec} (data di riferimento {data}), scritta da "
             f"esegui_ciclo_locale.py il {oggi}, da non modificare a mano. Rischi del radar in \"rischi\", in osservazione "
             "in \"rischi_in_osservazione\".\n\n"
             f"{INIZIO_BASELINE}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n")
 
 
-def scrivi_allegati_baseline(cartella, baseline, oggi):
-    """Scrive Input_A3.txt e Input_A4.txt accanto a Baseline_corrente; restituisce i percorsi."""
-    out = []
-    for agente, nome in ALLEGATI_BASELINE.items():
-        percorso = Path(cartella) / nome
-        percorso.write_text(componi_baseline(baseline, agente, oggi), encoding="utf-8")
-        out.append(percorso)
-    return out
+def scrivi_allegato_a3_a4(cartella, baseline, oggi):
+    """Scrive Input_A3_A4.txt accanto a Baseline_corrente (e toglie i due file con i nomi di prima)."""
+    percorso = Path(cartella) / FILE_A3_A4
+    percorso.write_text(componi_baseline(baseline, oggi), encoding="utf-8")
+    for vecchio in VECCHI_A3_A4:
+        try:
+            (Path(cartella) / vecchio).unlink(missing_ok=True)
+        except OSError:
+            pass
+    return percorso
+
+
+# D-84: A5 riceve un file solo, come gli altri agenti: l'output di A1 (o A8) che esamina e la baseline usata.
+PREFISSO_A5 = "Input_A5"
+INIZIO_OUTPUT = "=== 1. OUTPUT DI A1 ==="
+INIZIO_BASELINE_A5 = "=== 2. BASELINE ==="
+
+
+def componi_a5(payload, baseline, oggi):
+    ciclo = payload.get("ciclo") or baseline.get("ciclo_da_valutare") or "da valutare"
+    autore = prefisso(ciclo).split("_")[1]
+    return (f"INPUT DI A5 PER IL CICLO {ciclo}: l'output di {autore} da esaminare e la baseline su cui e' stato scritto, "
+            f"scritto da esegui_ciclo_locale.py il {oggi}, da non modificare a mano.\n\n"
+            f"{INIZIO_OUTPUT}\n{json.dumps(payload, ensure_ascii=False, indent=2)}\n\n"
+            f"{INIZIO_BASELINE_A5}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n")
+
+
+def leggi_a5(testo):
+    """(output di A1, baseline) dal testo di un allegato Input_A5. ValueError se non lo e'."""
+    dec = json.JSONDecoder()
+    parti = []
+    for segno in (INIZIO_OUTPUT, INIZIO_BASELINE_A5):
+        i = testo.find(segno)
+        graffa = testo.find("{", i) if i >= 0 else -1
+        if graffa < 0:
+            raise ValueError(f"non e' un allegato {PREFISSO_A5}: manca la parte \"{segno}\"")
+        parti.append(dec.raw_decode(testo, graffa)[0])
+    return parti[0], parti[1]
+
+
+def scrivi_a5(cartella, payload, baseline, oggi):
+    """Scrive Input_A5_<ciclo>.txt accanto a Baseline_corrente e toglie quelli di altri cicli. Restituisce il percorso."""
+    cartella = Path(cartella)
+    ciclo = payload.get("ciclo") or baseline.get("ciclo_da_valutare")
+    percorso = cartella / f"{PREFISSO_A5}_{ciclo}.txt"
+    percorso.write_text(componi_a5(payload, baseline, oggi), encoding="utf-8")
+    for vecchio in cartella.glob(f"{PREFISSO_A5}_*.txt"):
+        if vecchio != percorso:
+            try:
+                vecchio.unlink()
+            except OSError:
+                pass
+    return percorso
+
+
+def togli_a5(cartella, ciclo):
+    """L'output di A1 non va bene (punti da correggere): l'allegato di A5 di quel ciclo non vale piu'."""
+    try:
+        (Path(cartella) / f"{PREFISSO_A5}_{ciclo}.txt").unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
+NOME_A6 = "Input_A6_{ciclo}.json"                       # D-84: prima Schede_input_<ciclo>.json
 
 
 def scrivi(cartella, baseline, kernel, oggi):
@@ -1723,8 +1796,8 @@ def scrivi(cartella, baseline, kernel, oggi):
     testo, mancanti = componi(baseline, kernel, oggi)
     percorso = cartella / nome_file(baseline)
     percorso.write_text(testo, encoding="utf-8")
-    for vecchio in cartella.glob(f"{PREFISSO}*.txt"):
-        if vecchio != percorso and re.fullmatch(rf"{PREFISSO}(_\d{{4}}Q[1-4](-S[1-9])?)?\.txt", vecchio.name):
+    for vecchio in cartella.glob("Input_A[18]*.txt"):
+        if vecchio != percorso and re.fullmatch(r"Input_A[18](_\d{4}Q[1-4](-S[1-9])?)?\.txt", vecchio.name):
             try:
                 vecchio.unlink()
             except OSError:
@@ -1813,7 +1886,7 @@ def messaggio_correzione(ciclo, esito):
     di correzione, con le parole dei controlli (le stesse dell'allegato di A1)."""
     righe = [f"Il precontrollo dello script ha trovato questi punti nel tuo output del ciclo {ciclo}. Correggili e "
              "restituisci di nuovo l'intero JSON, solo JSON, senza cambiare cio' che non e' citato. I controlli sono "
-             "quelli della parte 2 dell'allegato Input_A1, la forma dei testi e' nella parte 3."]
+             f"quelli della parte 2 dell'allegato Input_{agente(ciclo)}, la forma dei testi e' nella parte 3."]   # D-84
 
     def blocco(titolo, voci):
         if voci:
