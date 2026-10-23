@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10, ramo `copilot-studio-pieno`: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**; **23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1 con Office Scripts: sezione 2-tretricesies**).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; sul ramo `copilot-studio-pieno`: **23/10: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**; **23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1 con Office Scripts: sezione 2-tretricesies**; dopo, il merge di `main` del 23/10 sera).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1322,7 +1322,7 @@ Prove in Banca, risultati nella tabella della sezione 9 di `09_Copilot_Studio/Co
     stesso caricatore sul PC): GPT-5 rifiuta "arbitrary code from your uploaded file";
   - GPT-4.1: "Access denied" sul file, poi "Import of module 'builtins' is blocked for security reasons".
   
-  E' un Python ristretto per scelta della piattaforma; non si aggira (trappola 122). Con il code interpreter spento,
+  E' un Python ristretto per scelta della piattaforma; non si aggira (trappola 130, era la 122 prima del merge di `main`). Con il code interpreter spento,
   l'ingresso Image or document accetta solo immagini. T4.2 e T4.3 non applicabili.
 - **T5.1 (K8) riuscita** sulla copia del registro della Banca: 50 righe in `tblNews`, 9 grafici su 9, 15 secondi;
   nell'app desktop grafici e formattazione intatti, il grafico di NewsLog comprende le righe nuove, la colonna
@@ -1352,6 +1352,84 @@ Prove in Banca, risultati nella tabella della sezione 9 di `09_Copilot_Studio/Co
 3. collaudo che esegue TypeScript e Python sugli stessi casi di `99_Collaudo/dati` e pretende esiti identici.
 
 Misura il costo vero della traduzione (stima V1: 8-11 settimane) prima di `esegui_ciclo_locale.py`.
+## 2-tertricesies. 23/10: due rami; su `main` la strada A con l'app di orchestrazione, tappa M1 (D-83)
+
+**Rami** (richiesta dell'utente, regola in `CLAUDE.md`):
+- `main`, cartella `Documents\NFR Horizon Agents`: la versione in uso, Agent Builder e motore Python sul PC;
+- `copilot-studio-pieno`, cartella `Documents\NFR Horizon Agents CS` (git worktree): la versione tutta in Copilot
+  Studio (D-82, sezione 2-duotricesies del ramo).
+
+Le modifiche comuni nascono su `main` e passano al ramo con `git merge main` (poi `genera_CS.py` nel ramo); il ramo
+non si unisce a `main` senza una decisione dell'utente. Il remote si chiama `main` come il ramo, da qui l'avviso
+"refname 'main' is ambiguous".
+
+**Decisioni** (D-83, chiude A-15 e A-16): su `main` la strada A, cioe' agenti in Agent Builder e un'app Python di
+orchestrazione; niente V4, il registro resta l'Excel di oggi; il report HTML sara' una seconda uscita del comando
+`report` ("un secondo tipo di report al comitato"). Scelte del piano: finestra tkinter, risposte dagli appunti piu' il
+file, piu' analisti sullo stesso registro. Piano a tappe nel TODO, sezione 4: M1 motore, M2 app, M3 installazione, M4
+report HTML.
+
+**Tappa M1, fatta**:
+- `07_Senza_Studio/lucchetto.py`: lucchetto `Archivio_Cicli/_Lucchetto/registro.json` per i comandi che scrivono,
+  presa in due tempi (attesa `attesa_lucchetto`, 0 di default dalla sera del 23/10: scelta dell'utente, quattro
+  analisti e l'impronta che protegge comunque; prima 5 secondi), scadenza 2
+  ore, copia in conflitto di OneDrive letta come un collega, comando `sblocca --motivo` registrato in `sblocchi.log`.
+- Copia di lavoro (`sessione_registro` in `esegui_ciclo_locale.py`): le sei sessioni in scrittura lavorano su una copia
+  in `%LOCALAPPDATA%\NFR\lavoro`; il registro si sostituisce alla fine solo se l'impronta non e' cambiata, altrimenti
+  FERMATO; registro aperto sul PC: fermo prima di scrivere. `SALVATO` vuol dire "sostituito". `AutoSaveOn` spento.
+- AU7: `baseline` scrive `Input_A3.txt` e `Input_A4.txt`; i prompt di A3 e A4 leggono la baseline solo dall'allegato
+  (A3 7.688 caratteri, A4 5.708). Il prompt schedulato di A3 non serve piu' (non porta allegati).
+- Automatismi: `valida` del ciclo corrente rigenera il report (`--senza-report`); `trimestrale` archivia i prompt in
+  `Prompt_in_uso/`; `schede` fa anche il PDF; `riapri` lascia `Riapertura_<ciclo>.json`, chiusa da `valida`.
+- `configurazione.json`: `utente`, `attesa_lucchetto`, facoltativa `cartella_lavoro`.
+- Collaudo: `test_app.py` (12 verifiche senza Excel); gruppo `piu_analisti` (passo 15) della catena; report da `valida`
+  e traccia della riapertura nei gruppi esistenti. Kit di Copilot Studio rigenerato (`input_a1.py` e' nello script
+  della skill).
+- Documenti: guida (0.2, 0.3, 0-bis, 1, 2, 3, 3-ter, 7, 8, 9), 00_LEGGIMI, README della variante locale,
+  controlli_e_model_risk, DECISIONI (D-82 riportata dal ramo, D-83), TODO, PROMPT_MASTER (trappole 122-126; le
+  113-121 sono del ramo), LEGGIMI del collaudo, documentazione di A3 e A4, presentazione (slide dei comandi, del
+  trimestre, di A3 e A4).
+
+**In Banca** (TODO B5-bis): copiare `07_Senza_Studio` e `02_Agenti`; `utente` in `configurazione.json`; reincollare A3 e
+A4; togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; nessun `aggiorna-registro`.
+
+**Tappa M2, fatta lo stesso giorno**: l'app. `NFR.cmd` apre `app_nfr.py` (finestra tkinter: stato, prossimo passo, un
+pulsante per processo, passo in corso, log colorato); i processi sono in `flussi.py` su un Ambiente (la finestra o,
+nel collaudo, `AmbienteFinto`); `stato.py` legge lo stato dall'archivio condiviso senza Excel; `ingresso.py` riceve le
+risposte copiate (recinti, testo attorno, risposta tagliata, agente dallo schema, In_arrivo); `appunti.py` ascolta gli
+appunti; `esecutore.py` lancia il motore e scrive il log. Ripresa di un processo interrotto dalla risposta gia' in
+`In_arrivo`. Correzione nella M1 trovata scrivendo lo stato: il PDF di `valida` si esporta in una cartella temporanea
+e si pubblica solo dopo la sostituzione del registro e dopo `Validazione_<ciclo>.json` (`esporta_pdf`,
+`pubblica_report`). Collaudo: `test_app.py` 47/47 (lucchetto, copia di lavoro, ingresso, stato, flussi, lanciatore).
+Documenti: guida (sezione "L'app NFR"), 00_LEGGIMI, PROMPT_MASTER (trappole 127-129), TODO, `configurazione_esempio.json`
+con `link_agenti`.
+
+**Sera del 23/10, richieste dell'utente**:
+- le risposte si **incollano nell'app** (riquadro "Risposta dell'agente", Ctrl+V), con in piu' l'ascolto degli appunti
+  (`ascolta_appunti`) e "Scegli file...";
+- gli agenti possono essere **in Agent Builder o in Copilot Studio** (casella "Agenti"): stessi nomi, stessa cartella
+  `In_arrivo`, stesso registro, origine annotata; `link_agenti` piatto o per versione; il JSON si legge anche dentro il
+  campo `text` dei record di Copilot Studio;
+- la finestra va bene su **1920x1080** anche con la scala al 150% (si apre ingrandita fino a 1200 pixel di altezza);
+- **documentazione d'uso completa** nella guida: sezione "L'app NFR: uso passo per passo"; agenti nella 0.2 (3-bis, link
+  per l'app; niente prompt schedulato di A3) e nella nuova 0.2-bis (gli stessi agenti in Copilot Studio); tabella
+  delle voci di `configurazione.json` nella 0.3.
+- Avanzamento voce per voce, con le spunte: `Analisi_Architettura/18_App_orchestrazione.md`.
+- Collaudo: catena completa 375/375 in 61 minuti (13 gruppi, compreso `piu_analisti`); `test_app.py` 49/49; rilancio
+  dei gruppi `catena` (178/178), `riapertura` (28/28), `piu_analisti` (7/7) dopo la correzione della pubblicazione del report; demo rigenerata e `REPORT_demo.md` riallineato.
+
+**Nomi degli allegati (D-84, sera del 23/10, richiesta dell'utente)**: sempre `Input_<agente>`. `Input_A1_<ciclo>.txt`,
+`Input_A8_<periodo>.txt` (straordinario), `Input_A3_A4.txt` (un file solo per A3 e A4), `Input_A5_<ciclo>.txt` (output
+di A1 e baseline, scritto dal precontrollo, che con A5 diventa necessario), `Input_A6_<ciclo>.json` (prima
+`Schede_input_`). Prompt di A3, A4, A5, A6, A8 da reincollare. Intestazione degli allegati di A3 e A4: "dopo il ciclo",
+non "ciclo validato". Il ramo `copilot-studio-pieno` riceve tutto con il merge: da adeguare `genera_CS.py` (le frasi che
+sostituisce in A3, A5, A6 e A8) e gli argomenti YAML che leggono `Baseline_corrente.json` per A3 e i file di A5 e A6.
+Collaudo: catena con Excel 375/375 (il gruppo `catena` rilanciato dopo un nome vecchio rimasto in un test), test senza
+Excel verdi, demo rigenerata (messaggio di correzione di A8 con `Input_A8`). Nella finestra: divisore trascinabile, riquadro
+della risposta alto e visibile dopo l'incolla, riga dell'esito.
+
+**Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
+(report HTML).
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

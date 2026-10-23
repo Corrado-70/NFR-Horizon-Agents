@@ -1,5 +1,7 @@
 # 12. Le due opzioni architetturali
 
+> **Esito, 23/10/2026 (D-83)**: l'opzione 1 (12.3, app Python unica sul PC) e' la strada di `main`, con una finestra tkinter, le risposte dagli appunti o da un file e piu' analisti sullo stesso registro (lucchetto e copia di lavoro). Piano a tappe M1-M4 nel TODO, sezione 4; la tappa M1 (motore) e' fatta.
+
 > **Dal 09/10/2026 superato in parte da `14_Tre_strade.md`**: le strade sono tre (A, CS-1, CS-2 senza PC). Le
 > descrizioni dell'opzione 1 (12.3) e della CS-1 (12.4) restano valide e il 14 le richiama.
 
@@ -64,7 +66,7 @@ Il motore resta quello di oggi; l'app lo chiama.
 |---|---|
 | Scrivere i comandi, con `cd`, nomi di file, `--periodo`, `--validatore` | un pulsante per passo; periodo e nomi li sa l'app dallo stato del registro |
 | Salvare le risposte degli agenti in Blocco note, UTF-8, con il nome giusto | l'app **ascolta gli appunti**: premuto "Copia" sotto la risposta, estrae il JSON, riconosce l'agente dallo schema, controlla, salva con il nome giusto |
-| Preparare e allegare i file per gli agenti | cartella "Da allegare" aperta dall'app, con il file pronto (`Input_A1`, `Schede_input`...); il testo della richiesta e' gia' negli appunti |
+| Preparare e allegare i file per gli agenti | cartella "Da allegare" aperta dall'app, con il file pronto (`Input_A1`, `Input_A6`...); il testo della richiesta e' gia' negli appunti |
 | Leggere un FERMATO e riscriverlo all'agente | il messaggio di correzione e' gia' negli appunti: va incollato nella chat dell'agente |
 | Copiare `Baseline_corrente.txt` nel Kernel, i prompt nell'archivio | automatico |
 | Ricordare dove si e' arrivati (A1 fatto? validato?) | **stato del processo** in un file per periodo: l'app riparte dal passo giusto dopo una chiusura, un errore o un riavvio del PC, e dice chi deve fare cosa |

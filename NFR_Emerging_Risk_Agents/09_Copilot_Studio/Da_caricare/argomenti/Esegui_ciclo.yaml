@@ -69,7 +69,7 @@ beginDialog:
       input:
         binding:
           text: ="BASE"
-          text_1: ="Input_A1_" & Global.periodo & ".txt"
+          text_1: =If(IsBlank(Find("-S", Global.periodo)), "Input_A1_", "Input_A8_") & Global.periodo & ".txt"
 
       output:
         binding:
@@ -87,7 +87,7 @@ beginDialog:
           actions:
             - kind: SendActivity
               id: sendActivity_lettura_fallita
-              activity: "Allegato Input_A1_{Global.periodo}.txt non trovato in Archivio_Cicli ({Topic.esito_lettura}). Lo scrive il comando Valida a fine ciclo, o Straordinario per un periodo -S."
+              activity: "Allegato Input_A1_{Global.periodo}.txt (Input_A8_ per uno straordinario -S) non trovato in Archivio_Cicli ({Topic.esito_lettura}). Lo scrive il comando Valida a fine ciclo, o Straordinario per un periodo -S."
 
             - kind: CancelAllDialogs
               id: cancelAllDialogs_lettura

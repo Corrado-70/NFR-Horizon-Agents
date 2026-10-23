@@ -66,7 +66,7 @@ Principi:
      Bloccante fa partire da solo il giro di correzione;
    - A5 si chiede solo quando serve (`Esegui_ciclo 2027Q1 A5`);
    - A4 e A7 non si spostano;
-   - nessun file si copia a mano: `Baseline_corrente.txt` in Kernel e la knowledge di A7 le scrive il motore.
+   - nessun file si copia a mano: gli allegati `Input_<agente>` (D-84) e la knowledge di A7 li scrive il motore.
 7. **Chi valida e decide e' l'utente collegato** (`System.User.DisplayName` e `PrincipalName`), non un nome scritto a
    mano.
 
@@ -80,7 +80,7 @@ la tiene in una sola azione **Compose** `radice`: si cambia li'.
 
 | Codice area | Cartella | Chi scrive | Chi legge |
 |---|---|---|---|
-| `BASE` | `<radice>` | il motore: `Input_A1_<periodo>.txt`, `Baseline_corrente.json` | Esegui_ciclo, Esegui_settimana |
+| `BASE` | `<radice>` | il motore: `Input_A1_<periodo>.txt` (`Input_A8_<periodo>.txt` per uno straordinario), `Input_A3_A4.txt`, `Input_A5_<periodo>.txt` (D-84) | Esegui_ciclo, Esegui_settimana |
 | `LAVORO` | `<radice>/In_arrivo` | Salva_JSON e il motore: output degli agenti, correzioni | il motore |
 | `ESITI` | `<radice>/Esiti` | il motore: `Ultimo_esito.txt`, un JSON per esecuzione, le buste | Stato |
 | (motore) | `<radice>/Cicli`, `Settimane`, `Dismissioni`, `Backup` | il motore, come oggi lo script | A7, chi consulta l'archivio |
@@ -104,7 +104,7 @@ attesa. La libreria Kernel e' in sola lettura per tutti tranne il manutentore.
 | Variabile | Contenuto | Letta da |
 |---|---|---|
 | `Global.periodo` | il ciclo (`2027Q1`, `2027Q1-S1`) o il lunedi' (`2026-10-19`) del comando | A3 (settimana), argomenti |
-| `Global.ingresso` | il testo dato al sotto-agente: `Input_A1_<periodo>.txt`, o `Baseline_corrente.json` per A3 | A1, A8, A3, citata nelle istruzioni |
+| `Global.ingresso` | il testo dato al sotto-agente: `Input_A1_<periodo>.txt` (A1), `Input_A8_<periodo>.txt` (A8), `Input_A3_A4.txt` (A3) | A1, A8, A3, citata nelle istruzioni |
 | `Global.uscita` | la risposta del sotto-agente (output di Completamento) | l'argomento, che la passa a Salva_JSON |
 
 Perche' cosi':
@@ -123,9 +123,9 @@ dell'output. I segni di citazione dentro i testi (`[1]`) non si tolgono: li segn
 | NFR Operatore | agente | testo in T1.1 | i comandi | messaggi brevi, mai JSON | nessuna |
 | A1 Horizon Scanner | sotto-agente | `agenti/A1_CS.md` (7.931 caratteri) | `{Global.ingresso}` = Input_A1 | `{Global.uscita}` = JSON | Analisi_Interne, Analisi_Esterne, News_Inbox, i 4 siti |
 | A8 Evento critico | sotto-agente | `agenti/A8_CS.md` (7.846) | `{Global.ingresso}` = Input_A1 dello straordinario; documenti dell'evento in `Analisi_Esterne/Eventi/<periodo>` | `{Global.uscita}` | come A1 |
-| A3 Interim Update | sotto-agente | `agenti/A3_CS.md` (7.597) | `{Global.ingresso}` = Baseline_corrente.json; `{Global.periodo}` = lunedi' | `{Global.uscita}` | Analisi_Interne, Analisi_Esterne, News_Inbox, i 4 siti |
-| A5 Challenger | prompt | `prompt/A5.txt` | `json_a1`, `baseline` | JSON (record, campo `text`) | nessuna (D-09) |
-| A6 Schede | prompt | `prompt/A6.txt` | `schede_input` | JSON | nessuna |
+| A3 Interim Update | sotto-agente | `agenti/A3_CS.md` (7.597) | `{Global.ingresso}` = Input_A3_A4.txt; `{Global.periodo}` = lunedi' | `{Global.uscita}` | Analisi_Interne, Analisi_Esterne, News_Inbox, i 4 siti |
+| A5 Challenger | prompt | `prompt/A5.txt` | `input_a5` (`Input_A5_<periodo>.txt`: output di A1 e baseline, D-84) | JSON (record, campo `text`) | nessuna (D-09) |
+| A6 Schede | prompt | `prompt/A6.txt` | `input_a6` (`Input_A6_<ciclo>.json`, D-84) | JSON | nessuna |
 | Correggi | prompt | `prompt/Correggi.txt` | `correzione`, `json_a1`, `allegato` | JSON corretto | nessuna |
 | Motore | prompt con code interpreter | `prompt/Motore.txt` | `comando` (testo), `busta` (file) | una riga JSON | nessuna |
 | A4, A7 | Agent Builder, invariati | `02_Agenti/` | come oggi | come oggi | come oggi; i file li aggiorna il motore |
@@ -209,9 +209,9 @@ dei 100 secondi.
 | Comando | Cosa fa il flusso dopo la risposta |
 |---|---|
 | `registra_ciclo` | [se `A5`: prompt A5 su A1 e Baseline -> `A5_<p>.json`] -> **giro**: controlli del motore; se ci sono Bloccanti e giro < 2: prompt Correggi -> nuova `A1_<p>.json` -> di nuovo i controlli -> scrittura del registro (`trimestrale`) -> archivio, baseline, Input_A1 successivo, knowledge di A7 |
-| `correggi_ciclo` | un giro di Correggi dai file `Correzione_A1_<p>.txt`, `A1_<p>.json`, `Input_A1_<p>.txt`, poi come `registra_ciclo` senza A5 |
+| `correggi_ciclo` | un giro di Correggi dai file `Correzione_A1_<p>.txt`, `A1_<p>.json`, `Input_A1_<p>.txt` (`Input_A8_` per -S), poi come `registra_ciclo` senza A5 |
 | `settimanale` | motore `settimanale` su `A3_<lunedi'>.json` |
-| `valida` | motore `valida` (griglia -> registro); per un ciclo anche baseline, Input_A1, knowledge di A7, `Kernel/Baseline_corrente.txt` per A4 |
+| `valida` | motore `valida` (griglia -> registro); per un ciclo anche baseline, `Input_A1`/`Input_A8`, `Input_A3_A4.txt` (A3 e A4), knowledge di A7 |
 | `riapri`, `dismetti`, `straordinario` | motore con i `parametri`; `straordinario` restituisce il periodo `AAAAQn-Sk` e scrive il suo Input_A1 |
 | `schede` | motore `schede-input` -> prompt A6 -> motore `schede` -> `Schede_<c>.xlsx` |
 | `report`, `diagnosi` | motore; PDF o testo in `Cicli/<c>/` |
@@ -351,7 +351,7 @@ Il documento lo dice qui perche' la decisione si prende sui fatti di T0, T4 e T5
 | si' | fallisce | V1 |
 | no | fallisce | versione piena non fattibile: A-15 |
 
-**Esito del 23/10/2026**: T0.1 si', T4.1 negativo (la sandbox dei prompt non esegue il nostro codice, trappola 122).
+**Esito del 23/10/2026**: T0.1 si', T4.1 negativo (la sandbox dei prompt non esegue il nostro codice, trappola 130).
 Su questo ramo si prosegue con **V1**: le regole del motore in TypeScript, eseguite da Office Scripts e lanciate dai
 flussi. La strada A va avanti a parte, su un altro ramo. La prova decisiva diventa T5 (K8).
 
@@ -387,7 +387,7 @@ riserva e' nella sezione 8. Si lavora con la radice `Archivio_Cicli/Prova_K0`, m
 - **T0.4 Cartelle e file di prova** in `Archivio_Cicli/Prova_K0`:
   - creare `Esiti` e `Motore`;
   - in `In_arrivo` ci sono gia' `A1_2027Q1.json` e la correzione del 22/10 (`Correzione_A1_2027Q1.txt`, dal PC);
-  - nella radice: `Input_A1_2027Q1.txt` (c'e'), `Baseline_corrente.json` dal PC, `Input_A1_2026Q4-S1.txt` dalla
+  - nella radice: `Input_A1_2027Q1.txt` (c'e'), `Baseline_corrente.json` dal PC, `Input_A8_2026Q4-S1.txt` dalla
     demo (`Demo_W1_W2/1_Input_agenti`);
   - in `Motore`: `K9_Busta_vuota.xlsx` e `Impronta.txt`, tutti e due da `Da_caricare/prove` (caricati, non
     riscritti a mano: `Impronta.txt` non ha l'a capo finale e il flusso lo confronta tale e quale);
@@ -570,7 +570,7 @@ Il punto critico: decide se il motore puo' stare nel tenant. Si fa prima di cost
   3. Flusso `Raccolta_notizie` (4.4), eseguito a mano una volta.
   4. Prova: `Esegui_settimana <lunedi' corrente>` -> `In_arrivo/A3_<lunedi'>.json`.
   5. Annotare: notizie, codici fonte, confronto con la raccolta dello script dello stesso giorno, se disponibile.
-- **T6.3 A6.** Prompt `A6` con `prompt/A6.txt`. Prova nel test del prompt con un `Schede_input_<ciclo>.json`
+- **T6.3 A6.** Prompt `A6` con `prompt/A6.txt`. Prova nel test del prompt con un `Input_A6_<ciclo>.json`
   dell'archivio. Si collega al motore con T5.4.
 
 ### T7. Teams
@@ -587,7 +587,7 @@ Il punto critico: decide se il motore puo' stare nel tenant. Si fa prima di cost
 
 Restano in Agent Builder. Quando il motore scrive (dopo T5.4) si verifica solo che la loro knowledge si aggiorni da
 sola:
-- `Kernel/Baseline_corrente.txt` per A4;
+- `Input_A3_A4.txt` per A4 (allegato, AU7 e D-84);
 - `Kernel/Spiegazioni` per A7.
 
 Prova: dopo un `Valida`, una domanda ad A7 su un valore cambiato.

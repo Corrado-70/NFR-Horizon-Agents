@@ -54,7 +54,7 @@ beginDialog:
       input:
         binding:
           text: ="BASE"
-          text_1: ="Baseline_corrente.json"
+          text_1: ="Input_A3_A4.txt"
 
       output:
         binding:
@@ -72,7 +72,7 @@ beginDialog:
           actions:
             - kind: SendActivity
               id: sendActivity_lettura_fallita
-              activity: "Baseline_corrente.json non trovata in Archivio_Cicli ({Topic.esito_lettura}): il registro non ha ancora un ciclo validato."
+              activity: "Input_A3_A4.txt non trovato in Archivio_Cicli ({Topic.esito_lettura}): il motore lo scrive con la baseline (AU7, D-84); il registro non ha ancora un ciclo validato?"
 
             - kind: CancelAllDialogs
               id: cancelAllDialogs_lettura

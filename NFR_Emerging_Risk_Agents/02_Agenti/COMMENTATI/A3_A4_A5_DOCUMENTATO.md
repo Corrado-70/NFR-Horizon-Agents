@@ -9,8 +9,15 @@ collaudo (`verifica_riferimenti.py`) controlla che coincidano.
 ## Input
 "Utilizza **sempre** lo strumento di ricerca file o altri strumenti di ricerca aziendale per accedere ai file della knowledge." (dal 13/10, la stessa frase in A1, A3, A4, A7 e A8; prima "Usa sempre la
 ricerca nei file o quella aziendale: non rispondere a memoria"): obbliga a leggere davvero
-`News_Inbox`, `Analisi_Interne` e la baseline in knowledge. Senza, su un
+`News_Inbox` e `Analisi_Interne`. Senza, su un
 compito che sembra chiaro il planner puo' saltare il recupero.
+
+"Baseline: SOLO l'allegato Input_A3_A4.txt della chat, mai dalla knowledge" (dal 23/10, AU7, D-83; lo stesso in A4
+con `Input_A3_A4.txt`): fino ad allora la baseline era il file singolo `Kernel/Baseline_corrente.txt` nella knowledge,
+da ricopiare a mano a ogni ciclo e indicizzato con ritardo. Il 13/10 A3 ha risposto "Baseline mancante" su un file
+appena caricato, e una copia dimenticata sarebbe stata letta vecchia senza avvisi. L'allegato lo scrive il comando
+`baseline` insieme a quello di A1; senza allegato A3 risponde "Baseline mancante" (A4 lo dice in testa al parere),
+quindi il prompt schedulato del lunedi', che non porta allegati, non si usa piu'.
 
 ## Ruolo
 "Non modifichi score e non proponi numeri": principio 3 del sistema. Senza,
@@ -239,7 +246,7 @@ ha ancora decisioni da prendere. Cosi' la scheda non puo' contraddire un
 valore rettificato dal validatore.
 
 ## Input
-Un solo allegato, `Schede_input_<ciclo>.json`, scritto dal comando
+Un solo allegato, `Input_A6_<ciclo>.json`, scritto dal comando
 `schede-input` dal registro validato: per ogni rischio le quattro dimensioni
 (Impatto, Probabilita, Prossimita, Velocity; la Velocity puo'
 essere "non valutata"), gli anni di adeguamento, il presidio dei controlli
@@ -326,7 +333,7 @@ caratteri dal 07/10 sera (D-76; 6.575 fino al 07/10 pomeriggio).
 trimestre. A1 e' scritto per valutare tutto il registro con la stessa profondita'; per un evento serve l'opposto:
 leggere per intero pochi documenti, ricostruire la catena causale e dire quali rischi l'evento tocca e quali no.
 
-**Perche' lo stesso formato di A1.** Allegato (`Input_A1_<AAAAQn-Sk>.txt`), schema e comandi sono gli stessi:
+**Perche' lo stesso formato di A1.** Allegato (`Input_A8_<AAAAQn-Sk>.txt`), schema e comandi sono gli stessi:
 precontrollo, controlli, scrittura e validazione non cambiano e non c'e' un secondo percorso da mantenere. Lo script
 non distingue chi ha scritto l'output (A1 sa ancora fare lo straordinario); cambia solo il destinatario dei messaggi
 di correzione ("Messaggio per A8", dal periodo `-Sk`).

@@ -492,9 +492,10 @@ def test_straordinario(e):
     testo, _ = input_a1.componi(base, KERNEL, "2027-01-20")
     e.verifica("CICLO STRAORDINARIO 2026Q4-S1" in testo.split(input_a1.INIZIO_BASELINE)[0]
                and "Valuta SOLO questi rischi: NFR-01" in testo
-               and "Ciclo straordinario" in testo and input_a1.nome_file(base) == "Input_A1_2026Q4-S1.txt"
+               and "Ciclo straordinario" in testo and input_a1.nome_file(base) == "Input_A8_2026Q4-S1.txt"
+               and testo.startswith("INPUT DI A8 PER IL CICLO 2026Q4-S1")
                and precontrollo.ciclo_di(run4, base) == "2026Q4-S1",
-               "straordinario: l'allegato di A1 dice in testa che cosa rivalutare e con quale motivo; nome del file e ciclo "
+               "straordinario: l'allegato (di A8, D-84) dice in testa che cosa rivalutare e con quale motivo; nome del file e ciclo "
                "del precontrollo con il periodo straordinario")
     a3 = carica(DATI / "run_A3_2026-10-12.json")
     a3["proposta_straordinario"] = {"rischi": ["NFR-01"], "motivo": "Kit di clonazione vocale in vendita: intensita' 3 su NFR-01, Impatto 4."}
@@ -681,14 +682,19 @@ def test_precontrollo(e):
                 codice = campo.main(["--workbook", str(tmp / "non_esiste.xlsx"), "--kernel", str(KERNEL),
                                      "--cartella-uscita", str(tmp), "precontrollo", "--payload", str(tmp / "A1.json")])
             return codice, out.getvalue()
+        codice, out = lancia(RUN1, BASE_Q3)
+        a5 = tmp / "Input_A5_2026Q3.txt"
+        e.verifica(codice == 0 and "0 punti da correggere" in out and "si puo' lanciare trimestrale" in out
+                   and a5.exists() and input_a1.leggi_a5(a5.read_text(encoding="utf-8")) == (RUN1, BASE_Q3)
+                   and str(a5) in out,
+                   "precontrollo: con soli punti di forma o da verificare il codice e' 0, e scrive l'allegato di A5 "
+                   "(Input_A5_<ciclo>.txt: output di A1 e baseline, D-84)", out[:400])
         codice, out = lancia(difettoso, BASE_Q3)
         file = tmp / "Cicli" / "2026Q3" / "Correzione_A1_2026Q3.txt"
         e.verifica(codice == 1 and file.exists() and "NFR-01 · C9: " in file.read_text(encoding="utf-8")
-                   and "2 punti da correggere" in out and not (tmp / "non_esiste.xlsx").exists(),
-                   "precontrollo: comando senza registro; codice 1 e messaggio in Cicli/<ciclo>/Correzione_A1_<ciclo>.txt", out[:600])
-        codice, out = lancia(RUN1, BASE_Q3)
-        e.verifica(codice == 0 and "0 punti da correggere" in out and "si puo' lanciare trimestrale" in out,
-                   "precontrollo: con soli punti di forma o da verificare il codice e' 0", out[:400])
+                   and "2 punti da correggere" in out and not (tmp / "non_esiste.xlsx").exists() and not a5.exists(),
+                   "precontrollo: comando senza registro; codice 1 e messaggio in Cicli/<ciclo>/Correzione_A1_<ciclo>.txt; "
+                   "l'allegato di A5 di un output da correggere non resta", out[:600])
         codice, out = lancia(run3, base_q4)
         e.verifica(codice == 0 and "nessun rilievo" in out and not (tmp / "Cicli" / "2026Q4" / "Correzione_A1_2026Q4.txt").exists()
                    and f"Impronta dell'output di A1: {campo.impronta(run3)}" in out,
@@ -837,7 +843,7 @@ def test_copilot_studio_pieno(e):
                    f"Copilot Studio pieno: {nome} con un segnaposto per variabile, sotto il limite con il margine",
                    f"{len(testo)} caratteri")
     ingressi = {n: cs.ingressi(cs.prompt(n)) for n in ("A5.txt", "A6.txt", "Correggi.txt", "Motore.txt")}
-    e.verifica(ingressi == {"A5.txt": ["json_a1", "baseline"], "A6.txt": ["schede_input"],
+    e.verifica(ingressi == {"A5.txt": ["input_a5"], "A6.txt": ["input_a6"],   # D-84: un ingresso per agente
                             "Correggi.txt": ["correzione", "json_a1", "allegato"], "Motore.txt": ["comando", "busta"]},
                "Copilot Studio pieno: ogni prompt ha in fondo i suoi ingressi", str(ingressi))
     noti = cs.segnaposto_noti()

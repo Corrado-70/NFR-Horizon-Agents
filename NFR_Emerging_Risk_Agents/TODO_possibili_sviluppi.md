@@ -11,7 +11,7 @@ Sezioni:
 1. ordine di lavoro;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
 3. processi (P1, P2, P4, P5, P6, P7, P9);
-4. automazione del processo (AU1-AU7);
+4. automazione del processo: l'app di orchestrazione (tappe M1-M4; AU1, AU2, AU3, AU5);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
@@ -27,12 +27,10 @@ che migliora quel ciclo.
 | Passo | Voci | Perche' qui | Giorni |
 |---|---|---|---|
 | 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati (B1-B4); poi le **prove della CS-1** (B5) | tutto il resto si appoggia su un'installazione allineata al pacchetto; le prove decidono la A-15 | 1-2 per B1-B4; 1-2 per le prove, piu' le attese (in Banca) |
-| 1 | **AU7** baseline in input ad A3 e A4 (non piu' nella knowledge); **P4** rapporti di scenario e **P9** temi da verificare | AU7 toglie un passo manuale a ogni ciclo e a ogni settimana, e l'errore "Baseline mancante" visto il 13/10; P4 e P9 sono piccole e migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1,5 |
-| 2 | **AU1, solo la parte "scrittura robusta"** (Salvataggio automatico spento, copia di lavoro del registro) | protegge il registro vero da scritture a meta' con OneDrive (rischio visto il 27/09); conviene averla prima del primo ciclo reale | circa 1 |
+| 1 | **P4** rapporti di scenario e **P9** temi da verificare (AU7 fatta il 23/10, D-83) | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1 |
 | 3 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale (quale rischio e quale dimensione sono sotto pressione) | 2-3 |
 | 4 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 |
-| 5 | **AU1** (il resto), **AU2**, **AU3**: la parte comune dell'automazione | utile qualunque strada si scelga; riduce i passi manuali del trimestre e della settimana | 6-7 |
-| 6 | **AU4**: decisione A-15 fra A, CS-1 e CS-2 (`Analisi_Architettura/14_Tre_strade.md`), poi la strada scelta | dopo le prove B5 (e K8, K9 se si punta alla CS-2) | A 3-4; CS-1 13-15; CS-2 6-8 settimane |
+| 5 | **App NFR, tappe M2-M4** (sezione 4: AU2, AU3, AU5 e report HTML; la tappa M1 e' fatta) | la strada A su `main` e' decisa (D-83): finestra che guida ogni processo, risposte dagli appunti, piu' analisti, report HTML al comitato | 13-15 |
 | 7 | **P2**, **P7**, **P6** | presentazione: scia sul radar, riepilogo mensile, scheda per tema | 2-3 |
 | in parallelo | **Q1** nota di metodo (il prototipo dopo il passo 4) | e' soprattutto lavoro della Banca (stime degli esperti) | nota 1-2, prototipo 3-5 |
 | in parallelo | **G1, G3, G2**; **G6** quando servira' leggere A1 accanto ai controlli prima della scrittura | toccano solo il generatore o sono strumenti di lettura | circa 2 |
@@ -66,6 +64,7 @@ Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzi
 | B5.9 | Facoltativo, per la CS-2: prova K0 ripetuta con file allineati (`09_Copilot_Studio/Prova_con_Copilot_Studio.md`: T1.2 con l'impronta, T1.3). Prima tornata del 09/10: opzione 1 funziona (T1.1, T1.2, T1.4 rifiutata), T1.3 una volta in errore, opzione 2 non disponibile in Banca, salvataggio in SharePoint riuscito con impronta uguale | D-70; CS-2 | parziale |
 | B5.10 | Facoltativo, per A-16: **K14** report HTML (`Analisi_Architettura/16_Report_HTML.md`, 16.9): apertura da SharePoint in Edge, "Convert file" su HTML, zip dal code interpreter, report nella knowledge di A7. Si usano i file di `Analisi_Architettura/16_Anteprima_HTML/` | A-16 | da fare |
 | B9 | **Copilot Studio pieno** (D-82, ramo `copilot-studio-pieno`): costruzione e prove T0-T8 di `09_Copilot_Studio/Copilot_Studio_pieno.md`, nell'ordine. Prima T0 (Office Scripts, code interpreter nei prompt, domande all'IT), poi T1-T3 (agente, flussi, A1 e A8, correzione dai file), poi **T4 (K9)** e **T5 (K8)**, che decidono la strada del motore (V2, F2, V1 o A-15). Sostituisce per questo ramo B5.3 (K6), B5.9 e la parte K8/K9 della CS-2. **23/10**: T0.1 e T0.2 si', T4.1 (K9) negativo, T5.1, T5.2 e K8-bis riusciti: strada **V1** (motore in TypeScript con Office Scripts); prossimo passo il precontrollo in TypeScript con collaudo sotto Node contro il Python (HANDOFF 2-tretricesies) | versione senza Python sul PC | in corso |
+| B5-bis | Tappe M1 e M2 dell'app (23/10): copiare `07_Senza_Studio` (file nuovi `lucchetto.py`, `NFR.cmd`, `app_nfr.py`, `flussi.py`, `stato.py`, `ingresso.py`, `appunti.py`, `esecutore.py`); in `configurazione.json` le voci della guida, sezione 0.3 (`utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`, `ascolta_appunti`, `link_agenti`); cancellare il prompt schedulato di A3; un trimestre di prova dall'app (doppio clic su `NFR.cmd`): copia dagli appunti di una risposta lunga di A1, giro di correzione, validazione; reincollare A3, A4, A5, A6 e A8 (D-84, nomi degli allegati); togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; prova del lucchetto con un collega (V-F e lucchetto fra due PC, `Analisi_Architettura/Archivio/10`, 10.5). Le prove CS-1 di B5 restano utili solo al ramo `copilot-studio-pieno` | D-83 | da fare |
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
 | B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore | A-17 | da fare |
@@ -250,12 +249,30 @@ Punti fermi:
 - Qualunque strada: nel registro scrive solo il motore, dopo i controlli (D-10); kernel, schemi, controlli,
   validazione e collaudo non cambiano.
 
+**Dal 23/10/2026 (D-83) la strada e' decisa**: su `main` la strada A, cioe' agenti in Agent Builder e un'app Python
+di orchestrazione sul PC; la versione tutta in Copilot Studio vive sul ramo `copilot-studio-pieno` (D-82). Le voci AU4 e
+AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a quattro tappe, piu' la M5 aggiunta il 23/10. **L'avanzamento voce per voce, con le spunte (fatto, da verificare, da fare), e' in `Analisi_Architettura/18_App_orchestrazione.md`**; qui solo il riassunto:
+
+| Tappa | Cosa | Moduli | Stato |
+|---|---|---|---|
+| M1 | motore: lucchetto per piu' analisti, copia di lavoro del registro, Salvataggio automatico spento; AU7; automatismi di AU1 (report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura) | `lucchetto.py`, `esegui_ciclo_locale.py`, `input_a1.py`, `excel_com.py` | **fatta il 23/10** |
+| M2 | l'app: ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, flussi di ogni processo, finestra tkinter (AU2, AU5) | `ingresso.py`, `appunti.py`, `stato.py`, `esecutore.py`, `flussi.py`, `app_nfr.py`, `NFR.cmd` | **fatta il 23/10** (collaudata senza Excel con un Ambiente finto; resta la prova a mano con gli agenti veri, B5-bis, e la demo attraverso i flussi) |
+| M3 | installazione con un doppio clic e Verifica del PC (AU3) | `installa.cmd`, `installa.py` | da fare, circa 1,5 giorni |
+| M4 | report HTML al comitato come seconda uscita di `report`: viste, grafici e schede di tutti i rischi dal prototipo dell'analisi 16, numeri controllati contro Excel | `report_html.py` | da fare, 3-4 giorni |
+| M5 | funzioni amministrative (richiesta del 23/10): pulizia dell'archivio dei cicli, ritorno indietro di N trimestri (registro dall'Excel validato del ciclo scelto), ripartenza da zero; niente si cancella subito, tutto nel parcheggio con l'atto; da decidere chi puo' farlo | voce Amministrazione dell'app, comandi del motore | da fare; dettaglio in `Analisi_Architettura/18_App_orchestrazione.md`, 18.5 |
+
+Scelte dell'utente: finestra tkinter; risposte dagli appunti piu' il file; piu' analisti sullo stesso registro; niente
+coda delle richieste (serviva alla CS-1). Le voci AU1, AU2, AU3 e AU5 qui sotto restano come dettaglio di cio' che le
+tappe realizzano.
+
 ### AU1. Motore: automatismi e scrittura robusta (piano 10: C2 e C3)
 
 - **Perche'**: spariscono passi a mano del trimestre (baseline copiata in `Kernel`, prompt copiati nell'archivio), e
   la scrittura resta pulita anche con il registro in una cartella OneDrive: il Salvataggio automatico potrebbe salvare
   righe scritte prima di un fermo (rischio trovato il 27/09, forse la causa di `RPC_E_DISCONNECTED`).
 - **Cosa fare**:
+  - *fatto il 23/10 (D-83, tappa M1): scrittura robusta, prompt archiviati, report da `valida`, PDF delle schede; la
+    copia della baseline in `kernel` non serve piu' (AU7)*;
   - **scrittura robusta (passo 2 dell'ordine)**: `wb.AutoSaveOn = False` subito dopo l'apertura;
     `registro_in_lavoro(conf)` per `trimestrale`, `settimanale`, `valida`, `riapri` e `dismetti`: copia di lavoro
     locale, scrittura e controlli sulla copia, sostituzione solo se l'originale non e' cambiato nel frattempo;
@@ -367,29 +384,6 @@ Punti fermi:
 - **Fatto quando**: i copioni di conversazione sono superati due volte di fila; la demo con richieste simulate e'
   rilanciata; il primo ciclo vero passa dal doppio run e dalla validazione.
 - **Impegno**: 13-15 giorni, piu' l'ombra della raccolta.
-
-### AU7. Baseline in input agli agenti, non nella base di conoscenza (richiesta del 13/10/2026) — IMPORTANTE
-
-- **Perche'**: oggi A3 e A4 leggono la baseline dal file singolo `Kernel/Baseline_corrente.txt` messo nella knowledge
-  (guida, 0.2: tabella delle knowledge). A ogni `baseline` il file va ricopiato nella library `Kernel` e, se Copilot non
-  lo ha ancora indicizzato o se in Agent Builder il file singolo salta, l'agente risponde "Baseline mancante" (visto il
-  13/10 su A3). E' un passo manuale ripetuto a ogni ciclo e a ogni settimana, con una causa di errore silenziosa:
-  l'agente puo' lavorare su una baseline vecchia senza accorgersene. A1, A5 e A6 la ricevono gia' come allegato alla
-  chat (D-69), e per questo non hanno il problema.
-- **Cosa fare**: la baseline arriva ad A3 e A4 **come input del messaggio**, come per A1. Strada piu' piccola: lo script
-  scrive, accanto a `Input_A1_<ciclo>.txt`, un allegato per A3 (`Input_A3_<lunedi'>.txt`: baseline + istruzioni di
-  consegna) e uno per A4 (la sola baseline), che si allegano alla chat; si toglie `Baseline_corrente.txt` dalla
-  knowledge di A3 e A4. Le istruzioni di A3 e A4 gia' ammettono "baseline allegata o in knowledge": va tolto solo il
-  ramo "in knowledge" e resta il controllo "Baseline mancante" se l'allegato non c'e'. Dentro l'allegato, l'intestazione
-  riporta ciclo e data di riferimento, e le istruzioni dicono di confrontarli con quelli del messaggio. A7 resta com'e'
-  (la sua knowledge `Kernel/Spiegazioni` e' la cartella che lo script riscrive, non un file da ricopiare).
-- **Tocca**: `esegui_ciclo_locale.py` (comando `baseline`), `input_a1.py` (o un modulo gemello per A3 e A4),
-  `02_Agenti/modelli/A3.md` e `A4.md` e i file composti (`componi_prompt.py`, controllo lunghezza), guida (0.2, tabella
-  delle knowledge; sezioni 1 e 5, passo "copiare Baseline_corrente.txt"; messaggi base di A3 e A4), DECISIONI, collaudo.
-- **Fatto quando**: da `baseline` escono gli allegati di A3 e A4; A3 e A4 non hanno piu' `Baseline_corrente.txt` nella
-  knowledge e rispondono con la baseline allegata; il messaggio "Baseline mancante" compare senza allegato; il passo di
-  copia in `Kernel` esce dalla guida (per A3 e A4).
-- **Impegno**: circa mezza giornata, piu' il reincollo dei due agenti sul PC della Banca.
 
 ## 5. Quantificazione per i rischi piu' rilevanti
 
@@ -530,6 +524,9 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | M4 (documenti) | Documenti di riferimento in `04_Riferimenti` | 08/10 | D-78 | 00_LEGGIMI |
 | P13 (1, 2) | Comando `diagnosi`; anni di adeguamento dei rischi in osservazione con Impatto 4-5 | 19/10 | D-80 | guida, sezione 9; guida di scrittura di A1; analisi 17, 17.10 |
 | P13 (3a) | Esposizione della Banca "non nota": nota di A1 nel razionale, segnalazione C5 da motivare, decide il validatore | 19/10 | D-81 | guida, sezione 3; guida di scrittura di A1; analisi 17, 17.10 |
+| AU7 | Baseline in input ad A3 e A4 come allegato della chat (`Input_A3_A4.txt`), non piu' dalla knowledge: niente copia di `Baseline_corrente.txt` nella library Kernel | 23/10 | D-83 | guida, sezioni 0.2, 1, 2 e 8; `input_a1.py` |
+| AU1 (scrittura robusta e automatismi) e lucchetto | Piu' analisti: lucchetto nell'archivio condiviso, copia di lavoro del registro con l'impronta, Salvataggio automatico spento, `sblocca`; report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura | 23/10 | D-83 | guida, sezioni 0.3, 3, 7 e 9; `lucchetto.py` |
+| AU4 | Scelta della strada: A su `main`, tutto in Copilot Studio sul ramo `copilot-studio-pieno` | 23/10 | D-83 (chiude A-15 e A-16) | `CLAUDE.md`, DECISIONI |
 | P10 | Registro unico: nel radar i primi (Prossimita e Probabilita almeno 2, capienza 15 fino a 20, eccezioni), gli altri in osservazione; un solo modulo per la regola | 08/10 | D-79 | rubrica sezione 9, Parametri righe 65-75, guida; analisi `13_Scala_unica.md` |
 
 ## 10. In riserva (non pianificate)

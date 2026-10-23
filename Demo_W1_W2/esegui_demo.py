@@ -49,8 +49,9 @@ ARCHIVIO = QUI / "Archivio_Cicli"
 def strumento(*argomenti):
     cmd = [sys.executable, str(PACCHETTO / "07_Senza_Studio" / "esegui_ciclo_locale.py"),
            "--workbook", str(WB), "--cartella-uscita", str(ARCHIVIO), *map(str, argomenti)]
+    # NFR_ATTESA_LUCCHETTO=0 (D-83): la demo gira in una cartella locale, nessun collega la sincronizza.
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+                       env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
     print(r.stdout.strip(), f"\n[codice di uscita {r.returncode}]\n")
     return r.returncode
 
@@ -246,7 +247,7 @@ def main():
               "Primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027).",
               "--decisore", "Comitato Rischi", "--data", "2027-01-20")
     shutil.copy2(ARCHIVIO / "Baseline_corrente.json", AGENTI / "Baseline_per_2026Q4-S1.json")
-    shutil.copy2(ARCHIVIO / "Input_A1_2026Q4-S1.txt", AGENTI / "Input_A1_2026Q4-S1.txt")
+    shutil.copy2(ARCHIVIO / "Input_A8_2026Q4-S1.txt", AGENTI / "Input_A8_2026Q4-S1.txt")   # D-84: allegato di A8
     print("=== Ciclo straordinario 2026Q4-S1: precontrollo, scrittura (A8 rivaluta solo NFR-01 e scrive l'analisi dell'evento, senza A5), validazione")
     strumento("precontrollo", "--payload", AGENTI / "A8_2026Q4-S1.json")
     strumento("trimestrale", "--payload", AGENTI / "A8_2026Q4-S1.json")

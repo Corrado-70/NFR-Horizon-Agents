@@ -52,7 +52,7 @@
 > **Analisi architetturale a due opzioni** (`Analisi_Architettura/12_Due_opzioni.md`:
 > app Python unica, Copilot Studio nei vincoli; **dal 09/10 tre strade**,
 > `14_Tre_strade.md`: A, CS-1, CS-2 senza Python sul PC, obiettivo dell'utente; **l'11/10 la CS-2
-> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110; **il 14/10 la variante V4**, `16_Report_HTML.md`: report HTML generato da Python al posto delle viste di Excel, anteprima in `Analisi_Architettura/16_Anteprima_HTML/`, decisione aperta A-16, trappola 111; il pacchetto non cambia finche' A-16 non e' decisa; **il 19/10 il contraddittorio "decimo uomo"**, `17_Decimo_uomo.md`: agente separato A9 proposto, decisione aperta A-17, prova K15; il pacchetto non cambia finche' A-17 non e' decisa; nella stessa analisi, 17.10, **ancoraggio e asimmetrie**: fatti il comando `diagnosi` e gli anni di adeguamento dei rischi in osservazione con Impatto 4-5, D-80, trappola 112, e l'esposizione "non nota" decisa dal validatore, D-81). Trappole 93-98. Prima, 07/10 sera:
+> approfondita**, `15_CS2_approfondita.md`: variante V2 "Python decide, Excel esegue", trappola 110; **il 14/10 la variante V4**, `16_Report_HTML.md`: report HTML generato da Python al posto delle viste di Excel, anteprima in `Analisi_Architettura/16_Anteprima_HTML/`, decisione aperta A-16, trappola 111; il pacchetto non cambia finche' A-16 non e' decisa; **il 19/10 il contraddittorio "decimo uomo"**, `17_Decimo_uomo.md`: agente separato A9 proposto, decisione aperta A-17, prova K15; il pacchetto non cambia finche' A-17 non e' decisa; nella stessa analisi, 17.10, **ancoraggio e asimmetrie**: fatti il comando `diagnosi` e gli anni di adeguamento dei rischi in osservazione con Impatto 4-5, D-80, trappola 112, e l'esposizione "non nota" decisa dal validatore, D-81; **il 23/10 due rami e la strada A su `main`** (D-83, chiude A-15 e A-16): su `main` agenti in Agent Builder e un'app Python di orchestrazione, per piu' analisti, a tappe M1-M4; tappa M1 fatta: lucchetto, copia di lavoro del registro, Salvataggio automatico spento, `sblocca`, AU7 (baseline ad A3 e A4 come allegato), report rigenerato da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura; poi la tappa M2, l'app: `NFR.cmd`, `app_nfr.py` (tkinter), `flussi.py`, `stato.py`, `ingresso.py`, `appunti.py`, `esecutore.py`; trappole 122-129 (le 113-121 sono del ramo `copilot-studio-pieno`, D-82); niente V4: il report HTML sara' una seconda uscita di `report`). Trappole 93-98. Prima, 07/10 sera:
 > **lista di osservazione** (D-73, **sostituita l'08/10 dal registro unico, D-79**: il testo resta come storia): i fenomeni
 > con un meccanismo di perdita ma lontani o solo teorici diventano voci `OSS-nn`
 > della tabella storica `tblOsservazione` (foglio dati Lista_Osservazione), con
@@ -412,8 +412,10 @@ la data della pagina. Alla stesura valgono (Learn, agg. luglio-agosto 2026):
 Conseguenze di progetto, obbligatorie:
 - il kernel non si puo' incollare per intero: i prompt si **compongono** con le
   sole sezioni che servono a ciascun agente (vedi "Prompt");
-- tutto cio' che un agente deve leggere come knowledge si scrive **anche in
-  .txt** (la baseline `Baseline_corrente.txt`, la raccolta notizie);
+- tutto cio' che un agente deve leggere come knowledge o allegato si scrive **anche in
+  .txt** (la raccolta notizie; la baseline arriva come allegato: `Input_A1_<ciclo>.txt` ad
+  A1, `Input_A8_<periodo>.txt` ad A8, `Input_A3_A4.txt` ad A3 e A4 (AU7), `Input_A5_<ciclo>.txt` ad A5, `Input_A6_<ciclo>.json` ad A6 (D-84): mai dalla knowledge,
+  che si indicizza in ritardo o salta un file singolo);
 - l'elenco delle fonti va **nelle istruzioni** di A3; come knowledge web solo i
   quattro siti marcati; "Search all websites" spento;
 - setup degli agenti: capability "nessuna" vuol dire **spegnere esplicitamente**
@@ -473,16 +475,18 @@ Conseguenze di progetto, obbligatorie:
   entrambe le varianti (con Power Automate lo lancia un desktop flow).
 - **A3 Interim Update** (settimanale): integra le notizie dei tre canali; per
   ogni notizia l'impatto su tutti e sette gli event type, il rischio collegato,
-  il segnale, il **codice fonte**; propone flag; non modifica score.
+  il segnale, il **codice fonte**; propone flag; non modifica score. Baseline solo
+  dall'allegato `Input_A3_A4.txt` (AU7, D-83).
 - **A4 News Assessor** (su richiesta): parere su una notizia, ancorato alla
-  valutazione deliberata; mai una cifra, mai una persona, non scrive.
+  valutazione deliberata; mai una cifra, mai una persona, non scrive. Baseline solo
+  dall'allegato `Input_A3_A4.txt` (AU7, D-83).
 - **A5 Challenger** (trimestrale, dopo A1, **facoltativo** dal 06/10, D-71):
   nove controlli C1-C9 su input ristretto (output di A1 + baseline, mai le
   notizie); i suoi rilievi non fermano il ciclo: vanno nella colonna
   Segnalazioni della griglia e un suo Bloccante chiede la Motivazione. Ferma
   solo lo script, per l'integrita' del registro.
 - **A6 Schede dei rischi** (trimestrale, DOPO la validazione, D-40): un solo
-  allegato, `Schede_input_<ciclo>.json` (dati validati preparati dallo
+  allegato, `Input_A6_<ciclo>.json` (dati validati preparati dallo
   script), nessuna knowledge; scrive per ogni rischio descrizione estesa (il
   fenomeno in termini di rischio), spiegazione di ognuna delle quattro
   dimensioni (Impatto, Probabilita, Prossimita, Velocity) a partire dalle
@@ -496,7 +500,7 @@ Conseguenze di progetto, obbligatorie:
   osservazione) distinguendo registrato, calcolato e sua lettura; knowledge
   scritta dallo script (cartella `Spiegazioni`); non propone valori e non scrive.
 - **A8 Evento critico** (nel ciclo straordinario deciso dalla funzione di rischio,
-  D-75, D-77): stesso allegato `Input_A1_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
+  D-75, D-77): stesso allegato `Input_A8_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
   i documenti dell'evento; analizza a fondo l'evento (campo `analisi_evento`),
   rivaluta TUTTI e SOLO i rischi indicati e censisce i nuovi che l'evento crea
   (almeno uno se lo straordinario e' di solo censimento); rilegge ogni KRI in
@@ -852,7 +856,7 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   sconosciuti o ripetuti; C8 "sempre Osservazione"; C9 due KRI, uno per tipo (D-64), soglie
   entrambe o nessuna. A4 (la riga dei nomi delle dimensioni, senza Gap): sezioni fisse del
   parere (e non promette che la notizia compaia nel foglio Notizie).
-- **A6**: ruolo (spiega, non valuta), input = solo `Schede_input_<ciclo>.json`
+- **A6**: ruolo (spiega, non valuta), input = solo `Input_A6_<ciclo>.json`
   (niente notizie, knowledge o ricerche: come A5, la frase "usa sempre lo
   strumento di ricerca" NON c'e'), sette regole (una scheda per rischio; valori
   intoccabili; **ogni numero deve stare nei dati del rischio o nella
@@ -1243,8 +1247,9 @@ cartelle SharePoint sincronizzate con OneDrive. Requisiti: Windows, Excel
 desktop, Python 3.10+, pywin32, pypac (solo per la raccolta notizie),
 openpyxl (solo per il file delle schede). Moduli:
 - `excel_com.py`: sessione Excel dedicata e invisibile (DispatchEx), apertura
-  in sola lettura o scrittura, ricalcolo completo, ricerca degli errori di
-  formula (#N/D voluto ammesso), rilevazione del file aperto da altri;
+  in sola lettura o scrittura (in scrittura `AutoSaveOn = False`, D-83), ricalcolo
+  completo, ricerca degli errori di formula (#N/D voluto ammesso), rilevazione del
+  file aperto da altri;
   **nuovi tentativi** (fino a 5, attesa crescente) sugli errori COM transitori
   di avvio (CO_E_SERVER_EXEC_FAILURE, RPC_E_CALL_REJECTED): senza, la catena
   falliva a caso 2 volte su 3.
@@ -1323,8 +1328,12 @@ openpyxl (solo per il file delle schede). Moduli:
   verifica ogni rischio con questi controlli e correggi...") e i controlli,
   "=== 3. GUIDA DI SCRITTURA ==="; un file del kernel mancante toglie la sua
   parte e non ferma niente. `scrivi(cartella, ...)` scrive il file e toglie gli
-  `Input_A1_<AAAAQn>.txt` degli altri cicli (solo quelli con quel nome; un file
-  aperto resta). `_scrivi_baseline` lo chiama a ogni baseline scritta
+  `Input_A1_<AAAAQn>.txt` e `Input_A8_<AAAAQn-Sk>.txt` degli altri periodi (solo quelli con quel nome; un file
+  aperto resta). **Nomi degli allegati (D-84)**: sempre `Input_<agente>`; `Input_A8_<periodo>.txt` per lo
+  straordinario (intestazione "INPUT DI A8"); `Input_A3_A4.txt` unico per A3 e A4 (`scrivi_allegato_a3_a4`, toglie
+  i vecchi `Input_A3.txt` e `Input_A4.txt`); `Input_A5_<ciclo>.txt` (`componi_a5`, `leggi_a5`: "=== 1. OUTPUT DI A1
+  ===" e "=== 2. BASELINE ===") scritto da `precontrollo` quando nessun punto e' da correggere e tolto quando ce ne
+  sono; `Input_A6_<ciclo>.json` in `Cicli/<ciclo>/` (`NOME_A6`, prima `Schede_input_`). `_scrivi_baseline` lo chiama a ogni baseline scritta
   (`baseline`, `trimestrale`, `valida`, `dismetti`) e avvisa se mancano file
   del kernel; con `baseline --uscita` no.
 - `input_a1.leggi_baseline(testo)` (D-70): il JSON della parte 1
@@ -1571,7 +1580,7 @@ openpyxl (solo per il file delle schede). Moduli:
     `pesoSeverity` se c'erano, e le colonne rinominate e tolte. Rilanciato su un
     registro gia' aggiornato: fermo "niente da aggiornare".
   - `schede-input` (D-40): sola lettura; si ferma se il ciclo corrente ha
-    decisioni "Da decidere"; scrive `Cicli/<ciclo>/Schede_input_<ciclo>.json`
+    decisioni "Da decidere"; scrive `Cicli/<ciclo>/Input_A6_<ciclo>.json`
     e dice come proseguire con A6.
   - `schede [--payload A6_<ciclo>.json]`: sola lettura del registro; con
     `--payload` valida lo schema e `controlla_a6` (un problema = fermo, nessun
@@ -1615,18 +1624,93 @@ openpyxl (solo per il file delle schede). Moduli:
     N); con N maggiore della Probabilita proposta un rilievo "Da motivare" con i due valori e, per un rischio della
     baseline, il massimo ammesso in validazione (un punto); frase senza valore maggiore = Osservazione. Nessun campo
     nuovo: la frase sta nel razionale.
+- **Piu' analisti** (D-83): `lucchetto.py` (solo libreria standard). I comandi di `SCRIVONO` (trimestrale,
+  settimanale, valida, griglia, riapri, dismetti, inizializza, aggiorna-registro) prendono in `main()` il lucchetto
+  `Archivio_Cicli/_Lucchetto/registro.json` (id, utente da `configurazione.json` o Windows, PC, comando, inizio,
+  scadenza 2 ore): un lucchetto valido di un altro utente o PC ferma (codice 1, "Il registro e' in uso"); uno scaduto,
+  o il proprio rimasto da un comando interrotto, si prende. **Presa in due tempi** solo se configurata: scrive, attende
+  `attesa_lucchetto` secondi (0 di default dal 23/10, scelta dell'utente: in quattro due avvii nello stesso istante
+  sono rarissimi e li ferma l'impronta; `NFR_ATTESA_LUCCHETTO` la sostituisce), rilegge; un id diverso o una copia in conflitto di OneDrive
+  (`registro-*.json`) di un altro = ritiro ("nello stesso momento"). Rilascio in `finally`, solo se e' ancora il
+  proprio. `sblocca --motivo` lo toglie e scrive `sblocchi.log`.
+- **Copia di lavoro** (D-83): le sessioni in scrittura passano da `sessione_registro(conf)`: fermo se il registro e'
+  aperto in un programma di questo PC (`aperto_qui`: `open(r+b)` -> PermissionError); copia in `cartella_lavoro`
+  (`%LOCALAPPDATA%/NFR/lavoro/<ora>_<pid>/`, stesso nome del file) con l'impronta SHA-256; Excel lavora sulla copia;
+  `_salva_con_backup` fa il backup dell'originale e salva la copia (`LAVORO["salvata"]`); chiusa la sessione,
+  `_sostituisci` controlla che l'impronta dell'originale non sia cambiata (altrimenti FERMATO "cambiato mentre lo
+  script lavorava"), copia in `~$NFR_nuovo_<pid>.xlsx` accanto all'originale (OneDrive non sincronizza i `~$`) e fa
+  `os.replace`; solo allora `SALVATO["registro"]`. La cartella di lavoro si cancella sempre.
+- **Automatismi** (AU1, D-83): `valida` del ciclo corrente (trimestre o straordinario) rigenera il PDF del report
+  dalla stessa sessione con `esporta_pdf` in una cartella temporanea e lo pubblica nell'archivio con `pubblica_report` (gli stessi di `report`) solo dopo la sostituzione del registro e dopo `Validazione_<ciclo>.json`, con l'ora della pubblicazione (avviso, mai fermo; `--senza-report`); `trimestrale`
+  copia `02_Agenti/A*.md` in `Cicli/<ciclo>/Prompt_in_uso/` (`archivia_prompt`); `schede` esporta anche
+  `Schede_<ciclo>.pdf` (avviso se non riesce); `riapri` scrive `Cicli/<ciclo>/Riapertura_<ciclo>.json`, `valida` la
+  chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
+  `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
+  dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
+- **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
+  poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
+  prossimo passo, un pulsante per processo, passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
+  "Scegli file...", "Ho chiuso il registro", "Annulla il passo", log con l'esito colorato. **L'app non contiene
+  regole**: i processi sono in `flussi.py`, scritti contro un `Ambiente` (esegui, apri, copia, risposta,
+  attendi_chiusura, chiedi, conferma, mostra) che la finestra realizza e il collaudo simula (`AmbienteFinto` di
+  `test_app.py`). Ogni processo gira in un thread; le chiamate alla finestra passano da una coda al thread di tkinter.
+  - `stato.py`: stato e prossimo passo **senza Excel**, dall'archivio condiviso (Baseline_corrente: `ciclo_precedente`
+    = ciclo corrente, `ciclo_da_valutare`; `Validazione_<c>.json` = validato; `Riapertura_<c>.json` aperta; report
+    piu' recente della validazione; schede; settimana dal lunedi' di oggi: Raccolta, A3 in In_arrivo, Settimane;
+    lucchetto). Priorita': attesa del collega, baseline, validazione (anche riapertura), straordinario deciso,
+    trimestre chiuso (oggi dopo la fine del trimestre da valutare), report, schede, settimana, validazione della
+    settimana. `segna` annota in `Archivio_Cicli/Stato/<periodo>.json` i passi senza file (chi, quando).
+  - `ingresso.py`: `estrai_json` (BOM e recinti via, `raw_decode` da ogni `{`, il piu' grande che e' di un agente;
+    graffe non chiuse = TRONCATA anche se dentro ci sono oggetti interi), `unisci` le parti, `riconosci_agente` dai
+    `required` degli schemi (il piu' specifico; A8 = schema di A1 con periodo `-Sk` o `analisi_evento`), `nome_file`,
+    `salva` in `Archivio_Cicli/In_arrivo/` (UTF-8 senza BOM; originale in `Originali/`, il file di prima in
+    `Precedenti/`, con i millisecondi), `ricevi` (un testo senza JSON e' un parere di A4 solo se atteso A4 o nessuno:
+    `Pareri/`), `messaggio_correzione` per A3, A5, A6.
+  - `appunti.py`: pywin32, `GetClipboardSequenceNumber`; le copie dell'app si ignorano; senza pywin32 solo i file.
+  - `esecutore.py`: motore in un processo a parte con `python.exe` anche sotto `pythonw`, `CREATE_NO_WINDOW`, uscita
+    riga per riga, fascia OK / FERMATO / ERRORE TECNICO ("DOPO IL SALVATAGGIO": non rilanciare), log in
+    `Archivio_Cicli/Log/`; `esito_precontrollo` legge la prima riga del precontrollo.
+  - `flussi.py`: per un agente prepara `%USERPROFILE%/NFR_Da_allegare/<agente>/`, apre la cartella e il link (solo se
+    comincia con http), copia il messaggio base (guida, sezione 8), aspetta la risposta; "continua" per una risposta
+    tagliata; giro di correzione nella **stessa chat** (A1/A8: `Correzione_A1_<periodo>.txt` del precontrollo o di
+    `trimestrale`; A3, A6: dal fermo); una risposta gia' in `In_arrivo` si riusa se l'analista conferma (ripresa).
+    Validazione: registro aperto con `os.startfile`, attesa che Excel lo apra e poi lo chiuda (`aperto_qui` e file
+    `~$`), poi `valida`. Configurazione dell'app in `configurazione.json`: `link_agenti` (piatto o per versione:
+    `{"Agent Builder": {...}, "Copilot Studio": {...}}`), `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`
+    (versione proposta all'avvio), `ascolta_appunti`.
+  - **Risposte incollate** (richiesta dell'utente, 23/10): riquadro "Risposta dell'agente" nella finestra; incollando
+    (evento `<<Paste>>`) la risposta passa al processo, o con "Usa il testo incollato"; l'ascolto degli appunti resta
+    in piu' (`ascolta_appunti`, acceso di default), e "Scegli file...". Casella **"Agenti"**: Agent Builder o Copilot
+    Studio; stessi nomi, cartella `In_arrivo` e registro, l'origine si annota (`ingresso.ORIGINI`; nome del testo
+    originale `<nome>_<ora>_<origine>.txt`; nota in `Stato/<periodo>.json`; nome del parere di A4) e sceglie il link.
+    `estrai_json` legge anche il JSON dentro un campo di testo (record di un prompt di Copilot Studio, campo `text`) e
+    ignora i link alle fonti in coda.
+  - **Divisore trascinabile** (ttk.PanedWindow, 60% passo in corso e 40% uscita all'avvio) fra il passo in corso e
+    l'uscita dei comandi; il riquadro della risposta e' alto e resta visibile dopo l'incolla (un nuovo Ctrl+V lo
+    sostituisce); sotto, la riga dell'esito scritta da `flussi.esito` (`esito_risposta` dell'Ambiente, se c'e'):
+    ricevuto con agente, caratteri e file, oppure risposta tagliata, di un altro agente, fuori schema.
+  - **Schermi 1920x1080**: con un'altezza dello schermo fino a 1200 pixel la finestra si apre ingrandita (`zoomed`);
+    stato su due righe, riquadro per incollare di tre righe; provata con la scala al 100, 125 e 150%.
+  - **Documentazione dell'uso**: guida, sezione "L'app NFR: uso passo per passo" (finestra, i tre gesti con un agente,
+    risposta tagliata, correzione, ogni processo con cio' che fa l'app e cio' che fa l'analista, ripresa, piu'
+    analisti); configurazione degli agenti nella 0.2 (3-bis, link) e 0.2-bis (Copilot Studio), voci di
+    `configurazione.json` in una tabella nella 0.3.
 - Codici di uscita: 0 eseguito; 1 fermato (registro intatto); 2 errore tecnico,
   distinguendo **prima** del salvataggio (nulla scritto) da **dopo** (registro
   scritto, baseline gia' aggiornata: "NON rilanciare").
 - **Archivio** (`Archivio_Cicli`): `Baseline_corrente.json/.txt`;
   `Cicli/<ciclo>/` (Excel di output `NFR_Registro_<ciclo>.xlsx`, versione
   `_validato`, output di A1 e A5, baseline usata, esito dei controlli,
-  `Righe_liste_<ciclo>.json`, validazione, `Schede_input_<ciclo>.json`,
-  `A6_<ciclo>.json`, `Schede_<ciclo>.xlsx`); `Cicli/<ciclo>/tentativo_<ora>/`
-  per OGNI tentativo, anche fermato; `Settimane/<lunedi'>/`; `Backup/`.
+  `Righe_liste_<ciclo>.json`, validazione, `Input_A6_<ciclo>.json`,
+  `A6_<ciclo>.json`, `Schede_<ciclo>.xlsx` e `.pdf`, `Report_comitato_<ciclo>.pdf`,
+  `Prompt_in_uso/`, `Riapertura_<ciclo>.json` finche' la riapertura e' aperta);
+  `Cicli/<ciclo>/tentativo_<ora>/` per OGNI tentativo, anche fermato;
+  `Settimane/<lunedi'>/`; `Backup/`; `_Lucchetto/` (registro.json, sblocchi.log; D-83);
+  accanto alla baseline `Input_A1_<ciclo>.txt`, `Input_A3_A4.txt`.
 - Dopo il salvataggio: prima la baseline, per ultima la copia dell'Excel (e'
   quella che fallisce se qualcuno ha aperto un file dell'archivio).
-- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox.
+- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto
+  (facoltativa `cartella_lavoro`).
 - `README_variante_locale.md`: vincoli di Agent Builder con data della fonte,
   setup dei cinque agenti (istruzioni, knowledge, capability, modalita'), setup
   dello script e pianificazione della raccolta, procedure, copertura dei
@@ -1747,8 +1831,9 @@ openpyxl (solo per il file delle schede). Moduli:
   agente, non una decisione in `DECISIONI.md` — dichiarato come tale), una
   seconda tabella con la **knowledge esatta** per agente (cartelle intere,
   file singolo, nessuna) e i **4 siti pubblici con URL esatto** (FNT-20..23,
-  da `01_Kernel/fonti.md`), spegnere le capability, prompt schedulato di A3,
-  prova di fumo); **0.3** sul
+  da `01_Kernel/fonti.md`), spegnere le capability, link degli agenti per l'app
+  (3-bis), niente prompt schedulato di A3 (AU7), prova di fumo; **0.2-bis** gli stessi
+  agenti in Copilot Studio, usati dall'app con copia e incolla); **0.3** sul
   PC di ogni analista (Python e dipendenze con verifica che apre Excel,
   sincronizzare OneDrive, `configurazione.json`, **verificare che
   `03_Excel/NFR_Dashboard_Template.xlsx` esista davvero** — trappola 47 — non
@@ -1772,7 +1857,9 @@ openpyxl (solo per il file delle schede). Moduli:
   dismesse, presidio "Non verificato", baseline in `Kernel`); **quando si lanciano A5 e A6** (riquadro dopo il ciclo
   trimestrale); in testa **"In breve: i cicli standard"** (07/10: settimana,
   trimestre e passi "quando serve", un passo per riga con il rimando alla
-  sezione di dettaglio); in fondo la **sezione 8 "Gli agenti: mansioni e
+  sezione di dettaglio); subito dopo, dal 23/10 (D-83), **"L'app NFR: uso passo per passo"** (la finestra parte per
+  parte, i tre gesti con un agente e il riquadro per incollare, risposta tagliata e correzione nella stessa chat,
+  una tabella con ogni processo: che cosa fa l'app e che cosa fa l'analista; ripresa, piu' analisti); in fondo la **sezione 8 "Gli agenti: mansioni e
   messaggi da usare"** (07/10: tabella di mansione, momento, input e output di
   ogni agente; messaggio base e variazioni per ciascuno, compreso il
   **messaggio rinforzato per A1** del 29/09 con i suoi due limiti — rinforza
@@ -2911,7 +2998,45 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     Script, prompt con code interpreter, correzioni) ne richiede di piu'. `NFR_Motore` risponde subito ("avviato") e
     continua; l'esito va in `Esiti/Ultimo_esito.txt` (comando `Stato`) e in Teams. Che il flusso continui dopo la
     risposta e' la prova T1.7: se no, flusso cloud su un file di richiesta.
-122. **Il code interpreter dei prompt non esegue il nostro codice** (23/10, K9). Tre tentativi: "python motore.py"
+122. **Con piu' analisti il lucchetto da solo non basta** (23/10, D-83). OneDrive porta il file del lucchetto sugli
+    altri PC con secondi o minuti di ritardo: due analisti possono prenderlo insieme, e un collega puo' salvare il
+    registro da Excel per il web senza passare dallo script. La garanzia e' la copia di lavoro con l'impronta: il
+    registro vero si sostituisce solo se e' ancora quello copiato all'inizio. Il lucchetto resta come avviso cortese,
+    con la copia in conflitto di OneDrive (`registro-PCNOME.json`) letta come un collega; la presa in due tempi c'e' ma
+    con attesa 0 di default: l'avviso serve a non cominciare un lavoro che si fermerebbe, non a proteggere i dati.
+123. **Mai sostituire un file aperto da Excel, e mai attraverso volumi diversi** (23/10). La copia di lavoro sta in
+    `%LOCALAPPDATA%`: la sostituzione si fa solo dopo aver chiuso la sessione di Excel (il file della copia e' bloccato
+    finche' e' aperto), copiando prima accanto all'originale e poi con `os.replace` (atomico solo nella stessa
+    cartella). Il nome temporaneo comincia con `~$`, che OneDrive non sincronizza. Un registro aperto in Excel sul PC
+    si scopre prima con `open(r+b)`: dopo, l'errore arriverebbe a lavoro fatto.
+124. **`SALVATO` vuol dire "registro sostituito", non "copia salvata"** (23/10). Con la copia di lavoro un errore
+    dopo `_salva_con_backup` ma prima della sostituzione lascia il registro com'era: il messaggio deve dire "non
+    salvato". `SALVATO["registro"]` si imposta solo in `_sostituisci`; la knowledge di A7 scritta dentro la sessione si
+    riallinea al comando dopo, se la sostituzione non riesce.
+125. **Il report rigenerato da `valida` aggiunge una versione** (23/10). Il collaudo che contava le versioni
+    precedenti del PDF dopo due `report` deve contarne una in piu'; nella riapertura si prova anche `--senza-report`.
+    Il report si esporta dalla sessione di `valida` gia' ricalcolata, prima di chiuderla (riaprire Excel costerebbe un
+    minuto a ogni validazione), ma in una cartella temporanea: entra nell'archivio solo dopo la sostituzione del
+    registro, altrimenti un fermo "registro cambiato" lascerebbe un report di dati mai salvati.
+126. **Un prompt schedulato non porta allegati** (23/10, AU7). Dal momento in cui A3 legge la baseline solo
+    dall'allegato `Input_A3_A4.txt`, il prompt schedulato del lunedi' risponde "Baseline mancante": A3 si lancia a mano
+    (o dall'app). Togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel, altrimenti un
+    agente potrebbe ancora leggerne una vecchia.
+127. **tkinter si tocca solo dal suo thread** (23/10, app). Il motore impiega minuti: i processi girano in un thread,
+    e ogni richiesta alla finestra (messaggio, domanda, modulo, attesa della risposta) passa da una coda svuotata con
+    `after` nel thread principale, con un Event per il risultato. Chiamare un widget dal thread del processo blocca o
+    chiude la finestra senza errori leggibili.
+128. **Senza `SetProcessDpiAwareness(1)` la finestra e' sfocata e le coordinate sono sbagliate** (23/10). Con la
+    scala di Windows al 125-150% tkinter disegna a 96 dpi e Windows ingrandisce l'immagine; anche una cattura dello
+    schermo prende il rettangolo sbagliato. La finestra si dimensiona in proporzione allo schermo, non in pixel fissi;
+    su 1920x1080 con la scala al 150% una finestra al 82% dell'altezza lasciava due righe all'uscita del motore: fino
+    a 1200 pixel di altezza si apre ingrandita. Provarla simulando lo schermo (geometria e `tk scaling`), non solo sul
+    monitor di chi sviluppa.
+129. **Una risposta tagliata contiene oggetti JSON interi** (23/10). Dentro un A1 interrotto a meta' ci sono rischi
+    completi: "c'e' un oggetto JSON" non basta a dire che la risposta e' intera. Si cerca prima l'oggetto di un agente
+    (campi obbligatori dello schema); solo se manca e le graffe dalla prima `{` non si chiudono la risposta e'
+    TRONCATA. Un segnaposto nei link degli agenti non si apre (solo link che cominciano con http).
+130. **Il code interpreter dei prompt non esegue il nostro codice** (23/10, K9). Tre tentativi: "python motore.py"
     -> la sandbox non lancia processi; caricatore con runpy -> GPT-5 rifiuta "arbitrary code from your uploaded
     file"; GPT-4.1 -> "Access denied" sul file e "Import of module 'builtins' is blocked for security reasons". E' un
     Python ristretto per scelta della piattaforma: non si aggira. Il motore nel tenant passa da Office Scripts (V1).
@@ -2936,7 +3061,8 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
                        Prova_A7.md (copione di prova di A7)
 07_Senza_Studio/  README_variante_locale.md  esegui_ciclo_locale.py  raccogli_notizie.py  fonti.py
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
-                  precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  configurazione_esempio.json
+                  precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
+                  NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     Copilot_Studio_pieno.md (ramo copilot-studio-pieno, D-82)  genera_CS.py  prepara_busta.py
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
@@ -2949,7 +3075,7 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
                                             Report Riapri Schede Stato Straordinario Valida (.yaml, scritti a mano)
                                  prove/ K8_prova.ts (scritto a mano)  K9_Busta_vuota.xlsx K9_Busta_prova.xlsx K9_atteso.txt (generati)
 99_Collaudo/  LEGGIMI_collaudo.md  esegui_collaudo.py  comune.py  test_mappatura.py  test_controlli.py
-              test_fonti.py  verifica_riferimenti.py  run_catena.py  confronta.py  osserva_cartella.py
+              test_fonti.py  test_app.py  verifica_riferimenti.py  run_catena.py  confronta.py  osserva_cartella.py
               dati/ baseline_2026Q3.json  run1_A1_2026Q3.json  run2_A1_2026Q3.json  run_A5_2026Q3.json
                     run_A3_2026-10-12.json  baseline_2026Q4.json  run3_A1_2026Q4.json  run_A5_2026Q4.json
                     decisioni_validatore_2026Q3.json  decisioni_validatore_2026-10-12.json

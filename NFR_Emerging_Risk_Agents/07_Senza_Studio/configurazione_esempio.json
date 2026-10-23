@@ -2,5 +2,18 @@
   "workbook": "C:\\Users\\NOME\\Banca\\NFR-Emerging-Risk - Report_Trimestrali\\NFR_Registro.xlsx",
   "kernel": "C:\\Users\\NOME\\Banca\\NFR-Emerging-Risk - Kernel",
   "cartella_uscita": "C:\\Users\\NOME\\Banca\\NFR-Emerging-Risk - Archivio_Cicli",
-  "news_inbox": "C:\\Users\\NOME\\Banca\\NFR-Emerging-Risk - News_Inbox"
+  "news_inbox": "C:\\Users\\NOME\\Banca\\NFR-Emerging-Risk - News_Inbox",
+  "utente": "Nome Cognome (Funzione Risk Management)",
+  "attesa_lucchetto": 0,
+  "validatore_predefinito": "Funzione Risk Management",
+  "raccolta_su_questo_pc": true,
+  "link_agenti": {
+    "A1": "incollare il link dell'agente (Agent Builder: ... -> Copia collegamento)",
+    "A3": "",
+    "A4": "",
+    "A5": "",
+    "A6": "",
+    "A7": "",
+    "A8": ""
+  }
 }

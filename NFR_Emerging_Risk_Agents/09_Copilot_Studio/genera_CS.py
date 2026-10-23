@@ -75,9 +75,9 @@ SOTTO_AGENTI = {
          "valore cambiato, max un punto); correggi."),
     ] + ACCORCIA),
     "A8_CS.md": ("A8_Evento_critico.md", [
-        ("Allegato Input_A1 dello straordinario (baseline, controlli, guida) e documenti sull'evento dati "
+        ("Allegato Input_A8 dello straordinario (baseline, controlli, guida) e documenti sull'evento dati "
          "dall'utente.",
-         f"Allegato Input_A1 dello straordinario = valore di {VAR_IN} (baseline, controlli, guida). Documenti "
+         f"Allegato Input_A8 dello straordinario = valore di {VAR_IN} (baseline, controlli, guida). Documenti "
          "sull'evento: in knowledge, Analisi_Esterne, cartella Eventi/<ciclo_da_valutare>."),
         ("Utilizza **sempre** lo strumento di ricerca file o altri strumenti di ricerca aziendale per accedere ai file "
          "della knowledge.",
@@ -86,8 +86,8 @@ SOTTO_AGENTI = {
          f"Solo JSON, nessun testo attorno; la stessa risposta va in {VAR_OUT}. Date AAAA-MM-GG."),
     ] + ACCORCIA),
     "A3_CS.md": ("A3_Interim_Update.md", [
-        ("Baseline allegata o in knowledge (Baseline_corrente):",
-         f"Baseline = valore di {VAR_IN} (Baseline_corrente):"),
+        ("Baseline: SOLO l'allegato Input_A3_A4.txt della chat, mai dalla knowledge;",
+         f"Baseline: SOLO il valore di {VAR_IN} (Input_A3_A4.txt), mai dalla knowledge;"),
         ("1. settimana = data del lunedi' della settimana in corso (AAAA-MM-GG).",
          f"1. settimana = valore di {VAR_PERIODO} (lunedi', AAAA-MM-GG)."),
         ("Solo JSON, nessun testo attorno, nessun campo in piu'. Date AAAA-MM-GG.",
@@ -99,14 +99,14 @@ SOTTO_AGENTI = {
 # Prompt: niente knowledge, ingresso e uscita fissi (output record, testo nel campo text). Gli ingressi sono in fondo.
 PROMPT = {
     "A5.txt": ("A5_Challenger.md", [
-        ("Solo due file allegati: l'output di A1 (JSON) e la baseline (Baseline_corrente.json).",
-         "Solo i due testi in fondo: JSON_A1, l'output di A1, e BASELINE, cioe' Baseline_corrente.json."),
-    ], "JSON_A1: [json_a1]\nBASELINE: [baseline]"),
+        ("Solo l'allegato Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline.",
+         "Solo il testo in fondo: INPUT_A5, cioe' Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline."),
+    ], "INPUT_A5: [input_a5]"),
     "A6.txt": ("A6_Schede.md", [
-        ("Un solo file allegato: Schede_input_<ciclo>.json, scritto dallo script dal registro validato.",
-         "Un solo testo, in fondo: SCHEDE_INPUT, cioe' Schede_input_<ciclo>.json, scritto dal motore dal registro "
+        ("Un solo file allegato: Input_A6_<ciclo>.json, scritto dallo script dal registro validato.",
+         "Un solo testo, in fondo: INPUT_A6, cioe' Input_A6_<ciclo>.json, scritto dal motore dal registro "
          "validato."),
-    ], "SCHEDE_INPUT: [schede_input]"),
+    ], "INPUT_A6: [input_a6]"),
 }
 
 CORREGGI = """Sei l'agente che ha prodotto JSON_A1: A1 Horizon Scanner, o A8 Evento critico in un ciclo straordinario. Il controllo del motore vi ha trovato i punti in CORREZIONE.

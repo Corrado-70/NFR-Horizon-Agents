@@ -1,4 +1,4 @@
-INPUT DI A1 PER IL CICLO 2026Q3: scritto da esegui_ciclo_locale.py il 2026-10-08, da non modificare a mano.
+INPUT DI A1 PER IL CICLO 2026Q3: scritto da esegui_ciclo_locale.py il 2026-10-23, da non modificare a mano.
 Tre parti: 1. BASELINE (JSON); 2. CONTROLLI che lo script (e A5 Challenger, se usato) applicano al tuo output; 3. GUIDA DI SCRITTURA.
 
 === 1. BASELINE ===
@@ -1186,6 +1186,7 @@ Le parti in quest'ordine, ognuna con la sua etichetta seguita dai due punti:
   3. perche' non il valore vicino, in una frase: cosa manca per salire o cosa esclude il valore piu' basso;
   4. se il valore cambia, da quanto a quanto e per quale evidenza nuova; se resta, quali fonti lo sostengono ancora.
   Velocity null: "VELOCITY: nessuna fonte documenta i tempi." Prossimita 4-5 con la deroga: dichiarala qui.
+  Esposizione della Banca: Probabilita 4-5 solo se la Banca e' esposta (ha il prodotto, il processo o il fornitore colpito). Se le fonti non lo dicono, non scegliere in silenzio il valore piu' basso: scrivi il valore che le fonti sostengono senza l'esposizione e, nella parte PROBABILITA, la frase "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N." con N maggiore del valore scritto. Decide il validatore, che l'esposizione la conosce. Se le fonti documentano o escludono l'esposizione, niente frase.
 - ADEGUAMENTO: solo se anni_adeguamento non e' null: che cosa va adeguato e perche' servono quegli anni.
 Un numero (importo, percentuale, conteggio) cita la sua fonte o e' dichiarato come stima. Attribuisci a un documento solo cio' che il documento dice.
 
@@ -1216,7 +1217,8 @@ Il registro e' unico: ogni rischio e' nel radar di Mosca (gestione completa: KRI
 Nella baseline i rischi del radar sono in "rischi", quelli in osservazione in "rischi_in_osservazione".
 - Rischi del radar: valutali TUTTI, ogni ciclo, con due KRI e da 1 a 5 azioni.
 - Rischi in osservazione: riscrivili SOLO se le fonti del ciclo portano evidenza nuova, con lo stesso id e le stesse regole di variazione (un punto per ciclo); gli altri restano com'erano. Per ognuno che scrivi: le quattro dimensioni, fonti, descrizione, razionale con RISCHIO: e una parte per dimensione, orizzonte_anni (anni stimati prima che possa manifestarsi: 5, 10...) e segnale_avvicinamento (il fatto osservabile e verificabile che lo farebbe salire, "primo caso documentato presso una banca europea", non una tendenza); kri_proposti e azioni_mitigazione vuoti. Se i nuovi valori lo portano sopra le soglie, entra nel radar: allora scrivi anche i due KRI e le azioni.
-- Un rischio nuovo va nel radar o in osservazione secondo la regola: serve sempre un meccanismo di perdita per la Banca e almeno una fonte specifica; in osservazione bastano dimensioni, fonti, orizzonte e segnale. Un tema senza meccanismo va fra i fenomeni non censiti.
+- Un rischio nuovo va nel radar o in osservazione secondo la regola: serve sempre un meccanismo di perdita per la Banca e almeno una fonte specifica; in osservazione bastano dimensioni, fonti, orizzonte e segnale (e gli anni di adeguamento, punto seguente). Un tema senza meccanismo va fra i fenomeni non censiti.
+- Rischi in osservazione con Impatto 4 o 5: stima anche anni_adeguamento quando difendersi richiede un adeguamento strutturale di anni (migrazione crittografica, sostituzione di sistemi, uscita da un fornitore), con la parte ADEGUAMENTO: nel razionale; null se non serve. Vale anche per un rischio in osservazione della baseline senza anni_adeguamento: riscrivilo per aggiungerli anche senza evidenza nuova, con le stesse dimensioni e le stesse fonti (gli anni non sono una variazione). Se mosca_x + anni_adeguamento supera la Z della sua Prossimita (anni_prossimita della regola: Prossimita 1 = 3,5 anni), il rischio e' AGIRE ORA ed entra nel radar: scrivi anche i due KRI e le azioni.
 - Ogni rischio in osservazione porta nella baseline le notizie che A3 vi ha collegato dopo il ciclo precedente (notizie_a3) e i suoi flag (flag_a3): verificali nelle fonti, sono proposte.
 - Al massimo 20 rischi in osservazione: oltre, il fenomeno meno rilevante va fra i non censiti (troppo_lontano). Un rischio in osservazione non piu' plausibile non si cancella riscrivendolo: dillo nel razionale, lo toglie la funzione di rischio.
 Lo script ferma il ciclo se manca un rischio del radar o se i rischi in osservazione superano 20; segnala al validatore, da motivare, un rischio che entra nel radar senza i due KRI o senza azioni.

@@ -140,7 +140,7 @@ il registro.
 
 ## Input delle schede (prodotto dallo script, non da un agente)
 
-`esegui_ciclo_locale.py schede-input` scrive `Cicli/<ciclo>/Schede_input_<ciclo>.json`
+`esegui_ciclo_locale.py schede-input` scrive `Cicli/<ciclo>/Input_A6_<ciclo>.json`
 dal registro validato: `ciclo`, `data_riferimento`, `ciclo_precedente`,
 `pesi`, `rischi[]` in ordine di classifica (id, nome, event type e nome,
 driver, owner, attenzione del supervisore, anni di adeguamento, presidio dei
