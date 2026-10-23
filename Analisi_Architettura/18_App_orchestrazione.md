@@ -59,7 +59,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | AU7: `baseline` scrive l'allegato di A3 e A4 (`input_a1.scrivi_allegato_a3_a4`; dal 23/10 sera un file solo, `Input_A3_A4.txt`, D-84) | catena `piu_analisti` (7/7) |
 | [x] | Prompt di A3 e A4: baseline solo dall'allegato (A3 7.691 caratteri, A4 5.711) | `componi_prompt.py --verifica` |
 | [x] | Nomi degli allegati unificati (D-84): `Input_A1_<ciclo>`, `Input_A8_<periodo>`, `Input_A3_A4`, `Input_A5_<ciclo>` (dal precontrollo), `Input_A6_<ciclo>`; prompt di A3, A4, A5 (7.994 caratteri), A6, A8 | `test_controlli.py`, `test_app.py`; catena 375/375 e demo rigenerata (23/10 sera) |
-| [~] | Il ramo `copilot-studio-pieno` con i nomi nuovi: `genera_CS.py` (frasi sostituite in A3, A5, A6, A8) e argomenti YAML | al merge di `main` nel ramo |
+| [x] | Il ramo `copilot-studio-pieno` con i nomi nuovi: merge di `main` (4aea653), `genera_CS.py` (A3, A5, A6, A8), argomenti YAML, test del ramo (290/293: restano i 3 KO noti dei fine riga CRLF di quella cartella) | merge del 23/10 sera |
 | [~] | A3, A4, A5, A6 e A8 reincollati in Agent Builder (D-84); `Baseline_corrente.txt` tolto dalla knowledge e dalla library Kernel | in Banca, B5-bis |
 | [x] | `trimestrale` archivia i prompt in `Cicli/<ciclo>/Prompt_in_uso/` | catena `piu_analisti` |
 | [x] | `valida` del ciclo corrente rigenera il report; `--senza-report` | catena `catena` 178/178 e `riapertura` 28/28 (rilanciate il 23/10) |

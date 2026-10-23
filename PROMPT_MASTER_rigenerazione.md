@@ -2950,8 +2950,9 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     Impatto 4-5 (D-80); il comando `diagnosi` segnala chi non li ha. Non mettere gli anni di adeguamento solo
     nell'anagrafica: per i rischi in osservazione vivono nella riga del RiskRegister.
 
-(Le trappole 113-121 sono sul ramo `copilot-studio-pieno`, versione tutta in Copilot Studio, D-82: arrivano qui
-solo se l'utente decide di unire il ramo.)
+(Le trappole 113-121 e 130 sono sul ramo `copilot-studio-pieno`, versione tutta in Copilot Studio, D-82: arrivano qui
+solo se l'utente decide di unire il ramo. Regola dei numeri: una trappola nuova prende il primo numero libero dopo
+l'ultimo usato in tutti e due i rami.)
 
 122. **Con piu' analisti il lucchetto da solo non basta** (23/10, D-83). OneDrive porta il file del lucchetto sugli
     altri PC con secondi o minuti di ritardo: due analisti possono prenderlo insieme, e un collega puo' salvare il
