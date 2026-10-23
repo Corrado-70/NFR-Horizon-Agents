@@ -2,8 +2,9 @@
 
 Un prompt con code interpreter riceve un solo file e il codice lo scrive il modello (Microsoft Learn, 30/09/2026).
 La "busta" e' quel file: una cartella di lavoro Excel con il codice del motore a blocchi nel foglio _Motore e gli
-ingressi nella tabella tblIngresso del foglio Ingresso. Il prompt (Da_caricare/prompt/Motore.txt) chiede solo di
-riunire i blocchi in motore.py ed eseguirlo; il programma stampa una riga JSON con l'impronta del proprio codice,
+ingressi nella tabella tblIngresso del foglio Ingresso. Il prompt (Da_caricare/prompt/Motore.txt) fa eseguire un
+caricatore fisso che riunisce i blocchi in motore.py e lo esegue nella sessione (la sandbox non lancia processi);
+qui si esegue lo stesso caricatore. Il programma stampa una riga JSON con l'impronta del proprio codice,
 che il flusso confronta con quella attesa: la prova che e' girato il nostro codice e non uno scritto dal modello.
 
 Per chi mantiene il pacchetto (serve openpyxl, come genera_dashboard.py): rilanciarlo dopo prepara_kit.py. Scrive in
@@ -11,6 +12,7 @@ Da_caricare/prove/:
   K9_Busta_vuota.xlsx   codice e tabella degli ingressi vuota: la riempie il flusso NFR_Motore (passo T4.2)
   K9_Busta_prova.xlsx   gli stessi, con un output di A1 e il suo allegato dai dati del collaudo (passo T4.1)
   K9_atteso.txt         l'impronta attesa del codice e la riga che il motore deve stampare sulla busta di prova
+  Impronta.txt          la sola impronta attesa, senza a capo: va in SharePoint accanto alla busta vuota (passo T0.4)
 
 Il codice della busta e' lo script del precontrollo (prepara_kit.py) con, al posto del suo avvio, il lettore della
 busta: legge l'.xlsx con la sola libreria standard (zipfile e xml), senza dipendere da cio' che il sandbox installa.
@@ -32,6 +34,7 @@ QUI = Path(__file__).resolve().parent
 PACCHETTO = QUI.parent
 PROVE = QUI / "Da_caricare" / "prove"
 VUOTA, PROVA, ATTESO = PROVE / "K9_Busta_vuota.xlsx", PROVE / "K9_Busta_prova.xlsx", PROVE / "K9_atteso.txt"
+IMPRONTA = PROVE / "Impronta.txt"
 SCRIPT = QUI / "precontrollo-nfr" / "scripts" / "precontrollo_nfr.py"
 DATI = PACCHETTO / "99_Collaudo" / "dati"
 BLOCCO = 30000                     # caratteri per cella (Excel ne tiene al massimo 32.767)
@@ -201,12 +204,13 @@ def leggi_busta(busta):
 
 
 def esegui_come_il_prompt(busta, comando="precontrollo"):
-    """Cio' che il prompt deve fare: riunire i blocchi di _Motore in motore.py ed eseguirlo sulla busta."""
+    """Cio' che il prompt deve fare: il caricatore di Motore.txt, con il percorso della busta e il comando, eseguito in
+    una cartella vuota (nel prompt gira nella sessione del code interpreter)."""
+    from genera_CS import CARICATORE
     codice, _ = leggi_busta(busta)
+    caricatore = CARICATORE.replace("PERCORSO_DELLA_BUSTA", str(Path(busta).resolve())).replace("NOME_DEL_COMANDO", comando)
     with tempfile.TemporaryDirectory() as cartella:
-        motore = Path(cartella) / "motore.py"
-        motore.write_text(codice, encoding="utf-8", newline="\n")
-        r = subprocess.run([sys.executable, str(motore), str(busta), comando], capture_output=True, encoding="utf-8",
+        r = subprocess.run([sys.executable, "-c", caricatore], cwd=cartella, capture_output=True, encoding="utf-8",
                            env={**os.environ, "PYTHONIOENCODING": "utf-8"})
     return codice, r.returncode, r.stdout.strip()
 
@@ -233,8 +237,9 @@ def main():
         f"Blocchi del foglio _Motore: {len(a_blocchi(codice))}, {len(codice):,} caratteri\n\n"
         "Riga attesa sulla busta di prova K9_Busta_prova.xlsx, comando precontrollo (identica, a parte l'ordine dei "
         "campi):\n" + riga + "\n", encoding="utf-8", newline="\n")
+    IMPRONTA.write_text(impronta(codice), encoding="utf-8")     # niente a capo: il flusso lo confronta tale e quale
     print(f"Busta del motore: {len(codice):,} caratteri in {len(a_blocchi(codice))} blocchi, impronta {impronta(codice)}")
-    for f in (VUOTA, PROVA, ATTESO):
+    for f in (VUOTA, PROVA, ATTESO, IMPRONTA):
         print(f"  {f.relative_to(PACCHETTO)}")
     print(f"  esito sulla busta di prova (codice {uscita_codice}): {esito.get('esito')}")
     return 0

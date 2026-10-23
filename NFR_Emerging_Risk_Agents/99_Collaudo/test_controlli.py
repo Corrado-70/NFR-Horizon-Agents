@@ -864,6 +864,8 @@ def test_copilot_studio_pieno(e):
     codice_vuota, ingressi_vuota = busta.leggi_busta(busta.VUOTA)
     e.verifica(codice_vuota == codice_busta and ingressi_vuota == {},
                "busta K9: la busta vuota ha lo stesso codice e nessun ingresso")
+    e.verifica(busta.IMPRONTA.read_bytes() == busta.impronta(codice_busta).encode("ascii"),
+               "busta K9: Impronta.txt contiene solo l'impronta del codice della busta, senza a capo")
 
 
 MOTIVAZIONI_NFR01 = {"impatto": "Grave: importi medi triplicati nel Report trimestrale frodi.",

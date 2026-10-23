@@ -2911,6 +2911,11 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     Script, prompt con code interpreter, correzioni) ne richiede di piu'. `NFR_Motore` risponde subito ("avviato") e
     continua; l'esito va in `Esiti/Ultimo_esito.txt` (comando `Stato`) e in Teams. Che il flusso continui dopo la
     risposta e' la prova T1.7: se no, flusso cloud su un file di richiesta.
+122. **Il code interpreter dei prompt non esegue il nostro codice** (23/10, K9). Tre tentativi: "python motore.py"
+    -> la sandbox non lancia processi; caricatore con runpy -> GPT-5 rifiuta "arbitrary code from your uploaded
+    file"; GPT-4.1 -> "Access denied" sul file e "Import of module 'builtins' is blocked for security reasons". E' un
+    Python ristretto per scelta della piattaforma: non si aggira. Il motore nel tenant passa da Office Scripts (V1).
+    Con il code interpreter spento, l'ingresso Image or document accetta solo immagini.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 

@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10, ramo `copilot-studio-pieno`: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10, ramo `copilot-studio-pieno`: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**; **23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1 con Office Scripts: sezione 2-tretricesies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1310,6 +1310,48 @@ Fatto, tutto in `NFR_Emerging_Risk_Agents/09_Copilot_Studio/`:
 Da fare in Banca: le prove T0-T8 nell'ordine. T0.1 (Office Scripts), T4 (K9) e T5 (K8) decidono la strada del motore;
 il codice del motore e' la consegna successiva. Dopo ogni modifica agli A*.md o agli argomenti: `genera_CS.py`; dopo
 `prepara_kit.py`: `prepara_busta.py`.
+
+## 2-tretricesies. 23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1
+
+Prove in Banca, risultati nella tabella della sezione 9 di `09_Copilot_Studio/Copilot_Studio_pieno.md`.
+- **T0.1** scheda Automatizza presente (Office Scripts attivo); **T0.2** "Enable code interpreter" presente nei
+  prompt. T0.3 (mail all'IT, testo pronto nel documento al posto di D1) e T0.4 (cartelle) non ancora fatti.
+- **T4.1 (K9) negativo.** Il prompt `Motore` con code interpreter non esegue il nostro codice:
+  - "python motore.py": la sandbox non lancia processi;
+  - caricatore con runpy (ora in `prompt/Motore.txt`, generato da `genera_CS.py`; `prepara_busta.py` esegue lo
+    stesso caricatore sul PC): GPT-5 rifiuta "arbitrary code from your uploaded file";
+  - GPT-4.1: "Access denied" sul file, poi "Import of module 'builtins' is blocked for security reasons".
+  
+  E' un Python ristretto per scelta della piattaforma; non si aggira (trappola 122). Con il code interpreter spento,
+  l'ingresso Image or document accetta solo immagini. T4.2 e T4.3 non applicabili.
+- **T5.1 (K8) riuscita** sulla copia del registro della Banca: 50 righe in `tblNews`, 9 grafici su 9, 15 secondi;
+  nell'app desktop grafici e formattazione intatti, il grafico di NewsLog comprende le righe nuove, la colonna
+  calcolata resta formula.
+- **T5.2 riuscita**: lo stesso script da un flusso istantaneo ("Esegui script"), 16 e 19 secondi, nessun errore di
+  connessione, DLP o blocco del file. Ha trovato 6 errori di formula nella colonna `Settimana` di NewsLog sulle
+  notizie gia' presenti, non su quelle scritte dallo script; `Data` e' una data vera scritta dal motore. **Causa da
+  chiarire**: serve la riga con `dettaglio_errori_prima` dello script nuovo, eseguito a mano e dal flusso. Se ci sono
+  anche a mano, e' un difetto del registro (da correggere su `main`).
+  - Trovato e corretto: a mano Excel in italiano scrive gli errori come `#N/D`, `#RIF!`, dal flusso `#N/A`, `#REF!`.
+    `prove/K8_prova.ts` ora riconosce gli errori dal tipo di cella, li conta prima e dopo e ne da' il dettaglio;
+    scrive la riga anche nel riquadro Output (a mano Excel non mostra il valore restituito).
+- **K8-bis riuscita** (`prove/K8_dimensione.ts`, 398 KB, 800 funzioni): si salva e gira in 0,1 secondi. Il motore V1
+  sta in un solo script. T5.3 (concorrenza) rinviata all'implementazione.
+- **Decisione dell'utente**: su questo ramo si prosegue con **V1** (regole del motore in TypeScript, eseguite da Office
+  Scripts lanciati dai flussi); la strada A va avanti a parte su un altro ramo. Gli agenti (Copilot Studio o Agent
+  Builder) si scelgono dopo, con il confronto di qualita': il motore e' lo stesso nei due casi.
+- Altro: `prepara_busta.py` genera anche `prove/Impronta.txt` (impronta senza a capo, per T0.4); i 3 KO del collaudo
+  (290/293) vengono dai fine riga CRLF di questa cartella (`core.autocrlf=true` della configurazione di sistema di
+  Git), non dal codice: correzione proposta (`core.autocrlf false` solo per questa cartella e file riportati a LF) in
+  attesa del si' dell'utente.
+
+**Prossimo passo** (approvato dall'utente): Node.js LTS installato su questo PC (solo sviluppo). Poi:
+1. scheletro: logica pura in moduli TypeScript (girano sotto Node e nello script), adattatore sottile per le tabelle di
+   Excel, generatore del file unico per Office Scripts;
+2. il precontrollo (schema e controlli dell'output di A1) in TypeScript;
+3. collaudo che esegue TypeScript e Python sugli stessi casi di `99_Collaudo/dati` e pretende esiti identici.
+
+Misura il costo vero della traduzione (stima V1: 8-11 settimane) prima di `esegui_ciclo_locale.py`.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

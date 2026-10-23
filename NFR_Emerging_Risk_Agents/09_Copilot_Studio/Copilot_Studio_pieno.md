@@ -351,6 +351,10 @@ Il documento lo dice qui perche' la decisione si prende sui fatti di T0, T4 e T5
 | si' | fallisce | V1 |
 | no | fallisce | versione piena non fattibile: A-15 |
 
+**Esito del 23/10/2026**: T0.1 si', T4.1 negativo (la sandbox dei prompt non esegue il nostro codice, trappola 122).
+Su questo ramo si prosegue con **V1**: le regole del motore in TypeScript, eseguite da Office Scripts e lanciate dai
+flussi. La strada A va avanti a parte, su un altro ramo. La prova decisiva diventa T5 (K8).
+
 ## 7. Sequenza di creazione e prove
 
 Ogni passo dice cosa fare, cosa deve succedere e cosa annotare nella tabella della sezione 9. Se fallisce, la
@@ -365,16 +369,28 @@ riserva e' nella sezione 8. Si lavora con la radice `Archivio_Cicli/Prova_K0`, m
     dell'organizzazione -> Office Scripts. Se resta no, F2.
 - **T0.2 Code interpreter nei prompt.** Nell'agente di prova: **Tools** -> **Add a tool** -> **Prompt** -> menu
   **...** -> **Settings**. Annotare se **Enable code interpreter** c'e' e si attiva. Chiudere senza salvare.
-- **T0.3 Domande all'IT** (insieme a D1):
-  - i prompt eseguiti dentro un agent flow (**Run a prompt**) e il code interpreter ("text and generative AI tools
-    (premium)") hanno costo per chi ha Microsoft 365 Copilot?
-  - i connettori Microsoft Teams, RSS ed Excel Online (Business) sono ammessi dalla data policy nei flussi?
+- **T0.3 Domande all'IT.** Per questa versione il testo qui sotto sostituisce D1 (`Prove_CS1.md`), che chiedeva del PC
+  esecutore. Oggetto: "Copilot Studio: prompt nei flussi, connettori e Office Scripts".
+
+  > Per il registro dei rischi emergenti NFR stiamo provando una versione tutta in Copilot Studio, senza programmi
+  > sul PC: un agente lancia gli agenti di valutazione e un agent flow aggiorna i file del nostro sito SharePoint. Vi
+  > chiediamo:
+  > 1. i prompt eseguiti dentro un agent flow (azione "Run a prompt") e i prompt con code interpreter ("text and
+  >    generative AI tools (premium)") hanno un costo per chi ha gia' la licenza Microsoft 365 Copilot? Se si', a
+  >    carico di chi e con quale limite?
+  > 2. nei flussi, la data policy ammette i connettori Microsoft Teams (messaggio del Flow bot a un utente), RSS ed
+  >    Excel Online (Business)?
+  > 3. gli Office Scripts (scheda Automatizza di Excel per il web, azione "Run script" nei flussi) sono attivi nel
+  >    tenant? Se no, si possono attivare per il nostro gruppo?
+  > 4. un agent flow usato da piu' colleghi puo' girare con una connessione unica di servizio invece di quella di
+  >    ogni utente? Ci e' gia' capitato l'errore "FlowMakerConnectionBlocked".
 - **T0.4 Cartelle e file di prova** in `Archivio_Cicli/Prova_K0`:
   - creare `Esiti` e `Motore`;
   - in `In_arrivo` ci sono gia' `A1_2027Q1.json` e la correzione del 22/10 (`Correzione_A1_2027Q1.txt`, dal PC);
   - nella radice: `Input_A1_2027Q1.txt` (c'e'), `Baseline_corrente.json` dal PC, `Input_A1_2026Q4-S1.txt` dalla
     demo (`Demo_W1_W2/1_Input_agenti`);
-  - in `Motore`: `K9_Busta_vuota.xlsx` e un file `Impronta.txt` con la sola impronta di `K9_atteso.txt`;
+  - in `Motore`: `K9_Busta_vuota.xlsx` e `Impronta.txt`, tutti e due da `Da_caricare/prove` (caricati, non
+    riscritti a mano: `Impronta.txt` non ha l'a capo finale e il flusso lo confronta tale e quale);
   - in `Analisi_Esterne` una cartella `Eventi`.
 
 ### T1. Fondamenta: agente, variabili, flussi
@@ -488,10 +504,13 @@ riserva e' nella sezione 8. Si lavora con la radice `Archivio_Cicli/Prova_K0`, m
 
 Il punto critico: decide se il motore puo' stare nel tenant. Si fa prima di costruire altro.
 
-- **T4.1 Prompt Motore.** **Tools** -> **Add a tool** -> **Prompt**, nome `Motore`.
+- **T4.1 Prompt Motore.** Non richiede T1-T3 ne' file in SharePoint: la busta si carica dal PC nel test del prompt.
+  Il prompt si crea in un agente qualunque (per esempio `NFR Operatore prova` di K6) ed e' dell'ambiente: il flusso
+  lo trovera' in T4.2 anche se sta in un altro agente. **Tools** -> **Add a tool** -> **Prompt**, nome `Motore`.
   1. Menu **...** -> **Settings** -> **Enable code interpreter**.
   2. Istruzioni = `prompt/Motore.txt`: `[comando]` diventa un ingresso **Text**, `[busta]` un ingresso **Image or
-     document**.
+     document** (accetta il .xlsx solo con il code interpreter gia' acceso). Il blocco di codice del testo resta
+     com'e': e' il caricatore che il modello deve eseguire, uguale a quello che `prepara_busta.py` prova sul PC.
   3. Nel test del prompt: busta = `K9_Busta_prova.xlsx`, comando = `precontrollo` -> **Test**.
   4. La risposta deve essere la riga di `K9_atteso.txt`: stesse impronte (`impronta_codice` = `impronta_busta` =
      quella attesa), stesso `esito`, stessa `impronta_output`.
@@ -516,16 +535,24 @@ Il punto critico: decide se il motore puo' stare nel tenant. Si fa prima di cost
 
 ### T5. K8: Office Scripts sul registro (se T0.1 e' positivo, altrimenti si passa a F2)
 
-- **T5.1** Copia del registro con dati: `NFR_Registro_prova_K8.xlsx`, fuori da `Report_Trimestrali`.
+- **T5.1** Copia del registro con dati: `NFR_Registro_prova_K8.xlsx`, fuori da `Report_Trimestrali` (va bene la copia
+  della demo, `Demo_W1_W2/NFR_Registro.xlsx`: `tblNews` con 16 righe, 9 grafici).
   1. Excel per il web -> **Automatizza** -> **Nuovo script**: incollare `prove/K8_prova.ts`, salvare come
-     `K8_prova`, **Esegui**.
-  2. Atteso: `errori_formula` 0; `grafici_prima` = `grafici_dopo`; `righe_dopo` = `righe_prima` + 50.
+     `K8_prova`, **Esegui**. La riga JSON compare nel riquadro **Output** sotto il codice.
+  2. Atteso: `errori_dopo` = `errori_prima` (nessun errore nuovo; il dettaglio dice dove sono); `grafici_prima` =
+     `grafici_dopo`; `righe_dopo` = `righe_prima` + 50. Gli errori si contano dal tipo della cella: a mano Excel in
+     italiano scrive `#N/D`, dal flusso `#N/A` (23/10).
   3. Annotare `millisecondi`. Aprire la copia nel desktop: grafici, formattazione condizionale e formule della tabella
      intatti.
 - **T5.2** Lo stesso script da un flusso: Excel Online (Business) **Run script**, sulla stessa copia. Atteso: stessa
   riga JSON, sotto i 120 secondi, nessun errore di blocco del file.
 - **T5.3 (K13)** Copia aperta in Excel per il web in un'altra scheda mentre il flusso esegue lo script: nessun dato
   perso. Due esecuzioni insieme: la seconda aspetta o fallisce, non scrive a meta'.
+- **T5.3-bis (K8-bis) Dimensione.** Il motore V1 in TypeScript sara' grande circa quanto il Python di oggi (336 KB) e
+  Learn non indica una dimensione massima per uno script. Nella stessa copia: **Automatizza** -> **Nuovo script**,
+  incollare `prove/K8_dimensione.ts` (398 KB, 800 funzioni), salvare come `K8_dimensione`, **Esegui**: nell'Output
+  `"esito":"ok"` e `"risultato":352563`. Poi lo stesso dal flusso di T5.2 (cambiare solo lo script). Se non si salva
+  o non parte, il motore va diviso in piu' script fin dall'inizio.
 - **T5.4 Esito.** V2 o F2 secondo la tabella della sezione 6. Il codice del motore (adattatore del registro, script
   "prepara" e "applica" o la scrittura F2, caricatore) e' la consegna successiva, scritta sui risultati di T4 e T5.
 
@@ -583,8 +610,8 @@ Prova: dopo un `Valida`, una domanda ad A7 su un valore cambiato.
 
 | Passo | Esito e note (data, tempo, caratteri, messaggi) |
 |---|---|
-| T0.1 Office Scripts (scheda Automatizza) | |
-| T0.2 Enable code interpreter nei prompt | |
+| T0.1 Office Scripts (scheda Automatizza) | 23/10/2026: si', la scheda Automatizza c'e'. V2 possibile (resta T5) |
+| T0.2 Enable code interpreter nei prompt | 23/10/2026: si', c'e' e si attiva. T4 si puo' fare |
 | T0.3 Risposte dell'IT (costi, connettori) | |
 | T1.3 Leggi_File: 4 casi | |
 | T1.4 Salva_JSON: versioni, link tolti | |
@@ -596,12 +623,14 @@ Prova: dopo un `Valida`, una domanda ad A7 su un valore cambiato.
 | T2.7 Prove negative | |
 | T2.8 Don't respond | |
 | T3.2 Correggi nel flusso: tempo, caratteri, errori | |
-| T4.1 Motore nel test del prompt: 5 esecuzioni | |
+| T4.1 Motore nel test del prompt: 5 esecuzioni | 23/10/2026: con il code interpreter spento l'ingresso Image or document accetta solo immagini; acceso, accetta il .xlsx. Prima versione del prompt ("python motore.py"): "Execution not possible here due to sandbox restrictions", la sandbox non lancia processi. Prompt cambiato: caricatore fisso che esegue motore.py nella sessione con runpy. Seconda versione: "I cannot execute arbitrary code from your uploaded file in this environment", propone di riscrivere la logica lui (proprio cio' che K9 deve escludere). Con GPT-4.1 nessun rifiuto, ma `{"error": {"message": "Access denied to .\\temp_busta_input.xlsx"}}` e poi `{"error": {"message": "Import of module 'builtins' is blocked for security reasons"}}`. **Esito: negativo.** La sandbox dei prompt e' un Python ristretto (file, moduli e caricamento di codice bloccati) e il modello rifiuta di eseguire codice preso dal file: il motore, che carica i propri moduli con exec, non puo' girarci. Non si aggira un controllo di sicurezza della piattaforma |
+| T4.2, T4.3 | non applicabili dopo T4.1 negativo |
 | T4.2 Busta dal flusso: 10 esecuzioni | |
 | T4.3 Giro automatico | |
-| T5.1 K8 in Excel per il web | |
-| T5.2 K8 da flusso | |
-| T5.3 K13 concorrenza | |
+| T5.1 K8 in Excel per il web | 23/10/2026, copia del registro della Banca: `{"esito":"ok","tabella":"tblNews","righe_prima":4,"righe_dopo":54,"errori_formula":0,"celle_na":0,"grafici_prima":9,"grafici_dopo":9,"millisecondi":15192}`: 50 righe scritte, nessun errore di formula, 9 grafici su 9, 15 secondi (con ricalcolo completo e lettura di tutti i fogli). Controllo a vista nell'app desktop: grafici e formattazione come prima, il grafico di NewsLog comprende le righe nuove, la colonna calcolata resta formula. **Riuscita**, ma gli zeri di errori e #N/A non sono affidabili: la prima versione dello script cercava solo i nomi inglesi degli errori (vedi T5.2) |
+| T5.2 K8 da flusso | 23/10/2026, flusso istantaneo con "Esegui script": due esecuzioni, `righe` 54 -> 104 e 104 -> 154, `errori_formula` 6 e 6, `celle_na` 2562 e 2562, grafici 9/9, 16,4 e 19,0 secondi. Stessi numeri nelle due esecuzioni: errori probabilmente gia' presenti. Script corretto (errori dal tipo di cella, prima e dopo, con il dettaglio): gli errori sono nella colonna calcolata `Settimana` (`=Data-WEEKDAY(Data;2)+1`) delle notizie gia' presenti, non in quelle scritte dallo script. `Data` e' una data vera (scritta dal motore, VAL.NUMERO = VERO): non e' un testo. Causa da chiarire con il dettaglio |
+| T5.3 K13 concorrenza | rinviata all'implementazione (blocco con `Esiti/In_corso.txt` e Concurrency control) |
+| T5.3-bis K8-bis dimensione dello script | 23/10/2026, a mano: `{"esito":"ok","risultato":352563,"atteso":352563,"funzioni":800,"note":0,"fogli":24,"millisecondi":113}`. Uno script di 398 KB e 800 funzioni si salva e gira in 0,1 secondi: il motore V1 puo' stare in un solo script. **Riuscita** |
 | T6.1 A5 a richiesta | |
 | T6.2 A3 e Raccolta_notizie | |
 | T6.3 A6 | |

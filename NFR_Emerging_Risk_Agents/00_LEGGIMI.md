@@ -150,9 +150,11 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 09_Copilot_Studio/Da_caricare/prompt/Motore.txt        prompt con code interpreter che esegue il codice della busta, ingressi comando e busta (generato)
 09_Copilot_Studio/Da_caricare/flussi/Fonti_rss.json    i feed approvati di fonti.md per il flusso Raccolta_notizie (generato)
 09_Copilot_Studio/Da_caricare/prove/K8_prova.ts        Office Script della prova K8: righe in una tabella, ricalcolo, errori e grafici, su una copia del registro
+09_Copilot_Studio/Da_caricare/prove/K8_dimensione.ts   Office Script sintetico di circa 400 KB (800 funzioni), risultato atteso 352563: la dimensione del motore V1 (prova K8-bis)
 09_Copilot_Studio/Da_caricare/prove/K9_Busta_vuota.xlsx  busta del motore senza ingressi, da riempire dal flusso NFR_Motore (generato)
 09_Copilot_Studio/Da_caricare/prove/K9_Busta_prova.xlsx  busta del motore con un output di A1 e il suo allegato dei dati del collaudo (generato)
 09_Copilot_Studio/Da_caricare/prove/K9_atteso.txt      impronta attesa del codice e riga attesa del motore sulla busta di prova (generato)
+09_Copilot_Studio/Da_caricare/prove/Impronta.txt       la sola impronta attesa, senza a capo, da caricare in Motore accanto alla busta vuota (generato)
 09_Copilot_Studio/Da_caricare/argomenti/Aiuto.yaml     argomento Aiuto: elenco dei comandi
 09_Copilot_Studio/Da_caricare/argomenti/Correggi_ciclo.yaml  argomento Correggi_ciclo: un giro di correzione dal motore
 09_Copilot_Studio/Da_caricare/argomenti/Diagnosi.yaml  argomento Diagnosi: lettura delle valutazioni del ciclo

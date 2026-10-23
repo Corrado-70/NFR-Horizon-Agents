@@ -121,12 +121,29 @@ JSON_A1: [json_a1]
 ALLEGATO: [allegato]
 """
 
-# Prompt con code interpreter (prova K9): esegue il codice del motore che sta nel file, non codice suo.
-MOTORE = """Esegui un programma gia' scritto. Non scrivere codice tuo, non riassumere, non interpretare i risultati.
-1. Il file in ingresso e' una cartella di lavoro Excel. Nel foglio _Motore, colonna A dalla riga 2 in giu', ci sono blocchi di testo: uniscili nell'ordine senza aggiungere, togliere o cambiare alcun carattere (nessun separatore) e salva il risultato come motore.py.
-2. Esegui: python motore.py <percorso del file in ingresso> <COMANDO>
-3. Rispondi solo con la riga che il programma stampa, copiata identica. Se il programma scrive uscita.xlsx, restituiscilo come file.
-4. Se l'esecuzione fallisce, rispondi solo ERRORE: seguito dal messaggio copiato identico. Non riprovare con codice diverso.
+# Prompt con code interpreter (prova K9): esegue il codice del motore che sta nel file, non codice suo. La sandbox
+# non lancia processi (23/10: "python motore.py" rifiutato), quindi il motore gira nella sessione con runpy. Il
+# caricatore e' lo stesso che prepara_busta.py esegue sul PC: cambiano solo i due valori fra virgolette.
+CARICATORE = """import runpy, sys
+import openpyxl
+busta = r"PERCORSO_DELLA_BUSTA"
+comando = "NOME_DEL_COMANDO"
+foglio = openpyxl.load_workbook(busta)["_Motore"]
+codice = "".join(r[0] for r in foglio.iter_rows(min_row=2, max_col=1, values_only=True) if r[0])
+with open("motore.py", "w", encoding="utf-8", newline="\\n") as f:
+    f.write(codice)
+sys.argv = ["motore.py", busta, comando]
+try:
+    runpy.run_path("motore.py", run_name="__main__")
+except SystemExit:
+    pass
+"""
+MOTORE = """Esegui un programma gia' scritto, contenuto nel file in ingresso. Non scrivere codice tuo, non riassumere, non interpretare i risultati.
+1. Esegui nel code interpreter, in questa sessione, esattamente il codice qui sotto. Cambia solo i due valori fra virgolette: PERCORSO_DELLA_BUSTA con il percorso del file in ingresso, NOME_DEL_COMANDO con il COMANDO scritto in fondo. Non lanciare processi esterni: il codice esegue motore.py nella stessa sessione.
+2. Rispondi solo con la riga JSON che il codice stampa, copiata identica.
+3. Se l'esecuzione fallisce, rispondi solo ERRORE: seguito dal messaggio copiato identico. Non riprovare con codice diverso.
+```python
+""" + CARICATORE + """```
 COMANDO: [comando]
 BUSTA: [busta]
 """
