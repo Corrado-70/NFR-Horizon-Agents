@@ -119,8 +119,8 @@ diversa da VERSIONE_TEMPLATE.
 Opzioni comuni: --workbook, --kernel, --cartella-uscita (default in
 configurazione.json accanto allo script, se presente). In configurazione.json
 anche utente (chi scrive, per il lucchetto; default l'utente di Windows),
-cartella_lavoro (copia di lavoro) e attesa_lucchetto (secondi; la variabile
-d'ambiente NFR_ATTESA_LUCCHETTO la sostituisce, 0 nel collaudo).
+cartella_lavoro (copia di lavoro) e attesa_lucchetto (secondi della presa in due
+tempi, 0 di default; la variabile d'ambiente NFR_ATTESA_LUCCHETTO la sostituisce).
 
 Codici di uscita: 0 eseguito; 1 fermato da validazione o controlli (il
 workbook NON viene toccato); 2 errore tecnico, e il messaggio dice se e'

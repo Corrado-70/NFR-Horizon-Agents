@@ -7,8 +7,10 @@ dopo un fermo o un errore.
 
 E' un avviso cortese, non una garanzia: OneDrive sincronizza con qualche secondo (o minuto) di ritardo, quindi due
 analisti possono prenderlo quasi insieme. Per questo:
-  - la presa e' in due tempi: si scrive il file, si attende, lo si rilegge; se nel frattempo e' arrivato il lucchetto
-    di un collega (o una copia in conflitto creata da OneDrive), ci si ritira;
+  - la presa puo' essere in due tempi: si scrive il file, si attende (attesa_lucchetto), lo si rilegge; se nel
+    frattempo e' arrivato il lucchetto di un collega (o una copia in conflitto creata da OneDrive), ci si ritira.
+    Dal 23/10/2026 l'attesa e' 0 di default (scelta dell'utente: quattro analisti, due avvii nello stesso istante
+    sono rarissimi e li ferma comunque l'impronta); il file si rilegge subito;
   - la garanzia vera e' la copia di lavoro del motore (registro_in_lavoro in esegui_ciclo_locale.py): il registro si
     sostituisce solo se nessuno l'ha cambiato nel frattempo.
 
@@ -29,7 +31,7 @@ CARTELLA = "_Lucchetto"
 FILE = "registro.json"
 REGISTRO_SBLOCCHI = "sblocchi.log"
 SCADENZA_ORE = 2
-ATTESA_SECONDI = 5          # presa in due tempi: il tempo per far arrivare il lucchetto di un collega
+ATTESA_SECONDI = 0          # presa in due tempi solo se configurata (attesa_lucchetto): con 0 si rilegge subito
 
 
 class Occupato(Exception):

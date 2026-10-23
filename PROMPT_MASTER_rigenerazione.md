@@ -1616,8 +1616,9 @@ openpyxl (solo per il file delle schede). Moduli:
   settimanale, valida, griglia, riapri, dismetti, inizializza, aggiorna-registro) prendono in `main()` il lucchetto
   `Archivio_Cicli/_Lucchetto/registro.json` (id, utente da `configurazione.json` o Windows, PC, comando, inizio,
   scadenza 2 ore): un lucchetto valido di un altro utente o PC ferma (codice 1, "Il registro e' in uso"); uno scaduto,
-  o il proprio rimasto da un comando interrotto, si prende. **Presa in due tempi**: scrive, attende `attesa_lucchetto`
-  secondi (5; `NFR_ATTESA_LUCCHETTO=0` in collaudo e demo), rilegge; un id diverso o una copia in conflitto di OneDrive
+  o il proprio rimasto da un comando interrotto, si prende. **Presa in due tempi** solo se configurata: scrive, attende
+  `attesa_lucchetto` secondi (0 di default dal 23/10, scelta dell'utente: in quattro due avvii nello stesso istante
+  sono rarissimi e li ferma l'impronta; `NFR_ATTESA_LUCCHETTO` la sostituisce), rilegge; un id diverso o una copia in conflitto di OneDrive
   (`registro-*.json`) di un altro = ritiro ("nello stesso momento"). Rilascio in `finally`, solo se e' ancora il
   proprio. `sblocca --motivo` lo toglie e scrive `sblocchi.log`.
 - **Copia di lavoro** (D-83): le sessioni in scrittura passano da `sessione_registro(conf)`: fermo se il registro e'
@@ -2948,7 +2949,8 @@ solo se l'utente decide di unire il ramo.)
     altri PC con secondi o minuti di ritardo: due analisti possono prenderlo insieme, e un collega puo' salvare il
     registro da Excel per il web senza passare dallo script. La garanzia e' la copia di lavoro con l'impronta: il
     registro vero si sostituisce solo se e' ancora quello copiato all'inizio. Il lucchetto resta come avviso cortese,
-    con la presa in due tempi e la copia in conflitto di OneDrive (`registro-PCNOME.json`) letta come un collega.
+    con la copia in conflitto di OneDrive (`registro-PCNOME.json`) letta come un collega; la presa in due tempi c'e' ma
+    con attesa 0 di default: l'avviso serve a non cominciare un lavoro che si fermerebbe, non a proteggere i dati.
 123. **Mai sostituire un file aperto da Excel, e mai attraverso volumi diversi** (23/10). La copia di lavoro sta in
     `%LOCALAPPDATA%`: la sostituzione si fa solo dopo aver chiuso la sessione di Excel (il file della copia e' bloccato
     finche' e' aperto), copiando prima accanto all'originale e poi con `os.replace` (atomico solo nella stessa

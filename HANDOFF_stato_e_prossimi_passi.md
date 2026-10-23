@@ -1287,7 +1287,8 @@ report HTML.
 
 **Tappa M1, fatta**:
 - `07_Senza_Studio/lucchetto.py`: lucchetto `Archivio_Cicli/_Lucchetto/registro.json` per i comandi che scrivono,
-  presa in due tempi (attesa `attesa_lucchetto`, 5 secondi; `NFR_ATTESA_LUCCHETTO=0` in collaudo e demo), scadenza 2
+  presa in due tempi (attesa `attesa_lucchetto`, 0 di default dalla sera del 23/10: scelta dell'utente, quattro
+  analisti e l'impronta che protegge comunque; prima 5 secondi), scadenza 2
   ore, copia in conflitto di OneDrive letta come un collega, comando `sblocca --motivo` registrato in `sblocchi.log`.
 - Copia di lavoro (`sessione_registro` in `esegui_ciclo_locale.py`): le sei sessioni in scrittura lavorano su una copia
   in `%LOCALAPPDATA%\NFR\lavoro`; il registro si sostituisce alla fine solo se l'impronta non e' cambiata, altrimenti

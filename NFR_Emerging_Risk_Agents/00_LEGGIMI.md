@@ -118,7 +118,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 07_Senza_Studio/raccogli_notizie.py                    W0 locale: scarica i feed dell'elenco fonti e scrive la raccolta settimanale in News_Inbox
 07_Senza_Studio/fonti.py                               unico lettore di 01_Kernel/fonti.md (script, prompt, collaudo)
 07_Senza_Studio/input_a1.py                            allegato di A1 Input_A1_<ciclo>.txt (baseline, controlli, guida) e unico lettore di controlli_A5.md (D-69); legge la baseline dall'allegato (skill, D-70); allegati di A3 e A4 Input_A3.txt e Input_A4.txt (AU7)
-07_Senza_Studio/lucchetto.py                           lucchetto del registro per piu' analisti (D-83): Archivio_Cicli/_Lucchetto/registro.json, presa in due tempi, scadenza, sblocca registrato
+07_Senza_Studio/lucchetto.py                           lucchetto del registro per piu' analisti (D-83): Archivio_Cicli/_Lucchetto/registro.json, avviso per non cominciare un lavoro che si fermerebbe (presa senza attesa di default), scadenza, sblocca registrato
 07_Senza_Studio/NFR.cmd                                l'app NFR Horizon Scan con un doppio clic (D-83): lancia app_nfr.py senza console
 07_Senza_Studio/app_nfr.py                             la finestra dell'app (tkinter): stato, prossimo passo, un pulsante per processo, passo in corso con le istruzioni per l'agente, uscita del motore
 07_Senza_Studio/flussi.py                              i processi dell'app come sequenze di passi (settimana, trimestre con il giro di correzione, straordinario, validazione, schede e report, riapertura, testi a mano, dismissione, parere di A4), su un Ambiente che la finestra realizza e il collaudo simula

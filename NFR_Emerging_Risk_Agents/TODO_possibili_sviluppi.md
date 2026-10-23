@@ -249,7 +249,7 @@ Punti fermi:
 
 **Dal 23/10/2026 (D-83) la strada e' decisa**: su `main` la strada A, cioe' agenti in Agent Builder e un'app Python
 di orchestrazione sul PC; la versione tutta in Copilot Studio vive sul ramo `copilot-studio-pieno` (D-82). Le voci AU4 e
-AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a quattro tappe. **L'avanzamento voce per voce, con le spunte (fatto, da verificare, da fare), e' in `Analisi_Architettura/18_App_orchestrazione.md`**; qui solo il riassunto:
+AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a quattro tappe, piu' la M5 aggiunta il 23/10. **L'avanzamento voce per voce, con le spunte (fatto, da verificare, da fare), e' in `Analisi_Architettura/18_App_orchestrazione.md`**; qui solo il riassunto:
 
 | Tappa | Cosa | Moduli | Stato |
 |---|---|---|---|
@@ -257,6 +257,7 @@ AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a q
 | M2 | l'app: ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, flussi di ogni processo, finestra tkinter (AU2, AU5) | `ingresso.py`, `appunti.py`, `stato.py`, `esecutore.py`, `flussi.py`, `app_nfr.py`, `NFR.cmd` | **fatta il 23/10** (collaudata senza Excel con un Ambiente finto; resta la prova a mano con gli agenti veri, B5-bis, e la demo attraverso i flussi) |
 | M3 | installazione con un doppio clic e Verifica del PC (AU3) | `installa.cmd`, `installa.py` | da fare, circa 1,5 giorni |
 | M4 | report HTML al comitato come seconda uscita di `report`: viste, grafici e schede di tutti i rischi dal prototipo dell'analisi 16, numeri controllati contro Excel | `report_html.py` | da fare, 3-4 giorni |
+| M5 | funzioni amministrative (richiesta del 23/10): pulizia dell'archivio dei cicli, ritorno indietro di N trimestri (registro dall'Excel validato del ciclo scelto), ripartenza da zero; niente si cancella subito, tutto nel parcheggio con l'atto; da decidere chi puo' farlo | voce Amministrazione dell'app, comandi del motore | da fare; dettaglio in `Analisi_Architettura/18_App_orchestrazione.md`, 18.5 |
 
 Scelte dell'utente: finestra tkinter; risposte dagli appunti piu' il file; piu' analisti sullo stesso registro; niente
 coda delle richieste (serviva alla CS-1). Le voci AU1, AU2, AU3 e AU5 qui sotto restano come dettaglio di cio' che le

@@ -584,7 +584,7 @@ link alle fonti: l'app li ignora.
    | `cartella_uscita` | la cartella sincronizzata di `Archivio_Cicli` | script, app |
    | `news_inbox` | la cartella sincronizzata di `News_Inbox` | raccolta, app |
    | `utente` | il proprio nome e la funzione: e' il nome che i colleghi vedono quando stai scrivendo nel registro (lucchetto, D-83) | script, app |
-   | `attesa_lucchetto` | secondi di attesa nella presa del lucchetto (5) | script |
+   | `attesa_lucchetto` | secondi di attesa nella presa del lucchetto: 0 (nessuna attesa); un numero solo se due colleghi partissero spesso nello stesso istante | script |
    | `validatore_predefinito` | chi valida di solito (per esempio "Funzione Risk Management"): l'app lo propone, si puo' cambiare ogni volta | app |
    | `raccolta_su_questo_pc` | `true` solo sul PC che raccoglie le notizie il lunedi'; sugli altri `false` | app |
    | `agenti` | `Agent Builder` o `Copilot Studio`: la versione degli agenti proposta all'avvio (si cambia nella finestra) | app |
@@ -626,9 +626,10 @@ lo lascia alla fine: se un collega sta scrivendo, il comando si ferma con
 quando ha finito. Lo script lavora poi su una **copia di lavoro** del registro
 sul tuo PC e sostituisce il registro vero solo alla fine, dopo i controlli, e
 solo se nel frattempo nessuno l'ha cambiato (altrimenti FERMATO "cambiato
-mentre lo script lavorava": rilanciare). La presa del lucchetto aspetta alcuni
-secondi (`attesa_lucchetto`), il tempo per far arrivare con OneDrive il
-lucchetto di un collega che inizia nello stesso momento.
+mentre lo script lavorava": rilanciare). Il lucchetto e' un avviso per non
+cominciare un lavoro che si fermerebbe; la protezione dei dati e' il controllo del
+registro prima di sostituirlo. Per questo la presa non aspetta (`attesa_lucchetto`
+0): due colleghi che partono nello stesso istante li ferma comunque il controllo.
 
 ### 0.4 Primo utilizzo reale (una volta, dopo 0.3)
 
@@ -1510,7 +1511,7 @@ comando; senza, valgono i percorsi di `configurazione.json`:
 
 In `configurazione.json`, oltre ai percorsi (D-83): `utente` (il nome che i colleghi
 vedono nel lucchetto; senza, l'utente di Windows), `attesa_lucchetto` (secondi della
-presa in due tempi, 5) e, facoltativa, `cartella_lavoro` (la copia di lavoro del
+presa in due tempi, 0: nessuna attesa) e, facoltativa, `cartella_lavoro` (la copia di lavoro del
 registro; senza, `%LOCALAPPDATA%\NFR\lavoro`). I comandi che scrivono nel registro
 (`trimestrale`, `settimanale`, `valida`, `griglia`, `riapri`, `dismetti`,
 `inizializza`, `aggiorna-registro`) prendono il lucchetto; gli altri no.

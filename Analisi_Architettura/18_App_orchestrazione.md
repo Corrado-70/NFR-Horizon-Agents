@@ -18,6 +18,7 @@ ne tiene solo la tabella riassuntiva; il racconto di cio' che e' stato fatto e' 
 | M2 | l'app: finestra, flussi, stato, ingresso delle risposte | fatta; da provare con gli agenti veri e nella demo |
 | M3 | installazione con un doppio clic e Verifica del PC | da fare |
 | M4 | report HTML al comitato, seconda uscita di `report` | da fare |
+| M5 | funzioni amministrative: pulizia dell'archivio, ritorno indietro di N trimestri, ripartenza da zero, tutto nel parcheggio | da fare (richiesta del 23/10) |
 
 Scelte dell'utente (23/10):
 - finestra tkinter;
@@ -69,7 +70,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 
 | Stato | Voce | Dove si verifica |
 |---|---|---|
-| [x] | `lucchetto.py`: presa in due tempi, scadenza, ripresa del proprio lucchetto, copia in conflitto di OneDrive, rilascio anche dopo un errore | `test_app.py` |
+| [x] | `lucchetto.py`: presa (in due tempi solo se configurata: attesa 0 di default dalla sera del 23/10, scelta dell'utente), scadenza, ripresa del proprio lucchetto, copia in conflitto di OneDrive, rilascio anche dopo un errore | `test_app.py` |
 | [x] | Comando `sblocca` registrato in `sblocchi.log` | `test_app.py`, catena `piu_analisti` |
 | [x] | I comandi che scrivono prendono il lucchetto; quelli che leggono no | catena `piu_analisti` |
 | [x] | Copia di lavoro (`sessione_registro`): sostituzione solo con l'impronta invariata, nessun file temporaneo rimasto | `test_app.py`, catena `piu_analisti` |
@@ -136,7 +137,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Presentazione: slide dei comandi, del trimestre, di A3 e A4 |
 | [x] | Presentazione: slide "L'app NFR" con l'immagine della finestra (69 slide; immagine `Presentazione/app_finestra.png`) |
 | [x] | Demo rigenerata (23/10) e `REPORT_demo.md` riallineato (report da `valida`, PDF delle schede, prompt archiviati, riapertura, allegati di A3 e A4) |
-| [ ] | Commit e push (quando lo chiede l'utente) |
+| [x] | Commit e push: 68b891f su `main` (23/10) |
 
 ## 18.3 Tappa M3: installazione e Verifica del PC (da fare, circa 1,5 giorni)
 
@@ -161,7 +162,31 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [ ] | `valida` pubblica PDF e HTML insieme; lo stato dell'app guarda anche l'HTML |
 | [ ] | Catena: numeri uguali a Excel e cancello che scatta con un numero alterato; guida, presentazione, PROMPT_MASTER |
 
-## 18.5 Verifiche in Banca (TODO B5-bis)
+## 18.5 Tappa M5: funzioni amministrative (da fare; richiesta dell'utente del 23/10/2026)
+
+Pulizia dell'archivio e "ritorno indietro nel tempo" di N trimestri. Regola di fondo: **niente si cancella subito**.
+Tutto cio' che si toglie va in un **parcheggio** (`Archivio_Cicli/_Parcheggio/<data_ora>_<operazione>/`) con un atto
+che dice chi, quando, perche' e che cosa. Si svuota solo con un comando a parte e dopo un tempo minimo. Ogni operazione:
+- prende il lucchetto;
+- chiede conferma scrivendo il nome del ciclo;
+- lascia la traccia in `Archivio_Cicli/Amministrazione/`;
+- si annulla rimettendo a posto il parcheggio.
+
+In una voce "Amministrazione" dell'app, protetta da una conferma; anche da riga di comando.
+
+| Stato | Voce |
+|---|---|
+| [ ] | **Pulizia dell'archivio**: i tentativi fermati (`Cicli/<c>/tentativo_<ora>/`) dei cicli validati; i `Backup` oltre gli ultimi N (o piu' vecchi di N giorni); le versioni precedenti dei report; `In_arrivo` (Originali, Precedenti) dei periodi chiusi; i `Log` vecchi. Anteprima di cio' che si sposta e dello spazio liberato, poi tutto nel parcheggio |
+| [ ] | **Ritorno indietro di N trimestri** (al ciclo validato C): il registro torna quello di fine validazione di C (`Cicli/C/NFR_Registro_C_validato.xlsx`, che dopo una riapertura e' l'ultima validazione). Nel parcheggio vanno il registro attuale, le cartelle dei periodi dopo C (cicli, straordinari, settimane), `Baseline_corrente`, gli allegati e la knowledge di A7. Poi si rigenerano baseline, allegati, knowledge di A7 e griglia. Lo stato dell'app riparte da "Ciclo C: VALIDATO" |
+| [ ] | Controlli del ritorno: C deve avere l'Excel validato nell'archivio e la stessa versione del template (altrimenti prima `aggiorna-registro` sulla copia); motivo (almeno 20 caratteri) e decisore obbligatori; avviso sulle settimane dopo C, le cui notizie escono dal registro ma restano nel parcheggio |
+| [ ] | **Annulla il ritorno**: rimette il registro e le cartelle dal parcheggio, se nel frattempo non si e' scritto niente (impronta del registro uguale a quella del ritorno) |
+| [ ] | **Ripartenza da zero** (per esempio dopo i cicli di prova): registro nuovo con `inizializza`; il vecchio registro e tutto l'archivio dei cicli vanno nel parcheggio |
+| [ ] | **Svuota il parcheggio**: solo i parcheggi piu' vecchi di N giorni (in configurazione), con conferma; l'elenco di cio' che si cancella resta nella traccia |
+| [ ] | Settimane dopo C dal parcheggio: proposta di riscriverle con `settimanale` dai loro `A3_<lunedi'>.json` parcheggiati (le notizie tornano nel registro) |
+| [ ] | Chi puo' farlo: decisione della funzione di rischio (DECISIONI), per esempio solo il manutentore o con un `ruolo` in `configurazione.json`; governance (controlli_e_model_risk: rischio "storia riscritta" e presidio) |
+| [ ] | Collaudo (catena: ritorno di un trimestre e annullamento, pulizia con anteprima, parcheggio intatto; senza Excel: selezione di cio' che si sposta); guida, PROMPT_MASTER, HANDOFF, presentazione |
+
+## 18.6 Verifiche in Banca (TODO B5-bis)
 
 | Stato | Voce |
 |---|---|

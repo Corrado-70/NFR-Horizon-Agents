@@ -141,7 +141,7 @@ class Banco:
     def esegui(self, *argomenti):
         cmd = [sys.executable, str(CAMPO / "esegui_ciclo_locale.py"), "--workbook", str(self.wb),
                "--kernel", str(KERNEL), "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
-        # NFR_ATTESA_LUCCHETTO=0: nel collaudo nessun collega sincronizza la cartella, la presa in due tempi non serve.
+        # NFR_ATTESA_LUCCHETTO=0: nessuna attesa nella presa del lucchetto (e' anche il default dal 23/10), esplicito.
         r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
                            env={**__import__("os").environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
         return r.returncode, r.stdout + r.stderr
