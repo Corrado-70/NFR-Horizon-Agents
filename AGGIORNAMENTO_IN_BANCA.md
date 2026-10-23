@@ -29,6 +29,11 @@ Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 contiene `configurazione.json`, che resta com'e'. Se ci sono ancora le cartelle vecchie `04_SharePoint`,
 `05_Workflow`, `06_Governance`, `08_Deploy`, cancellarle.
 
+**Zip arrivato per posta** (nome che finisce con `_posta.zip`): la posta blocca gli allegati con file `.cmd`, quindi il
+lanciatore dell'app e' nello zip come `07_Senza_Studio\NFR.cmd.txt`. Dopo l'estrazione **rinominarlo `NFR.cmd`**:
+in Esplora file, Visualizza -> Mostra -> Estensioni nomi file (per vedere il `.txt` finale), poi tasto destro ->
+Rinomina e togliere `.txt`. Se c'e' gia' un `NFR.cmd` di un pacchetto precedente, sostituirlo.
+
 **2. Library `Kernel`** (la cartella sincronizzata della voce `kernel` di `configurazione.json`)
 - copiare **tutti** i file di `NFR_Emerging_Risk_Agents\01_Kernel` e `04_Riferimenti\DECISIONI.md`: lo script legge
   il kernel da li';

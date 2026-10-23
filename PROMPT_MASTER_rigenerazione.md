@@ -2994,6 +2994,12 @@ l'ultimo usato in tutti e due i rami.)
     (campi obbligatori dello schema); solo se manca e le graffe dalla prima `{` non si chiudono la risposta e'
     TRONCATA. Un segnaposto nei link degli agenti non si apre (solo link che cominciano con http).
 
+131. **La posta blocca gli zip con file eseguibili** (23/10). Gmail ha rifiutato lo zip del pacchetto per `07_Senza_Studio/NFR.cmd`:
+    gli allegati con .cmd, .bat, .ps1, .vbs, .js, .exe (anche dentro uno zip) non passano. Per la posta si consegna
+    `<nome>_posta.zip`: lo stesso contenuto di git archive, con quei file rinominati `.txt` in coda, e in
+    `AGGIORNAMENTO_IN_BANCA.md` il passo per rinominarli dopo l'estrazione. Prima di consegnare si controllano anche
+    gli zip annidati del kit.
+
 ## STRUTTURA DEI FILE DA PRODURRE
 
 ```
