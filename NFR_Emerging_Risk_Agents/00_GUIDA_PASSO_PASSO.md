@@ -35,6 +35,14 @@ le risposte degli agenti, le **controlla**, le **scrive** nel registro Excel
 e ne **archivia** una copia. Senza Python le risposte degli agenti restano
 nella chat e andrebbero ricopiate a mano, senza nessun controllo.
 
+### L'app NFR: il modo piu' semplice (dal 23/10/2026, D-83)
+
+Dal 23/10/2026 i comandi Python si lanciano anche da una finestra: doppio clic su **`NFR.cmd`** nella cartella degli
+script. L'app mostra a che punto e' il lavoro, propone il prossimo passo e guida ogni processo, agenti compresi:
+**sezione "L'app NFR: uso passo per passo"**, qui sotto dopo "In breve". La configurazione che le serve (link degli
+agenti, validatore, ecc.) e' nella sezione 0.3. I comandi scritti a mano, descritti nelle sezioni 1-3 e 9, restano
+validi e fanno esattamente le stesse cose: l'app lancia gli stessi.
+
 ### Cosa lanci tu, e quando
 
 Solo due programmi, sempre dal Prompt dei comandi, dalla cartella degli script:
@@ -116,7 +124,7 @@ registro chiuso.
 |---|---|---|
 | 1 | `python raccogli_notizie.py` (di solito automatico alle 7) | scarica le notizie delle fonti in `News_Inbox\<lunedi'>\` |
 | 2 | file in `News_Inbox\<lunedi'>\Manuali\` | aggiungi a mano cio' che non arriva dai feed |
-| 3 | A3: "Esegui l'aggiornamento settimanale" | valuta le notizie; salva la risposta come `A3_<lunedi'>.json` |
+| 3 | A3: allega `Input_A3.txt` (cartella di uscita), "Esegui l'aggiornamento settimanale" | valuta le notizie; salva la risposta come `A3_<lunedi'>.json` |
 | 4 | `python esegui_ciclo_locale.py settimanale --payload A3_<lunedi'>.json` | scrive le notizie nel registro |
 | 5 | facoltativo: griglia del foglio Validazione, poi `python esegui_ciclo_locale.py valida --periodo <lunedi'> --validatore "..."` | conferma o corregge le notizie (sezione 3) |
 
@@ -125,14 +133,13 @@ registro chiuso.
 | # | Passo | In una riga |
 |---|---|---|
 | 1 | Registro, riga 4: "Ciclo validato" | il trimestre prima deve essere validato |
-| 2 | `python esegui_ciclo_locale.py baseline` | prepara la baseline e l'allegato di A1 `Input_A1_<ciclo>.txt` |
-| 3 | copia `Baseline_corrente.txt` nella library Kernel | serve ad A3 e A4 |
+| 2 | `python esegui_ciclo_locale.py baseline` | prepara la baseline e gli allegati degli agenti: `Input_A1_<ciclo>.txt` per A1, `Input_A3.txt` e `Input_A4.txt` per A3 e A4 (dal 23/10/2026 non serve piu' copiare la baseline nella library Kernel) |
 | 4 | A1: allega `Input_A1_<ciclo>.txt`, "Esegui il ciclo" | valuta i rischi; salva come `A1_<ciclo>.json` |
 | 5 | **facoltativi, si possono saltare**: `python esegui_ciclo_locale.py precontrollo --payload A1_<ciclo>.json` e A5 | controllano A1 prima di scrivere (sezione 2, punti 5-bis e 6) |
 | 6 | `python esegui_ciclo_locale.py trimestrale --payload A1_<ciclo>.json` (con `--challenger A5_<ciclo>.json` se hai usato A5) | scrive il ciclo; se FERMATO, dai ad A1 il messaggio `Correzione_A1_<ciclo>.txt` (sezione 2, punto 8) |
 | 7 | griglia del foglio Validazione, poi `python esegui_ciclo_locale.py valida --periodo <ciclo> --validatore "..."` | il validatore decide le proposte (anche lo stato dei rischi: radar o osservazione) e motiva le segnalazioni ⚑ (sezione 3) |
 | 8 | `python esegui_ciclo_locale.py schede-input`, A6 "Scrivi le schede", `python esegui_ciclo_locale.py schede --payload A6_<ciclo>.json` | schede dei rischi (sezione 2, punti 11-12) |
-| 9 | `python esegui_ciclo_locale.py report` | PDF del report al comitato (sezione 2, punto 13) |
+| 9 | `python esegui_ciclo_locale.py report` | PDF del report al comitato: lo fa gia' `valida` del passo 7; rilanciarlo dopo modifiche a mano (sezione 2, punto 13) |
 
 **Quando serve**
 
@@ -148,6 +155,87 @@ registro chiuso.
 | `python esegui_ciclo_locale.py griglia` | ricostruisce il foglio Validazione rovinato a mano | sezione 3 |
 | `python esegui_ciclo_locale.py diagnosi` | dopo la validazione, ogni tanto: i rischi nuovi entrano tutti bassi? il validatore alza (o abbassa) sempre le stesse dimensioni? ci sono rischi lontani con Impatto alto senza anni di adeguamento? Solo lettura | sezione 9 |
 | `python esegui_ciclo_locale.py aggiorna-registro` | porta il registro su un template nuovo, dopo un aggiornamento del pacchetto | sezione 0-bis |
+
+## L'app NFR: uso passo per passo
+
+**A che cosa serve.** Fa da regista: sa a che punto e' il lavoro, prepara i file per gli agenti, raccoglie le loro
+risposte, lancia i comandi nell'ordine giusto e mostra l'esito. **Non decide niente**: i controlli e la scrittura nel
+registro restano allo script (gli stessi comandi della sezione 9), le decisioni al validatore.
+
+**Avvio.** Doppio clic su `NFR.cmd` (cartella degli script, `07_Senza_Studio`); conviene un collegamento sul Desktop
+(tasto destro su `NFR.cmd` -> Mostra altre opzioni -> Invia a -> Desktop). Prima volta: `configurazione.json`
+compilato (sezione 0.3) e i link degli agenti (sezione 0.2, punto 3-bis). Se la finestra non si apre: sezione 7.
+
+### La finestra, dall'alto in basso
+
+| Parte | Che cosa dice o fa |
+|---|---|
+| **Stato** (due righe) | il ciclo corrente (scritto, DA VALIDARE, VALIDATO, RIAPERTO; report e schede pronti o da fare), il prossimo periodo, la settimana (raccolta, A3, scritta, validata), il registro (libero o in uso da chi). Si aggiorna da solo ogni mezzo minuto; e' lo stesso per tutti i colleghi, perche' si legge dall'archivio condiviso |
+| **▶ Prossimo passo** | il passo che lo stato propone, con chi lo deve fare (analista o validatore) e perche'. Un clic e parte |
+| **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Testi a mano, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti |
+| **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71) |
+| **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
+| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
+| **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso il registro, Annulla il passo |
+| **Fascia dell'esito e uscita** | l'esito dell'ultimo comando (verde OK, arancio FERMATO, rosso ERRORE TECNICO) e l'uscita dei comandi riga per riga. Ogni comando lascia un log in `Archivio_Cicli\Log\` |
+
+Su uno schermo 1920x1080 (o piu' piccolo) la finestra si apre a tutto schermo, anche con la scala di Windows al 150%.
+
+### Lavorare con un agente: i tuoi tre gesti
+
+Per ogni agente l'app:
+1. prepara i file da allegare in `%USERPROFILE%\NFR_Da_allegare\<agente>\` e apre la cartella;
+2. apre l'agente, se in `configurazione.json` c'e' il suo link (sezione 0.2, punto 3-bis);
+3. mette negli appunti il messaggio base (sezione 8), per esempio "Esegui il ciclo".
+
+Poi tocca a te:
+1. **chat nuova** con l'agente, **trascini** i file della cartella nella chat, **incolli** il messaggio (Ctrl+V) e invii;
+2. quando l'agente ha finito **copi la risposta** (pulsante Copia sotto la risposta) e la **incolli nel riquadro
+   "Risposta dell'agente"** dell'app (Ctrl+V). Appena incolli, l'app la prende; se no, "Usa il testo incollato".
+
+In piu', se l'ascolto degli appunti e' acceso (`ascolta_appunti`, sezione 0.3), basta premere Copia: l'app se ne
+accorge da sola. Una risposta salvata in un file si prende con "Scegli file...".
+
+L'app estrae il JSON anche con frasi prima e dopo, i segni di codice ```json o i link alle fonti in coda, riconosce
+l'agente dal formato, controlla il formato e salva il file con il nome giusto in `Archivio_Cicli\In_arrivo\`
+(`A1_<ciclo>.json`, `A3_<lunedi'>.json`, `A5_<ciclo>.json`, `A6_<ciclo>.json`, `A8_<periodo>.json`; il parere di A4 in
+`Archivio_Cicli\Pareri\`). Il testo incollato resta in `In_arrivo\Originali\` (con l'origine, Agent Builder o
+Copilot Studio, nel nome); un file con lo stesso nome passa in `In_arrivo\Precedenti\`: niente si perde.
+
+Casi particolari:
+- **Risposta tagliata** (l'agente si ferma a meta'): l'app mette "continua" negli appunti; lo incolli nella **stessa
+  chat** e incolli nell'app il resto della risposta. Le parti si uniscono da sole.
+- **Correzione**: se il precontrollo o lo script trovano qualcosa da correggere, il messaggio di correzione e' gia'
+  negli appunti. Lo incolli nella **stessa chat** dell'agente e incolli nell'app la risposta nuova.
+- **Risposta di un altro agente** (per esempio A3 mentre il passo aspetta A1): l'app la salva ma il passo non avanza,
+  e lo dice.
+
+### I processi
+
+| Pulsante | Che cosa fa l'app | Che cosa fai tu |
+|---|---|---|
+| **Settimana** | raccolta delle notizie se manca (solo sul PC della raccolta); apre `News_Inbox\<lunedi'>\Manuali`; A3 con `Input_A3.txt`; `settimanale`; se A3 va corretto, il messaggio negli appunti; propone la validazione delle notizie | metti in Manuali i file a mano; i tre gesti con A3; decidi se validare |
+| **Trimestre** | controlla che il ciclo prima sia validato; `baseline`; A1 con `Input_A1_<ciclo>.txt`; `precontrollo` (sempre: pochi secondi, senza Excel) con il giro di correzione nella stessa chat; A5 se la casella e' spuntata; `trimestrale` (un fermo: stesso giro di correzione); propone la validazione | i tre gesti con A1 (e A5); se il precontrollo ha solo punti "da verificare", scegli se farli rivedere ad A1 o lasciarli al validatore |
+| **Straordinario** | modulo con rischi, motivo, decisore, data; `baseline --straordinario`; A8 con `Input_A1_<periodo>.txt`; precontrollo; `trimestrale`; propone la validazione | compili il modulo (decide la funzione di rischio); allega ad A8 anche i documenti dell'evento |
+| **Validazione** | chiede chi valida (proposto `validatore_predefinito`); apre il registro in Excel, visibile; aspetta che tu lo chiuda; `valida` (che rigenera il report). Se la validazione non passa, riapre il registro per correggere; poi propone le schede | lavori nelle celle gialle del foglio Validazione (sezione 3), salvi e chiudi Excel |
+| **Schede** | `schede-input`; chiede se usare A6; A6 con `Schede_input_<ciclo>.json` e `schede` (con il giro di correzione), oppure `schede` con i testi di A1; il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
+| **Report** | `report`; apre la cartella del ciclo | — (dopo modifiche a mano delle celle gialle, sezione 6) |
+| **Riapri un ciclo** | chiede i rischi (vuoto = tutti); `riapri`; poi la Validazione | come nella validazione (sezione 3-ter) |
+| **Testi a mano** | apre il registro; aspetta che tu lo chiuda; `baseline` e `report` | correggi solo le colonne di testo (sezione 3-ter) |
+| **Parere di A4** | A4 con `Input_A4.txt`; archivia il parere in `Pareri`; se A4 propone uno straordinario, lo dice | incolli la notizia dopo il messaggio base; copi e incolli il parere |
+| **Chiedi ad A7** | apre A7 | fai le tue domande in chat (sezione 8) |
+| **Diagnosi** | `diagnosi`: l'esito nell'uscita | leggi le misure (sezione 9) |
+| **Dismetti** | modulo con rischio, motivazione, decisore; `dismetti` | compili il modulo (decide la funzione di rischio) |
+
+**Interrompere e riprendere.** "Annulla il passo" (o la chiusura della finestra) ferma il processo senza danni: il
+registro si scrive solo dentro i comandi. Al riavvio, il "Prossimo passo" riparte dal punto giusto; se la risposta di
+un agente e' gia' in `In_arrivo`, l'app chiede se usarla invece di richiederla.
+
+**Piu' analisti.** Mentre un collega scrive nel registro, lo stato dice "Registro: in uso da ..." e il prossimo passo
+e' "Attendere"; un comando lanciato lo stesso si ferma senza toccare niente (sezione 0.3, "Piu' analisti").
+
+**Se qualcosa non va**: la fascia arancio (FERMATO) o rossa (ERRORE TECNICO) dice cosa fare; il testo completo e' nel
+log e nella sezione 7.
 
 ## Avvio del progetto (responsabile, funzioni di controllo, manutentore — una volta)
 
@@ -210,7 +298,7 @@ versione corrente su un registro separato) e
 | 3 SharePoint | sito, sette library, controllo versione, permessi; `Kernel` caricato; sottocartelle di `Analisi_Interne`; sincronizzazione e `configurazione.json` | sezioni 0.1, 0.2 (punto 2), 0.3 |
 | 4 Registro vivo | `inizializza`, Parametri compilati, baseline (mai un registro creato a mano dal template) | sezione 0.4 |
 | 5 Raccolta notizie | raccolta pianificata il lunedi'; `Manuali`; dopo due settimane le fonti "non raggiungibili" o senza notizie si correggono in `fonti.md` (e si ricarica A3) | "Raccolta notizie automatica ogni lunedi'", sezione 1 |
-| 6 Agenti | creazione degli agenti, capability spente, prompt schedulato di A3, istruzioni archiviate, prova di fumo | sezione 0.2 |
+| 6 Agenti | creazione degli agenti (in Agent Builder o in Copilot Studio), capability spente, link degli agenti per l'app, istruzioni archiviate, prova di fumo | sezioni 0.2 e 0.2-bis |
 
 **Cancello G2** — Manutentore: gli agenti rispondono nel formato atteso (prova di fumo della sezione 0.2).
 
@@ -334,8 +422,9 @@ versione attivo.
    "Cambiare le regole"). Poi `python 02_Agenti/componi_prompt.py` e, se e'
    cambiata la tassonomia, `python 03_Excel/genera_dashboard.py`.
 2. Caricare nella library `Kernel`: i file di `01_Kernel/` e `DECISIONI.md`. Servono
-   allo script (che li legge da li') e agli agenti A3 e A4 per la baseline; non
-   si aggiungono come knowledge degli agenti (vedi sotto).
+   allo script, che li legge da li'; non si aggiungono come knowledge degli agenti
+   (vedi sotto). La baseline non va nella library: gli agenti la ricevono come
+   allegato (`Input_A1`, `Input_A3`, `Input_A4`, AU7).
 3. Creare gli **agenti** in Agent Builder (A1, A3, A4, A5 facoltativo, A6, A7) (rimando per il "perche'" — limiti di Agent Builder, fonti verificate su Microsoft Learn, capacita' che evolvono in fretta: `07_Senza_Studio/README_variante_locale.md`; qui solo i passi):
    Microsoft 365 Copilot ->
    Nuovo agente -> **"Passa a Configura"** (configurazione manuale, NON la
@@ -366,8 +455,7 @@ versione attivo.
      errore che A5 poi deve fermare.
    - **A3 — Auto**: per ogni notizia della settimana, un compito
      classificatorio ripetuto (intensita' 0-3 su nove categorie fisse,
-     direzione fra quattro valori). Gira anche su un **prompt schedulato
-     automatico** ogni lunedi': un tempo di risposta prevedibile conta, e il
+     direzione fra quattro valori). Un tempo di risposta prevedibile conta, e il
      compito non ha il ragionamento multi-vincolo di A1.
    - **A4 — Auto**: valuta UNA notizia alla volta, su richiesta, con una
      struttura di risposta fissa. Meno superficie di errore di A1: non tocca
@@ -396,8 +484,8 @@ versione attivo.
    | Agente | Cartelle SharePoint (intere) | File singolo | Siti web esterni |
    |---|---|---|---|
    | A1 Horizon Scanner | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | — | i 4 sotto |
-   | A3 Interim Update | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | `Kernel/Baseline_corrente.txt` | i 4 sotto |
-   | A4 News Assessor | — | `Kernel/Baseline_corrente.txt` | nessuno |
+   | A3 Interim Update | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` (la baseline arriva in chat: allegato `Input_A3.txt`) | — | i 4 sotto |
+   | A4 News Assessor | — (la baseline arriva in chat: allegato `Input_A4.txt`) | — | nessuno |
    | A5 Challenger | **nessuna** (riceve solo i 2 allegati in chat: output di A1 e baseline) | — | nessuno |
    | A6 Schede dei rischi | **nessuna** (riceve solo l'allegato `Schede_input_<ciclo>.json` in chat) | — | nessuno |
    | A7 Assistente del registro | `Kernel/Spiegazioni` (la cartella intera: la scrive lo script), `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | — | nessuno |
@@ -415,8 +503,11 @@ versione attivo.
 
    Il kernel (tassonomia, rubrica, elenco fonti) e' gia' dentro le
    Istruzioni di ogni agente: **non va aggiunto come knowledge**, ne' come
-   cartella `Kernel` intera ne' come elenco fonti a parte — solo il singolo
-   file `Baseline_corrente.txt` va aggiunto dove indicato in tabella.
+   cartella `Kernel` intera ne' come elenco fonti a parte. Nemmeno la
+   baseline: dal 23/10/2026 (AU7, D-83) A3 e A4 la ricevono come allegato
+   della chat (`Input_A3.txt`, `Input_A4.txt`), come A1. Se in un agente c'e'
+   ancora `Kernel/Baseline_corrente.txt` fra le knowledge, toglierlo: sarebbe
+   una baseline vecchia.
 
    Capability: il code interpreter ("Create documents, charts, and code") e'
    **acceso di default** su ogni agente nuovo — va **spento a mano**, insieme
@@ -424,10 +515,15 @@ versione attivo.
    bisogno, la scrittura resta sempre allo script. Nel tenant della Banca le
    capability **non sono abilitate** (verificato il 01/10/2026): non c'e'
    niente da spegnere, ed e' la configurazione voluta (D-11).
-4. A3: creare un **prompt schedulato** settimanale (lunedi' mattina, dopo la
-   raccolta notizie) con il testo "Esegui l'aggiornamento settimanale".
-   Verificare dove arriva la risposta (chat, notifica): va controllato in
-   ambiente, non e' specificato dalla documentazione Microsoft.
+3-bis. **Link degli agenti per l'app** (D-83): per ogni agente, in Agent Builder,
+   menu "..." dell'agente -> **Copia collegamento** (o, nella chat dell'agente, l'indirizzo
+   della barra del browser), e incollarlo in `configurazione.json`, voce `link_agenti`
+   (sezione 0.3). Con il link l'app apre da sola l'agente giusto; senza, lo si apre a
+   mano e l'app funziona lo stesso.
+4. A3: **niente prompt schedulato**. Dal 23/10/2026 (AU7) A3 legge la baseline solo
+   dall'allegato `Input_A3.txt`, che un prompt schedulato non puo' portare: risponderebbe
+   "Baseline mancante". A3 si lancia dall'app (pulsante Settimana) o a mano (sezione 1).
+   Se c'era un prompt schedulato, cancellarlo.
 5. Archiviare in `Archivio_Cicli\Prompt\<data>\` il testo delle istruzioni
    appena incollate: si modificano nell'interfaccia di Agent Builder senza
    lasciare traccia.
@@ -437,6 +533,30 @@ versione attivo.
    accetta.
 
 **Verifica**: i cinque agenti rispondono nel formato atteso.
+
+### 0.2-bis Agenti in Copilot Studio (alternativa ad Agent Builder, con l'app)
+
+Gli stessi agenti si possono creare in **Copilot Studio** invece che in Agent Builder (anche solo alcuni, per esempio
+A1) e usare con l'app allo stesso modo: chat nuova, allegati, messaggio, risposta copiata e incollata nell'app. L'app
+salva le risposte con gli stessi nomi, nella stessa cartella e per lo stesso registro; annota solo da dove vengono
+(casella "Agenti" della finestra). La versione tutta in Copilot Studio, con i flussi che leggono e scrivono i file da
+soli, e' un'altra cosa: si progetta sul ramo `copilot-studio-pieno` (D-82).
+
+Per ogni agente in Copilot Studio (esperienza standard; passi dettagliati della costruzione nella prova K0,
+`09_Copilot_Studio/Prova_con_Copilot_Studio.md`, B1):
+1. **Create** -> New agent -> **Configure**; nome come in Agent Builder (per esempio "A1 Horizon Scanner").
+2. **Instructions**: lo stesso file intero di `02_Agenti/` della tabella del punto 3 (non i modelli, non le versioni
+   `_CS` per le variabili globali, che servono solo alle prove K6).
+3. **Knowledge**: le stesse cartelle SharePoint e gli stessi siti della tabella "Knowledge esatta per agente".
+4. **Settings -> Generative AI**: "Use general knowledge" e "Web search" spenti; **File uploads** acceso (gli allegati
+   in chat); **Code interpreter** spento (D-11). Modello: annotarlo (le prove K0 e K6 hanno usato GPT-5 reasoning).
+5. **Authentication**: "Authenticate with Microsoft".
+6. Il link per l'app: il riquadro di prova non ha un link; dopo **Publish**, il canale Teams o Microsoft 365 Copilot da'
+   l'indirizzo della chat. In `link_agenti` si possono tenere i link delle due versioni (sezione 0.3).
+
+Attenzione: in **Teams** un messaggio oltre circa 100 KB da' errore (prova K0): una risposta lunga di A1 si legge meglio
+nella chat di Microsoft 365 Copilot o nel riquadro di prova. Copilot Studio puo' aggiungere in coda alla risposta i
+link alle fonti: l'app li ignora.
 
 ### 0.3 Sul proprio PC (ogni analista, dopo 0.1 e 0.2)
 
@@ -454,8 +574,23 @@ versione attivo.
 2. Sincronizzare con OneDrive (pulsante "Sincronizza" di SharePoint) le
    raccolte `Kernel`, `Report_Trimestrali`, `Archivio_Cicli`, `News_Inbox`.
 3. Nella cartella degli script (`07_Senza_Studio`) copiare
-   `configurazione_esempio.json` in `configurazione.json` e scrivere dentro i
-   percorsi delle cartelle sincronizzate (aprirlo con Blocco note).
+   `configurazione_esempio.json` in `configurazione.json` e compilarlo con Blocco note
+   (le barre dei percorsi vanno raddoppiate, `\\`, come nell'esempio):
+
+   | Voce | Che cosa scrivere | Chi la usa |
+   |---|---|---|
+   | `workbook` | il registro `NFR_Registro.xlsx` nella cartella sincronizzata di `Report_Trimestrali` | script, app |
+   | `kernel` | la cartella sincronizzata della library `Kernel` | script, app |
+   | `cartella_uscita` | la cartella sincronizzata di `Archivio_Cicli` | script, app |
+   | `news_inbox` | la cartella sincronizzata di `News_Inbox` | raccolta, app |
+   | `utente` | il proprio nome e la funzione: e' il nome che i colleghi vedono quando stai scrivendo nel registro (lucchetto, D-83) | script, app |
+   | `attesa_lucchetto` | secondi di attesa nella presa del lucchetto (5) | script |
+   | `validatore_predefinito` | chi valida di solito (per esempio "Funzione Risk Management"): l'app lo propone, si puo' cambiare ogni volta | app |
+   | `raccolta_su_questo_pc` | `true` solo sul PC che raccoglie le notizie il lunedi'; sugli altri `false` | app |
+   | `agenti` | `Agent Builder` o `Copilot Studio`: la versione degli agenti proposta all'avvio (si cambia nella finestra) | app |
+   | `ascolta_appunti` | `true`: basta premere Copia sotto la risposta; `false`: si incolla sempre nel riquadro | app |
+   | `link_agenti` | i link degli agenti (sezione 0.2, punto 3-bis): `{"A1": "https://...", "A3": "...", ...}`; con le due versioni, `{"Agent Builder": {"A1": ...}, "Copilot Studio": {"A1": ...}}`. Un link vuoto: l'agente si apre a mano | app |
+   | `cartella_lavoro` | facoltativa: dove lo script tiene la copia di lavoro del registro (di solito non serve) | script |
 4. Verificare che la cartella `03_Excel`, **fianco a fianco** con
    `07_Senza_Studio` (stesso livello, NON dentro la cartella sincronizzata da
    SharePoint), contenga il file `NFR_Dashboard_Template.xlsx`, non solo
@@ -477,9 +612,23 @@ versione attivo.
    proxy: chiedere all'informatica, oppure rinunciare al canale rss e proseguire
    con i siti dell'agente e i file in `Manuali`.
 
-Da qui in avanti: ogni comando della guida si scrive nel Prompt dei comandi,
-dalla cartella degli script, e **il registro Excel deve essere chiuso**
-(anche per i colleghi) mentre lo script lavora.
+7. Prova dell'app: doppio clic su `NFR.cmd`. Si apre la finestra con lo stato in alto; se il registro non c'e'
+   ancora, il prossimo passo e' la baseline (0.4). Conviene un collegamento sul Desktop.
+
+Da qui in avanti: ogni passo si fa dall'app (sezione "L'app NFR: uso passo per passo") o con i comandi nel Prompt dei
+comandi, dalla cartella degli script; **il registro Excel deve essere chiuso** (anche per i colleghi) mentre lo script
+lavora.
+
+**Piu' analisti sullo stesso registro** (D-83). Ogni comando che scrive nel
+registro prende un **lucchetto** (`Archivio_Cicli\_Lucchetto\registro.json`) e
+lo lascia alla fine: se un collega sta scrivendo, il comando si ferma con
+"Il registro e' in uso: <nome> ... dal ..." e non tocca niente; si riprova
+quando ha finito. Lo script lavora poi su una **copia di lavoro** del registro
+sul tuo PC e sostituisce il registro vero solo alla fine, dopo i controlli, e
+solo se nel frattempo nessuno l'ha cambiato (altrimenti FERMATO "cambiato
+mentre lo script lavorava": rilanciare). La presa del lucchetto aspetta alcuni
+secondi (`attesa_lucchetto`), il tempo per far arrivare con OneDrive il
+lucchetto di un collega che inizia nello stesso momento.
 
 ### 0.4 Primo utilizzo reale (una volta, dopo 0.3)
 
@@ -503,8 +652,8 @@ lo script.
    gialle i pesi, le soglie e i parametri dell'urgenza decisi nella fase 1
    dell'avvio (punto 1.3; la cella accanto alla somma dei pesi deve dire "OK"),
    salvare e chiudere. Poi `python esegui_ciclo_locale.py baseline`: la baseline
-   dice il primo ciclo da valutare e non contiene rischi; copiare
-   `Baseline_corrente.txt` nella library `Kernel`.
+   dice il primo ciclo da valutare e non contiene rischi (gli allegati per A1,
+   A3 e A4 sono accanto, nella cartella di uscita).
 4. Non serve nessun trimestre gia' valutato: al primo ciclo A1 individua i
    rischi da zero, leggendo la documentazione disponibile (`Analisi_Interne`,
    `Analisi_Esterne`, `News_Inbox`, siti): un rischio per ogni meccanismo di
@@ -647,9 +796,9 @@ e dettagli in `04_Riferimenti/DECISIONI.md`):
    plausibilita', Prossimita dall'orizzonte), che A1 rivaluta al primo ciclo; le
    notizie collegate a una voce passano al rischio. Il file mantiene nome e
    percorso.
-5. Prova: `python esegui_ciclo_locale.py baseline` deve rispondere come sempre;
-   poi ricaricare `Baseline_corrente.txt` nella raccolta `Kernel` (A3 e A4 la
-   leggono).
+5. Prova: `python esegui_ciclo_locale.py baseline` deve rispondere come sempre
+   (A3 e A4 ricevono la baseline dagli allegati `Input_A3.txt` e `Input_A4.txt`
+   che il comando riscrive: niente da ricaricare nella library `Kernel`).
 
 Prima di sostituire il file lo script verifica che le righe siano le stesse,
 che non ci siano errori di formula e che la baseline sia identica a parte i
@@ -667,7 +816,7 @@ proposito.
 |---|---|---|---|
 | 1 | automatico o tu | `python raccogli_notizie.py` (di solito lo lancia da solo l'Utilita' di pianificazione di Windows alle 7) | `Raccolta scritta: ...News_Inbox\<lunedi'>\Raccolta_<oggi>.txt` e il numero di notizie. Se compare "ATTENZIONE: ... non raggiungibile", la raccolta e' incompleta per quella fonte: annotarlo, si puo' proseguire. |
 | 2 | tu | Salvare nella cartella `News_Inbox\<lunedi'>\Manuali\` cio' che non arriva da solo: circolari CERTFin, rapporti di threat intelligence, newsletter, notizie viste sui siti senza feed. | I file sono nella cartella. |
-| 3 | A3 | In Copilot, aprire l'agente **A3 Interim Update** e scrivere `Esegui l'aggiornamento settimanale` (o aspettare il prompt schedulato). | Una risposta che e' **solo** un blocco JSON (comincia con `{` e finisce con `}`). |
+| 3 | A3 | In Copilot, aprire l'agente **A3 Interim Update**, chat nuova: **allegare** `Input_A3.txt` (cartella di uscita: la baseline, AU7) e scrivere `Esegui l'aggiornamento settimanale`. Il prompt schedulato non porta l'allegato: dal 23/10/2026 A3 senza allegato risponde "Baseline mancante". | Una risposta che e' **solo** un blocco JSON (comincia con `{` e finisce con `}`). Se risponde "Baseline mancante", l'allegato non e' arrivato. |
 | 4 | tu | Copiare tutta la risposta, incollarla in Blocco note, *Salva con nome*: tipo "Tutti i file", codifica **UTF-8**, nome `A3_<lunedi'>.json` (es. `A3_2026-10-12.json`) nella cartella di lavoro. | Il file esiste. |
 | 5 | tu | `python esegui_ciclo_locale.py settimanale --payload A3_2026-10-12.json` | `Settimana 2026-10-12: N notizie aggiunte`, i segnali netti oltre la soglia, le aree non presidiate, e `Excel di output: ...Settimane\2026-10-12\...`. |
 | 6 | tu | Aprire l'Excel di output della settimana: Registro (colonna "Segnali netti"), Notizie (colonna Presidio e, a destra, la **sintesi di A3 e i flag proposti** della settimana). | Un ▲ o "AREA NON PRESIDIATA" sono segnali da riportare al prossimo trimestre: **nessuno score cambia di settimana in settimana**. |
@@ -680,8 +829,8 @@ Si fa nei primi giorni dopo la fine del trimestre. Esempio per il `2026Q3`.
 | # | Chi | Cosa fare | Cosa si deve vedere |
 |---|---|---|---|
 | 1 | tu | Controllare che il trimestre PRECEDENTE sia validato: nel registro, foglio Registro riga 4 deve dire **"Ciclo validato"** (anche la fascia blu in cima a ogni foglio dice "validato" o "da validare"). Se dice "CICLO NON ANCORA VALIDATO", fare prima la sezione 3 per quel ciclo. | "Ciclo validato". |
-| 2 | tu | `python esegui_ciclo_locale.py baseline` | `Baseline scritta: ...` e `Allegato per A1: ...Input_A1_2026Q3.txt`. Se compare "ATTENZIONE: il ciclo ... ha ancora N righe da validare", tornare al passo 1. Se compare "Avviso: nel kernel ... mancano", copiare nella library `Kernel` tutti i file di `01_Kernel` (sezione 0-bis, punto 1). |
-| 3 | tu | Copiare `Baseline_corrente.txt` (cartella di uscita) nella raccolta `Kernel`, sostituendo quella vecchia. | — |
+| 2 | tu | `python esegui_ciclo_locale.py baseline` | `Baseline scritta: ...`, `Allegato per A1: ...Input_A1_2026Q3.txt` e `Allegati per A3 e A4 (AU7): ...Input_A3.txt, ...Input_A4.txt`. Se compare "ATTENZIONE: il ciclo ... ha ancora N righe da validare", tornare al passo 1. Se compare "Avviso: nel kernel ... mancano", copiare nella library `Kernel` tutti i file di `01_Kernel` (sezione 0-bis, punto 1). |
+| 3 | — | Niente da fare (dal 23/10/2026, AU7): A3 e A4 ricevono la baseline dagli allegati scritti al passo 2, non piu' dalla raccolta `Kernel`. | — |
 | 4 | A1 | In Copilot, agente **A1 Horizon Scanner**, chat nuova: **allegare al messaggio** `Input_A1_2026Q3.txt` (cartella di uscita) e scrivere `Esegui il ciclo`. L'allegato va nella chat: A1 non lo legge dalla library `Kernel`, che non e' tra le sue knowledge. | Solo JSON, con `"ciclo":"2026Q3"`. Se risponde "Baseline mancante", l'allegato non e' arrivato (per esempio e' solo nel `Kernel`): allegarlo al messaggio. |
 | 5 | tu | Salvare la risposta come `A1_2026Q3.json` (Blocco note, UTF-8, come al punto 4 della sezione 1). | — |
 | 5-bis | tu | **Precontrollo: FACOLTATIVO, si puo' saltare** (pochi secondi, senza Excel, non scrive niente): `python esegui_ciclo_locale.py precontrollo --payload A1_2026Q3.json`. Serve solo in due casi: prima di A5, se lo usi, o per far correggere ad A1 le segnalazioni prima di scrivere. Altrimenti si passa direttamente al punto 7, che fa gli stessi controlli e, se qualcosa ferma il ciclo, scrive lo stesso messaggio di correzione per A1. | `Precontrollo dell'output di A1 (2026Q3): nessun rilievo.` (la riga dopo, `Impronta dell'output di A1: ...`, serve solo alla prova di Copilot Studio). Altrimenti i punti da correggere (fermerebbero il ciclo) e da verificare (finirebbero nella colonna Segnalazioni), e il file `Cicli\2026Q3\Correzione_A1_2026Q3.txt`: aprirlo con Blocco note, copiarlo tutto, incollarlo nella chat di A1, salvare la nuova risposta (punto 5) e ripetere. |
@@ -690,10 +839,10 @@ Si fa nei primi giorni dopo la fine del trimestre. Esempio per il `2026Q3`.
 | 8 | tu | Se invece compare **FERMATO** con "Ciclo da rivedere": l'output di A1 ha un difetto che renderebbe incoerente il registro (C1 un rischio mancante o con un'altra categoria, C2 variazioni che non tornano, C7 o C9 un KRI con un identificativo sbagliato). Aprire il file `Cicli\2026Q3\Correzione_A1_2026Q3.txt` indicato, copiarlo tutto nella chat di A1, salvare la nuova risposta (punto 5) e ripetere il punto 7 (e A5, se lo usi, sul nuovo file). | Il registro non e' stato toccato: si puo' ripetere quante volte serve. |
 | 8-bis | tu | **Segnalazioni da motivare**: non si rilancia niente. Sono le regole di metodo non rispettate (C3: evidenza fuori finestra o generica, salto di piu' di un punto; C5: fonte datata dopo la data di riferimento, oppure esposizione della Banca non nota alle fonti, con la Probabilita proposta e quella "se esposta" (D-81); C9: KRI senza la coppia Esposizione/Evoluzione o soglie invertite) e i rilievi Bloccanti di A5. Si decidono in validazione (sezione 3). Se preferisci farle correggere ad A1 prima di scrivere, usa il precontrollo (punto 5-bis). | Nel foglio Validazione quei rischi hanno ⚑ davanti al nome e il testo nella colonna **Segnalazioni dei controlli**; il Quadro dice quante sono (riga "Segnalazioni da motivare"). |
 | 9 | validatore | **Validare il ciclo**: sezione 3, con `--periodo 2026Q3`. Finche' non e' fatto, il trimestre dopo non parte. | Registro riga 4: "Ciclo validato". |
-| 10 | tu | Copiare in `Archivio_Cicli\Cicli\2026Q3\` il testo dei prompt in uso (i file di `02_Agenti`). | — |
+| 10 | — | Niente da fare: `trimestrale` (punto 7) ha gia' archiviato i prompt degli agenti del pacchetto in `Archivio_Cicli\Cicli\2026Q3\Prompt_in_uso\`. Se in Agent Builder ci sono istruzioni diverse da quelle del pacchetto, copiarle li'. | La riga `Prompt degli agenti del pacchetto archiviati: ...` nell'uscita di `trimestrale`. |
 | 11 | tu | **Schede dei rischi**, dati per A6: `python esegui_ciclo_locale.py schede-input` | `Input delle schede del ciclo 2026Q3 (12 rischi): ...Cicli\2026Q3\Schede_input_2026Q3.json`. Se compare "righe da validare", il ciclo non e' ancora validato (punto 9). |
-| 12 | A6, tu | Agente **A6 Schede dei rischi** (solo dopo la validazione, solo con l'allegato di `schede-input`; non valuta, spiega i valori validati): allegare SOLO `Schede_input_2026Q3.json`, scrivere `Scrivi le schede`. Salvare la risposta come `A6_2026Q3.json` (come al punto 5), poi `python esegui_ciclo_locale.py schede --payload A6_2026Q3.json` | `Schede del ciclo 2026Q3: 12 rischi, testi di A6 controllati. File: ...Schede_2026Q3.xlsx`. Se compare **FERMATO** (per esempio "numeri che non stanno nei dati del rischio" o "le fonti devono essere quelle dell'input"), chiedere ad A6 di correggere quei punti e rilanciare. Senza A6: `python esegui_ciclo_locale.py schede` produce le schede con i testi del registro. |
-| 13 | tu | **Report al comitato**: `python esegui_ciclo_locale.py report` (con `--con-lavoro` aggiunge Registro e Parametri, in orizzontale su una pagina ciascuno). Il PDF si fa dal registro com'e' ora: se dopo la validazione cambi a mano il presidio, gli anni di adeguamento, l'attenzione del supervisore o lo stato di un'azione, **rilancia il comando** e il PDF segue le modifiche (la versione precedente resta con la data nel nome). Per un altro Excel: `--file <percorso>`. Allegare `Schede_2026Q3.xlsx` (o il suo PDF). | `Report al comitato del ciclo 2026Q3 rigenerato da ...` e il PDF in `Archivio_Cicli\Cicli\2026Q3\Report_comitato_2026Q3.pdf`, dal Quadro d'insieme alla Metodologia. Se la riga "Dopo il commento" del Quadro e' compilata (fondo giallo), il commento di A1 precede delle rettifiche: valgono i numeri. |
+| 12 | A6, tu | Agente **A6 Schede dei rischi** (solo dopo la validazione, solo con l'allegato di `schede-input`; non valuta, spiega i valori validati): allegare SOLO `Schede_input_2026Q3.json`, scrivere `Scrivi le schede`. Salvare la risposta come `A6_2026Q3.json` (come al punto 5), poi `python esegui_ciclo_locale.py schede --payload A6_2026Q3.json` | `Schede del ciclo 2026Q3: 12 rischi, testi di A6 controllati. File: ...Schede_2026Q3.xlsx` e `PDF: ...Schede_2026Q3.pdf`. Se compare **FERMATO** (per esempio "numeri che non stanno nei dati del rischio" o "le fonti devono essere quelle dell'input"), chiedere ad A6 di correggere quei punti e rilanciare. Senza A6: `python esegui_ciclo_locale.py schede` produce le schede con i testi del registro. |
+| 13 | tu | **Report al comitato**: lo produce gia' `valida` (punto 9) quando valida il ciclo corrente. `python esegui_ciclo_locale.py report` lo rigenera (con `--con-lavoro` aggiunge Registro e Parametri, in orizzontale su una pagina ciascuno). Il PDF si fa dal registro com'e' ora: se dopo la validazione cambi a mano il presidio, gli anni di adeguamento, l'attenzione del supervisore o lo stato di un'azione, **rilancia il comando** e il PDF segue le modifiche (la versione precedente resta con la data nel nome). Per un altro Excel: `--file <percorso>`. Allegare `Schede_2026Q3.xlsx` (o il suo PDF). | `Report al comitato del ciclo 2026Q3 rigenerato da ...` e il PDF in `Archivio_Cicli\Cicli\2026Q3\Report_comitato_2026Q3.pdf`, dal Quadro d'insieme alla Metodologia. Se la riga "Dopo il commento" del Quadro e' compilata (fondo giallo), il commento di A1 precede delle rettifiche: valgono i numeri. |
 
 **Che cosa controlla lo script** (D-69, D-71): all'output di A1 applica la
 parte dei controlli che si puo' verificare con una regola (lo schema, C1, C2,
@@ -858,7 +1007,9 @@ sono la raccolta che servira' per insegnare agli agenti.
    N, rettificate N (N valori cambiati), respinte N`, e il file
    `NFR_Registro_2026Q3_validato.xlsx` nell'archivio del ciclo. Le righe del
    periodo escono dal foglio Validazione; nel Registro, riga 4: "Ciclo
-   validato".
+   validato". Per il ciclo corrente `valida` rigenera anche il report al
+   comitato (`Report al comitato del ciclo 2026Q3 rigenerato: ...pdf`; la
+   versione precedente resta con la data nel nome); con `--senza-report` no.
 
 Cosa succede ai dati: il valore rettificato sostituisce quello proposto nel
 registro (colonna Validazione = "Rettificato"), e l'esito e le Variazioni del
@@ -919,8 +1070,10 @@ con la stessa griglia della sezione 3, **quante volte serve**.
    <ciclo> --validatore "<chi decide>"`. Nello storico (foglio
    Storico_Validazioni) le decisioni hanno il suffisso **(riapertura)**:
    Invariato, Rettificato o Respinto, con il valore di prima, quello deciso, la
-   motivazione, chi e quando. Baseline, knowledge di A7 e report seguono da soli
-   (per il PDF: `report`).
+   motivazione, chi e quando. Baseline, knowledge di A7 e report al comitato
+   (PDF rigenerato da `valida`) seguono da soli. `riapri` lascia nella cartella
+   del ciclo `Riapertura_<ciclo>.json` (chi ha riaperto, quando, che cosa);
+   `valida` lo chiude con la data e chi ha validato.
 
 Finche' la riapertura non e' validata il ciclo risulta "da validare": `trimestrale`,
 `report` e `schede` aspettano. Per chiuderla senza cambiare niente basta lanciare
@@ -1070,6 +1223,11 @@ c'e' gia'.
 | `Le notizie da validare (N...) superano le ... righe del foglio Validazione` (comando settimanale) | molte settimane di notizie non sono ancora state validate | validare le settimane piu' vecchie (`valida --periodo <lunedi'>`: una riga non toccata vale come accettata), poi rilanciare; niente e' stato scritto |
 | `... superano le ... righe della vista` / `Anagrafica piena` | e' stata raggiunta una capacita' del template; niente e' stato salvato | chi mantiene il pacchetto rigenera il template con capacita' piu' alte |
 | `Manca ...\Kernel\mappatura_campi.json` (o un altro file del kernel) | i file di `01_Kernel` non sono stati copiati nella cartella `kernel` di `configurazione.json` (la library Kernel sincronizzata) | copiarli tutti (sezione 0-bis, punto 1) e rilanciare; niente e' stato scritto |
+| `FERMATO ... Il registro e' in uso: <nome> (PC ...), comando ..., dal ...` | un collega sta scrivendo nel registro (D-83) | aspettare che finisca e rilanciare; il registro non e' stato toccato |
+| `FERMATO ... Un collega ha iniziato a scrivere nello stesso momento` | due analisti hanno lanciato un comando quasi insieme | riprovare fra qualche minuto |
+| `Il registro e' in uso` con un nome che non sta lavorando | il lucchetto e' rimasto (PC spento o comando interrotto a meta'); scade da solo dopo 2 ore | dopo aver sentito il collega: `python esegui_ciclo_locale.py sblocca --motivo "..."` (resta scritto in `_Lucchetto\sblocchi.log`) |
+| `FERMATO ... e' cambiato mentre lo script lavorava` | un collega ha salvato il registro, o la sincronizzazione ha portato una versione nuova, mentre il comando girava | rilanciare il comando: riparte dal registro aggiornato |
+| `FERMATO ... Il registro e' aperto in un programma di questo PC` | il registro e' aperto in Excel sul tuo PC | chiuderlo e rilanciare |
 | `Workbook non trovato: None` | manca `configurazione.json` (c'e' solo `configurazione_esempio.json`), oppure la voce `workbook` e' vuota o assente | copiare `configurazione_esempio.json` in `configurazione.json` e compilare `workbook` (sezione 0.3, punto 3) |
 | `Workbook non trovato: <percorso>` | quel percorso in `configurazione.json` e' sbagliato, o il registro non e' ancora stato creato | correggere il percorso, oppure creare il registro (sezione 0.4, "Primo utilizzo reale") |
 | `Template non trovato: <percorso>...03_Excel\NFR_Dashboard_Template.xlsx` | manca il file nella cartella `03_Excel` del pacchetto (non e' configurabile in `configurazione.json`: lo script lo cerca sempre fianco a fianco a `07_Senza_Studio`); capita se il pacchetto e' arrivato incompleto (es. l'allegato `.xlsx` filtrato dalla posta) | dalla cartella `03_Excel`: `python genera_dashboard.py` lo rigenera sul posto (serve `openpyxl`: `pip install openpyxl`); in alternativa richiedere di nuovo il pacchetto completo |
@@ -1182,7 +1340,9 @@ razionale in parti.
 
 ### A3 Interim Update
 
-Messaggio base (lo stesso del prompt schedulato del lunedi'):
+Messaggio base, con l'allegato `Input_A3.txt` (la baseline, dalla cartella di uscita;
+AU7, 23/10/2026). Il prompt schedulato del lunedi' non porta l'allegato: A3 risponde
+"Baseline mancante", quindi si lancia a mano.
 
 > Esegui l'aggiornamento settimanale
 
@@ -1211,7 +1371,9 @@ settimana nei `Manuali` della settimana in corso.
 
 ### A4 News Assessor
 
-Messaggio base: la notizia, incollata o allegata.
+Messaggio base: la notizia, incollata o allegata, con l'allegato `Input_A4.txt` (la
+baseline, dalla cartella di uscita; AU7, 23/10/2026). Senza allegato A4 lo dice in testa
+e da' solo l'analisi di impatto sulle nove categorie.
 
 > Dammi il parere su questa notizia: [testo o link]
 
@@ -1346,6 +1508,13 @@ comando; senza, valgono i percorsi di `configurazione.json`:
 - `--kernel <cartella>`: la cartella del kernel (la library Kernel sincronizzata);
 - `--cartella-uscita <cartella>`: l'archivio (baseline, cicli, settimane, backup).
 
+In `configurazione.json`, oltre ai percorsi (D-83): `utente` (il nome che i colleghi
+vedono nel lucchetto; senza, l'utente di Windows), `attesa_lucchetto` (secondi della
+presa in due tempi, 5) e, facoltativa, `cartella_lavoro` (la copia di lavoro del
+registro; senza, `%LOCALAPPDATA%\NFR\lavoro`). I comandi che scrivono nel registro
+(`trimestrale`, `settimanale`, `valida`, `griglia`, `riapri`, `dismetti`,
+`inizializza`, `aggiorna-registro`) prendono il lucchetto; gli altri no.
+
 Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" --cartella-uscita "C:\NFR_Prova\Archivio" baseline`.
 
 ### raccogli_notizie.py
@@ -1366,8 +1535,9 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 `python esegui_ciclo_locale.py baseline [--uscita <file.json>]`
 `python esegui_ciclo_locale.py baseline --straordinario [--rischi NFR-nn[,NFR-mm]] --motivo "..." --decisore "..." [--data AAAA-MM-GG]`
 
-- Cosa fa: scrive `Baseline_corrente.json` (e la copia `.txt`) e l'allegato di A1
-  `Input_A1_<ciclo>.txt` nella cartella di uscita. Sola lettura del registro. Con
+- Cosa fa: scrive `Baseline_corrente.json` (e la copia `.txt`), l'allegato di A1
+  `Input_A1_<ciclo>.txt` e gli allegati di A3 e A4 `Input_A3.txt` e `Input_A4.txt`
+  (AU7) nella cartella di uscita. Sola lettura del registro. Con
   `--straordinario` (D-75) la baseline e l'allegato sono per il periodo `AAAAQn-Sk`
   (l'allegato lo usa A8, D-77) e la decisione si archivia in
   `Cicli\<AAAAQn-Sk>\Straordinario_<AAAAQn-Sk>.json`.
@@ -1436,15 +1606,18 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 
 ### esegui_ciclo_locale.py valida
 
-`python esegui_ciclo_locale.py valida --periodo <ciclo o lunedi'> --validatore "<funzione o comitato>"`
+`python esegui_ciclo_locale.py valida --periodo <ciclo o lunedi'> --validatore "<funzione o comitato>" [--senza-report]`
 
 - Cosa fa: legge la griglia del foglio Validazione per quel periodo (cella gialla
   uguale alla proposta = accettata, cambiata = rettificata, Respingi = Si' =
   respinta), controlla tutte le righe e solo se vanno tutte bene le applica ai dati,
   scrive lo storico, salva (backup prima), archivia l'Excel validato e
-  `Validazione_<periodo>.json`; per il ciclo corrente riscrive baseline e knowledge di A7.
+  `Validazione_<periodo>.json`; per il ciclo corrente riscrive baseline e knowledge di A7
+  e rigenera il report al comitato (PDF, come `report`; D-83). Dopo una riapertura
+  chiude `Riapertura_<ciclo>.json`.
 - Obbligatori: `--periodo` (es. `2026Q3` o `2026-10-12`), `--validatore`.
-  `--accetta-il-resto`: superata, accettata ma inutile.
+  `--senza-report`: non rigenerare il report. `--accetta-il-resto`: superata, accettata
+  ma inutile.
 - Quando: dopo ogni trimestre (obbligatoria) e, se si vuole, dopo ogni settimana (sezione 3).
 - Errori tipici: "Validazione del periodo ... NON applicata (N problemi)" con il
   numero di riga; "il rischio ha segnalazioni da motivare"; "proposta di A1 non
@@ -1467,7 +1640,8 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 - Cosa fa (D-76): riapre la validazione del ciclo corrente, gia' validato: rischi (nel
   radar e in osservazione, D-79), KRI in vigore e azioni aperte tornano nella griglia
   del foglio Validazione con il valore validato. Poi `valida` come sempre; si puo'
-  ripetere. Salva (backup prima); non cambia nessun dato.
+  ripetere. Salva (backup prima); non cambia nessun dato. Lascia
+  `Cicli\<ciclo>\Riapertura_<ciclo>.json` (chi, quando, che cosa), che `valida` chiude.
 - Opzioni: `--rischi` solo quei rischi, con i loro KRI e azioni. Senza: tutto. (L'opzione
   per le voci della lista non c'e' piu' dall'08/10: le voci sono rischi in osservazione.)
 - Quando: per cambiare un valore gia' validato (sezione 3-ter).
@@ -1481,8 +1655,9 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 `python esegui_ciclo_locale.py schede [--payload A6_<ciclo>.json]`
 
 - Cosa fanno: `schede-input` scrive `Cicli\<ciclo>\Schede_input_<ciclo>.json`, l'unico
-  allegato di A6; `schede` controlla l'output di A6 e scrive `Schede_<ciclo>.xlsx`
-  (senza `--payload`, le schede con i testi del registro). Sola lettura del registro.
+  allegato di A6; `schede` controlla l'output di A6 e scrive `Schede_<ciclo>.xlsx` e il
+  suo PDF (senza `--payload`, le schede con i testi del registro). Sola lettura del
+  registro. Un errore nel PDF e' solo un avviso.
 - Quando: dopo la validazione (sezione 2, punti 11-12).
 - Errori tipici: "righe da validare" (validare prima); "Output di A6 non coerente
   con i dati validati" con l'elenco (correggere con A6, sezione 8); "No module named
@@ -1497,9 +1672,21 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
   e ora nel nome. Non modifica l'Excel.
 - Opzioni: `--file` un altro Excel (per esempio l'Excel validato di un ciclo);
   `--con-lavoro` aggiunge Registro e Parametri, in orizzontale.
-- Quando: dopo la validazione e dopo ogni correzione a mano delle celle gialle
-  (sezione 2, punto 13; sezione 6).
+- Quando: dopo ogni correzione a mano delle celle gialle (sezione 2, punto 13; sezione
+  6); dopo la validazione lo fa gia' `valida`.
 - Errori tipici: "righe da validare" (il ciclo deve essere validato).
+
+### esegui_ciclo_locale.py sblocca
+
+`python esegui_ciclo_locale.py sblocca --motivo "..."`
+
+- Cosa fa (D-83): toglie il lucchetto del registro (`Archivio_Cicli\_Lucchetto\registro.json`)
+  rimasto per errore, e scrive in `_Lucchetto\sblocchi.log` chi, quando, perche' e di chi
+  era. Non tocca il registro.
+- Obbligatorio: `--motivo`, almeno 10 caratteri.
+- Quando: solo se un comando si ferma con "Il registro e' in uso" e chi e' indicato non
+  sta lavorando (PC spento o comando interrotto a meta'); sentirlo prima. Un lucchetto
+  scade comunque da solo dopo 2 ore.
 
 ### esegui_ciclo_locale.py diagnosi
 

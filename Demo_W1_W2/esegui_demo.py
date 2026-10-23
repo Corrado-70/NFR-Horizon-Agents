@@ -49,8 +49,9 @@ ARCHIVIO = QUI / "Archivio_Cicli"
 def strumento(*argomenti):
     cmd = [sys.executable, str(PACCHETTO / "07_Senza_Studio" / "esegui_ciclo_locale.py"),
            "--workbook", str(WB), "--cartella-uscita", str(ARCHIVIO), *map(str, argomenti)]
+    # NFR_ATTESA_LUCCHETTO=0 (D-83): la demo gira in una cartella locale, nessun collega la sincronizza.
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                       env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+                       env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
     print(r.stdout.strip(), f"\n[codice di uscita {r.returncode}]\n")
     return r.returncode
 

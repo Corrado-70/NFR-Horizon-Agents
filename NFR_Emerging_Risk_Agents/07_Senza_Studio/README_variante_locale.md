@@ -63,8 +63,8 @@ che riscriverebbe le istruzioni).
 | Agente | Istruzioni (incollare il file intero) | Knowledge | Capability | Modalita' |
 |---|---|---|---|---|
 | A1 Horizon Scanner | `02_Agenti/A1_Horizon_Scanner.md` | `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox`, i siti `sito_agente: si` di `fonti.md` | nessuna: **spegnere** "Create documents, charts, and code" e "Create images" | Think deeper |
-| A3 Interim Update | `02_Agenti/A3_Interim_Update.md` | `News_Inbox`, `Analisi_Interne`, `Analisi_Esterne`, file `Kernel/Baseline_corrente.txt`, i siti `sito_agente: si` di `fonti.md` | nessuna (spegnere entrambi) | Auto |
-| A4 News Assessor | `02_Agenti/A4_News_Assessor.md` | file `Kernel/Baseline_corrente.txt` | nessuna (spegnere entrambi) | Auto |
+| A3 Interim Update | `02_Agenti/A3_Interim_Update.md` | `News_Inbox`, `Analisi_Interne`, `Analisi_Esterne`, i siti `sito_agente: si` di `fonti.md` (la baseline arriva come allegato `Input_A3.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
+| A4 News Assessor | `02_Agenti/A4_News_Assessor.md` | nessuna (la baseline arriva come allegato `Input_A4.txt`, AU7) | nessuna (spegnere entrambi) | Auto |
 | A5 Challenger (facoltativo) | `02_Agenti/A5_Challenger.md` | **nessuna** (riceve solo gli allegati) | nessuna (spegnere entrambi) | Think deeper |
 | A6 Schede dei rischi | `02_Agenti/A6_Schede.md` | **nessuna** (riceve solo `Schede_input_<ciclo>.json`) | nessuna (spegnere entrambi) | Think deeper |
 | A7 Assistente del registro | `02_Agenti/A7_Assistente_registro.md` | `Kernel/Spiegazioni` (scritta da `trimestrale`, `valida`, `dismetti`), `Analisi_Interne`, `Analisi_Esterne`, `News_Inbox` | nessuna (spegnere entrambi) | Think deeper |
@@ -82,8 +82,10 @@ per l'elenco delle fonti: codici e nomi sono nelle istruzioni di A3
 `sito_agente: si`. Lasciare **spento** "Search all websites": l'agente
 citerebbe fonti fuori elenco (che la scrittura poi rifiuta).
 
-A3: creare un prompt schedulato settimanale (lunedi' mattina) con il testo
-"Esegui l'aggiornamento settimanale". A4: condividere l'agente solo con il
+A3: niente prompt schedulato (dal 23/10/2026, AU7: la baseline arriva solo come
+allegato `Input_A3.txt`, che un prompt schedulato non porta); si lancia dall'app o a
+mano. Per ogni agente copiare il link ("..." -> Copia collegamento) in
+`configurazione.json`, `link_agenti`: l'app apre l'agente giusto. A4: condividere l'agente solo con il
 gruppo della funzione di rischio. A6: condividerlo con chi prepara il report
 al comitato; nessuna knowledge, perche' la scheda non deve introdurre fatti che
 il ciclo non ha valutato.
@@ -100,7 +102,8 @@ il ciclo non ha valutato.
 2. Sincronizzare con OneDrive le library `Kernel`, `Report_Trimestrali`,
    `Archivio_Cicli`, `News_Inbox` del sito.
 3. Copiare `configurazione_esempio.json` in `configurazione.json` accanto allo
-   script e compilarlo con i percorsi locali sincronizzati.
+   script e compilarlo con i percorsi locali sincronizzati e con `utente` (il
+   nome che i colleghi vedono nel lucchetto del registro, D-83).
 4. Registro vivo (una volta sola, da chi fa il deploy):
    `python esegui_ciclo_locale.py inizializza --ciclo-precedente <AAAAQn> --settimana <lunedi'>`
    crea `NFR_Registro.xlsx` nel percorso di `configurazione.json` copiando il
@@ -144,9 +147,9 @@ library `Kernel`: le regole non sono copiate qui.
 
 ## Procedura trimestrale
 
-1. `python esegui_ciclo_locale.py baseline` -> copia `Baseline_corrente.txt`
-   in `Kernel` (e' la knowledge di A3 e A4; la `.json` e' identica). Accanto
-   alla baseline lo script scrive anche `Input_A1_<ciclo>.txt` (D-69):
+1. `python esegui_ciclo_locale.py baseline`. Accanto alla baseline lo script
+   scrive gli allegati `Input_A3.txt` e `Input_A4.txt` per A3 e A4 (AU7, D-83:
+   non si copia piu' niente nella library `Kernel`) e `Input_A1_<ciclo>.txt` (D-69):
    baseline, controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo
    delle istruzioni di A5) e guida di scrittura (`01_Kernel/guida_scrittura_A1.md`).
    Lo riscrive ogni volta che aggiorna la baseline (`trimestrale`, `valida`,
@@ -184,7 +187,8 @@ library `Kernel`: le regole non sono copiate qui.
      Lo **stato** di ogni rischio (registro unico, D-79: nel radar, in uscita o
      in osservazione) e' nel RiskRegister, calcolato con la regola di Parametri
      (`radar.py`); lo script stampa quanti sono nel radar e in osservazione, chi
-     e' entrato e chi e' uscito.
+     e' entrato e chi e' uscito. I prompt del pacchetto sono archiviati in
+     `Cicli/<ciclo>/Prompt_in_uso/`.
 5. **Validazione umana** (obbligatoria): nel foglio Validazione del registro,
    una riga per rischio (anche in osservazione, con la decisione sullo stato),
    KRI e azione proposti da A1, con le celle gialle gia' compilate con le
@@ -192,7 +196,8 @@ library `Kernel`: le regole non sono copiate qui.
    cambia i valori con cui non e' d'accordo (con la Motivazione) o respinge un
    KRI, un'azione o una voce (Respingi = Sì), salva, chiude
    e lancia
-   `python esegui_ciclo_locale.py valida --periodo <ciclo> --validatore "<chi>"`.
+   `python esegui_ciclo_locale.py valida --periodo <ciclo> --validatore "<chi>"`
+   (rigenera anche il report al comitato, D-83).
    Una riga non toccata vale come accettata. Finche' non lo fa, il ciclo dopo
    non parte. Passo per passo: `00_GUIDA_PASSO_PASSO.md`, sezione 3. Il
    dettaglio campo per campo resta nel foglio Storico_Validazioni; la
@@ -243,8 +248,10 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
 0. La raccolta automatica (`raccogli_notizie.py`) ha scritto la
    `Raccolta_<data>.txt` della settimana; gli analisti salvano in `Manuali/`
    cio' che viene dai siti senza feed e dalle fonti a licenza.
-1. Il prompt schedulato di A3 gira il lunedi', dopo la raccolta. Salvare il
-   JSON della risposta come `A3_<AAAA-MM-GG>.json`.
+1. A3, chat nuova, con l'allegato `Input_A3.txt` (la baseline, AU7): "Esegui
+   l'aggiornamento settimanale". Il prompt schedulato non porta l'allegato e
+   risponde "Baseline mancante". Salvare il JSON della risposta come
+   `A3_<AAAA-MM-GG>.json`.
 2. `python esegui_ciclo_locale.py settimanale --payload A3_<AAAA-MM-GG>.json`:
    l'Excel di output della settimana e' in `Settimane/<AAAA-MM-GG>/`.
    Rilanciarlo sulla stessa settimana non duplica le notizie. Si ferma se una
@@ -253,6 +260,25 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
    riga per notizia, poi `valida --periodo <AAAA-MM-GG> --validatore "<chi>"`).
    Le notizie non validate restano nel foglio; oltre 200, il settimanale si
    ferma e chiede di validare le settimane piu' vecchie.
+
+## L'app NFR (D-83)
+
+Doppio clic su `NFR.cmd`: la finestra mostra lo stato del processo e il prossimo passo e guida ogni processo
+(settimana, trimestre, straordinario, validazione, schede e report, riapertura, testi a mano, parere di A4). Per ogni
+agente prepara gli allegati, apre l'agente (`link_agenti` in `configurazione.json`) e mette la richiesta negli
+appunti; la risposta si incolla nel riquadro dell'app (o, con `ascolta_appunti`, basta premere Copia). Gli agenti
+possono essere in Agent Builder o in Copilot Studio (casella "Agenti": stessi nomi e cartelle, origine annotata). I
+comandi scritti a mano restano validi: l'app lancia gli stessi. Passo per passo: guida, sezione "L'app NFR: uso passo
+per passo"; configurazione: guida, sezioni 0.2 (punto 3-bis), 0.2-bis e 0.3.
+
+## Piu' analisti sullo stesso registro (D-83)
+
+Ogni comando che scrive prende il lucchetto `Archivio_Cicli/_Lucchetto/registro.json`
+(chi, PC, comando, da quando; scade dopo 2 ore) e lavora su una copia di lavoro
+locale del registro: il registro vero si sostituisce alla fine, dopo i controlli, solo
+se nessuno l'ha cambiato nel frattempo. Un collega che sta scrivendo ferma il comando
+("Il registro e' in uso"); un lucchetto rimasto per errore si toglie con
+`python esegui_ciclo_locale.py sblocca --motivo "..."`, registrato in `sblocchi.log`.
 
 ## Cosa copre lo script dei controlli di A5 — dichiarato, non sottinteso
 
@@ -271,9 +297,10 @@ validatore.
 
 ## Limiti (onesti)
 
-- **Passaggio a mano del JSON** fra chat dell'agente e file. Dove arrivi il
-  risultato di un prompt schedulato (chat, notifica, mail) va verificato in
-  ambiente: la documentazione non lo specifica.
+- **Passaggio a mano del JSON** fra chat dell'agente e app: Agent Builder non ha API,
+  quindi la risposta si copia e si incolla nell'app (o si preme Copia e l'app la prende
+  dagli appunti). Gli agenti possono essere anche in Copilot Studio, con lo stesso
+  passaggio (guida, sezione 0.2-bis).
 - **Liste SharePoint non scritte.** Senza Power Automate e senza API nessuno
   carica le liste. Non si perde storia: le tabelle del workbook sono tutte
   storiche (anche KRI, una riga per KRI per ciclo), con la cronologia versioni

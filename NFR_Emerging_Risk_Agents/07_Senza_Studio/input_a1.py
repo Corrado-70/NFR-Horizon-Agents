@@ -80,6 +80,31 @@ def leggi_baseline(testo):
     return json.JSONDecoder().raw_decode(testo, graffa)[0]
 
 
+# AU7 (23/10/2026): A3 e A4 ricevono la baseline come allegato della chat, come A1, e non piu' dal file
+# Baseline_corrente.txt nella knowledge (indicizzazione lenta, file singolo saltato: "Baseline mancante" del 13/10).
+ALLEGATI_BASELINE = {"A3": "Input_A3.txt", "A4": "Input_A4.txt"}
+
+
+def componi_baseline(baseline, agente, oggi):
+    """Allegato di A3 o A4: intestazione con ciclo e data di riferimento, poi la baseline (JSON)."""
+    prec = baseline.get("ciclo_precedente") or "nessuno"
+    data = baseline.get("data_riferimento_precedente") or "n.d."
+    return (f"INPUT DI {agente}: baseline del registro NFR, ciclo validato {prec} (data di riferimento {data}), scritta da "
+            f"esegui_ciclo_locale.py il {oggi}, da non modificare a mano. Rischi del radar in \"rischi\", in osservazione "
+            "in \"rischi_in_osservazione\".\n\n"
+            f"{INIZIO_BASELINE}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n")
+
+
+def scrivi_allegati_baseline(cartella, baseline, oggi):
+    """Scrive Input_A3.txt e Input_A4.txt accanto a Baseline_corrente; restituisce i percorsi."""
+    out = []
+    for agente, nome in ALLEGATI_BASELINE.items():
+        percorso = Path(cartella) / nome
+        percorso.write_text(componi_baseline(baseline, agente, oggi), encoding="utf-8")
+        out.append(percorso)
+    return out
+
+
 def scrivi(cartella, baseline, kernel, oggi):
     """Scrive l'allegato accanto a Baseline_corrente e toglie quelli dei cicli
     passati (file generati, rigenerabili: uno solo in cartella, quello giusto).

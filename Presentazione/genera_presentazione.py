@@ -540,7 +540,7 @@ def agenti():
         "- **Flag proposti** quando un descrittore potrebbe non essere più quello vigente (o un rischio in osservazione realizza il suo segnale).",
         "- **Proposta di ciclo straordinario** solo con la regola del segnale critico.",
         "- **Sintesi** della settimana: notizie rilevanti, aree non presidiate, direzioni per categoria."],
-        ["«Esegui l'aggiornamento settimanale» (anche prompt schedulato). Nessun allegato: legge la baseline in knowledge.",
+        ["Chat nuova, allegato **Input_A3.txt** (la baseline): «Esegui l'aggiornamento settimanale». Senza allegato: «Baseline mancante».",
          "Variazioni: correzione dopo un fermo, insistere su un rischio."],
         ["- **Prima: raccogli_notizie.py** (lunedì alle 7, Utilità di pianificazione) → News_Inbox\\<lunedì>\\Raccolta_<data>.txt; a mano i file in Manuali.",
          "- **Dopo: settimanale --payload A3_<lunedì>.json** → NewsLog senza duplicati, Sintesi_Settimane, segnali netti, aree non presidiate, proposta di straordinario a video.",
@@ -556,7 +556,7 @@ def agenti():
         "- **5. Cosa suggerisco** — verifiche per la funzione di rischio; in testa «PROPOSTA DI CICLO STRAORDINARIO» se vale la regola del segnale critico.",
         "- **6. Limiti del parere** — che cosa non sa, quali fonti mancano.",
         "Distingue il fatto dalla propria interpretazione; non nomina persone."],
-        ["«Dammi il parere su questa notizia: [testo o link]».",
+        ["Allegato **Input_A4.txt** (la baseline) e la notizia: «Dammi il parere su questa notizia: [testo o link]».",
          "Variazioni: rispetto a un rischio preciso [NFR-nn]; con attenzione a una categoria [9.n]."],
         ["- **Nessun passo Python**: il parere resta in chat, non entra nel registro.",
          "- Se la notizia è rilevante deve entrare nel prossimo aggiornamento settimanale (A3 + settimanale).",
@@ -609,39 +609,62 @@ def comandi():
     s = nuova("I comandi Python, uno per azione")
     fondo = tabella(s, 0.5, 1.35, 12.33, ["Comando", "Quando", "Che cosa fa"], [
         ["raccogli_notizie.py", "ogni lunedì (automatico)", "scarica i feed delle fonti approvate in News_Inbox\\<lunedì>\\"],
-        ["baseline [--straordinario]", "inizio trimestre / straordinario", "fotografia del registro validato + allegato di A1 (baseline, controlli, guida)"],
+        ["baseline [--straordinario]", "inizio trimestre / straordinario", "fotografia del registro validato + allegati: di A1 (baseline, controlli, guida), di A3 e A4 (baseline)"],
         ["precontrollo", "dopo A1, facoltativo", "controlli senza Excel, messaggio di correzione per A1"],
         ["trimestrale", "dopo A1 (e A5)", "controlla, scrive il ciclo, regola del radar, archivio, knowledge di A7"],
         ["settimanale", "dopo A3", "scrive le notizie, segnali netti, sintesi della settimana"],
-        ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni"],
+        ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni; rigenera il report al comitato"],
         ["griglia · riapri", "quando serve", "ricostruisce il foglio Validazione · riapre un ciclo già validato"],
         ["schede-input · schede", "dopo la validazione", "dati per A6 · controlli su A6 e Schede_<ciclo>.xlsx"],
         ["report [--con-lavoro]", "dopo la validazione", "PDF del report al comitato dall'Excel com'è ora"],
-        ["dismetti", "decisione della funzione di rischio", "toglie un rischio dal registro; la storia resta"],
+        ["dismetti · sblocca", "decisione della funzione di rischio · lucchetto rimasto", "toglie un rischio, la storia resta · toglie il lucchetto e lo registra"],
         ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"],
         ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"]],
-        [2.7, 2.7, 6.9], 12, 0.38)
-    nota_fondo(s, ["Prima di ogni scrittura lo script controlla il formato e le regole, fa una copia di sicurezza, scrive, "
-                   "ricalcola Excel, verifica che non ci siano errori di formula, salva e archivia una copia con nome proprio."], fondo + 0.1)
+        [2.7, 2.7, 6.9], 12, 0.36)
+    nota_fondo(s, ["Ogni scrittura: lucchetto (più analisti), controlli, copia di lavoro, ricalcolo e verifica in Excel, "
+                   "registro sostituito solo se nessuno l'ha cambiato nel frattempo; backup e archivio."], fondo + 0.1)
+
+
+def app_nfr():
+    """L'app di orchestrazione (D-83): la finestra (immagine Presentazione/app_finestra.png) e come si lavora."""
+    IMG.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(QUI / "app_finestra.png", IMG / "app_finestra.png")
+    s = nuova("L'app NFR: un doppio clic, il prossimo passo")
+    _, _, hh = immagine(s, "app_finestra", 0.5, 1.35, 7.9, 3.2, taglio=(0, 0, 1, 0.6))
+    scheda(s, 0.5, 1.35 + hh + 0.15, 7.9, 5.95 - hh - 0.15, "Che cosa fa (e che cosa no)", [
+        "- **Stato e prossimo passo** letti dall'archivio condiviso: uguali per tutti i colleghi.",
+        "- Un pulsante per processo: settimana, trimestre, straordinario, validazione, schede, report, riapertura…",
+        "- Lancia i comandi Python nell'ordine giusto e mostra l'esito (OK, FERMATO, ERRORE TECNICO).",
+        "- **Non decide niente**: controlli e scrittura restano allo script, le decisioni al validatore."], NAVY, 11.5)
+    scheda(s, 8.65, 1.35, 4.18, 5.95, "Con un agente: tre gesti", [
+        "L'app prepara gli allegati, apre l'agente e mette la richiesta negli appunti. Tu:",
+        "- **chat nuova**, trascini i file, incolli la richiesta;",
+        "- **copi la risposta** e la **incolli nell'app** (o premi Copia: l'app la prende da sola);",
+        "- se serve una correzione, il messaggio è già negli appunti: **stessa chat**.",
+        "L'app salva il JSON con il nome giusto in In_arrivo e passa al passo dopo.",
+        "## Agenti",
+        "- Agent Builder o Copilot Studio: stessi file, stesso registro, origine annotata.",
+        "## Più analisti",
+        "- Lucchetto e copia di lavoro: il registro si sostituisce solo se nessuno l'ha cambiato."], VERDE, 11.5)
 
 
 def cicli():
     s = nuova("Il trimestre passo per passo: chi fa che cosa")
     tabella(s, 0.5, 1.35, 7.7, ["#", "Chi", "Passo"], [
         ["1", "analista", "Registro, riga 4: il trimestre prima è «Ciclo validato»"],
-        ["2", "Python", "baseline → Input_A1_<ciclo>.txt"],
-        ["3", "analista", "Baseline_corrente.txt nella library Kernel (per A3 e A4)"],
+        ["2", "Python", "baseline → Input_A1_<ciclo>.txt, Input_A3.txt, Input_A4.txt"],
+        ["3", "—", "niente da copiare nel Kernel: A3 e A4 hanno l'allegato (AU7)"],
         ["4", "A1", "«Esegui il ciclo» con l'allegato → A1_<ciclo>.json"],
         ["5", "Python · A5", "precontrollo e A5, entrambi facoltativi"],
         ["6", "Python", "trimestrale → ciclo scritto (o FERMATO + correzione)"],
         ["7", "validatore", "griglia del foglio Validazione, poi valida"],
         ["8", "Python · A6", "schede-input, A6, schede → Schede_<ciclo>.xlsx"],
-        ["9", "Python", "report → Report_comitato_<ciclo>.pdf"]],
+        ["9", "Python", "report → Report_comitato_<ciclo>.pdf (lo fa già valida)"]],
         [0.4, 1.4, 5.9], 12, 0.43)
     scheda(s, 8.45, 1.35, 4.38, 2.6, "Ogni lunedì (≈ 20 minuti)", [
         "- raccogli_notizie.py (automatico alle 7)",
         "- file a mano in Manuali",
-        "- A3 → A3_<lunedì>.json",
+        "- A3 con Input_A3.txt → A3_<lunedì>.json",
         "- settimanale → notizie nel registro",
         "- facoltativo: valida le notizie",
         "> Nessuno score cambia di settimana in settimana."], VERDE, 12)
@@ -1364,6 +1387,7 @@ def costruisci():
     agenti_panoramica()
     agenti()
     comandi()
+    app_nfr()
     cicli()
     schede_rischi()
     report_intro()

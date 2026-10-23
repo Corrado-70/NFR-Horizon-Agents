@@ -37,8 +37,9 @@ template costruito a mano: variabile d'ambiente `NFR_TEMPLATE=<percorso>`.
 | `test_mappatura.py` | ogni campo degli schemi ha una destinazione, ogni colonna una sorgente e un significato; tabelle del template = mappa; nomi `VG_...` della griglia del foglio Validazione per ogni campo validabile; liste documentate | no |
 | `test_controlli.py` | validatore su payload conformi e difettosi (anche i campi tolti il 30/09: gap_controlli, esito, da/a, dimensione); controlli di A5 su un ciclo pulito e su un difetto per controllo, piu' cio' che non deve fermare (Velocity da non valutata a un valore, KRI non riletto); A5 facoltativo e Bloccanti di A5 "Da motivare" in `combina`, C3, date di C5 e soglie di C9 che non fermano (D-71); D-72: `fenomeni_non_censiti` nello schema di A1 (facoltativo, motivo fuori elenco rifiutato), testi della knowledge di A7 (file del rischio e `Ciclo.txt`), file dei rischi tolti, cartella nella library Kernel o in quella di uscita; D-79: registro unico (la regola di `radar.py`: soglie, eccezioni, capienza, uscita in due cicli, massimo delle viste; lo stato previsto dai controlli sui dati di prova; un difetto per regola sui rischi in osservazione e su chi entra; 21 rischi in osservazione fermano, 20 no; decisione sullo stato nelle rettifiche; rischi in osservazione ed entrati/usciti in `Ciclo.txt`); dati di esempio conformi alla rubrica, con l'esito calcolato dallo script; regole delle rettifiche umane; consistenza fra due run; una mappa delle colonne di un'altra versione ferma lo script; output di A6 (schema e controlli, un difetto per controllo) e file delle schede, compreso il razionale in parti (D-68: lettura delle etichette, perche' accanto a ogni valore, Razionale con il fenomeno, azioni e KRI con perche' ed effetto atteso; un razionale scritto prima resta intero); D-69: C8 su un'azione uguale a un'azione aperta (e nessuna nei cicli di prova), `precontrollo` (schema, controlli, forma del razionale, messaggio di correzione, codici di uscita, comando senza registro e senza baseline), allegato di A1 (baseline identica, controlli = testo del prompt di A5, guida senza note, sostituzione del file del ciclo prima, kernel senza i file nuovi); D-70: impronta dell'output nel comando `precontrollo`, lettura della baseline dall'allegato, kit della prova di Copilot Studio (lo script della skill contiene esattamente i moduli e lo schema del pacchetto, gli zip contengono `SKILL.md` e lo script attuali, `name` e `description` della skill nel formato richiesto; lo script eseguito come processo a parte da' la stessa prima riga, la stessa impronta e lo stesso messaggio del comando, legge anche una risposta con i recinti o `Baseline_corrente.json`, codice 2 su file illeggibili); D-80: `diagnosi` su righe finte (valori all'ingresso dei soli rischi nuovi, verso delle rettifiche per rischi nuovi e riapertura, Velocity da n.v. senza verso, KRI esclusi, margine di Mosca dei rischi lontani, segnalazione di chi non ha gli anni di adeguamento) e istruzione sugli anni di adeguamento dei rischi in osservazione nell'allegato di A1; D-81: la frase "ESPOSIZIONE NON NOTA" (Da motivare con i due valori e il limite di un punto, Osservazione senza un valore maggiore, nessun Bloccante in piu', nessuna segnalazione senza la frase), conteggio in `diagnosi`, frase nell'allegato | no |
 | `test_fonti.py` | `fonti.md` leggibile, codici unici e conformi allo schema A3, al massimo 4 siti per l'agente con URL validi per Agent Builder, codici dei dati di esempio nell'elenco, elenco nel prompt di A3; raccolta notizie con feed finti (RSS, Atom, voci senza data, finestra, esclusioni, doppioni, fonte giu'), senza rete | no |
+| `test_app.py` | l'app e i piu' analisti (D-83), senza Excel: ingresso delle risposte (BOM, recinti, testo attorno, risposta tagliata in due parti, agente dallo schema compreso A8, nomi, In_arrivo con originali e precedenti, parere di A4, risposta di un altro agente), stato e prossimo passo su archivi finti (baseline, validazione, riapertura, report, schede, trimestre chiuso, straordinario, settimana, lucchetto), flussi con un Ambiente finto (trimestrale con il giro di correzione, ripresa da In_arrivo, risposta tagliata, validazione, settimanale con il fermo di A3, annullamento), `NFR.cmd` solo ASCII; lucchetto (preso e lasciato anche dopo un errore; di un collega: fermo, e il suo resta; scaduto: si prende; il proprio rimasto: si riprende; copia in conflitto di OneDrive: ritiro), `sblocca` registrato; sostituzione dalla copia di lavoro (originale cambiato: fermo, niente segnato come salvato; invariato: sostituito senza file temporanei); registro aperto in esclusiva da un programma | no |
 | `verifica_riferimenti.py` | tassonomia, controlli C1-C9 (anche nel testo unico `01_Kernel/controlli_A5.md` e senza copie nel modello di A5, D-69), numeri di passo, campi derivati, formule e nomi del manuale, indice di 00_LEGGIMI, comandi e opzioni citati nella guida e nei README (anche con il trattino, come `aggiorna-registro`), versione della struttura uguale in generatore, script, mappa e template | no |
-| `run_catena.py` | due cicli trimestrali e due settimane con lo strumento di campo vero, su una copia del template, verificati aprendo il workbook in Excel; validazione nella griglia del foglio Validazione, come la fa il validatore (D-67); primo uso (`inizializza`) e dismissione di un rischio; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c (colonne dismesse); A5 facoltativo e segnalazioni in validazione (D-71); knowledge di A7 dopo trimestrale, valida e dismetti e Note dell'analista archiviate al ciclo dopo (D-72); registro unico (D-79): NFR-16 nuovo in osservazione nel 2026Q3 con i tre del template riportati, pagina Fenomeni per score con il perche', NFR-16 che entra nel radar nel 2026Q4 con KRI e azioni; passo 14 con uscita in due cicli, decisioni del validatore sullo stato, capienza ridotta e dismissione di un rischio in osservazione; passo 11c con la conversione della lista di un registro 2026-10-08b; report al comitato confrontato con calcoli indipendenti; schede dei rischi con A6 (controlli sull'output, file) | **si'** |
+| `run_catena.py` | due cicli trimestrali e due settimane con lo strumento di campo vero, su una copia del template, verificati aprendo il workbook in Excel; validazione nella griglia del foglio Validazione, come la fa il validatore (D-67); primo uso (`inizializza`) e dismissione di un rischio; registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c (colonne dismesse); A5 facoltativo e segnalazioni in validazione (D-71); knowledge di A7 dopo trimestrale, valida e dismetti e Note dell'analista archiviate al ciclo dopo (D-72); registro unico (D-79): NFR-16 nuovo in osservazione nel 2026Q3 con i tre del template riportati, pagina Fenomeni per score con il perche', NFR-16 che entra nel radar nel 2026Q4 con KRI e azioni; passo 14 con uscita in due cicli, decisioni del validatore sullo stato, capienza ridotta e dismissione di un rischio in osservazione; passo 11c con la conversione della lista di un registro 2026-10-08b; report al comitato confrontato con calcoli indipendenti, rigenerato da `valida` (D-83); schede dei rischi con A6 (controlli sull'output, file); passo 15, piu' analisti (D-83): lucchetto di un collega, `sblocca`, scrittura dalla copia di lavoro, registro aperto sul PC, allegati di A3 e A4, prompt archiviati; traccia della riapertura | **si'** |
 | `osserva_cartella.py` | strumento della prova K7a della CS-1 (`09_Copilot_Studio/Prove_CS1.md`): ora in cui i file compaiono sul PC da SharePoint, e file segnale per misurare il caricamento; non fa parte del processo |
 | `confronta.py` | strumento: confronta due output di A1 (usato dai test e, in tenant, per il doppio run); `--primo-ciclo` abbina i rischi per event type e nome quando, da registro vuoto, A1 li numera da se' | no |
 | `comune.py` | percorsi e utilita' condivise | — |
@@ -89,7 +90,7 @@ difetto alla volta, cosi' ogni caso isola un solo controllo.
 ## La catena, in breve
 
 Durata: circa 40 minuti in parallelo, circa 50 in sequenza (08/10/2026: Excel si apre e ricalcola circa 150 volte).
-La catena e' divisa in **dieci gruppi indipendenti**, ognuno su copie proprie del template:
+La catena e' divisa in **tredici gruppi indipendenti**, ognuno su copie proprie del template:
 - `catena` (passi 0-5, 7, 7b, 8s, 8a);
 - `gate` (6);
 - `errore` (8, 8b);
@@ -99,7 +100,10 @@ La catena e' divisa in **dieci gruppi indipendenti**, ognuno su copie proprie de
 - `notizie` (3b);
 - `aggiornamento_25c` (11b);
 - `segnalazioni` (12);
-- `riapertura` (13).
+- `riapertura` (13);
+- `registro_unico` (14);
+- `aggiornamento_08b` (11c);
+- `piu_analisti` (15).
 
 Con `--parallelo 3` (il default di `esegui_collaudo.py`) girano in tre processi, ognuno con la sua istanza di Excel:
 `SessioneExcel` usa `DispatchEx` e non condivide l'istanza. La durata e' quella del gruppo `catena`, che resta in
@@ -277,7 +281,8 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    identiche; storico con le decisioni "(riapertura)", griglia vuota, integrita' e
    report. Una seconda riapertura (`--rischi NFR-02`) porta solo quel rischio con
    i suoi KRI e azioni e, validata senza cambiare niente, lascia il registro
-   com'era.
+   com'era. Dal 23/10 (D-83): `riapri` lascia `Riapertura_<ciclo>.json`, `valida` la
+   chiude con chi ha validato e rigenera il report; `valida --senza-report` no.
 14. Registro unico (D-79), sul template: nel 2026Q3 NFR-08 scende sotto la soglia di
    Probabilita e resta un ciclo "Radar, in uscita" (con KRI e azioni); in validazione
    una decisione sullo stato senza Motivazione ferma `valida`; poi NFR-12 va in
@@ -285,6 +290,13 @@ questa correzione la catena falliva a caso in 2 esecuzioni su 3.
    la capienza a 10, NFR-08 esce al secondo ciclo e il piu' basso per score resta un
    ciclo in uscita per capienza (11 nel radar), NFR-12 resta fuori per decisione;
    `dismetti` toglie un rischio in osservazione.
+15. Piu' analisti (D-83), sul template: con il lucchetto valido di un collega `griglia` si
+   ferma e il registro non cambia; `diagnosi`, che non scrive, non lo guarda; `sblocca`
+   lo toglie e lo registra; con un lucchetto scaduto `griglia` scrive dalla copia di
+   lavoro (nessun file accanto al registro, cartella di lavoro vuota alla fine); con il
+   registro aperto in esclusiva da un programma del PC si ferma prima di scrivere;
+   `baseline` scrive `Input_A3.txt` e `Input_A4.txt` con la baseline del `.json` (AU7);
+   `trimestrale` archivia i prompt del pacchetto in `Prompt_in_uso/`.
 11c. Aggiornamento di un registro del template 2026-10-08b (lista di osservazione,
    `dati/registro_template_2026-10-08b.xlsx`): le tre voci in osservazione diventano
    NFR-13, 14, 15 in osservazione (accettate, "Conversione D-79", valori provvisori),

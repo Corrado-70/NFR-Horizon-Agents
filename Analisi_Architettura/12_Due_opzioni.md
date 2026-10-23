@@ -1,5 +1,7 @@
 # 12. Le due opzioni architetturali
 
+> **Esito, 23/10/2026 (D-83)**: l'opzione 1 (12.3, app Python unica sul PC) e' la strada di `main`, con una finestra tkinter, le risposte dagli appunti o da un file e piu' analisti sullo stesso registro (lucchetto e copia di lavoro). Piano a tappe M1-M4 nel TODO, sezione 4; la tappa M1 (motore) e' fatta.
+
 > **Dal 09/10/2026 superato in parte da `14_Tre_strade.md`**: le strade sono tre (A, CS-1, CS-2 senza PC). Le
 > descrizioni dell'opzione 1 (12.3) e della CS-1 (12.4) restano valide e il 14 le richiama.
 

@@ -62,6 +62,11 @@ class SessioneExcel:
         if not self.sola_lettura and self.wb.ReadOnly:
             self.__exit__(None, None, None)
             raise RuntimeError(f"Il file e' aperto da qualcun altro (o sincronizzazione in corso): {self.percorso}")
+        if not self.sola_lettura:
+            try:                                   # D-83: mai salvataggi a meta' (un file in OneDrive lo avrebbe acceso)
+                self.wb.AutoSaveOn = False
+            except Exception:
+                pass                               # Excel senza la proprieta' o file locale: niente da spegnere
         return self
 
     def salva(self):

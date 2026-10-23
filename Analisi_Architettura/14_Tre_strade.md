@@ -1,5 +1,7 @@
 # 14. Tre strade: tutto sul PC, ibrida, tutto in Copilot Studio
 
+> **Esito, 23/10/2026 (D-83, chiude A-15)**: la strada A su `main`; la CS-2 sul ramo `copilot-studio-pieno` (D-82, cartella `NFR Horizon Agents CS`), con le prove T0-T8. La CS-1 non si costruisce.
+
 Data: 09/10/2026. Richiesta dell'utente, dopo la prima tornata della prova K0 di Copilot Studio:
 - "una volta implementato voglio che nessun python giri su PC, solo via agenti copilot studio";
 - "a cosa mai mi servirebbe l'agente copilot se tengo python su PC?";

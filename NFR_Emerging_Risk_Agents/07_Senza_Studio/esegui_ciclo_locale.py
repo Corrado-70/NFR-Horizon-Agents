@@ -35,7 +35,7 @@ Comandi:
       dell'output di A1 rispetto a Baseline_corrente.json; se trova qualcosa
       scrive Cicli/<ciclo>/Correzione_A1_<ciclo>.txt, il messaggio da incollare
       nella chat di A1 (D-69). Codice 1 se un punto fermerebbe il ciclo.
-  valida       --periodo 2026Q3|2026-10-12 --validatore "Comitato Rischi"
+  valida       --periodo 2026Q3|2026-10-12 --validatore "Comitato Rischi" [--senza-report]
       legge la griglia del foglio Validazione (una riga per rischio, KRI,
       azione, notizia, D-67): valore giallo uguale alla proposta = Accettato,
       cambiato = Rettificato, Respingi = Si' = Respinto; controlla TUTTE le
@@ -45,6 +45,8 @@ Comandi:
       Validazione_<periodo>.json e l'Excel validato; per un ciclo riscrive
       Righe_liste_<ciclo>.json con i valori validati; aggiorna la baseline.
       Il trimestrale si ferma se il ciclo precedente non e' validato.
+      Per il ciclo corrente (trimestre o straordinario) rigenera anche il
+      report al comitato, come il comando report (D-83; --senza-report no).
   griglia
       ricostruisce la griglia del foglio Validazione dalle proposte ancora da
       decidere, conservando cio' che il validatore ha gia' scritto nelle righe
@@ -57,7 +59,8 @@ Comandi:
       serve. Riga non toccata = niente cambia; valore cambiato = rettifica con
       Motivazione, senza limite di un punto; Respingi = Si' toglie un KRI o
       annulla un'azione; Decisione sullo stato = rischio nel radar o in
-      osservazione. Nello storico: "(riapertura)".
+      osservazione. Nello storico: "(riapertura)". Lascia la traccia
+      Cicli/<ciclo>/Riapertura_<ciclo>.json, che valida chiude (D-83).
   inizializza  --ciclo-precedente 2026Q3 --settimana 2026-09-28 [--template file.xlsx]
       crea il registro vivo (percorso --workbook o configurazione.json) dal
       template, SENZA i dati di esempio. Non sovrascrive mai un file esistente.
@@ -73,8 +76,8 @@ Comandi:
   schede       [--payload A6_<ciclo>.json]
       controlla l'output di A6 rispetto ai dati validati (stessi rischi, cinque
       dimensioni, stesse fonti, nessun numero nuovo) e scrive Cicli/<ciclo>/
-      Schede_<ciclo>.xlsx; senza --payload, schede con i testi del registro.
-      Non modifica il registro.
+      Schede_<ciclo>.xlsx (e il PDF accanto); senza --payload, schede con i
+      testi del registro. Non modifica il registro.
   aggiorna-registro  [--template file.xlsx]
       porta il registro vivo sul template nuovo quando cambia la struttura del
       workbook (versioneTemplate): copia per nome di colonna tutte le righe,
@@ -99,13 +102,25 @@ Comandi:
       verso delle rettifiche del validatore sulle dimensioni, rischi lontani
       (Prossimita 1) con Impatto alto e senza anni di adeguamento. Stampa e
       scrive Cicli/<ciclo>/Diagnosi_valutazioni_<ciclo>.txt (diagnosi.py).
+  sblocca      --motivo "..."
+      toglie il lucchetto del registro rimasto per errore (PC spento a meta'
+      comando) e lo registra in Archivio_Cicli/_Lucchetto/sblocchi.log.
+
+Piu' analisti sullo stesso registro (D-83, 23/10/2026): ogni comando che scrive
+prende il lucchetto (lucchetto.py, Archivio_Cicli/_Lucchetto/registro.json) e
+lavora su una COPIA DI LAVORO locale del registro (%LOCALAPPDATA%, NFR/lavoro):
+il registro vero si sostituisce solo alla fine, dopo i controlli, e solo se
+nessuno l'ha cambiato nel frattempo (impronta SHA-256); altrimenti FERMATO.
 
 Ogni comando (tranne inizializza e aggiorna-registro, e precontrollo che non
 apre il registro) si ferma su un registro creato con un template di versione
 diversa da VERSIONE_TEMPLATE.
 
 Opzioni comuni: --workbook, --kernel, --cartella-uscita (default in
-configurazione.json accanto allo script, se presente).
+configurazione.json accanto allo script, se presente). In configurazione.json
+anche utente (chi scrive, per il lucchetto; default l'utente di Windows),
+cartella_lavoro (copia di lavoro) e attesa_lucchetto (secondi; la variabile
+d'ambiente NFR_ATTESA_LUCCHETTO la sostituisce, 0 nel collaudo).
 
 Codici di uscita: 0 eseguito; 1 fermato da validazione o controlli (il
 workbook NON viene toccato); 2 errore tecnico, e il messaggio dice se e'
@@ -121,11 +136,14 @@ leggono da 01_Kernel (libreria Kernel del sito), il validatore e' generico
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import re
 import shutil
 import sys
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
@@ -133,6 +151,7 @@ sys.path.insert(0, str(QUI))
 
 import controlli_a5                      # noqa: E402
 import input_a1                          # noqa: E402
+import lucchetto                         # noqa: E402  un solo analista alla volta scrive (D-83)
 import radar                             # noqa: E402  regola del registro unico (D-79)
 from fonti import codici_ammessi, leggi_fonti   # noqa: E402
 from precontrollo import ciclo_di, conta, impronta, messaggio_correzione, precontrolla, riga_esito   # noqa: E402
@@ -208,11 +227,17 @@ def configurazione(argomenti):
     def scegli(nome, predefinito=None):
         valore = getattr(argomenti, nome, None) or conf.get(nome) or predefinito
         return Path(valore) if valore else None
+    attesa = os.environ.get("NFR_ATTESA_LUCCHETTO", conf.get("attesa_lucchetto", lucchetto.ATTESA_SECONDI))
     return {
         "workbook": scegli("workbook"),
         "kernel": scegli("kernel", QUI.parent / "01_Kernel"),
         "cartella_uscita": scegli("cartella_uscita", QUI / "Uscita"),
         "news_inbox": scegli("news_inbox", QUI / "News_Inbox"),
+        # D-83: piu' analisti sullo stesso registro.
+        "utente": conf.get("utente") or None,
+        "cartella_lavoro": Path(os.environ.get("NFR_CARTELLA_LAVORO") or "") if os.environ.get("NFR_CARTELLA_LAVORO")
+        else scegli("cartella_lavoro", Path(os.environ.get("LOCALAPPDATA") or tempfile.gettempdir()) / "NFR" / "lavoro"),
+        "attesa_lucchetto": float(attesa),
     }
 
 
@@ -1898,17 +1923,32 @@ def _scrivi_json(percorso, dati):
 
 def _scrivi_baseline(conf, dati):
     """Baseline_corrente in due copie identiche: .json per lo script e per gli
-    allegati, .txt per la knowledge di Agent Builder (che dalle library legge
-    .txt, .docx, .pdf..., non .json). Accanto, l'allegato di A1 (D-69):
-    Input_A1_<ciclo>.txt con baseline, controlli di A5 e guida di scrittura.
-    Un file del kernel mancante non ferma niente (la baseline basta ad A1): avviso."""
+    allegati, .txt per chi la legge a mano. Accanto, gli allegati degli agenti:
+    Input_A1_<ciclo>.txt con baseline, controlli di A5 e guida di scrittura (D-69),
+    Input_A3.txt e Input_A4.txt con la sola baseline (AU7, 23/10/2026: non piu'
+    dalla knowledge). Un file del kernel mancante non ferma niente (la baseline
+    basta ad A1): avviso."""
     percorso = _scrivi_json(_cartella(conf) / "Baseline_corrente.json", dati)
     shutil.copy2(percorso, percorso.with_suffix(".txt"))
+    input_a1.scrivi_allegati_baseline(_cartella(conf), dati, dt.date.today().isoformat())   # AU7: allegati di A3 e A4
     allegato, mancanti = input_a1.scrivi(_cartella(conf), dati, conf["kernel"], dt.date.today().isoformat())
     if mancanti:
         print(f"Avviso: nel kernel ({conf['kernel']}) mancano {', '.join(mancanti)}: l'allegato di A1 {allegato.name} ha "
               "solo la baseline. Copiare nella library Kernel tutti i file di 01_Kernel del pacchetto.")
     return percorso
+
+
+CARTELLA_PROMPT = QUI.parent / "02_Agenti"
+
+
+def archivia_prompt(cartella):
+    """AU1: i prompt degli agenti del pacchetto (02_Agenti/A*.md, quelli da incollare in Agent Builder) nella cartella
+    del ciclo, Prompt_in_uso/: resta agli atti con quali istruzioni il ciclo e' stato valutato."""
+    dest = cartella / "Prompt_in_uso"
+    dest.mkdir(parents=True, exist_ok=True)
+    for f in sorted(CARTELLA_PROMPT.glob("A*.md")):
+        shutil.copy2(f, dest / f.name)
+    return dest
 
 
 def _valida_o_ferma(payload, schema_file, conf, etichetta):
@@ -1926,8 +1966,81 @@ def _salva_con_backup(sessione, workbook, conf):
     copia = _cartella(conf, "Backup") / f"{workbook.stem}_{dt.datetime.now():%Y%m%d_%H%M%S}{workbook.suffix}"
     shutil.copy2(workbook, copia)                    # stato PRIMA della scrittura
     sessione.salva()
-    SALVATO.update(registro=workbook, backup=copia)
+    if LAVORO["copia"] is not None:                  # D-83: salvata la copia; il registro si sostituisce alla fine
+        LAVORO["salvata"] = True
+        SALVATO["backup"] = copia
+    else:
+        SALVATO.update(registro=workbook, backup=copia)
     return copia
+
+
+# ================================================================ copia di lavoro (D-83)
+# Ogni comando che scrive lavora su una copia locale del registro (fuori da OneDrive: niente Salvataggio automatico,
+# niente sincronizzazione a meta'). Il registro vero si sostituisce solo quando la sessione e' chiusa e i controlli
+# sono passati, e solo se nel frattempo nessuno l'ha cambiato: un collega che salva in Excel, anche per il web, o la
+# sincronizzazione che porta una versione nuova. Altrimenti FERMATO e niente scritto.
+LAVORO = {"copia": None, "salvata": False}
+
+
+def impronta_file(percorso):
+    h = hashlib.sha256()
+    with open(percorso, "rb") as f:
+        for blocco in iter(lambda: f.read(1 << 20), b""):
+            h.update(blocco)
+    return h.hexdigest()
+
+
+def aperto_qui(percorso):
+    """Un programma di questo PC (di solito Excel) tiene il file aperto in scrittura: non si potrebbe sostituire."""
+    try:
+        with open(percorso, "r+b"):
+            return False
+    except PermissionError:
+        return True
+    except OSError:
+        return False
+
+
+def _sostituisci(copia, originale, impronta_prima):
+    if impronta_file(originale) != impronta_prima:
+        raise Fermo(f"Il registro {originale} e' cambiato mentre lo script lavorava (un collega lo ha salvato, o la "
+                    "sincronizzazione ha portato una versione nuova): non e' stato sostituito. Rilanciare il comando: "
+                    "ripartira' dal registro aggiornato.")
+    temporaneo = originale.with_name(f"~$NFR_nuovo_{os.getpid()}{originale.suffix}")   # "~$": OneDrive non lo sincronizza
+    shutil.copy2(copia, temporaneo)
+    try:
+        os.replace(temporaneo, originale)
+    except OSError as ex:
+        temporaneo.unlink(missing_ok=True)
+        raise Fermo(f"Il registro {originale} non si puo' sostituire ({ex}): e' aperto da un programma. Chiuderlo e "
+                    "rilanciare il comando.")
+    SALVATO["registro"] = originale
+
+
+@contextmanager
+def sessione_registro(conf):
+    """Sessione di Excel in scrittura sulla copia di lavoro del registro; alla fine, se la sessione ha salvato,
+    sostituisce il registro vero (vedi sopra). La knowledge di A7 scritta durante la sessione si riallinea al comando
+    dopo, se la sostituzione non riesce."""
+    from excel_com import SessioneExcel
+    originale = Path(conf["workbook"])
+    if aperto_qui(originale):
+        raise Fermo(f"Il registro e' aperto in un programma di questo PC (di solito Excel): {originale}. Chiuderlo e "
+                    "rilanciare il comando.")
+    cartella = Path(conf["cartella_lavoro"]) / f"{dt.datetime.now():%Y%m%d_%H%M%S}_{os.getpid()}"
+    cartella.mkdir(parents=True, exist_ok=True)
+    copia = cartella / originale.name
+    shutil.copy2(originale, copia)
+    prima = impronta_file(copia)
+    LAVORO.update(copia=copia, salvata=False)
+    try:
+        with SessioneExcel(copia) as s:
+            yield s
+        if LAVORO["salvata"]:
+            _sostituisci(copia, originale, prima)
+    finally:
+        LAVORO.update(copia=None, salvata=False)
+        shutil.rmtree(cartella, ignore_errors=True)
 
 
 def _excel_di_output(workbook, cartella, etichetta):
@@ -2049,7 +2162,7 @@ def comando_trimestrale(arg, conf):
                          f"{sum(1 for x in da_mot if x['origine'] == 'script')}, A5 {sum(1 for x in da_mot if x['origine'] == 'A5')})."
                          if da_mot else None)
 
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         scr = Scrittore(s, mappa)
         nota_archiviata = archivia_nota_quadro(s, scr, baseline["ciclo_precedente"])      # D-72
         esito_scrittura = scrivi_trimestrale(scr, payload, oggi, baseline=baseline,
@@ -2071,6 +2184,7 @@ def comando_trimestrale(arg, conf):
     _scrivi_json(cartella / f"Righe_liste_{ciclo}.json", liste)
     for f in tentativo.iterdir():                    # il tentativo riuscito diventa l'archivio del ciclo
         shutil.copy2(f, cartella / f.name)
+    prompt_in_uso = archivia_prompt(cartella)
     excel = _excel_di_output(conf["workbook"], cartella, ciclo)
 
     fuori = sorted(x["id_rischio"] for x in payload["rischi"] if x["event_type"] == controlli_a5.FUORI_PERIMETRO)
@@ -2098,6 +2212,7 @@ def comando_trimestrale(arg, conf):
              "foglio Validazione, ⚑ davanti al nome): in validazione quei rischi chiedono una Motivazione.\n" if da_mot else "") +
           f"Excel di output: {excel}\nArchivio del ciclo: {cartella}\n"
           f"Backup (stato prima): {copia}\nBaseline per il prossimo run: {file_baseline}\n"
+          f"Prompt degli agenti del pacchetto archiviati: {prompt_in_uso}\n"
           f"DA FARE: validazione umana nel foglio Validazione (una riga per rischio scritto da A1, nel radar o in osservazione, "
           f"KRI e azione: si cambiano solo le celle gialle, la Motivazione e Respingi; lo stato si ricalcola sui valori "
           f"validati), poi: python esegui_ciclo_locale.py valida --periodo {ciclo} "
@@ -2119,7 +2234,6 @@ def comando_trimestrale(arg, conf):
 
 
 def comando_settimanale(arg, conf):
-    from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
     payload = leggi_payload(arg.payload, "Output di A3")
     _valida_o_ferma(payload, "schema_output_A3.json", conf, "Output di A3")
@@ -2142,7 +2256,7 @@ def comando_settimanale(arg, conf):
     if fuori:
         raise Fermo(f"Codici fonte non nell'elenco (o esclusi) in 01_Kernel/fonti.md: {fuori}")
 
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         _, anag = scr.leggi_anagrafica()
@@ -2186,13 +2300,12 @@ def comando_settimanale(arg, conf):
 
 
 def comando_valida(arg, conf):
-    from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
     periodo, oggi = arg.periodo.strip(), dt.date.today().isoformat()
     if getattr(arg, "accetta_il_resto", False):
         print("Nota: --accetta-il-resto non serve piu' (D-67): nel foglio Validazione una riga non toccata vale gia' "
               "come accettata.")
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         esiti, esiti_righe, registro, movimenti = applica_validazione(scr, periodo, arg.validatore.strip(), oggi)
@@ -2210,13 +2323,28 @@ def comando_valida(arg, conf):
         nuova_baseline = estrai_baseline(s, mappa) if periodo == ciclo_corrente else None
         liste = righe_liste(scr, periodo) if "Q" in periodo else None
         msg_a7 = aggiorna_spiegazioni(s, scr, conf) if periodo == ciclo_corrente else None     # D-72
+        # D-83: validato il ciclo corrente, il report al comitato si esporta dalla stessa sessione (gia' ricalcolata),
+        # senza riaprire Excel, in una cartella temporanea: entra nell'archivio solo dopo la sostituzione del registro,
+        # cosi' un fermo "registro cambiato" non lascia un report di dati non salvati. Un errore e' solo un avviso.
+        msg_report, pdf_tmp = None, None
+        if periodo == ciclo_corrente and "Q" in periodo and not getattr(arg, "senza_report", False):
+            pdf_tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.pdf"
+            try:
+                esporta_pdf(s, scr, ciclo_corrente, FOGLI_REPORT, pdf_tmp)
+            except Exception as ex:                  # noqa: BLE001 - un avviso, mai un fermo
+                pdf_tmp = None
+                msg_report = (f"Avviso: report al comitato non rigenerato ({type(ex).__name__}: {ex}); i dati sono "
+                              "validati. Rilanciare: python esegui_ciclo_locale.py report")
     if nuova_baseline is not None:
         _scrivi_baseline(conf, nuova_baseline)
     cartella = _cartella(conf, "Cicli" if "Q" in periodo else "Settimane", periodo)
+    chiusa = chiudi_riapertura(cartella, periodo, arg.validatore.strip())
     if liste is not None:
         _scrivi_json(cartella / f"Righe_liste_{periodo}.json", liste)   # sostituisce quelle "da validare"
     _scrivi_json(cartella / f"Validazione_{periodo}.json",
                  {"periodo": periodo, "esiti": esiti, "esiti_righe": esiti_righe, "righe": registro})
+    if pdf_tmp is not None:                          # dopo Validazione_: l'app lo vede piu' recente della validazione
+        msg_report = pubblica_report(pdf_tmp, conf, ciclo_corrente, FOGLI_REPORT)
     excel = _excel_di_output(conf["workbook"], cartella, f"{periodo}_validato")
     print(f"Validazione del periodo {periodo} applicata: {sum(esiti_righe.values())} righe — accettate "
           f"{esiti_righe['Accettato']}, rettificate {esiti_righe['Rettificato']} ({esiti['Rettificato']} valori cambiati), "
@@ -2227,15 +2355,30 @@ def comando_valida(arg, conf):
           f"Backup (stato prima): {copia}"
           + ("\nBaseline per il prossimo ciclo aggiornata con i valori validati." if nuova_baseline is not None else "")
           + (f"\nRighe per le liste con i valori validati: {cartella / f'Righe_liste_{periodo}.json'}" if liste is not None else "")
+          + (f"\nRiapertura chiusa: {chiusa}" if chiusa else "")
+          + (f"\n{msg_report}" if msg_report else "")
           + (f"\n{msg_a7}" if msg_a7 else ""))
+
+
+def chiudi_riapertura(cartella, periodo, validatore):
+    """D-83: la traccia della riapertura (Riapertura_<ciclo>.json, scritta da riapri) si chiude con la validazione:
+    resta nella cartella del ciclo con la data e l'ora nel nome, e chi ha validato."""
+    traccia = cartella / f"Riapertura_{periodo}.json"
+    if not traccia.exists():
+        return None
+    dati = carica_json(traccia)
+    dati.update(validata_il=dt.datetime.now().replace(microsecond=0).isoformat(), validata_da=validatore)
+    chiusa = cartella / f"Riapertura_{periodo}_{dt.datetime.now():%Y%m%d_%H%M%S}.json"
+    _scrivi_json(chiusa, dati)
+    traccia.unlink()
+    return chiusa
 
 
 def comando_griglia(arg, conf):
     """Ricostruisce la griglia del foglio Validazione dalle proposte ancora da decidere (D-67), conservando cio'
     che il validatore ha gia' scritto nelle righe intatte. Serve dopo una modifica a mano del foglio."""
-    from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         scritte = ricostruisci_griglia(scr)
@@ -2255,10 +2398,9 @@ def comando_riapri(arg, conf):
     Validazione con il valore validato in grigio e nella cella gialla; poi si valida come sempre (comando valida), quante
     volte serve. Senza --rischi riapre tutto: i rischi del registro (nel radar e in osservazione, D-79), i KRI in vigore
     e le azioni aperte. Anche lo stato si cambia cosi' (colonna Decisione sullo stato)."""
-    from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
     rischi_scelti = {x.strip().upper() for x in (arg.rischi or "").split(",") if x.strip()}
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
@@ -2293,6 +2435,10 @@ def comando_riapri(arg, conf):
         if errori:
             raise Fermo("Errori di formula dopo la riapertura: " + "; ".join(f"{e[0]}!{e[1]} {e[2]}" for e in errori[:10]))
         copia = _salva_con_backup(s, conf["workbook"], conf)
+    traccia = _scrivi_json(_cartella(conf, "Cicli", ciclo) / f"Riapertura_{ciclo}.json",   # D-83: la legge l'app (stato)
+                           {"ciclo": ciclo, "rischi": sorted(rischi_scelti) or "tutti", "oggetti": oggetti,
+                            "riaperta_il": dt.datetime.now().replace(microsecond=0).isoformat(),
+                            "riaperta_da": lucchetto.chi_sono(conf.get("utente"))["utente"]})
     print(f"Validazione del ciclo {ciclo} RIAPERTA (D-76): rischi {oggetti['Rischio']}, KRI {oggetti['KRI']}, azioni "
           f"{oggetti['Azione']}, nel foglio Validazione.\n"
           "In grigio il valore validato, nella cella gialla lo stesso valore: una riga non toccata resta com'e'. Per cambiare "
@@ -2301,7 +2447,7 @@ def comando_riapri(arg, conf):
           "radar o in osservazione (D-79). Score e margine di Mosca si ricalcolano mentre scrivi, lo stato con valida.\n"
           f"Poi, con il file chiuso:  python esegui_ciclo_locale.py valida --periodo {ciclo} --validatore \"<chi decide>\"\n"
           "Si puo' riaprire di nuovo dopo, quante volte serve. Finche' non si valida, trimestrale, report e schede aspettano.\n"
-          f"Backup (stato prima): {copia}")
+          f"Traccia della riapertura: {traccia}\nBackup (stato prima): {copia}")
 
 
 def comando_inizializza(arg, conf):
@@ -2361,13 +2507,12 @@ def comando_inizializza(arg, conf):
 
 def comando_dismetti(arg, conf):
     """Toglie un rischio dal registro attivo, lasciandone la storia."""
-    from excel_com import SessioneExcel
     mappa = carica_mappa(conf)
     rid, motivo, decisore = arg.rischio.strip().upper(), arg.motivazione.strip(), arg.decisore.strip()
     if len(motivo) < 10:
         raise Fermo("--motivazione obbligatoria, almeno 10 caratteri: resta agli atti.")
     oggi = dt.date.today().isoformat()
-    with SessioneExcel(conf["workbook"]) as s:
+    with sessione_registro(conf) as s:
         controlla_versione(s)
         scr = Scrittore(s, mappa)
         _, anag = scr.leggi_anagrafica()
@@ -2507,6 +2652,7 @@ def comando_baseline(arg, conf):
     if not arg.uscita:
         print(f"Allegato per {agente_di(dati.get('ciclo_da_valutare'))}: {uscita.parent / input_a1.nome_file(dati)} "
               "(baseline, controlli di A5 e guida di scrittura)")
+        print("Allegati per A3 e A4 (AU7): " + ", ".join(str(uscita.parent / n) for n in input_a1.ALLEGATI_BASELINE.values()))
 
 
 def _input_schede(s, mappa):
@@ -2598,25 +2744,40 @@ def comando_report(arg, conf):
         controlla_versione(s)
         s.ricalcola()
         ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
-        pendenti = da_decidere(Scrittore(s, mappa), ciclo or "")
-        if pendenti:
-            raise Fermo(f"Il ciclo {ciclo} ha ancora {righe_griglia(pendenti)} righe da validare (foglio Validazione): il report "
-                        "si fa sui valori validati (comando valida).")
-        errori = s.errori_formula()
-        if errori:
-            raise Fermo("Errori di formula nell'Excel: " + "; ".join(f"{e[0]}!{e[1]} {e[2]}" for e in errori[:10]))
-        prepara_report(s)
-        cartella = _cartella(conf, "Cicli", ciclo)
-        pdf = cartella / f"Report_comitato_{ciclo}.pdf"
-        precedente = None
-        if pdf.exists():
-            precedente = pdf.with_name(f"Report_comitato_{ciclo}_{dt.datetime.fromtimestamp(pdf.stat().st_mtime):%Y%m%d_%H%M%S}.pdf")
-            os.replace(pdf, precedente)
-        s.wb.Worksheets(fogli).Select()
-        s.wb.ActiveSheet.ExportAsFixedFormat(0, str(pdf))
-    print(f"Report al comitato del ciclo {ciclo} rigenerato da {file}:\n  {pdf}\n"
-          f"Fogli: {', '.join(fogli)}."
-          + (f"\nVersione precedente conservata: {precedente}" if precedente else ""))
+        pdf_tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.pdf"
+        esporta_pdf(s, Scrittore(s, mappa), ciclo, fogli, pdf_tmp)
+    print(pubblica_report(pdf_tmp, conf, ciclo, fogli).replace("rigenerato:", f"rigenerato da {file}:", 1))
+
+
+def esporta_pdf(s, scr, ciclo, fogli, percorso):
+    """PDF del report al comitato dalla sessione aperta e ricalcolata, in 'percorso' (fuori dall'archivio): solo su
+    ciclo validato e senza errori di formula. Lo usano report e, dal 23/10/2026, valida (D-83)."""
+    pendenti = da_decidere(scr, ciclo or "")
+    if pendenti:
+        raise Fermo(f"Il ciclo {ciclo} ha ancora {righe_griglia(pendenti)} righe da validare (foglio Validazione): il report "
+                    "si fa sui valori validati (comando valida).")
+    errori = s.errori_formula()
+    if errori:
+        raise Fermo("Errori di formula nell'Excel: " + "; ".join(f"{e[0]}!{e[1]} {e[2]}" for e in errori[:10]))
+    prepara_report(s)
+    Path(percorso).parent.mkdir(parents=True, exist_ok=True)
+    s.wb.Worksheets(fogli).Select()
+    s.wb.ActiveSheet.ExportAsFixedFormat(0, str(percorso))
+
+
+def pubblica_report(pdf_tmp, conf, ciclo, fogli):
+    """Il PDF esportato entra nell'archivio del ciclo come Report_comitato_<ciclo>.pdf; la versione precedente resta
+    con la data e l'ora nel nome. L'ora del file e' quella della pubblicazione. Restituisce il messaggio da stampare."""
+    cartella = _cartella(conf, "Cicli", ciclo)
+    pdf = cartella / f"Report_comitato_{ciclo}.pdf"
+    precedente = None
+    if pdf.exists():
+        precedente = pdf.with_name(f"Report_comitato_{ciclo}_{dt.datetime.fromtimestamp(pdf.stat().st_mtime):%Y%m%d_%H%M%S}.pdf")
+        os.replace(pdf, precedente)
+    shutil.move(str(pdf_tmp), str(pdf))
+    os.utime(pdf, None)
+    return (f"Report al comitato del ciclo {ciclo} rigenerato:\n  {pdf}\nFogli: {', '.join(fogli)}."
+            + (f"\nVersione precedente conservata: {precedente}" if precedente else ""))
 
 
 def comando_diagnosi(arg, conf):
@@ -2676,8 +2837,15 @@ def comando_schede(arg, conf):
         _scrivi_json(cartella / f"A6_{ciclo}.json", uscita_a6)
     file = schede.scrivi_file_schede(dati, uscita_a6, cartella / f"Schede_{ciclo}.xlsx",
                                      validazione[0] if validazione else "")
+    try:                                             # AU1: il PDF delle schede, da allegare al report; solo un avviso
+        pdf = Path(file).with_suffix(".pdf")
+        with SessioneExcel(file, sola_lettura=True) as sx:
+            sx.wb.ExportAsFixedFormat(0, str(pdf))
+        msg_pdf = f"PDF: {pdf}"
+    except Exception as ex:                          # noqa: BLE001
+        msg_pdf = f"Avviso: PDF delle schede non prodotto ({type(ex).__name__}: {ex}); il file Excel c'e'."
     print(f"Schede del ciclo {ciclo}: {len(dati['rischi'])} rischi, "
-          f"{'testi di A6 controllati' if uscita_a6 else 'testi di A1 dal registro (senza A6)'}.\nFile: {file}")
+          f"{'testi di A6 controllati' if uscita_a6 else 'testi di A1 dal registro (senza A6)'}.\nFile: {file}\n{msg_pdf}")
 
 
 PARAMETRI_DA_CONSERVARE = ["cicloCorrente", "settimanaCorrente", "moscaX", "moscaYDefault", "quadroNote",   # quadroNote: D-72
@@ -2933,6 +3101,20 @@ def comando_aggiorna_registro(arg, conf):
               "corregge la categoria nell'anagrafica, Parametri colonna J).")
 
 
+def comando_sblocca(arg, conf):
+    """D-83: toglie il lucchetto del registro rimasto per errore; resta scritto chi, quando, perche' e di chi era."""
+    motivo = (arg.motivo or "").strip()
+    if len(motivo) < 10:
+        raise Fermo("--motivo obbligatorio, almeno 10 caratteri: resta in Archivio_Cicli/_Lucchetto/sblocchi.log.")
+    tolto = lucchetto.sblocca(conf["cartella_uscita"], motivo, conf.get("utente"))
+    print(f"Lucchetto del registro tolto: {lucchetto.descrivi(tolto) if tolto else 'non c era nessun lucchetto'}.\n"
+          f"Registrato in {conf['cartella_uscita'] / lucchetto.CARTELLA / lucchetto.REGISTRO_SBLOCCHI}.")
+
+
+# Comandi che scrivono nel registro: prendono il lucchetto (D-83).
+SCRIVONO = {"trimestrale", "settimanale", "valida", "griglia", "riapri", "dismetti", "inizializza", "aggiorna-registro"}
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Scrittura A2 e controlli A5 per la variante senza Copilot Studio.")
     p.add_argument("--workbook")
@@ -2959,6 +3141,8 @@ def main(argv=None):
     v = sub.add_parser("valida", help="applica la griglia del foglio Validazione per un ciclo o una settimana")
     v.add_argument("--periodo", required=True, help="ciclo (2026Q3) o lunedi' della settimana (2026-10-12)")
     v.add_argument("--validatore", required=True, help="chi valida: una funzione o un comitato")
+    v.add_argument("--senza-report", dest="senza_report", action="store_true",
+                   help="non rigenerare il report al comitato dopo la validazione del ciclo corrente")
     # Fino al 2026-10-01 accettava le righe senza Decisione; con la griglia (D-67) una riga non toccata e' gia'
     # accettata: resta solo per non rompere i comandi gia' in uso, e lo dice.
     v.add_argument("--accetta-il-resto", dest="accetta_il_resto", action="store_true", help=argparse.SUPPRESS)
@@ -2983,23 +3167,33 @@ def main(argv=None):
     r.add_argument("--con-lavoro", dest="con_lavoro", action="store_true", help="aggiunge i fogli Registro e Parametri")
     a = sub.add_parser("aggiorna-registro", help="porta il registro vivo sul template nuovo, senza perdere dati")
     a.add_argument("--template", help="template da usare (default: 03_Excel/NFR_Dashboard_Template.xlsx)")
+    sb = sub.add_parser("sblocca", help="toglie il lucchetto del registro rimasto per errore (D-83)")
+    sb.add_argument("--motivo", required=True, help="perche' (almeno 10 caratteri): resta nel registro degli sblocchi")
     arg = p.parse_args(argv)
     conf = configurazione(arg)
     try:
-        if arg.comando not in ("inizializza", "precontrollo") and (not conf["workbook"] or not conf["workbook"].exists()):
+        if arg.comando not in ("inizializza", "precontrollo", "sblocca") and (not conf["workbook"] or not conf["workbook"].exists()):
             print(f"Workbook non trovato: {conf['workbook']}")
             return 2
         if arg.comando == "inizializza" and not conf["workbook"]:
             print("Manca il percorso del registro da creare: --workbook o 'workbook' in configurazione.json.")
             return 2
-        codice = {"trimestrale": comando_trimestrale, "settimanale": comando_settimanale,
-                  "baseline": comando_baseline, "precontrollo": comando_precontrollo,
-                  "valida": comando_valida, "griglia": comando_griglia, "riapri": comando_riapri,
-                  "inizializza": comando_inizializza, "dismetti": comando_dismetti,
-                  "aggiorna-registro": comando_aggiorna_registro, "schede-input": comando_schede_input,
-                  "schede": comando_schede, "report": comando_report,
-                  "diagnosi": comando_diagnosi}[arg.comando](arg, conf)
+        comando = {"trimestrale": comando_trimestrale, "settimanale": comando_settimanale,
+                   "baseline": comando_baseline, "precontrollo": comando_precontrollo,
+                   "valida": comando_valida, "griglia": comando_griglia, "riapri": comando_riapri,
+                   "inizializza": comando_inizializza, "dismetti": comando_dismetti,
+                   "aggiorna-registro": comando_aggiorna_registro, "schede-input": comando_schede_input,
+                   "schede": comando_schede, "report": comando_report,
+                   "diagnosi": comando_diagnosi, "sblocca": comando_sblocca}[arg.comando]
+        if arg.comando in SCRIVONO:
+            with lucchetto.preso(conf["cartella_uscita"], arg.comando, conf.get("utente"), conf["attesa_lucchetto"]):
+                codice = comando(arg, conf)
+        else:
+            codice = comando(arg, conf)
         return codice or 0
+    except lucchetto.Occupato as e:
+        print(f"FERMATO — il workbook non e' stato modificato.\n{e}")
+        return 1
     except Fermo as e:
         print(f"FERMATO — il workbook non e' stato modificato.\n{e}")
         return 1

@@ -35,8 +35,8 @@ Si rilancia con `python esegui_demo.py` (circa 15 minuti).
 | 6 | W3 su richiesta (A4) | 12/10/2026 | parere su una notizia |
 | 7 | Precontrollo, W1 **senza A5** + validazione | 2026Q4 | nessun rilievo; **NFR-16 entra nel radar** (13 rischi), 3 restano in osservazione; 55 righe accettate senza toccarle |
 | 8 | **Riapertura** della validazione per NFR-02 | 2026Q4 | 7 righe in griglia; Probabilita da 2 a 4 (nessun limite in riapertura) e un KRI rettificato |
-| 9 | Schede dei rischi | 2026Q4 | `Schede_2026Q4.xlsx`, 13 schede (i rischi del radar), senza A6 |
-| 10 | Report al comitato (`report`), correzione manuale e report rigenerato | 2026Q4 | PDF di 13 pagine con la pagina Fenomeni (i rischi in osservazione); dopo la correzione del presidio di NFR-02, 16 pagine con Registro e Parametri |
+| 9 | Schede dei rischi | 2026Q4 | `Schede_2026Q4.xlsx` e il suo PDF, 13 schede (i rischi del radar), senza A6 |
+| 10 | Report al comitato: da `valida` (dal 23/10, D-83), poi `report` dopo una correzione manuale | 2026Q4 | PDF di 13 pagine con la pagina Fenomeni (i rischi in osservazione), rigenerato da ogni validazione del ciclo; dopo la correzione del presidio di NFR-02, 16 pagine con Registro e Parametri |
 | 11 | Settimana con la **proposta di ciclo straordinario** di A3 | settimana del 16/11/2026 | "PROPOSTA DI CICLO STRAORDINARIO di A3 per NFR-01" a video e nel foglio Notizie |
 | 12 | **Ciclo straordinario** deciso e fatto da **A8** | 2026Q4-S1 | NFR-01 rivalutato (Probabilita da 4 a 5), gli altri 12 rischi del radar e i 3 in osservazione riportati gia' validati; validato |
 
@@ -293,14 +293,16 @@ la regola usa le soglie e non solo la classifica.
 ### Schede dei rischi e report al comitato
 
 `schede-input` e `schede` (senza A6) producono `Schede_2026Q4.xlsx`, un indice e 13 schede (i rischi del radar) con
-il razionale in parti, il perche' di ogni valore, azioni e KRI con "Perche'" ed "Effetto atteso".
+il razionale in parti, il perche' di ogni valore, azioni e KRI con "Perche'" ed "Effetto atteso"; accanto,
+`Schede_2026Q4.pdf` (dal 23/10/2026).
 
-Il report al comitato si fa in due passi:
-1. `report` scrive `Report_comitato_2026Q4.pdf`, 13 pagine: Quadro, Classifica, Radar_Mosca, Matrice, Delta,
-   **Fenomeni** (i rischi in osservazione) e Metodologia (con la regola del registro unico);
+Il report al comitato:
+1. dal 23/10/2026 (D-83) lo scrive gia' `valida` a ogni validazione del ciclo, anche dopo la riapertura:
+   `Report_comitato_2026Q4.pdf`, 13 pagine: Quadro, Classifica, Radar_Mosca, Matrice, Delta, **Fenomeni** (i rischi
+   in osservazione) e Metodologia (con la regola del registro unico); `report` lo rigenera uguale;
 2. il validatore corregge a mano il presidio dei controlli di NFR-02 (da Non verificato a Parziale);
    `report --con-lavoro` rigenera il PDF, ora di 16 pagine con Registro e Parametri (che documenta la regola del
-   radar alle righe 65-75). Il PDF di prima resta con la data e l'ora nel nome.
+   radar alle righe 65-75). Ogni PDF di prima resta con la data e l'ora nel nome.
 
 ---
 
@@ -379,7 +381,7 @@ La demo parte dal template con i dati di esempio. La catena di collaudo (`99_Col
 ```text
 Demo_W1_W2/
   NFR_Registro.xlsx                     registro VIVO: cresce a ogni run
-  News_Inbox/2026-10-05/                raccolta REALE dai feed
+  News_Inbox/<lunedi'>/                 raccolta REALE dai feed, della settimana in cui gira la demo
   1_Input_agenti/                       output simulati degli agenti (A1, A3, A5, A8), decisioni simulate del validatore,
                                         baseline date agli agenti, allegati Input_A1 del 2026Q3, 2026Q4 e 2026Q4-S1
   A4_parere_esempio.md                  parere di A4
@@ -387,11 +389,15 @@ Demo_W1_W2/
     Baseline_corrente.json / .txt       input degli agenti per il prossimo run (valori validati, rischi in osservazione,
                                         regola del radar)
     Input_A1_2027Q1.txt                 allegato di A1 per il prossimo ciclo
+    Input_A3.txt, Input_A4.txt          allegati di A3 e A4: la baseline (AU7, dal 23/10)
+    _Lucchetto/                         lucchetto del registro, vuoto a fine demo (D-83)
     Spiegazioni/                        knowledge di A7: Ciclo.txt e Rischio_01..20.txt
     Cicli/2026Q3/                       registro scritto e validato, output degli agenti, baseline usata, esito dei
                                         controlli, Validazione_2026Q3.json, Correzione_A1_2026Q3.txt
     Cicli/2026Q3/tentativo_<ora>/       ogni tentativo, anche quello fermato
-    Cicli/2026Q4/                       idem, piu' schede e Report_comitato_2026Q4.pdf (e la versione precedente)
+    Cicli/2026Q4/                       idem, piu' schede (.xlsx e .pdf), Report_comitato_2026Q4.pdf con le versioni
+                                        precedenti, Prompt_in_uso/ (i prompt del pacchetto), Riapertura_2026Q4_<ora>.json
+                                        (la riapertura, con chi l'ha validata)
     Cicli/2026Q4-S1/                    lo straordinario: Straordinario_2026Q4-S1.json (la decisione), registro scritto
                                         e validato, output di A8 (archiviato come A1_2026Q4-S1.json)
     Settimane/2026-10-12/, 2026-11-16/  Excel della settimana, validato, output di A3

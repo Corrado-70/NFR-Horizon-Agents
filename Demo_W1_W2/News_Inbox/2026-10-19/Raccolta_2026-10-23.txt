@@ -1,0 +1,468 @@
+RACCOLTA NOTIZIE — settimana del 2026-10-19 (raccolta del 2026-10-23)
+Finestra: dal 2026-10-16 al 2026-10-23. Fonti interrogate: 18; con notizie: 16; notizie: 148.
+Raccolta automatica dai feed dell'elenco fonti (01_Kernel/fonti.md), senza selezione di merito.
+Ogni notizia porta il codice della fonte: usalo come codice_fonte.
+
+FONTI NON RAGGIUNGIBILI IN QUESTA RACCOLTA (la settimana e' incompleta per queste fonti):
+- FNT-07 FSB, pubblicazioni e comunicati: URLError: <urlopen error [Errno 11002] getaddrinfo failed>
+
+== FNT-01 BCE Vigilanza bancaria, comunicati ==
+- [FNT-01] 2026-10-23 | Patrick Montagner: Stress testing in a changing risk environment
+  https://www.bankingsupervision.europa.eu//press/speeches/date/2026/html/ssm.sp261023~32ca63a9d1.en.html
+- [FNT-01] 2026-10-20 | Frank Elderson: Interview with Die Presse
+  https://www.bankingsupervision.europa.eu//press/interviews/date/2026/html/ssm.in261020~41cc1155bb.en.html
+- [FNT-01] 2026-10-19 | Frank Elderson: From climate and nature risks to economic resilience and competitiveness
+  https://www.bankingsupervision.europa.eu//press/speeches/date/2026/html/ssm.sp261019~1a96adc133.en.html
+
+== FNT-02 BCE Vigilanza bancaria, pubblicazioni ==
+- [FNT-02] 2026-10-23 | List of supervised entities - Cut-off date 1 September 2026
+  https://www.bankingsupervision.europa.eu//ecb/pub/pdf/ssm.listofsupervisedentities202610.en.pdf
+
+== FNT-03 EBA, notizie e comunicati ==
+- [FNT-03] 2026-10-23 | ​The EBA appoints Kristīne Černaja-Mežmale as its new Vice-Chair
+  https://www.eba.europa.eu/publications-and-media/press-releases/eba-appoints-kristine-cernaja-mezmale-its-new-vice-chair
+  ​The Board of Supervisors of the European Banking Authority (EBA) has elected Kristīne Černaja-Mežmale as its Vice-Chair for a duration of two and a half years. Ms Černaja-Mežmale will take up her new role on 1 November 2026 when the current EBA Vice-Chair, Helmut Ettl starts his new role as Executive Director of the International Monetary Fund (IMF).
+- [FNT-03] 2026-10-22 | The ​EBA extends some consultation deadlines due to website maintenance​
+  https://www.eba.europa.eu/publications-and-media/press-releases/eba-extends-some-consultation-deadlines-due-website-maintenance
+  On 21 October 2026, CERT-EU, the cybersecurity service for the EU institutions, bodies and agencies, alerted organisations to two critical security flaws in software used to run many websites, including that of the European Banking Authority (EBA). As a precaution, the EBA took its website offline on Wednesday 21 October 2026 at 13:00 CEST while the necessary security updates were applied. The web
+
+== FNT-04 ESMA, notizie ==
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA streamlines several Q&As as part of simplification efforts
+  https://www.esma.europa.eu/press-news/esma-news/esma-streamlines-several-qas-part-simplification-efforts
+  ESMA streamlines several Q&As as part of simplification efforts 22 October 2026 Market Abuse MiFID - Secondary Markets Short Selling Simplification and Burden Reduction The European Securities and Markets Authority (ESMA), the EU regulator and supervisor, has updated its Questions and Answers (Q&As) on market structure under MiFID II , the Market Abuse Regulation (MAR) and the Short Selling Regula
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA specifies requirements to facilitate safe use of post-trade risk reduction services
+  https://www.esma.europa.eu/press-news/esma-news/esma-specifies-requirements-facilitate-safe-use-post-trade-risk-reduction
+  ESMA specifies requirements to facilitate safe use of post-trade risk reduction services 20 October 2026 Guidelines and Technical standards Post Trading The European Securities and Markets Authority (ESMA), the EU’s financial markets regulator and supervisor, has outlined the conditions that providers and users of post-trade risk reduction (PTRR) services need to meet for certain OTC derivative tr
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | New Q&As available
+  https://www.esma.europa.eu/press-news/esma-news/new-qas-available-27
+  New Q&As available 16 October 2026 CCP Digital Finance and Innovation The European Securities and Markets Authority (ESMA), the EU's securities markets regulator, has published the following question and answer: European crowdfunding service providers for business Crowdfunding service providers that charge registration, membership, or other access fees ("investment club" crowdfunding platforms) (2
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA finalises the review of guidelines on the delay in disclosure of inside information
+  https://www.esma.europa.eu/press-news/esma-news/esma-finalises-review-guidelines-delay-disclosure-inside-information
+  ESMA finalises the review of guidelines on the delay in disclosure of inside information 16 October 2026 Guidelines and Technical standards Market Abuse Market Integrity Simplification and Burden Reduction The European Securities and Markets Authority (ESMA), the EU’s financial markets regulator and supervisor, has updated and streamlined its Market Abuse Regulation (MAR) guidelines on the delay i
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | One year to go for T+1 settlement: the regulatory framework is complete, now let’s make it happen
+  https://www.esma.europa.eu/press-news/esma-news/one-year-go-t1-settlement-regulatory-framework-complete-now-lets-make-it
+  One year to go for T+1 settlement: the regulatory framework is complete, now let’s make it happen 16 October 2026 Guidelines and Technical standards Post Trading Press Releases The European Union (EU) will switch to T+1 settlement on 11 October 2027. Ahead of the transition, the European Securities and Markets Authority (ESMA), the EU’s financial markets regulator and supervisor, calls on market p
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA updates its manual on transparency with new guidance for OTC derivatives and tick-size regime
+  https://www.esma.europa.eu/press-news/esma-news/esma-updates-its-manual-transparency-new-guidance-otc-derivatives-and-tick
+  ESMA updates its manual on transparency with new guidance for OTC derivatives and tick-size regime 15 October 2026 Trading The European Securities and Markets Authority (ESMA), the EU regulator and supervisor, has updated its manual on transparency to provide further guidance on the identification of over-the-counter (OTC) derivatives subject to transparency requirements and to enhance supervisory
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA's third Sanctions Report highlights the need for greater convergence in enforcement
+  https://www.esma.europa.eu/press-news/esma-news/esmas-third-sanctions-report-highlights-need-greater-convergence-enforcement
+  ESMA's third Sanctions Report highlights the need for greater convergence in enforcement 15 October 2026 Market Abuse Supervisory convergence Transparency The European Securities and Markets Authority (ESMA), the EU's financial markets regulator and supervisor, published today its consolidated report on sanctions and measures imposed across the European Economic Area (EEA) in 2025, enhancing the t
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA analysis shows continued growth in cross-border investment services
+  https://www.esma.europa.eu/press-news/esma-news/esma-analysis-shows-continued-growth-cross-border-investment-services
+  ESMA analysis shows continued growth in cross-border investment services 14 October 2026 Investor protection The European Securities and Markets Authority (ESMA), the EU’s financial markets regulator and supervisor, has completed its annual analysis of the cross-border provision of investment services , together with national competent authorities (NCAs). The exercise collected data from investmen
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | European Supervisory Authorities set priorities for 2027
+  https://www.esma.europa.eu/press-news/esma-news/european-supervisory-authorities-set-priorities-2027
+  European Supervisory Authorities set priorities for 2027 13 October 2026 Joint Committee The Joint Committee of the European Supervisory Authorities (EBA, EIOPA and ESMA – the ESAs) published today its Annual Work Programme for 2027 , setting out its priorities for addressing cross-sectoral risks and strengthening coordination across the European Union's financial sector. In 2027, the Joint Commit
+- [FNT-04] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | ESMA sets out 2026 European Common Enforcement Priorities
+  https://www.esma.europa.eu/press-news/esma-news/esma-sets-out-2026-european-common-enforcement-priorities
+  ESMA sets out 2026 European Common Enforcement Priorities 13 October 2026 Financial reporting Issuer disclosure The European Securities and Markets Authority (ESMA), the European financial markets regulator and supervisor, has outlined the European Common Enforcement Priorities (ECEP) for the 2026 annual financial reports of listed issuers. The priorities identify the following areas of focus for 
+
+== FNT-05 Banca d'Italia, aggiornamenti del sito ==
+- [FNT-05] 2026-10-23 | ECB Consumer Expectations Survey results - September 2026 [pdf, 147.6 KB]
+  https://www.bancaditalia.it/media/bce-comunicati/documenti/2026/ecb.pr.261023.en.pdf
+- [FNT-05] 2026-10-22 | Sergio Nicoletti Altimari apre la sesta conferenza "WE_ARE_IN Macroeconomics and Finance" a Roma
+  https://www.bancaditalia.it/media/notizia/sergio-nicoletti-altimari-apre-la-sesta-conferenza-we-are-in-macroeconomics-and-finance-a-roma?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-22 | Women in Economics: Advancing Research in Economics Internationally
+  https://www.bancaditalia.it/pubblicazioni/interventi-direttorio/int-dir-2026/20261022-altimari/index.html?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-21 | Testo integrale (al 20 ottobre 2026) [pdf, 361.4 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c326/CIRC_326.pdf
+  Circolare n. 326 del 20 ottobre 2026
+- [FNT-05] 2026-10-21 | Atto di emanazione [pdf, 211.8 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c326/ATTO_EMAN_326.pdf
+  Circolare n. 326 del 20 ottobre 2026
+- [FNT-05] 2026-10-21 | Testo integrale al 20 ottobre 2026 [pdf, 25.2 MB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c154/78-aggto/Testo_Integrale_154_78agg_UFFICIALE.pdf
+- [FNT-05] 2026-10-21 | Atto di Emanazione del 78° aggiornamento della Circolare n.154 del 22.11.1991 [pdf, 709.1 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c154/78-aggto/Atto-di-emanazione_154_78agg_UFFICIALE.pdf
+- [FNT-05] 2026-10-21 | Circolare n. 326 del 20 ottobre 2026
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c326/index.html?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-21 | Circolare n.154 del 22.11.1991 - Aggiornamento n. 78 del 20 ottobre 2026 [pdf, 17.1 MB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c154/78-aggto/Aggiornamento78_Circ154_UFFICIALE.pdf
+- [FNT-05] 2026-10-21 | Merchant Category Code - lista dei codici segnalabili - Aggiornamento n.3 [pdf, 517.0 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c154/78-aggto/Merchant-Category-Code_lista-codici-segnalabili_agg3.pdf
+- [FNT-05] 2026-10-21 | Informativa privacy [pdf, 101.8 KB]
+  https://www.bancaditalia.it/statistiche/raccolta-dati/segnalazioni/rilevazioni-transazioni/informativa-privacy-MMSR.pdf
+  Rilevazione statistica delle transazioni sul mercato monetario
+- [FNT-05] 2026-10-21 | Informativa sulla protezione dei dati personali [pdf, 104.2 KB]
+  https://www.bancaditalia.it/compiti/emissione-euro/accesso-al-contante/Informativa-privacy-Punti-Accesso-Contante.pdf
+  Accesso al contante
+- [FNT-05] 2026-10-21 | Aggiornamento n. 19 del 20 ottobre 2026 [pdf, 908.3 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c286/Aggiornamento_n_19_del_20_ottobre_2026_Circolare_286.pdf
+  Circolare n. 286 del 17 dicembre 2013
+- [FNT-05] 2026-10-21 | Atto di emanazione del 19° aggiornamento [pdf, 132.8 KB]
+  https://www.bancaditalia.it/compiti/vigilanza/normativa/archivio-norme/circolari/c286/Atto-di-emanazione-del-19-aggiornamento-della-circolare-286.pdf
+  Circolare n. 286 del 17 dicembre 2013
+- [FNT-05] 2026-10-21 | Aperte le iscrizioni alla quarta edizione del Master Universitario di 2° livello "Data Science for Public Decision Making"
+  https://www.bancaditalia.it/media/notizia/aperte-le-iscrizioni-alla-quarta-edizione-del-master-universitario-di-2-livello-data-science-for-public-decision-making?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-21 | Indagine Fintech sugli operatori italiani non vigilati - 2026
+  https://www.bancaditalia.it/media/notizia/indagine-fintech-sugli-operatori-italiani-non-vigilati-2026?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-20 | Pubblicazione nuovi "Temi di discussione" - 20 ottobre 2026
+  https://www.bancaditalia.it/media/notizia/pubblicazione-nuovi-temi-di-discussione-20-ottobre-2026?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-20 | N. 1549 - Oltre la dimensione: posizione delle imprese nelle reti produttive e trasmissione degli shock in cinque paesi europei
+  https://www.bancaditalia.it/pubblicazioni/temi-discussione/2026/2026-1549/index.html?com.dotmarketing.htmlpage.language=102
+  Temi di discussione N. 1549 - "Oltre la dimensione: posizione delle imprese nelle reti produttive e trasmissione degli shock in cinque paesi europei" di G. Magerman, A. Palazzolo, E. Dhyne, A. Borsos, D. Kulikov, A. Linarello, A. Paulus, G. Romanini e M. Saldias. "Questo lavoro confronta le reti di fornitura di Italia, Belgio, Estonia, Ungheria e Portogallo usando dati armonizzati sugli scambi tra
+- [FNT-05] 2026-10-20 | N. 1548 - Qualità del capitale e divari regionali: evidenze dalle transazioni di veicoli commerciali
+  https://www.bancaditalia.it/pubblicazioni/temi-discussione/2026/2026-1548/index.html?com.dotmarketing.htmlpage.language=102
+  Temi di discussione N. 1548 - "Qualità del capitale e divari regionali: evidenze dalle transazioni di veicoli commerciali" di Marta Crispino, Michele Loberto e Riccardo Russo. "Il lavoro analizza le differenze territoriali nella qualità degli autoveicoli posseduti dalle imprese italiane, utilizzando un archivio del Ministero delle Infrastrutture e dei trasporti sulle transazioni di veicoli commerc
+- [FNT-05] 2026-10-20 | N. 1547 - Una valutazione degli effetti competitivi dell'introduzione del salario minimo in Italia
+  https://www.bancaditalia.it/pubblicazioni/temi-discussione/2026/2026-1547/index.html?com.dotmarketing.htmlpage.language=102
+  Temi di discussione N. 1547 - "Una valutazione degli effetti competitivi dell'introduzione del salario minimo in Italia" di Salvatore Lo Bello e Lorenzo Pesaresi. "Il lavoro analizza i potenziali effetti dell'introduzione di un salario minimo nell'economia italiana attraverso un modello di equilibrio economico generale nel quale le imprese hanno sia un potere di monopsonio nel mercato del lavoro, 
+
+== FNT-06 Commissione europea, sala stampa ==
+- [FNT-06] 2026-10-23 | Speech by President von der Leyen to the Hungarian National Assembly on the occasion of the 70th anniversary of the Hungarian Revolution of 1956
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2251
+  European Commission Speech Budapest, 23 Oct 2026 “Check against delivery” Dear Honourable Speaker Forsthoffer, Dear President Baka, Dear Prime Minister Magyar, Dear President Costa, Dear Presidents, Dear Pri...
+- [FNT-06] 2026-10-23 | La Commissione propone un maggiore riconoscimento dei siti del patrimonio europeo*
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2250
+  European Commission Comunicato stampa Brussels, 23 Oct 2026 La Commissione europea ha proposto di rinnovare e rafforzare il quadro giuridico del marchio del patrimonio europeo. Il programma è stato adottato nel 2011 con l'obiettivo di offrire un riconoscimento conferito dall'Unione europea a siti - edifici, monumenti, documenti - di eccezionale valore simbolico che hanno svolto un ruolo chiave nel
+- [FNT-06] 2026-10-23 | Daily News 23 / 10 / 2026
+  https://ec.europa.eu/commission/presscorner/detail/en/mex_26_2249
+  European Commission Daily news Brussels, 23 Oct 2026 EU Civil Protection Mechanism turns 25 For 25 years, European countries have been joining forces to save lives when disasters strike under the EU Civil Protecti...
+- [FNT-06] 2026-10-23 | Il meccanismo di protezione civile dell'UE compie 25 anni
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2248
+  European Commission Comunicato stampa Brussels, 23 Oct 2026 Da 25 anni i paesi europei uniscono le forze per salvare vite umane in caso di catastrofi nell'ambito del meccanismo di protezione civile dell'UE. Questo è uno dei migliori esempi di solidarietà europea in azione.
+- [FNT-06] 2026-10-23 | L'UE annuncia un importo supplementare di 22,5 milioni di EUR per rafforzare l'assistenza umanitaria nello Yemen
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2247
+  European Commission Comunicato stampa Brussels, 23 Oct 2026 La Commissione europea sta stanziando 22,5 milioni di € in aiuti umanitari allo Yemen, in aggiunta agli 87,5 milioni di € precedentemente stanziati per il 2026, per affrontare le conseguenze della rinnovata escalation del conflitto e le esigenze critiche di milioni di persone.
+- [FNT-06] 2026-10-23 | Opening remarks by Commissioner Kubilius at the Launch Event of the 3rd Hybrid Threats Report
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2242
+  European Commission Speech Brussels, 23 Oct 2026 Good morning, First, welcome to the Berlaymont. And thank you for this very important report. I have it on my desk in my office. I have read very thoroughly and...
+- [FNT-06] 2026-10-22 | Commission opens investigation into possible anticompetitive conduct by Omya in the supply of calcium carbonates to the paper industry
+  https://ec.europa.eu/commission/presscorner/detail/en/ip_26_2232
+  European Commission Press release Brussels, 23 Oct 2026 The European Commission has opened a formal antitrust investigation to assess whether Omya has breached EU competition rules by requiring customers in the paper industry to purchase all or most of their calcium carbonates from Omya.
+- [FNT-06] 2026-10-22 | Speech by Commissioner Lahbib at the Resilient Europe Conference
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2239
+  European Commission Speech Prague, 22 Oct 2026 When you arrived today, I hope you looked up at the roof of this palace. Four stone statues stand along the top. They represent the four elements: fire, water, ...
+- [FNT-06] 2026-10-22 | La Commissione accoglie con favore gli impegni di Coca-Cola, Nestlé e Danone di modificare le dichiarazioni di riciclaggio delle bottiglie di plastica
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2238
+  European Commission Comunicato stampa Brussels, 22 Oct 2026 A seguito di un dialogo con la Commissione europea e la rete di cooperazione per la tutela dei consumatori (CPC), Coca-Cola, Nestlé e Danone si sono impegnati a modificare le dichiarazioni di riciclaggio pubblicizzate sulle loro bottiglie di plastica.
+- [FNT-06] 2026-10-22 | Online speech by Commissioner Albuquerque at the Nordic Financial Unions Conference: Resilience in an era of uncertainty and change
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2237
+  European Commission Speech Online, 22 Oct 2026 Good morning, ladies and gentlemen, I very much wish I could be with you in beautiful Reykjavík this morning. Hopefully we will be able to make that happen in t...
+
+== FNT-08 BIS, comunicati (incluso il Comitato di Basilea) ==
+- [FNT-08] 2026-10-16 | Basel Committee finalises measures to address window-dressing in the G-SIB framework and consults on G-SIB methodology review
+  https://www.bis.org/media-releases/20261016-basel-committee-finalises-measures-address-window-dressing-g-sib-framework-and-consults-g-sib
+  The Basel Committee on Banking Supervision today published final amendments to address window dressing in the G-SIB framework and a consultation on the G-SIB methodology review.
+
+== FNT-09 Commissione europea, strategia digitale ==
+- [FNT-09] 2026-10-21 | Commission to investigate how Booking.com combats scams and fraud under the Digital Services Act
+  https://digital-strategy.ec.europa.eu/en/news/commission-investigate-how-bookingcom-combats-scams-and-fraud-under-digital-services-act
+  Commission to investigate how Booking.com combats scams and fraud under the Digital Services Act Anonymous (not verified) Wed, 10/21/2026 - 12:06 The European Commission has opened formal proceedings to assess whether Booking.com may have breached the Digital Services Act (DSA) by not having diligently assessed or effectively mitigated risks related to fraudulent listings and phishing scams. The p
+- [FNT-09] 2026-10-20 | Digital Services Act study on financial scams on online platforms and ways to counter them
+  https://digital-strategy.ec.europa.eu/en/library/digital-services-act-study-financial-scams-online-platforms-and-ways-counter-them
+  Digital Services Act study on financial scams on online platforms and ways to counter them Anonymous (not verified) Tue, 10/20/2026 - 08:47 A new study maps the main types of online financial scams, platform features scammers exploit, their impact on users and society and measures platforms can take to stop them. Online financial scams – fraudulent schemes whose primary aim is to extract money fro
+- [FNT-09] 2026-10-19 | First harmonised standard supporting the AI Act published in the Official Journal
+  https://digital-strategy.ec.europa.eu/en/library/first-harmonised-standard-supporting-ai-act-published-official-journal
+  First harmonised standard supporting the AI Act published in the Official Journal Anonymous (not verified) Mon, 10/19/2026 - 09:37 The European Commission has published the reference to the first harmonised standard supporting the implementation of the AI Act in the Official Journal of the European Union. The standard, EN 18286:2026 - Artificial intelligence - Quality management system for EU AI A
+
+== FNT-10 ACN, CSIRT Italia: avvisi e allerte ==
+- [FNT-10] 2026-10-23 | MongoDB: disponibili PoC per numerose vulnerabilità in C# Driver
+  https://www.acn.gov.it/portale/w/mongodb-disponibili-poc-per-numerose-vulnerabilita-in-c-driver
+  Disponibili Proof of Concept per diverse vulnerabilità, già sanate dal vendor, presenti nella componente C# Driver di MongoDB. Tali vulnerabilità, qualora sfruttate, potrebbero consentire a un utente malevolo di accedere a informazioni sensibili, manipolare i dati, compromettere la disponibilità del servizio o impersonare entità legittime sui sistemi interessati.
+- [FNT-10] 2026-10-23 | Vulnerabilità in prodotti ASUS
+  https://www.acn.gov.it/portale/w/vulnerabilita-in-prodotti-asus-4
+  ASUS ha rilasciato aggiornamenti di sicurezza per sanare 3 vulnerabilità con gravità "alta", che interessano il firmware di diversi modelli di router. Tali vulnerabilità, qualora sfruttate, potrebbero consentire ad un attaccante remoto non autenticato di eludere i meccanismi di autenticazione, di elevare i propri privilegi e di eseguire codice arbitrario sui sistemi interessati.
+- [FNT-10] 2026-10-23 | Arista Networks: rilevato sfruttamento in rete della CVE-2026-114625
+  https://www.acn.gov.it/portale/w/arista-networks-rilevato-sfruttamento-in-rete-della-cve-2026-114625
+  Arista Networks ha rilevato lo sfruttamento in rete di una vulnerabilità con gravità "critica", identificata tramite la CVE-2026-114625, in VeloCloud Orchestrator (VCO) On-Prem, piattaforma di gestione e orchestrazione centralizzata per infrastrutture SD-WAN, utilizzata per la configurazione, il monitoraggio e l'amministrazione delle reti VeloCloud.
+- [FNT-10] 2026-10-23 | Compromissione di chiavi private associate a certificati CA intermedi eMudhra
+  https://www.acn.gov.it/portale/w/compromissione-di-chiavi-private-associate-a-certificati-ca-intermedi-emudhra
+  È stata resa pubblica la compromissione delle chiavi private associate ai certificati di otto autorità di certificazione (CA) intermedie di eMudhra , sei destinate all'emissione di certificati TLS e due alla firma del codice. Risultano interessate anche le corrispondenti versioni dei certificati intermedi oggetto di certificazione incrociata (cross-signing) da parte di Sectigo.
+- [FNT-10] 2026-10-22 | Risolte vulnerabilità in prodotti WatchGuard
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-watchguard-3
+  Rilasciati aggiornamenti di sicurezza per risolvere due vulnerabilità, di cui una con gravità "alta" in WatchGuard Agent per Windows. Tale vulnerabilità, qualora sfruttata da un utente locale autenticato e privo di privilegi amministrativi, potrebbe consentire la scrittura, la modifica e l'eliminazione non autorizzata di file nella directory dei log.
+- [FNT-10] 2026-10-22 | Accesso non autorizzato al portale TeamUpdraft e possibile esposizione dei dati dei clienti
+  https://www.acn.gov.it/portale/w/accesso-non-autorizzato-al-portale-teamupdraft-e-possibile-esposizione-dei-dati-dei-clienti
+  TeamUpdraft ha recentemente rilevato un accesso non autorizzato al proprio portale, che potrebbe aver determinato l’accesso al database dei clienti e l’esposizione delle chiavi di connessione associate ai servizi cloud del vendor.
+- [FNT-10] 2026-10-22 | Rilevate vulnerabilità in prodotti Splunk
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-prodotti-splunk-6
+  Splunk ha rilasciato aggiornamenti di sicurezza per sanare molteplici vulnerabilità, di cui 4 con gravità “critica” e 13 con gravità “alta”, nei prodotti Splunk SOAR e Splunk Enterprise. Tali vulnerabilità potrebbero consentire a un attaccante remoto, in alcuni casi non autenticato, di accedere a informazioni sensibili, di eludere i meccanismi di autenticazione e di autorizzazione o di eludere le 
+- [FNT-10] 2026-10-22 | Laravel: disponibile PoC per lo sfruttamento della CVE-2026-114509
+  https://www.acn.gov.it/portale/w/laravel-disponibile-poc-per-lo-sfruttamento-della-cve-2026-114509
+  Disponibile Proof of Concept (PoC) per lo sfruttamento della CVE-2026-114509 presente in Laravel, noto framework open source per lo sviluppo di applicazioni web. Tale vulnerabilità, qualora sfruttata, potrebbe consentire ad un utente malintenzionato di eludere i meccanismi di autenticazione sui sistemi interessati, consentendo di impersonare un altro utente.
+- [FNT-10] 2026-10-22 | Risolte vulnerabilità in GitLab CE/EE
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-gitlab-ce/ee-1
+  Rilasciati aggiornamenti di sicurezza che risolvono 12 vulnerabilità, di cui 1 con gravità “critica” e 2 con gravità “alta”, in GitLab Community Edition (CE) ed Enterprise Edition (EE). Tali vulnerabilità, qualora sfruttate, potrebbero consentire a un utente malintenzionato di eludere le funzionalità di sicurezza, di impersonare un'entità legittima o di eseguire codice arbitrario sui sistemi inter
+- [FNT-10] 2026-10-21 | PHP2Shell: sanate vulnerabilità critiche in PHP
+  https://www.acn.gov.it/portale/w/php2shell-sanate-vulnerabilita-critiche-in-php
+  Aggiornamenti di sicurezza sanano 2 nuove vulnerabilità con gravità "critica" in PHP, noto interprete del linguaggio di scripting per lo sviluppo web. Tali vulnerabilità interessano la componente php-src e, qualora sfruttate, potrebbero permettere a un utente malintenzionato remoto di eseguire codice arbitrario sui sistemi interessati.
+- [FNT-10] 2026-10-21 | Aggiornamenti di sicurezza per prodotti Cisco
+  https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-per-prodotti-cisco-1
+  Cisco ha rilasciato aggiornamenti di sicurezza per risolvere 34 vulnerabilità nei propri prodotti, di cui 5 con gravità “critica” e 17 con gravità “alta”.
+- [FNT-10] 2026-10-21 | Risolte vulnerabilità in ISC BIND 9
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-isc-bind-9-1
+  ISC ha rilasciato aggiornamenti di sicurezza per BIND 9 e BIND Supported Preview Edition, software per la gestione e la risoluzione delle richieste DNS, che sanano 4 vulnerabilità con gravità "alta". Tali vulnerabilità possono permettere l'esecuzione di codice arbitrario o compromettere la disponibilità del servizio sui sistemi interessati.
+- [FNT-10] 2026-10-21 | Ollama: disponibile PoC per lo sfruttamento della CVE-2026-103663
+  https://www.acn.gov.it/portale/w/ollama-disponibile-poc-per-lo-sfruttamento-della-cve-2026-103663
+  Disponibile un Proof of Concept (PoC) per lo sfruttamento della CVE-2026-103663 presente in Ollama, noto motore di inferenza open source che consente di eseguire LLM in locale. Tale vulnerabilità potrebbe consentire a un utente malintenzionato remoto non autenticato di eseguire codice arbitrario sui sistemi interessati.
+- [FNT-10] 2026-10-21 | Rilevate vulnerabilità in prodotti Acronis
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-prodotti-acronis-1
+  Rilevate due vulnerabilità di sicurezza, di cui una con gravità "alta", in Acronis Cyber Infrastructure. Tale vulnerabilità, qualora sfruttata, potrebbe consentire ad un utente malintenzionato l'accesso ad informazioni sensibili e la manipolazione di dati sui sistemi interessati.
+- [FNT-10] 2026-10-21 | Node.js: risolte molteplici vulnerabilità
+  https://www.acn.gov.it/portale/w/node.js-risolte-molteplici-vulnerabilita-1
+  Rilasciati aggiornamenti di sicurezza che risolvono 10 vulnerabilità, di cui 4 con gravità “alta”, in Node.js, noto software open source per l’esecuzione di codice Javascript. Tali vulnerabilità, qualora sfruttate, potrebbero permettere ad un utente malintenzionato l'elusione dei meccanismi di sicurezza e/o la compromissione della disponibilità dei servizi interessati.
+- [FNT-10] 2026-10-21 | Risolte vulnerabilità in prodotti SolarWinds
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-solarwinds
+  Aggiornamenti di sicurezza risolvono 4 vulnerabilità, di cui 1 con gravità "alta", presenti in SolarWinds Observability Self-Hosted, piattaforma per il monitoraggio di reti, server, applicazioni e ambienti cloud ibridi. Tale vulnerabilità, qualora sfruttata, potrebbe consentire ad un utente malintenzionato autenticato con bassi privilegi di accedere e modificare informazioni sensibili sui sistemi 
+- [FNT-10] 2026-10-21 | Risolte vulnerabilità in Apache Tomcat
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-apache-tomcat
+  Rilasciati aggiornamenti di sicurezza per sanare alcune vulnerabilità, di cui 3 con gravità “critica”, in Apache Tomcat, noto server web open source sviluppato da Apache Software Foundation. Tali vulnerabilità potrebbero consentire a un attaccante remoto non autenticato di eludere i meccanismi di autenticazione o di accedere a informazioni sensibili sui sistemi interessati.
+- [FNT-10] 2026-10-21 | Risolte vulnerabilità in Google Chrome
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-google-chrome-81
+  Google ha rilasciato un aggiornamento per il browser Chrome al fine di correggere 353 nuove vulnerabilità di sicurezza, di cui 6 con gravità “critica” e 61 con gravità “alta”.
+- [FNT-10] 2026-10-21 | Critical Patch Update di Oracle
+  https://www.acn.gov.it/portale/w/critical-patch-update-di-oracle-12
+  Oracle ha rilasciato il Critical Patch Update di ottobre che mira a correggere numerose vulnerabilità su più prodotti, di cui 64 con gravità “critica” e 383 con gravità “alta”.
+- [FNT-10] 2026-10-20 | Risolte vulnerabilità in Roundcube Webmail
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-roundcube-webmail
+  Rilasciati aggiornamenti di sicurezza per risolvere 20 vulnerabilità, di cui 6 con gravità “alta”, in Roundcube Webmail, noto gestore di posta elettronica open source. Tali vulnerabilità, qualora sfruttate, potrebbero consentire ad un attaccante remoto di eludere meccanismi di sicurezza e di manipolare dati e contenuti sui sistemi interessati.
+- [FNT-10] 2026-10-20 | Risolte vulnerabilità in Stormshield Network Security
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-stormshield-network-security
+  Stormshield ha rilasciato aggiornamenti di sicurezza per sanare alcune vulnerabilità, di cui 2 con gravità “alta”, nel prodotto Stormshield Network Security. Tali vulnerabilità potrebbero consentire a un attaccante non autenticato di eludere i meccanismi di autenticazione sui sistemi interessati.
+- [FNT-10] 2026-10-20 | Vulnerabilità in MongoDB
+  https://www.acn.gov.it/portale/w/vulnerabilita-in-mongodb
+  MongoDB ha rilasciato aggiornamenti di sicurezza che sanano una vulnerabilità con gravità "alta" nella libreria PHP Driver. Tale vulnerabilità, qualora sfruttata, potrebbe permettere a un utente malintenzionato remoto di compromettere la disponibilità del servizio sui sistemi interessati.
+- [FNT-10] 2026-10-20 | Plex Media Server: rilevato sfruttamento in rete delle catena di attacco Plex2Shell
+  https://www.acn.gov.it/portale/w/plex-media-server-rilevato-sfruttamento-in-rete-delle-catena-di-attacco-plex2shell
+  Rilevato lo sfruttamento attivo in rete delle vulnerabilità CVE-2026-96652 CVE-2026-96654 CVE-2026-96655 e CVE-2026-96656 - già sanate dal vendor - relative a Plex Media Server. Si evidenzia che risulta disponibile in rete un Proof of Concept (PoC) per lo sfruttamento concatenato di tali vulnerabilità.
+- [FNT-10] 2026-10-20 | Vulnerabilità in prodotti ASUS
+  https://www.acn.gov.it/portale/w/vulnerabilita-in-prodotti-asus-3
+  ASUS ha rilasciato aggiornamenti di sicurezza per sanare 3 vulnerabilità, di cui 2 con gravità "alta", in Armoury Crate e in ASUS Router Firmware.
+- [FNT-10] 2026-10-20 | Risolta vulnerabilità in Signal RingRTC
+  https://www.acn.gov.it/portale/w/risolta-vulnerabilita-in-signal-ringrtc
+  Signal ha rilasciato aggiornamenti di sicurezza per sanare una vulnerabilità con gravità “critica” in RingRTC, libreria middleware per la gestione delle chiamate audio e video.
+
+== FNT-12 CERT-EU, security advisories ==
+- [FNT-12] 2026-10-23 | 2026-018: Critical Vulnerabilities in PHP
+  https://cert.europa.eu/publications/security-advisories/2026-018/
+  On 20 October 2026, the PHP project announced an upcoming security release addressing two critical vulnerabilities in PHP. Public reports indicated that these vulnerabilities could lead to remote code execution (RCE). The PHP team released the fixes today, 21 October 2026 at 13:30 UTC, in PHP versions 8.5.12, 8.4.27, 8.3.36 and 8.2.35. Both vulnerabilities can allow unauthenticated remote code exe
+- [FNT-12] 2026-10-22 | 2026-019: Critical Vulnerability in GitLab Community and Enterprise Editions
+  https://cert.europa.eu/publications/security-advisories/2026-019/
+  On 21 October 2026, GitLab published a security advisory addressing several vulnerabilities among which a critical flaw that could allow an unauthenticated user to execute arbitrary code on a GitLab server. CERT-EU recommends organisations to update affected assets as soon as possible, prioritising internet facing assets, and to run an assessment to identify compromised assets.
+
+== FNT-13 NCSC Regno Unito, notizie e guide ==
+- [FNT-13] 2026-10-21 | Critical security issue affecting PHP
+  https://www.ncsc.gov.uk/news/critical-security-issue-affecting-php
+  Updated: The NCSC is encouraging UK organisations to take immediate action to mitigate a security issue affecting PHP (CVE-2026-109618 and CVE-2026-109619).
+- [FNT-13] 2026-10-20 | Introducing a new AI chapter in the NCSC research problem book
+  https://www.ncsc.gov.uk/blogs/introducing-new-ai-chapter-ncsc-research-problem-book
+  A revolution is underway at the intersection of AI and cyber security.
+
+== FNT-14 Europol, notizie ==
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | 27 arrests and 248 potential victims identified in action week against labour exploitation
+  https://www.europol.europa.eu/media-press/newsroom/news/27-arrests-and-248-potential-victims-identified-in-action-week-against-labour-exploitation
+  Europol, the European Labour Authority (ELA), and 34 participating countries today announced the results of an action week targeting human trafficking for labour exploitation. The operation, part of an EMPACT action led by Sweden, brought together police, border guards, labour and social security inspectorates, and tax authorities to crack down on exploitative practices in high-risk sectors such a
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | 5th EMPACT Hackathon leads to the detection of 51 potential victims
+  https://www.europol.europa.eu/media-press/newsroom/news/5th-empact-hackathon-leads-to-detection-of-51-potential-victims
+  An international operation involving 40 experts and investigators from 20 countries has identified 51 potential victims of human trafficking, as well as five suspects. Held in Amsterdam from 23 to 25 September 2026, the fifth EMPACT Hackathon against the digital aspects of human trafficking brought together police officers, labour authorities and specialists in online investigations, supported by 
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Keeping pace with e-evidence: New report examines Europe’s digital forensic capabilities
+  https://www.europol.europa.eu/media-press/newsroom/news/keeping-pace-e-evidence-new-report-examines-europes-digital-forensic-capabilities
+  Coordinated by the European Commission in cooperation with Europol, the analysis draws on stakeholder consultations, dedicated meetings, surveys and contributions from experts at Europol’s European Cybercrime Centre.The findings point to common challenges: investigative tools, resources and expertise are struggling to keep pace with the forms and volume of digital evidence created by modern techno
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | European and Ecuadorian cooperation leads to 20 arrests in major hit against drug trafficking
+  https://www.europol.europa.eu/media-press/newsroom/news/european-and-ecuadorian-cooperation-leads-to-20-arrests-in-major-hit-against-drug-trafficking
+  The operation, codenamed Operation CANTABRIA, underscores the success of strong cooperation between European and Ecuadorian law enforcement agencies, proving that joint efforts are key to tackling transnational criminal networks.Magnus BrunnerEU Commissioner for Internal Affairs and Migration“International cooperation is our greatest strength against drug trafficking. Criminal networks know no bor
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Almost 50 arrested as police target Western Balkan network linked to killings
+  https://www.europol.europa.eu/media-press/newsroom/news/almost-50-arrested-police-target-western-balkan-network-linked-to-killings
+  Nearly 50 suspects have been arrested in an international operation targeting a drug trafficking network with Western Balkan members, linked to killings, kidnappings and grenade attacks across Europe.
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Europol urges early action to protect cryptocurrencies and sensitive data from quantum threats
+  https://www.europol.europa.eu/media-press/newsroom/news/europol-urges-early-action-to-protect-cryptocurrencies-and-sensitive-data-quantum-threats
+  The timing of these capabilities remains uncertain. However, this should not be the main concern. Adapting systems and coordinating security upgrades will take time. Therefore, regardless of the nature of the threats that may emerge, crypto-agility should be pursued proactively to ensure that systems can withstand and overcome future threats while remaining secure.Both reports highlight the need t
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Ordering violence from abroad: five suspects arrested in Spain, Morocco, and France
+  https://www.europol.europa.eu/media-press/newsroom/news/ordering-violence-abroad-five-suspects-arrested-in-spain-morocco-and-france
+  Five suspects linked to the organisation and recruitment of serious violence have been arrested in Spain, Morocco, and France, in the latest results of the Operational Taskforce (OTF) GRIMM, coordinated by Europol. The arrests in August and September target the upper levels of violence-as-a-service: those suspected of ordering attacks, finding perpetrators and coordinating crimes from abroad. Amon
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Teenager suspected of leading KillSec ransomware group as law enforcement seizes servers and leak site
+  https://www.europol.europa.eu/media-press/newsroom/news/teenager-suspected-of-leading-killsec-ransomware-group-law-enforcement-seizes-servers-and-leak-site
+  On 30 September 2026, law enforcement took control of KillSec’s leak site, securing at least 110 terabytes of data against further unauthorised access. The cybercrime group used the site to threaten organisations with the publication of stolen files unless they paid a ransom.
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Cannabis smuggling from North America and Thailand into Europe: Europol highlights growing threat
+  https://www.europol.europa.eu/media-press/newsroom/news/cannabis-smuggling-north-america-and-thailand-europe-europol-highlights-growing-threat
+  Cannabis smuggling from North America and Thailand in Europe has seen a sharp rise, driven by oversupply in legal markets and the adaptability of organised crime groups. A dedicated Europol Operational Taskforce (OTF) has been established to dismantle the criminal networks behind this evolving threat.
+- [FNT-14] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | EU law enforcement chiefs gather to discuss new challenges in EU security
+  https://www.europol.europa.eu/media-press/newsroom/news/eu-law-enforcement-chiefs-gather-to-discuss-new-challenges-in-eu-security
+  The Convention was opened by Jürgen Ebner, Europol’s Acting Executive Director, and Justin Kelly, Commissioner of the Irish An Garda Síochána.Jürgen EbnerEuropol Acting Executive DirectorOrganised crime itself has become digital by default. Technology is not just an enabler of criminal activity - it is increasingly driving it. We need strong national capabilities reinforced by shared European capa
+
+== FNT-15 BleepingComputer, stampa specializzata cyber ==
+- [FNT-15] 2026-10-23 | You gave your AI agent access, but who is giving it orders?
+  https://www.bleepingcomputer.com/news/security/you-gave-your-ai-agent-access-but-who-is-giving-it-orders/
+  AI agents can be manipulated through malicious emails, websites, and plugins into executing commands, stealing data, or deleting files using their legitimate permissions. Gen Digital explains how its Agent Trust Hub helps protect agents through skill verification, secure connectivity, and runtime controls that intercept dangerous act [...]
+- [FNT-15] 2026-10-23 | HPE patches eight max severity RCE and auth bypass AOS flaws
+  https://www.bleepingcomputer.com/news/security/hpe-patches-eight-max-severity-rce-and-auth-bypass-aos-flaws/
+  Hewlett Packard Enterprise (HPE) released security updates to patch 72 vulnerabilities in the Aruba Operating System (ArubaOS), including eight maximum-severity authentication bypass and code execution issues. [...]
+- [FNT-15] 2026-10-22 | Railway warns devs to rotate secrets after potential breach
+  https://www.bleepingcomputer.com/news/security/railway-warns-devs-to-rotate-secrets-after-potential-breach/
+  Cloud platform Railway published an urgent warning to users after detecting suspicious activity on its systems that store customer environment variables earlier this week. [...]
+- [FNT-15] 2026-10-22 | Capcom confirms data breach affecting 11.7 million accounts
+  https://www.bleepingcomputer.com/news/security/capcom-confirms-data-breach-affecting-117-million-accounts/
+  Japanese gaming giant Capcom has confirmed that hackers breached its membership service, CAPCOM ID, exposing more than 11.7 million customer email addresses and associated information. [...]
+- [FNT-15] 2026-10-22 | LiteLLM release pipeline hacked to distribute info-stealer malware
+  https://www.bleepingcomputer.com/news/security/litellm-release-pipeline-hacked-to-distribute-info-stealer-malware/
+  Hackers compromised the LiteLLM project's PyPI package and published malicious Docker images with a payload that steals credentials, secrets, and environment variables. [...]
+- [FNT-15] 2026-10-22 | Arista patches new VeloCloud Orchestrator zero-day exploited in attacks
+  https://www.bleepingcomputer.com/news/security/arista-patches-new-velocloud-orchestrator-zero-day-exploited-in-attacks/
+  Arista Networks released security updates to patch an actively exploited zero-day vulnerability affecting VeloCloud Orchestrator (VCO) On-Prem deployments. [...]
+- [FNT-15] 2026-10-22 | Microsoft shares how to fix broken Exchange Online EWS apps
+  https://www.bleepingcomputer.com/news/microsoft/microsoft-shares-how-to-fix-broken-exchange-online-ews-apps/
+  Microsoft says IT admins can re-enable the retired Exchange Web Services (EWS) API in Exchange Online to fix EWS apps that have stopped working. [...]
+- [FNT-15] 2026-10-22 | Machine speed attacks require machine speed detection and response
+  https://www.bleepingcomputer.com/news/security/machine-speed-attacks-require-machine-speed-detection-and-response/
+  Attackers can steal credentials and begin exfiltrating data within minutes, often before security teams can respond. Exaforce examines real-world attacks involving stolen GitHub tokens, malicious AI installers, and MFA phishing, explaining why faster detection and automated containment are critical. [...]
+- [FNT-15] 2026-10-22 | Amazon says PHP2Shell exploitation began 4 days before patches
+  https://www.bleepingcomputer.com/news/security/amazon-says-php2shell-exploitation-began-4-days-before-patches/
+  Security researchers at Amazon Threat Intelligence say attackers began targeting the PHP2Shell flaws four days before security patches were released on Wednesday. [...]
+- [FNT-15] 2026-10-22 | GitLab warns of new max severity code execution vulnerability
+  https://www.bleepingcomputer.com/news/security/gitlab-warns-of-new-max-severity-code-execution-vulnerability/
+  GitLab has released security patches for a maximum-severity Regular Expression Compiler flaw that can let remote attackers run arbitrary code on vulnerable servers. [...]
+- [FNT-15] 2026-10-22 | Authorities disrupt nearly 11,000 cybercrime networks in Africa
+  https://www.bleepingcomputer.com/news/security/authorities-disrupt-nearly-11-000-cybercrime-networks-in-africa/
+  Law enforcement agencies have disrupted nearly 11,000 cybercriminal networks and arrested more than 1,400 people in Operation Serengeti III, which targeted business email compromise, ransomware, and online scams. [...]
+- [FNT-15] 2026-10-21 | Google Chrome adds Gemini-powered scam detection, warns users of ClickFix attacks
+  https://www.bleepingcomputer.com/news/google/google-chrome-adds-gemini-powered-scam-detection-warns-users-of-clickfix-attacks/
+  Chrome is getting new scam protections that use Gemini to detect deceptive websites and warn users when they copy suspicious commands from ClickFix attacks. [...]
+- [FNT-15] 2026-10-21 | Japan's Onamae Desktop Cloud hacked, up to 27,000 servers affected
+  https://www.bleepingcomputer.com/news/security/japans-onamae-desktop-cloud-hacked-up-to-27-000-servers-affected/
+  Hackers compromised the infrastructure of Onamae Desktop Cloud, a popular provider of VPS services in Japan, and installed malware on up to 26,739 customers' servers. [...]
+- [FNT-15] 2026-10-21 | Lazarus hackers use post-quantum cryptography for malware delivery
+  https://www.bleepingcomputer.com/news/security/lazarus-hackers-use-post-quantum-cryptography-for-malware-delivery/
+  North Korean hackers are using a post-quantum cryptographic mechanism to secure malicious payload delivery in new operations that combine old and new malware. [...]
+- [FNT-15] 2026-10-21 | CISA: Hackers chain Plex flaws in Plex2Shell attacks to breach servers
+  https://www.bleepingcomputer.com/news/security/cisa-hackers-chain-plex-flaws-in-plex2shell-attacks-to-breach-servers/
+  The U.S. Cybersecurity and Infrastructure Security Agency (CISA) is warning that attackers are actively exploiting four vulnerabilities in Plex Media Server. [...]
+
+== FNT-16 Aeronautica Militare, notizie meteo e clima ==
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Quando la meteorologia entra nella storia: il meteo come regista degli eventi umani
+  https://www.meteoam.it/it/in-primo-piano/quando-la-meteorologia-entra-nella-storia--il-meteo-come-regista-degli-eventi-umani
+  Le condizioni climatologiche e meteorologiche hanno spesso avuto un impatto significativo sui grandi eventi della Storia, segnando le sorti di guerre e rivoluzioni. Scopriamo insieme qualche esempio del passato con uno sguardo alle sfide meteorologiche del presente.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | COSMO General Meeting: la meteorologia numerica internazionale si incontra a Roma
+  https://www.meteoam.it/it/in-primo-piano/cosmo-general-meeting--la-meteorologia-numerica-internazionale-si-incontra-a-roma
+  La 28^ edizione dell’annuale appuntamento della comunità internazionale sulla modellistica numerica per la previsione meteorologica, è stata ospitata a Palazzo Salviati sede del Centro Alti Studi per la Difesa
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | L’estate 2026 è la più calda della serie storica per la rete osservativa AM
+  https://www.meteoam.it/it/in-primo-piano/l-estate-2026---la-pi--calda-della-serie-storica-per-la-rete-osservativa-am
+  La stagione che si sta concludendo ha superato anche il record del 2003, vediamolo nel dettaglio.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Pubblicati i nomi delle tempeste per la stagione 2026-2027
+  https://www.meteoam.it/it/in-primo-piano/pubblicati-i-nomi-delle-tempeste-per-la-stagione-2026-2027
+  La nuova stagione delle tempeste inizia nominalmente il 1° settembre 2026. Scopri i nomi che saranno utilizzati quest'anno per le perturbazioni più intense
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Nuova veste per il Meteo Museo Edmondo Bernacca
+  https://www.meteoam.it/it/in-primo-piano/nuova-veste-per-il-meteo-museo-edmondo-bernacca
+  Veste rinnovata per il Meteo Museo Edmondo Bernacca (MMEB) di Fivizzano (MS) che, nato nel 2018, inaugura un nuovo percorso museale all’insegna dell’interattività, della tecnologia e della passione per il mondo meteorologico.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Tra gli effetti del caldo: come nascono i temporali estivi
+  https://www.meteoam.it/it/in-primo-piano/tra-gli-effetti-del-caldo--come-nascono-i-temporali-estivi
+  Non solo temperature elevate. Una costante degli ultimi giorni sono stati anche i temporali intensi che, nelle ore più calde della giornata, si sono sviluppati nelle zone montuose o più interne del nostro territorio. Scopriamo insieme gli ingredienti alla base della loro formazione.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | 80 anni di storia: l'anniversario della stazione meteorologica di Gioia del Colle
+  https://www.meteoam.it/it/in-primo-piano/80-anni-di-storia--l-anniversario-della-stazione-meteorologica-di-gioia-del-colle
+  Ha tagliato un traguardo storico la stazione meteorologica di Gioia del Colle. Fondata il 15 maggio 1946, la struttura ha infatti da poco celebrato l’ottantesimo anniversario dalla sua costituzione.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | EUMETNET celebra 30 anni di cooperazione meteorologica europea
+  https://www.meteoam.it/it/in-primo-piano/eumetnet-celebra-30-anni-di-cooperazione-meteorologica-europea
+  Nel 2026 EUMETNET taglia il traguardo dei 30 anni di cooperazione tra i servizi meteorologici nazionali europei.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Il ritorno dell'Osservatorio di Montevergine nella rete osservativa AM
+  https://www.meteoam.it/it/in-primo-piano/il-ritorno-dell-osservatorio-di-montevergine-nella-rete-osservativa-am
+  Dopo 74 anni torna a far parte della rete osservativa del Servizio Meteorologico dell’Aeronautica Militare lo storico Osservatorio meteorologico di Montevergine.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Il Servizio Meteorologico dell’Aeronautica Militare al Salone Internazionale del Libro di Torino 2026
+  https://www.meteoam.it/it/in-primo-piano/il-servizio-meteorologico-dell-aeronautica-militare-al-salone-internazionale-del-libro-di-torino-2026
+  Non perdere la presentazione del nuovo libro sulla meteorologia
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Disponibile su meteoam.it la nuova mappa interattiva con le osservazioni della rete MeteoNetwork
+  https://www.meteoam.it/it/in-primo-piano/disponibile-su-meteoam-it-la-nuova-mappa-interattiva-con-le-osservazioni-della-rete-meteonetwork-
+  I dati della rete osservativa MeteoNetwork arrivano su meteoam.it: scopri la nuova mappa interattiva.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Il folding della tropopausa: formazione ed effetti sul volo
+  https://www.meteoam.it/it/in-primo-piano/il-folding-della-tropopausa--formazione-ed-effetti-sul-volo
+  Il fenomeno del folding della tropopausa rappresenta un interessante esempio di interazione tra stratosfera e troposfera con impatti significativi per l'attività di volo.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Giornata Meteorologica Mondiale 2026: l'Aeronautica Militare celebra al MUSAM. "Osservare oggi, proteggere domani"
+  https://www.meteoam.it/it/in-primo-piano/giornata-meteorologica-mondiale-2026--l-aeronautica-militare-celebra-al-musam---osservare-oggi--proteggere-domani-
+  L'Aeronautica Militare celebra a Vigna di Valle, nella suggestiva cornice del Museo Storico dell'Aeronautica Militare, la Giornata Meteorologica Mondiale 2026: una preziosa occasione di incontro e riflessione tra illustri relatori e studenti.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | El Niño: cosa succede quando oceano e atmosfera si parlano
+  https://www.meteoam.it/it/in-primo-piano/el-ni-o--cosa-succede-quando-oceano-e-atmosfera-si-parlano
+  Fenomeno osservato da centinaia di anni dai pescatori peruviani, El Niño rappresenta uno degli esempi più significativi di interazione tra atmosfera ed oceano inserendosi all’interno del più ampio fenomeno climatico ENSO.
+- [FNT-16] 2026-10-23 (data non indicata dalla fonte: prima raccolta) | Il ruolo dell’Aeronautica Militare nel National Collaboration Programme del progetto Copernicus
+  https://www.meteoam.it/it/in-primo-piano/il-ruolo-dell-aeronautica-militare-nel-national-collaboration-programme-del-progetto-copernicus
+  L’Aeronautica Militare tra i protagonisti nell’elaborazione e diffusione dei prodotti sviluppati nell’ambito del programma europeo Copernicus per il monitoraggio dello stato del nostro pianeta.
+
+== FNT-17 ANSA, Economia ==
+- [FNT-17] 2026-10-23 | A Maker Faire Roma il lancio del premio 'Innovators under 35 Europe'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/a-maker-faire-roma-il-lancio-del-premio-innovators-under-35-europe_69aca714-9809-4478-bb3b-7f9d00618373.html
+  Le candidature saranno aperte dal 23 ottobre 2026 al 15 maggio 2027
+- [FNT-17] 2026-10-23 | Borsa: l'Europa in calo dopo Wall Street, Milano -0,6%
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/borsa-leuropa-in-calo-dopo-wall-street-milano-06_5e4c7fc9-86b2-4ce9-abd8-cc6727dd270e.html
+  Scivola Stellantis, corre Eni. Lo spread tra Btp e Bund a 124 punti
+- [FNT-17] 2026-10-23 | Wall Street apre in calo, Dj -0,97%, nasdaq -0,37%
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/wall-street-apre-in-calo-dj-097-nasdaq-037_bf4c0924-ada5-4d5f-bfcf-a6865a3ba0d4.html
+  S 500 perde lo 0,54%
+- [FNT-17] 2026-10-23 | Pietroluongo (Mts), Mef ha intercettato esigenze di diverse fasce risparmiatori
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/pietroluongo-mts-mef-ha-intercettato-esigenze-di-diverse-fasce-risparmiatori_b021a614-efca-4972-9562-41ae3325d555.html
+  'Ritocco al rialzo cedole risponde a oscillazioni mercato a tutela dei risparmiatori'
+- [FNT-17] 2026-10-23 | Il petrolio in rialzo a New York a 101,33 dollari
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/il-petrolio-in-rialzo-a-new-york-a-10133-dollari_c2caeb53-6666-4e93-9768-d2ba6dd9ce91.html
+  Quotazioni salgono dell'1,86%
+- [FNT-17] 2026-10-23 | Mef, rivisti al rialzo i tassi cedolari del Btp Valore e del Btp Valore Insieme
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/mef-rivisti-al-rialzo-i-tassi-cedolari-del-btp-valore-e-del-btp_af85601c-5de4-4a2e-b1a8-b9612e193e50.html
+  'Per tenere conto dell'evoluzione delle condizioni di mercato'
+- [FNT-17] 2026-10-23 | Confindustria: 'Lavoro e giovani, non disperdere la spinta del Pnrr'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/confindustria-lavoro-e-giovani-non-disperdere-la-spinta-del-pnrr_d0b2c364-dc69-4aad-ada7-d8ca5d293c82.html
+  Di Stefano: "Proposte concrete" su competenze e orientamento, ma "dobbiamo decidere ora"
+- [FNT-17] 2026-10-23 | Il Btp Valore e il Btp Valore Insieme chiudono a 16,6 miliardi
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/il-btp-valore-e-il-btp-valore-insieme-chiudono-a-oltre-166-miliardi_e7a59a52-80cd-462d-be02-4b1e96198969.html
+  Il primo raccoglie circa 12,07 miliardi, il secondo circa 4,55 miliardi
+- [FNT-17] 2026-10-23 | Borsa: l'Europa in rosso guarda al Medioriente, a Milano corre Eni
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/borsa-leuropa-in-rosso-guarda-al-medioriente-a-milano-corre-eni_b4ce6162-cca3-48f6-84e9-d9ae7715499e.html
+  Prosegue la corsa del petrolio, spread e titoli di Stato poco mossi
+- [FNT-17] 2026-10-23 | La Banca Centrale russa lascia il tasso di riferimento al 14%
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/la-banca-centrale-russa-lascia-il-tasso-di-riferimento-al-14_734237e6-5c47-40a8-b317-333b6add7022.html
+  Prosegue politica di allentamento decisa a settembre
+- [FNT-17] 2026-10-23 | Upb, Pil 2026 intorno all'1%, risente dell'inflazione, rischi al ribasso
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/upb-pil-2026-intorno-all1-risente-dellinflazione-rischi-al-ribasso_2028eb4f-8e52-47ad-8397-427bd110395a.html
+  'Quadro coerente con stime governo. Segnali di diffusione del caro-prezzi'
+- [FNT-17] 2026-10-23 | Paolo Moretti nominato amministratore delegato di Rina
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/paolo-moretti-nominato-amministratore-delegato-di-rina_f80211b3-5367-4c29-af54-2b321dd4a0b6.html
+  Salerno: "Avviamo un nuovo ciclo di sviluppo"
+- [FNT-17] 2026-10-23 | Taxi, 'siamo tanti, manifestazione del 26 si sposta di fronte al Mit '
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/taxi-siamo-tanti-manifestazione-del-26-si-sposta-di-fronte-al-mit_774dc0ee-f604-4462-afb6-78da181501a8.html
+  Si terrà in Piazzale di Porta Pia
+- [FNT-17] 2026-10-23 | Tabarelli, 'dopo la guerra enormi quantità di energia, tranquilli per secoli'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/tabarelli-dopo-la-guerra-enormi-quantita-di-energia-tranquilli-per-secoli_941bcb6c-dad3-45a5-acd2-4a9afdb2d195.html
+  'Ritornare alla realtà e parlare di cose concrete e dei problemi della gente"
+- [FNT-17] 2026-10-23 | Prime autobotti sulle isole del golfo di Napoli ma saltano ancora corse
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/prime-autobotti-sulle-isole-del-golfo-di-napoli-ma-saltano-ancora-corse_612379e8-c541-4b98-936f-3aa79e2ddf38.html
+  Partenze soppresse a causa di scorte insufficienti. Si riempiono scaffali supermercati
+- [FNT-17] 2026-10-23 | Anghileri (Confindustria), 'L'AI oggi è la sfida decisiva, il Paese non cresce da 25 anni'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/anghileri-confindustria-lai-oggi-e-la-sfida-decisiva-il-paese-non-cresce-da-25-anni_d42350eb-3bb3-4481-a482-8cf5a289562e.html
+  'Una strategia italiana c'è, ora va tradotta effettivamente in azione'
+- [FNT-17] 2026-10-23 | Camere commercio di Austria, Italia, Slovenia e Croazia riunite, 'meno burocrazia'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/camere-commercio-di-austria-italia-slovenia-e-croazia-riunite-meno-burocrazia_134a77bd-1ceb-453f-a385-7eeb1cedde2b.html
+  "Le regole europee devono essere proporzionate alla realtà delle nostre imprese"
+- [FNT-17] 2026-10-23 | Protesta Tir e agricoltori, ritardi e carenze di pesce e ortofrutta al Nord
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/protesta-tir-e-agricoltori-ritardi-e-carenze-di-pesce-e-ortofrutta-al-nord_454be286-e6b3-4f82-bf13-a02074dbc499.html
+  Bmti: 'Meglio per prodotti locali e a media-lunga conservazione da mele a castagne'
+- [FNT-17] 2026-10-23 | Torna l'ora solare. Terna, con quella legale risparmiati 90 milioni di euro
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/torna-lora-solare.-terna-con-quella-legale-risparmiati-90-milioni-di-euro_886f8155-8e4c-4a66-8ea9-079c5a377ff4.html
+  Nella notte tra sabato e domenica. Minori consumi di energia per 300 milioni di kWh
+- [FNT-17] 2026-10-23 | Torna l'ora solare, 'con quella legale risparmiati 90 milioni di euro'
+  https://www.ansa.it/sito/notizie/economia/2026/10/23/torna-lora-solare-con-quella-legale-risparmiati-90-milioni-di-euro_3b0f87be-a16f-4cd2-9b08-287a81c83690.html
+  Lancette indietro di un'ora tra le 3 e le 2 nella notte tra sabato e domenica. Oltre ai minori consumi di energia con l'ora legale si sono ridotte le emissioni di CO2 per circa 140 mila tonnellate
+
+== FNT-18 Il Sole 24 Ore, Finanza ==
+- [FNT-18] 2026-10-23 | Francia, ecco cosa c’è dietro la fuga dai titoli di Stato di Parigi
+  https://www.ilsole24ore.com/art/francia-ecco-cosa-c-e-dietro-fuga-titoli-stato-parigi-AJWUFrrB
+  E’ altamente probabile che oggi Moody’s declassi il rating sovrano della Francia dall’attuale Aa3 alla A1. Una retrocessione già scontata dai mercati, uno dei fattori che hanno contribuito al violento...
+- [FNT-18] 2026-10-23 | Borse in calo, a Milano corre Eni dopo i conti. Greggio al top da maggio
+  https://www.ilsole24ore.com/art/borsa-indici-venerdi-23-ottobre-2026-AJwiGEsB
+  Rimane sotto la lente il mercato dei Titoli di Stato, mentre in serata è in calendario il rating Moody's del debito pubblico francese. Gli investitori continuano a interrogarsi anche sulle future mosse del presidente americano Donald Trump in Iran
+- [FNT-18] 2026-10-23 | Eni, conti in forte crescita e cedola straordinaria a dicembre. Descalzi: «Risultati eccellenti»
+  https://www.ilsole24ore.com/art/eni-conti-forte-crescita-e-cedola-straordinaria-dicembre-descalzi-risultati-eccellenti-AJBVhmrB
+  Il gruppo rivede al rialzo la stima di crescita dell’E&P e migliora la proiezione sul flusso di cassa per l’intero esercizio (16,5 miliardi). Piano di buyback rafforzato a 3,8 miliardi
+- [FNT-18] 2026-10-23 | Lusso, primi nove mesi fra luci e ombre: Zegna in crescita, su Hermès pesa la Cina
+  https://www.ilsole24ore.com/art/lusso-primi-nove-mesi-luci-e-ombre-zegna-crescita-hermes-pesa-cina-AJErJ1rB
+  Nel terzo trimestre Kering prosegue il rilancio, ma Gucci perde ancora il 4%. Prada primo in Italia con ricavi a 4,5 miliardi (+4%)
+- [FNT-18] 2026-10-22 | Spotify prevede utile superiore alle stime di Wall Street per fine anno
+  https://www.ilsole24ore.com/art/spotify-prevede-utile-superiore-stime-wall-street-fine-anno-AJXUdLrB
+  La trimestrale della piattaforma musicale: 672 milioni di utile, 4,97 miliardi di fatturato e 788 milioni di utenti attivi
+- [FNT-18] 2026-10-22 | Barclays taglia 5mila dipendenti con la crescita dell’Ai
+  https://www.ilsole24ore.com/art/barclays-taglia-5mila-dipendenti-la-crescita-dell-ai-AJcc47qB
+  Le efficienze dell’intelligenza artificiale iniziano a entrare nel conto economico e a minacciare l’organico. Barclays ha annunciato 5mila tagli legati ala crescita dell’Ai nella profittabilità. Il gruppo bancario inglese ha...
+- [FNT-18] 2026-10-22 | A Francoforte Qiagen corre dopo l'offerta di Eqt da 10,8 miliardi
+  https://www.ilsole24ore.com/art/a-francoforte-qiagen-corre-l-offerta-eqt-108-miliardi-AJZXnCrB
+  Positiva di riflesso a Milano anche Diasorin, partner dell'azienda biotech con sede nei Paesi Bassi
+- [FNT-18] 2026-10-22 | Add Capital con CX Living rilancia sugli studentati: in corsa per rilevare il 65%
+  https://www.ilsole24ore.com/art/add-capital-cx-living-rilancia-studentati-corsa-rilevare-65percento-AJFP4hqB
+  L’operazione ha un valore di 400 milioni tra acquisto e investimenti per la crescita. Abbadessa agisce tramite il veicolo Add Value Fund 1 nell’ambito di una jv. La società di student housing conta un fatturato di 54 milioni, 25 asset (di cui 13 operativi) e un miliardo di Aum
+- [FNT-18] 2026-10-21 | Meta, ricavi oltre le stime. Titolo in rialzo. In rosso i flussi di cassa
+  https://www.ilsole24ore.com/art/meta-ricavi-oltre-stime-investimenti-mandano-rosso-flussi-cassa-AJqPWiqB
+  Utile netto sotto il consenso. Solidità del business pubblicitario, ma crescenti pressioni su redditività e free cash flow. Nell’after hours titolo in rialzo

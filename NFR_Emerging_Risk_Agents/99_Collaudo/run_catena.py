@@ -141,8 +141,18 @@ class Banco:
     def esegui(self, *argomenti):
         cmd = [sys.executable, str(CAMPO / "esegui_ciclo_locale.py"), "--workbook", str(self.wb),
                "--kernel", str(KERNEL), "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
+        # NFR_ATTESA_LUCCHETTO=0: nel collaudo nessun collega sincronizza la cartella, la presa in due tempi non serve.
         r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                           env={**__import__("os").environ, "PYTHONIOENCODING": "utf-8"})
+                           env={**__import__("os").environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
+        return r.returncode, r.stdout + r.stderr
+
+    def esegui_conf(self, chiavi, *argomenti):
+        """Come esegui, con chiavi di configurazione passate come variabile d'ambiente NFR_CONF_EXTRA (solo collaudo)."""
+        cmd = [sys.executable, str(CAMPO / "esegui_ciclo_locale.py"), "--workbook", str(self.wb),
+               "--kernel", str(KERNEL), "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0",
+                                "NFR_CARTELLA_LAVORO": chiavi.get("cartella_lavoro", "")})
         return r.returncode, r.stdout + r.stderr
 
     def scrivi_json(self, nome, dati):
@@ -505,7 +515,8 @@ def passi():
             "segnalazioni": (segnalazioni_in_validazione, "A5 facoltativo e segnalazioni in validazione (passo 12)"),
             "riapertura": (riapertura, "la riapertura della validazione (passo 13)"),
             "registro_unico": (registro_unico, "il registro unico: radar e osservazione (passo 14, D-79)"),
-            "aggiornamento_08b": (aggiornamento_08b, "l'aggiornamento dal template 2026-10-08b, lista di osservazione (passo 11c)")}
+            "aggiornamento_08b": (aggiornamento_08b, "l'aggiornamento dal template 2026-10-08b, lista di osservazione (passo 11c)"),
+            "piu_analisti": (piu_analisti, "lucchetto, copia di lavoro, allegati e archivi automatici (passo 15, D-83)")}
 
 
 def esegui_passi(nomi, titolo):
@@ -1057,6 +1068,9 @@ def riapertura(e):
         n_storico = len(s0["validazione"])
         codice, out = b.esegui("riapri")
         s1 = b.leggi()
+        traccia = b.uscita / "Cicli" / ciclo / f"Riapertura_{ciclo}.json"
+        e.verifica(codice == 0 and traccia.exists() and carica(traccia)["ciclo"] == ciclo and carica(traccia)["rischi"] == "tutti",
+                   "13. riapri lascia la traccia Riapertura_<ciclo>.json per l'app (D-83)", out)
         e.verifica(codice == 0 and per_oggetto(s1) == attesi and rr(s1) == rr(s0),
                    "13. riapri: rischi (15: 12 del radar e 3 in osservazione), KRI in vigore e azioni aperte tornano nella "
                    "griglia; il registro non cambia", f"{out}\ngriglia {per_oggetto(s1)}\natteso {attesi}")
@@ -1121,6 +1135,10 @@ def riapertura(e):
                    and conta["Respinto (riapertura)"] == 3 and all(r["Stato"] == "Applicata" for r in nuove),
                    "13. storico: decisioni con il suffisso (riapertura), distinte dalle proposte degli agenti", str(conta))
         e.verifica(not s2["griglia"], "13. dopo valida la griglia e' vuota", str(list(s2["griglia"])[:5]))
+        chiuse = list(traccia.parent.glob(f"Riapertura_{ciclo}_*.json"))
+        e.verifica(not traccia.exists() and len(chiuse) == 1 and carica(chiuse[0])["validata_da"] == validatore
+                   and (traccia.parent / f"Report_comitato_{ciclo}.pdf").exists(),
+                   "13. valida chiude la traccia della riapertura (con chi ha validato) e rigenera il report", out[-600:])
         verifica_integrita(e, s2, "13. dopo la validazione riaperta")
         verifica_report(e, s2, "13. dopo la validazione riaperta")
 
@@ -1131,11 +1149,70 @@ def riapertura(e):
                    and per_oggetto(s3)["KRI"] == sum(1 for k in s2["kri"] if k["Ciclo"] == ciclo and k["ID_Rischio"] == "NFR-02"
                                                      and k["In_Vigore"] == "Sì"),
                    "13. riapri --rischi NFR-02: solo il rischio, i suoi KRI e le sue azioni", f"{out}\n{per_oggetto(s3)}")
-        codice, out = b.esegui("valida", "--periodo", ciclo, "--validatore", validatore)
+        codice, out = b.esegui("valida", "--periodo", ciclo, "--validatore", validatore, "--senza-report")
         s4 = b.leggi()
+        e.verifica(codice == 0 and "Report al comitato" not in out
+                   and len(list(traccia.parent.glob(f"Report_comitato_{ciclo}_*.pdf"))) == 0,
+                   "13. valida --senza-report: il report non si rigenera", out[-400:])
         e.verifica(codice == 0 and rr(s4) == rr(s2) and all(r["Decisione"] == "Invariato (riapertura)"
                                                              for r in s4["validazione"][len(s2["validazione"]):]),
                    "13. riaprire e validare senza toccare niente: il registro resta com'era", out)
+
+
+def piu_analisti(e):
+    """Passo 15 (D-83): piu' analisti sullo stesso registro. Il lucchetto di un collega ferma i comandi che scrivono
+    (niente scritto); uno scaduto si prende; sblocca lo toglie e lo registra. Un registro aperto in un programma di
+    questo PC ferma prima di scrivere. La scrittura avviene su una copia di lavoro: niente file lasciati accanto al
+    registro, nessuna copia rimasta nella cartella di lavoro. In piu' (F1): allegati di A3 e A4 dalla baseline, prompt
+    archiviati con il ciclo, PDF delle schede."""
+    import datetime as dt_
+    import win32con
+    import win32file
+    with tempfile.TemporaryDirectory() as tmp:
+        b = Banco(tmp)
+        cartella_lucchetto = b.uscita / "_Lucchetto"
+        cartella_lucchetto.mkdir(parents=True)
+        adesso = dt_.datetime.now().replace(microsecond=0)
+        collega = {"id": "x", "utente": "Collega", "pc": "ALTRO-PC", "comando": "valida", "inizio": adesso.isoformat(),
+                   "scadenza": (adesso + dt_.timedelta(hours=1)).isoformat()}
+        (cartella_lucchetto / "registro.json").write_text(json.dumps(collega), encoding="utf-8")
+        prima = sha(b.wb)
+        codice, out = b.esegui("griglia")
+        e.verifica(codice == 1 and "in uso" in out and "Collega" in out and sha(b.wb) == prima,
+                   "15. lucchetto di un collega: il comando che scrive si ferma, niente scritto", out)
+        codice, out = b.esegui("diagnosi")
+        e.verifica("in uso" not in out, "15. un comando che non scrive (diagnosi) non guarda il lucchetto", out[-300:])
+        codice, out = b.esegui("sblocca", "--motivo", "PC del collega spento a meta' validazione")
+        log = (cartella_lucchetto / "sblocchi.log").read_text(encoding="utf-8")
+        e.verifica(codice == 0 and not (cartella_lucchetto / "registro.json").exists() and "Collega" in log and "spento" in log,
+                   "15. sblocca toglie il lucchetto e registra chi, perche' e di chi era", out + log)
+        scaduto = dict(collega, scadenza=(adesso - dt_.timedelta(minutes=1)).isoformat())
+        (cartella_lucchetto / "registro.json").write_text(json.dumps(scaduto), encoding="utf-8")
+        lavoro = Path(tmp) / "lavoro"
+        codice, out = b.esegui_conf({"cartella_lavoro": str(lavoro)}, "griglia")
+        accanto = sorted(f.name for f in b.wb.parent.iterdir() if f.name.startswith("~$"))
+        e.verifica(codice == 0 and sha(b.wb) != prima and not (cartella_lucchetto / "registro.json").exists()
+                   and not accanto and lavoro.exists() and not any(lavoro.iterdir()),
+                   "15. lucchetto scaduto: il comando lo prende, scrive dalla copia di lavoro, lo lascia; nessun file "
+                   "temporaneo accanto al registro, nessuna copia rimasta", f"{out}\n{accanto}")
+        handle = win32file.CreateFile(str(b.wb), win32con.GENERIC_READ, 0, None, win32con.OPEN_EXISTING, 0, None)
+        try:
+            codice, out = b.esegui("griglia")
+        finally:
+            handle.Close()
+        e.verifica(codice == 1 and "aperto in un programma di questo PC" in out,
+                   "15. registro aperto in un programma di questo PC: fermo prima di scrivere", out)
+        codice, out = b.esegui("baseline")
+        base = carica(b.uscita / "Baseline_corrente.json")
+        import input_a1
+        a3, a4 = (b.uscita / "Input_A3.txt").read_text(encoding="utf-8"), (b.uscita / "Input_A4.txt").read_text(encoding="utf-8")
+        e.verifica(codice == 0 and input_a1.leggi_baseline(a3) == base and input_a1.leggi_baseline(a4) == base
+                   and a3.startswith("INPUT DI A3") and a4.startswith("INPUT DI A4") and "Input_A3.txt" in out,
+                   "15. baseline scrive gli allegati di A3 e A4 (AU7) con la stessa baseline del .json", out)
+        codice, out = b.esegui("trimestrale", "--payload", DATI / "run1_A1_2026Q3.json", "--challenger", DATI / "run_A5_2026Q3.json")
+        prompt = b.uscita / "Cicli" / "2026Q3" / "Prompt_in_uso"
+        e.verifica(codice == 0 and sorted(f.name for f in prompt.glob("A*.md")) == sorted(f.name for f in (CAMPO.parent / "02_Agenti").glob("A*.md")),
+                   "15. trimestrale archivia i prompt degli agenti del pacchetto con il ciclo (AU1)", out[-500:])
 
 
 def registro_unico(e):
@@ -1690,6 +1767,9 @@ def catena(e):
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", dec["validatore"])
         e.verifica(codice == 0 and "53 righe" in out and "rettificate 4 (5 valori cambiati), respinte 1" in out,
                    "2b. validazione del 2026Q3 applicata: 4 righe rettificate (5 valori), 1 respinta (un'azione)", out)
+        pdf_valida = b.uscita / "Cicli" / "2026Q3" / "Report_comitato_2026Q3.pdf"
+        e.verifica(pdf_valida.exists() and pdf_valida.stat().st_size > 10000 and "Report al comitato del ciclo 2026Q3" in out,
+                   "2b. valida rigenera da sola il report al comitato del ciclo validato (D-83)", out[-600:])
         nfr10 = file_rischio(b.uscita / "Spiegazioni", "NFR-10") or ""
         nfr08 = file_rischio(b.uscita / "Spiegazioni", "NFR-08") or ""
         e.verifica("VALIDATI" in (b.uscita / "Spiegazioni" / "Ciclo.txt").read_text(encoding="utf-8")
@@ -1768,8 +1848,9 @@ def catena(e):
                    "2b. report: PDF del report al comitato dal registro validato, registro intatto", out)
         codice, out = b.esegui("report", "--con-lavoro")
         vecchi = list(pdf.parent.glob("Report_comitato_2026Q3_*.pdf"))
-        e.verifica(codice == 0 and pdf.exists() and len(vecchi) == 1 and "Registro, Parametri" in out,
-                   "2b. report --con-lavoro: aggiunge Registro e Parametri; la versione precedente del PDF e' conservata", out)
+        e.verifica(codice == 0 and pdf.exists() and len(vecchi) == 2 and "Registro, Parametri" in out,
+                   "2b. report --con-lavoro: aggiunge Registro e Parametri; le versioni precedenti del PDF (di valida e del "
+                   "primo report) sono conservate", out)
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", dec["validatore"])
         e.verifica(codice == 1 and "niente da validare" in out, "2b. rilanciare valida sullo stesso ciclo: niente da fare", out)
         schede_a6(e, b, s)

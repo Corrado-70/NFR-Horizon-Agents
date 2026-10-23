@@ -106,9 +106,16 @@ Lo script le archivia da solo, tranne il testo dei prompt:
   prima della validazione).
 - Fuori ciclo: l'atto di ogni rischio dismesso (`Archivio_Cicli/Dismissioni/<rischio>_<data>.json`:
   chi, quando, perche', KRI e azioni toccati).
-- **Il testo dei prompt in uso** (i quattro file di `02_Agenti` e la versione del
+- **Il testo dei prompt in uso** (i file di `02_Agenti` e la versione del
   kernel, `fonti.md` compreso): si modificano nell'interfaccia di Agent Builder o Copilot Studio
-  senza traccia, quindi vanno fotografati a ogni ciclo.
+  senza traccia, quindi vanno fotografati a ogni ciclo. Dal 23/10/2026 (D-83) `trimestrale`
+  archivia da solo i prompt del pacchetto in `Prompt_in_uso/`; se in Agent Builder ci sono
+  istruzioni diverse, vanno copiate li' a mano.
+- Il report al comitato (`Report_comitato_<ciclo>.pdf`, rigenerato da `valida` e da `report`,
+  con le versioni precedenti) e il PDF delle schede; dopo una riapertura, la sua traccia
+  (`Riapertura_<ciclo>_<ora>.json`: chi ha riaperto, che cosa, chi ha validato).
+- Fuori ciclo: gli sblocchi del lucchetto (`Archivio_Cicli/_Lucchetto/sblocchi.log`: chi, quando,
+  perche', di chi era).
 - Chi ha validato e quando, e ogni decisione (`Validazione_<ciclo>.json`,
   `NFR_Registro_<ciclo>_validato.xlsx`; nel registro: foglio dati
   Storico_Validazioni, una riga per campo, e colonne `Approvato_Da`,
@@ -125,8 +132,10 @@ Lo script le archivia da solo, tranne il testo dei prompt:
 | Deriva mediatica | la copertura sostituisce l'evidenza | soglia di 3 segnali netti; A3 non modifica score; C6 |
 | Affidamento su A4 | il parere su richiesta diventa una valutazione di fatto | A4 non scrive, non propone numeri, rimanda al ciclo trimestrale |
 | Ciclo scritto a meta' | rischi mancanti letti come rischio nullo | controllo di copertura, gate prima del salvataggio, #N/A invece di zero |
+| Due analisti sullo stesso registro (D-83) | due comandi scrivono insieme, oppure un collega salva il registro (anche da Excel per il web) mentre lo script lavora: una delle due scritture si perde senza che nessuno se ne accorga | lucchetto nell'archivio condiviso (chi, da quale PC, con quale comando, da quando), con la presa in due tempi per il ritardo di OneDrive; la garanzia e' la copia di lavoro: il registro si sostituisce solo se e' ancora quello copiato all'inizio (impronta SHA-256), altrimenti FERMATO e niente scritto; lo sblocco a mano resta registrato |
+| Salvataggio a meta' con OneDrive | il Salvataggio automatico di un registro in OneDrive salva righe scritte prima di un fermo dei controlli | lo script lavora su una copia locale, fuori da OneDrive, con `AutoSaveOn` spento; il registro vero cambia solo con la sostituzione finale, dopo i controlli |
 | Prompt modificati senza traccia | il comportamento cambia fra cicli | fotografia dei prompt per ciclo; `componi_prompt.py --verifica` |
-| Retrieval incompleto | il planner salta una knowledge source | kernel nelle istruzioni; baseline allegata esplicitamente |
+| Retrieval incompleto | il planner salta una knowledge source | kernel nelle istruzioni; baseline allegata esplicitamente a ogni agente che la usa (A1, A8; dal 23/10 anche A3 e A4, AU7: niente piu' baseline nella knowledge, che poteva essere vecchia) |
 | Kernel generico | descrittori e soglie non della Banca | adattamento obbligatorio prima del deploy (00_LEGGIMI) |
 | Validazione non indipendente | nel pilota una sola persona lancia gli agenti e ne valida le proposte (`04_Riferimenti/DECISIONI.md`, D-13) | **limite accettato per il pilota** (D-30): dichiararlo nel report al comitato; la quota di rettifiche resta visibile per ciclo; da riconsiderare prima dell'esercizio pieno (G4) |
 | Validazione di facciata | il validatore lancia `valida` senza guardare: con la griglia (D-67) una riga non toccata vale come accettata, quindi accettare tutto non chiede nessun gesto e nello storico non si distingue da un'accettazione ragionata | la quota di rettifiche per ciclo e' nel Registro (G4, "Rettifiche applicate"), nel riepilogo di `valida` e nel foglio Storico_Validazioni: una quota sempre a zero e' un segnale da portare al comitato; i rischi scritti superando un bloccante di A5 (⚑) chiedono la Motivazione anche se non cambia nulla; Score e Margine di Mosca della griglia mostrano l'effetto di ogni valore prima di confermarlo |

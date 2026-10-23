@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; la sezione 2-duotricesies, versione tutta in Copilot Studio, e' sul ramo `copilot-studio-pieno`).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1267,6 +1267,74 @@ se la nota torna sugli stessi rischi.
   - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
     rigenerato se serve;
   - una mail sui fogli del workbook.
+
+## 2-tertricesies. 23/10: due rami; su `main` la strada A con l'app di orchestrazione, tappa M1 (D-83)
+
+**Rami** (richiesta dell'utente, regola in `CLAUDE.md`):
+- `main`, cartella `Documents\NFR Horizon Agents`: la versione in uso, Agent Builder e motore Python sul PC;
+- `copilot-studio-pieno`, cartella `Documents\NFR Horizon Agents CS` (git worktree): la versione tutta in Copilot
+  Studio (D-82, sezione 2-duotricesies del ramo).
+
+Le modifiche comuni nascono su `main` e passano al ramo con `git merge main` (poi `genera_CS.py` nel ramo); il ramo
+non si unisce a `main` senza una decisione dell'utente. Il remote si chiama `main` come il ramo, da qui l'avviso
+"refname 'main' is ambiguous".
+
+**Decisioni** (D-83, chiude A-15 e A-16): su `main` la strada A, cioe' agenti in Agent Builder e un'app Python di
+orchestrazione; niente V4, il registro resta l'Excel di oggi; il report HTML sara' una seconda uscita del comando
+`report` ("un secondo tipo di report al comitato"). Scelte del piano: finestra tkinter, risposte dagli appunti piu' il
+file, piu' analisti sullo stesso registro. Piano a tappe nel TODO, sezione 4: M1 motore, M2 app, M3 installazione, M4
+report HTML.
+
+**Tappa M1, fatta**:
+- `07_Senza_Studio/lucchetto.py`: lucchetto `Archivio_Cicli/_Lucchetto/registro.json` per i comandi che scrivono,
+  presa in due tempi (attesa `attesa_lucchetto`, 5 secondi; `NFR_ATTESA_LUCCHETTO=0` in collaudo e demo), scadenza 2
+  ore, copia in conflitto di OneDrive letta come un collega, comando `sblocca --motivo` registrato in `sblocchi.log`.
+- Copia di lavoro (`sessione_registro` in `esegui_ciclo_locale.py`): le sei sessioni in scrittura lavorano su una copia
+  in `%LOCALAPPDATA%\NFR\lavoro`; il registro si sostituisce alla fine solo se l'impronta non e' cambiata, altrimenti
+  FERMATO; registro aperto sul PC: fermo prima di scrivere. `SALVATO` vuol dire "sostituito". `AutoSaveOn` spento.
+- AU7: `baseline` scrive `Input_A3.txt` e `Input_A4.txt`; i prompt di A3 e A4 leggono la baseline solo dall'allegato
+  (A3 7.688 caratteri, A4 5.708). Il prompt schedulato di A3 non serve piu' (non porta allegati).
+- Automatismi: `valida` del ciclo corrente rigenera il report (`--senza-report`); `trimestrale` archivia i prompt in
+  `Prompt_in_uso/`; `schede` fa anche il PDF; `riapri` lascia `Riapertura_<ciclo>.json`, chiusa da `valida`.
+- `configurazione.json`: `utente`, `attesa_lucchetto`, facoltativa `cartella_lavoro`.
+- Collaudo: `test_app.py` (12 verifiche senza Excel); gruppo `piu_analisti` (passo 15) della catena; report da `valida`
+  e traccia della riapertura nei gruppi esistenti. Kit di Copilot Studio rigenerato (`input_a1.py` e' nello script
+  della skill).
+- Documenti: guida (0.2, 0.3, 0-bis, 1, 2, 3, 3-ter, 7, 8, 9), 00_LEGGIMI, README della variante locale,
+  controlli_e_model_risk, DECISIONI (D-82 riportata dal ramo, D-83), TODO, PROMPT_MASTER (trappole 122-126; le
+  113-121 sono del ramo), LEGGIMI del collaudo, documentazione di A3 e A4, presentazione (slide dei comandi, del
+  trimestre, di A3 e A4).
+
+**In Banca** (TODO B5-bis): copiare `07_Senza_Studio` e `02_Agenti`; `utente` in `configurazione.json`; reincollare A3 e
+A4; togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; nessun `aggiorna-registro`.
+
+**Tappa M2, fatta lo stesso giorno**: l'app. `NFR.cmd` apre `app_nfr.py` (finestra tkinter: stato, prossimo passo, un
+pulsante per processo, passo in corso, log colorato); i processi sono in `flussi.py` su un Ambiente (la finestra o,
+nel collaudo, `AmbienteFinto`); `stato.py` legge lo stato dall'archivio condiviso senza Excel; `ingresso.py` riceve le
+risposte copiate (recinti, testo attorno, risposta tagliata, agente dallo schema, In_arrivo); `appunti.py` ascolta gli
+appunti; `esecutore.py` lancia il motore e scrive il log. Ripresa di un processo interrotto dalla risposta gia' in
+`In_arrivo`. Correzione nella M1 trovata scrivendo lo stato: il PDF di `valida` si esporta in una cartella temporanea
+e si pubblica solo dopo la sostituzione del registro e dopo `Validazione_<ciclo>.json` (`esporta_pdf`,
+`pubblica_report`). Collaudo: `test_app.py` 47/47 (lucchetto, copia di lavoro, ingresso, stato, flussi, lanciatore).
+Documenti: guida (sezione "L'app NFR"), 00_LEGGIMI, PROMPT_MASTER (trappole 127-129), TODO, `configurazione_esempio.json`
+con `link_agenti`.
+
+**Sera del 23/10, richieste dell'utente**:
+- le risposte si **incollano nell'app** (riquadro "Risposta dell'agente", Ctrl+V), con in piu' l'ascolto degli appunti
+  (`ascolta_appunti`) e "Scegli file...";
+- gli agenti possono essere **in Agent Builder o in Copilot Studio** (casella "Agenti"): stessi nomi, stessa cartella
+  `In_arrivo`, stesso registro, origine annotata; `link_agenti` piatto o per versione; il JSON si legge anche dentro il
+  campo `text` dei record di Copilot Studio;
+- la finestra va bene su **1920x1080** anche con la scala al 150% (si apre ingrandita fino a 1200 pixel di altezza);
+- **documentazione d'uso completa** nella guida: sezione "L'app NFR: uso passo per passo"; agenti nella 0.2 (3-bis, link
+  per l'app; niente prompt schedulato di A3) e nella nuova 0.2-bis (gli stessi agenti in Copilot Studio); tabella
+  delle voci di `configurazione.json` nella 0.3.
+- Avanzamento voce per voce, con le spunte: `Analisi_Architettura/18_App_orchestrazione.md`.
+- Collaudo: catena completa 375/375 in 61 minuti (13 gruppi, compreso `piu_analisti`); `test_app.py` 49/49; rilancio
+  dei gruppi `catena` (178/178), `riapertura` (28/28), `piu_analisti` (7/7) dopo la correzione della pubblicazione del report; demo rigenerata e `REPORT_demo.md` riallineato.
+
+**Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
+(report HTML).
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
