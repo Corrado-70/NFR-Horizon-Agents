@@ -160,9 +160,8 @@ ha uno schema proprio.
 ## Baseline (prodotta dallo script, non da un agente)
 
 `esegui_ciclo_locale.py baseline` scrive `Baseline_corrente.json` (e una copia
-identica `Baseline_corrente.txt`, perche' la knowledge di Agent Builder non
-legge .json), input di
-A1, A3, A4 e A5: `ciclo_precedente`, `data_riferimento_precedente`,
+identica `Baseline_corrente.txt`, da leggere a mano), input di
+A1, A3, A4 e A5, che la ricevono negli allegati `Input_<agente>` (D-84): `ciclo_precedente`, `data_riferimento_precedente`,
 `ciclo_da_valutare`, `data_riferimento`, `rischi[]` (id, nome, event_type,
 driver, owner, presidio dei controlli, anni di adeguamento (dall'anagrafica), impatto,
 velocity (null = non valutata), prossimita, probabilita, esito_precedente, razionale, fonti,

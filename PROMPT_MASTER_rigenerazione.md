@@ -1709,7 +1709,8 @@ openpyxl (solo per il file delle schede). Moduli:
   accanto alla baseline `Input_A1_<ciclo>.txt`, `Input_A3_A4.txt`.
 - Dopo il salvataggio: prima la baseline, per ultima la copia dell'Excel (e'
   quella che fallisce se qualcuno ha aperto un file dell'archivio).
-- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto
+- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto (0),
+  validatore_predefinito, raccolta_su_questo_pc, agenti, ascolta_appunti, link_agenti
   (facoltativa `cartella_lavoro`).
 - `README_variante_locale.md`: vincoli di Agent Builder con data della fonte,
   setup dei cinque agenti (istruzioni, knowledge, capability, modalita'), setup
@@ -3041,6 +3042,12 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     file"; GPT-4.1 -> "Access denied" sul file e "Import of module 'builtins' is blocked for security reasons". E' un
     Python ristretto per scelta della piattaforma: non si aggira. Il motore nel tenant passa da Office Scripts (V1).
     Con il code interpreter spento, l'ingresso Image or document accetta solo immagini.
+
+131. **La posta blocca gli zip con file eseguibili** (23/10). Gmail ha rifiutato lo zip del pacchetto per `07_Senza_Studio/NFR.cmd`:
+    gli allegati con .cmd, .bat, .ps1, .vbs, .js, .exe (anche dentro uno zip) non passano. Per la posta si consegna
+    `<nome>_posta.zip`: lo stesso contenuto di git archive, con quei file rinominati `.txt` in coda, e in
+    `AGGIORNAMENTO_IN_BANCA.md` il passo per rinominarli dopo l'estrazione. Prima di consegnare si controllano anche
+    gli zip annidati del kit.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 

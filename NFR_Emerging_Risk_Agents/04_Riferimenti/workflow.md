@@ -374,8 +374,8 @@ in `News_Inbox`.
 ## W3 — A4 su richiesta
 
 Nessun flow. A4 e' pubblicato solo al gruppo Teams della funzione di rischio,
-con `Baseline_corrente.txt` in knowledge (copia della .json: la knowledge non
-legge .json). Il parere non scrive nulla e non e'
+con la baseline nell'allegato `Input_A3_A4.txt` della chat (AU7, D-84; prima
+`Baseline_corrente.txt` in knowledge). Il parere non scrive nulla e non e'
 vincolante. Se un parere suggerisce di rivedere un rischio, la via e' il
 prossimo ciclo trimestrale.
 
