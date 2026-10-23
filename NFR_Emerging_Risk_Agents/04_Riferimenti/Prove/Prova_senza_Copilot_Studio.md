@@ -35,7 +35,7 @@ Il risultato di ogni passo va nella tabella in fondo. Gli stessi file della part
 | A1 in Agent Builder | Configura -> Istruzioni, cercare (Ctrl+F) `Allegato Input_A1` | trovato = istruzioni del 02/10 |
 | A5 | cercare `I tuoi rilievi vanno al validatore` | trovato = istruzioni del 06/10 |
 | A6 | cercare `il fenomeno in termini di rischio` | trovato = istruzioni del 02/10 |
-| A4 | cercare `Baseline_corrente.txt in knowledge` | trovato = istruzioni del 01/10 |
+| A4 | cercare `Input_A3_A4.txt` | trovato = istruzioni del 23/10 (D-84); se invece c'e' `Baseline_corrente.txt in knowledge` = istruzioni del 01/10 |
 
 Il pacchetto del 06/10 va estratto comunque: cambia lo script (D-71) e contiene
 `07_Senza_Studio\precontrollo.py`, senza il quale lo script non parte.

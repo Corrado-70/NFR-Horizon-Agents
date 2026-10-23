@@ -132,7 +132,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 07_Senza_Studio/excel_com.py                           accesso al workbook tramite Excel desktop (COM)
 07_Senza_Studio/controlli_a5.py                        controlli meccanizzati C1-C9 (C4 escluso, per disegno)
 07_Senza_Studio/valida_output.py                       validatore JSON Schema generico, solo libreria standard
-07_Senza_Studio/configurazione_esempio.json            percorsi da copiare in configurazione.json; utente, cartella di lavoro e attesa del lucchetto (D-83)
+07_Senza_Studio/configurazione_esempio.json            percorsi da copiare in configurazione.json; utente, attesa del lucchetto (D-83); per l'app validatore_predefinito, raccolta_su_questo_pc, agenti, ascolta_appunti, link_agenti (guida, 0.3)
 09_Copilot_Studio/Prova_con_Copilot_Studio.md          prova K0 di Copilot Studio (D-70): A1 e il precontrollo con il Code interpreter dell'esperienza standard (opzione 1) e con una skill nel sandbox della nuova esperienza (opzione 2); Teams e agent flow facoltativi; tabella dei risultati
 09_Copilot_Studio/Prova_K6_Operatore.md                prova K6 (CS-1, 09/10): un Operatore con un argomento a passi fissi legge l'allegato di A1 da SharePoint, lo passa al sotto-agente A1 e salva il JSON in Archivio_Cicli\In_arrivo con un agent flow; cartelle di lettura e scrittura; tabella dei risultati
 09_Copilot_Studio/Prove_CS1.md                         prove di fattibilita' della CS-1 dopo l'allineamento (TODO B5): domande all'IT e alla DPO, K6, K4 qualita' di A1, K11 piu' utenti, K12 A7, K7a sincronizzazione, K7b Excel senza nessuno davanti; tabella dei risultati

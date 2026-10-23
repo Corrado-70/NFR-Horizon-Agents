@@ -1344,6 +1344,11 @@ Collaudo: catena con Excel 375/375 (il gruppo `catena` rilanciato dopo un nome v
 Excel verdi, demo rigenerata (messaggio di correzione di A8 con `Input_A8`). Nella finestra: divisore trascinabile, riquadro
 della risposta alto e visibile dopo l'incolla, riga dell'esito.
 
+**Pacchetto per la Banca (23/10 sera)**: verifica di coerenza fatta (riferimenti superati corretti in schema documentato, workflow,
+struttura delle library, copione di prova, guida sezione 5; voci `agenti` e `ascolta_appunti` aggiunte all'esempio di
+configurazione); istruzioni di aggiornamento in `AGGIORNAMENTO_IN_BANCA.md` alla radice, dentro lo zip
+`NFR-Horizon-Agents_2026-10-23_<commit>.zip` (repository intero, come gli zip precedenti).
+
 **Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
 (report HTML).
 
@@ -1540,7 +1545,7 @@ Nel tenant (fuori dalla portata di Claude Code) — seguire `08_Deploy/Piano_dep
 - [x] Agenti in Agent Builder, tutti e quattro provati (G2, 24/09; condizione: ricaricarli).
 - [ ] Creare A6 Schede dei rischi in Agent Builder (D-40) e provarlo su un input
       prodotto da `schede-input` (Piano_deploy 6.4).
-- [ ] Verificare dove arriva il risultato di un prompt schedulato (chat, mail?).
+- [x] ~~Verificare dove arriva il risultato di un prompt schedulato~~: superato il 23/10/2026, niente prompt schedulato (AU7).
 - [x] Script di campo sul PC dell'analista (D-26); verifiche tecniche aperte qui sotto.
 - [ ] Raccolta notizie dal PC della Banca: verificare che il proxy lasci
       passare urllib (`raccogli_notizie.py --anche-da-validare`); pianificarla.

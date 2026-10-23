@@ -764,6 +764,13 @@ e dettagli in `04_Riferimenti/DECISIONI.md`):
    scrittura e schema); A1 non cambia. Con il registro unico (D-79, pacchetto
    dell'08/10 sera) cambiano **A1, A3, A5, A7 e A8** (reincollarli tutti) e il
    kernel (rubrica, schemi, guida di scrittura, controlli, mappa: copiarlo tutto).
+   Con il pacchetto del 23/10/2026 (app NFR, D-83; nomi degli allegati, D-84) cambiano **A3, A4, A5, A6 e A8**
+   (reincollarli), il kernel no; in `07_Senza_Studio` ci sono file nuovi (`NFR.cmd`, `app_nfr.py`, `flussi.py`,
+   `stato.py`, `ingresso.py`, `appunti.py`, `esecutore.py`, `lucchetto.py`); in `configurazione.json` vanno
+   aggiunte le voci nuove (sezione 0.3: `utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`,
+   `ascolta_appunti`, `link_agenti`); dalla knowledge di A3 e A4 e dalla library `Kernel` si toglie
+   `Baseline_corrente.txt` e si cancella il prompt schedulato di A3 (sezione 0.2). Poi `baseline` riscrive gli
+   allegati con i nomi nuovi. Nessun `aggiorna-registro`.
    In dubbio, ricaricarli tutti.
    Dal pacchetto dell'08/10 i documenti di riferimento stanno in una cartella sola,
    `04_Riferimenti` (DECISIONI, SharePoint, workflow, governance e, in `Prove`, i
@@ -1167,6 +1174,10 @@ A7 che legge i file di testo e una copia di prova che legge solo il registro Exc
 | Output degli agenti, esiti dei controlli, decisioni di validazione | nella stessa cartella del ciclo o della settimana |
 | Ogni tentativo fermato | `Archivio_Cicli\Cicli\<ciclo>\tentativo_<data_ora>\` |
 | Copia del registro prima di ogni scrittura | `Archivio_Cicli\Backup\` |
+| Allegati per gli agenti (D-84) | `Archivio_Cicli\`: `Input_A1_<ciclo>.txt`, `Input_A8_<periodo>.txt`, `Input_A3_A4.txt`, `Input_A5_<ciclo>.txt`; `Input_A6_<ciclo>.json` nella cartella del ciclo. L'app li copia in `%USERPROFILE%\NFR_Da_allegare\<agente>\` |
+| Risposte degli agenti prese dall'app | `Archivio_Cicli\In_arrivo\` (il testo incollato in `Originali\`, le versioni di prima in `Precedenti\`); pareri di A4 in `Archivio_Cicli\Pareri\` |
+| Log dei comandi lanciati dall'app; chi sta scrivendo | `Archivio_Cicli\Log\`; `Archivio_Cicli\_Lucchetto\` (con `sblocchi.log`) |
+| Prompt in uso nel ciclo; traccia di una riapertura | `Archivio_Cicli\Cicli\<ciclo>\Prompt_in_uso\`; `Riapertura_<ciclo>_<ora>.json` |
 | Notizie raccolte | `News_Inbox\<lunedi'>\` |
 
 ## 6. Cambiare le regole (solo su decisione della funzione di rischio)
@@ -1542,7 +1553,7 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
   `Input_A1_<ciclo>.txt` e l'allegato di A3 e A4 `Input_A3_A4.txt`
   (AU7) nella cartella di uscita. Sola lettura del registro. Con
   `--straordinario` (D-75) la baseline e l'allegato sono per il periodo `AAAAQn-Sk`
-  (l'allegato lo usa A8, D-77) e la decisione si archivia in
+  (l'allegato `Input_A8_<periodo>.txt` lo usa A8, D-77, D-84) e la decisione si archivia in
   `Cicli\<AAAAQn-Sk>\Straordinario_<AAAAQn-Sk>.json`.
 - Opzioni: `--uscita` scrive la baseline in un altro file (prove, confronti);
   `--straordinario` con `--rischi` (separati da virgole; senza, lo straordinario e' di

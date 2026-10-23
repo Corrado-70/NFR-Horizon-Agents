@@ -1701,7 +1701,8 @@ openpyxl (solo per il file delle schede). Moduli:
   accanto alla baseline `Input_A1_<ciclo>.txt`, `Input_A3_A4.txt`.
 - Dopo il salvataggio: prima la baseline, per ultima la copia dell'Excel (e'
   quella che fallisce se qualcuno ha aperto un file dell'archivio).
-- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto
+- `configurazione_esempio.json`: workbook, kernel, cartella_uscita, news_inbox, utente, attesa_lucchetto (0),
+  validatore_predefinito, raccolta_su_questo_pc, agenti, ascolta_appunti, link_agenti
   (facoltativa `cartella_lavoro`).
 - `README_variante_locale.md`: vincoli di Agent Builder con data della fonte,
   setup dei cinque agenti (istruzioni, knowledge, capability, modalita'), setup

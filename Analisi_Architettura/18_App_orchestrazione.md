@@ -193,8 +193,8 @@ In una voce "Amministrazione" dell'app, protetta da una conferma; anche da riga 
 
 | Stato | Voce |
 |---|---|
-| [ ] | Copiare `07_Senza_Studio` e `02_Agenti`; in `configurazione.json` `utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `link_agenti` |
-| [ ] | Reincollare A3 e A4; togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel |
+| [ ] | Estrarre il pacchetto (zip del 23/10, istruzioni in `AGGIORNAMENTO_IN_BANCA.md`); copiare `01_Kernel` e `DECISIONI.md` nella library Kernel; in `configurazione.json` le voci della guida 0.3 (`utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`, `ascolta_appunti`, `link_agenti`) |
+| [ ] | Reincollare A3, A4, A5, A6 e A8 (D-84); togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; cancellare il prompt schedulato di A3; `baseline` per gli allegati con i nomi nuovi |
 | [ ] | V-A: il link "Copia collegamento" apre la chat dell'agente |
 | [ ] | V-B, V-C: il pulsante Copia porta negli appunti un A1 intero di 40 KB |
 | [ ] | V-F: `AutoSaveOn` e `FullName` del registro aperto via COM |
