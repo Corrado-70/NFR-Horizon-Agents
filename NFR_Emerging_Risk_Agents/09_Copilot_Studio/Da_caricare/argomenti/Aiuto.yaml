@@ -1,0 +1,29 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnActivity
+  id: main
+  type: Message
+  condition: =StartsWith(System.Activity.Text, "Aiuto")
+  actions:
+    - kind: SendActivity
+      id: sendActivity_comandi
+      activity: |-
+        Comandi dell'Operatore NFR (uno per messaggio, all'inizio del messaggio):
+        Esegui_ciclo 2027Q1 - A1 valuta il trimestre, poi il motore registra; con A5 in fondo (Esegui_ciclo 2027Q1 A5) anche il Challenger. Per un ciclo straordinario: Esegui_ciclo 2027Q1-S1 (A8).
+        Correggi_ciclo 2027Q1 - un giro di correzione in piu' dell'output di A1, dai punti trovati dal motore.
+        Esegui_settimana 2026-10-19 - A3 sulle notizie della settimana (data del lunedi'), poi il motore registra.
+        Valida 2027Q1 - applica al registro le decisioni della griglia di validazione (anche Valida 2026-10-19 per una settimana).
+        Riapri, oppure Riapri NFR-03 NFR-07 - riapre la validazione del ciclo corrente.
+        Dismetti NFR-07 - toglie un rischio dal registro, con la motivazione.
+        Straordinario NFR-01 NFR-07, oppure Straordinario - decide un ciclo straordinario (senza rischi: solo censimento).
+        Schede 2027Q1 - schede dei rischi del ciclo validato (A6).
+        Report 2027Q1 - report per il comitato in PDF (Report 2027Q1 completo: con i fogli di lavoro).
+        Diagnosi 2027Q1 - lettura delle valutazioni del ciclo.
+        Stato - ultimo esito del motore.
+        Per domande sul registro usa l'Assistente del registro (A7); per una notizia singola il News Assessor (A4).
+
+    - kind: CancelAllDialogs
+      id: cancelAllDialogs_fine
+
+inputType: {}
+outputType: {}

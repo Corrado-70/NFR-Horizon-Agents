@@ -1,0 +1,66 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnActivity
+  id: main
+  type: Message
+  condition: =StartsWith(System.Activity.Text, "Correggi_ciclo")
+  actions:
+    - kind: SetVariable
+      id: setVariable_periodo
+      variable: init:Topic.periodo
+      value: =Match(System.Activity.Text, "\d{4}Q[1-4](-S[1-9])?").FullMatch
+
+    - kind: ConditionGroup
+      id: conditionGroup_periodo
+      conditions:
+        - id: conditionItem_periodo_mancante
+          condition: =IsBlank(Topic.periodo)
+          actions:
+            - kind: Question
+              id: question_periodo
+              variable: Topic.periodo
+              prompt: Quale periodo correggere? Per esempio 2027Q1.
+              entity: StringPrebuiltEntity
+              alwaysPrompt: true
+              interruptionPolicy:
+                allowInterruption: false
+
+    - kind: ConditionGroup
+      id: conditionGroup_formato
+      conditions:
+        - id: conditionItem_formato_errato
+          condition: =Not(IsMatch(Trim(Topic.periodo), "\d{4}Q[1-4](-S[1-9])?"))
+          actions:
+            - kind: SendActivity
+              id: sendActivity_formato_errato
+              activity: "Periodo non valido: {Topic.periodo}. Scrivi per esempio Correggi_ciclo 2027Q1."
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_formato
+
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_motore
+      displayName: NFR_Motore
+      input:
+        binding:
+          text: ="correggi_ciclo"
+          text_1: =Trim(Topic.periodo)
+          text_2: =""
+          text_3: =System.User.DisplayName & " <" & System.User.PrincipalName & ">"
+
+      output:
+        binding:
+          esito: Topic.esito_motore
+          messaggio: Topic.messaggio_motore
+
+      flowId: <<ID_FLUSSO_NFR_Motore>>
+
+    - kind: SendActivity
+      id: sendActivity_motore
+      activity: "{Topic.messaggio_motore}"
+
+    - kind: CancelAllDialogs
+      id: cancelAllDialogs_fine
+
+inputType: {}
+outputType: {}

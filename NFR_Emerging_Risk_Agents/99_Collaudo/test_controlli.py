@@ -814,20 +814,56 @@ def test_kit_copilot_studio(e):
                    "kit: --verifica elenca l'impronta di ogni modulo e dello schema", out[:300])
 
 
-def test_a1_copilot_studio(e):
-    """K6-ter (22/10): l'A1 per Copilot Studio con variabili globali e' l'A1 attuale con le sole sostituzioni di
-    genera_A1_CS.py e resta sotto il limite, con il margine per le variabili inserite con "/"."""
+def test_copilot_studio_pieno(e):
+    """D-82: istruzioni dei sotto-agenti e testi dei prompt generati dagli A*.md attuali, argomenti YAML che passano i
+    controlli, busta del motore (K9) che restituisce il codice identico e la riga attesa."""
+    import contextlib
+    import io
+    import json
     from comune import RADICE
     sys.path.insert(0, str(RADICE / "09_Copilot_Studio"))
-    import genera_A1_CS as cs
+    import genera_CS as cs
+    import prepara_busta as busta
 
-    atteso = cs.versione_cs(cs.SORGENTE.read_text(encoding="utf-8"))
-    e.verifica(cs.USCITA.exists() and cs.USCITA.read_text(encoding="utf-8") == atteso,
-               "A1 Copilot Studio: Da_caricare/A1_Horizon_Scanner_CS.md corrisponde all'A1 attuale (se no: python "
-               "09_Copilot_Studio/genera_A1_CS.py)")
-    e.verifica(len(atteso) <= cs.LIMITE - cs.MARGINE and atteso.count(cs.VAR_IN) == 1 and atteso.count(cs.VAR_OUT) == 1,
-               "A1 Copilot Studio: sotto il limite con il margine per le variabili, un segnaposto per variabile",
-               f"{len(atteso)} caratteri")
+    uscita = io.StringIO()
+    with contextlib.redirect_stdout(uscita):
+        codice = cs.main(["genera_CS.py", "--verifica"])
+    e.verifica(codice == 0, "Copilot Studio pieno: file generati aggiornati, sotto i limiti, argomenti YAML in ordine "
+                            "(se no: python 09_Copilot_Studio/genera_CS.py)", uscita.getvalue()[-600:])
+    for nome in cs.SOTTO_AGENTI:
+        testo = cs.sotto_agente(nome)
+        attese = {cs.VAR_IN: 1, cs.VAR_OUT: 1, cs.VAR_PERIODO: 1 if nome == "A3_CS.md" else 0}
+        e.verifica(all(testo.count(v) == n for v, n in attese.items()) and len(testo) <= cs.LIMITE - cs.MARGINE,
+                   f"Copilot Studio pieno: {nome} con un segnaposto per variabile, sotto il limite con il margine",
+                   f"{len(testo)} caratteri")
+    ingressi = {n: cs.ingressi(cs.prompt(n)) for n in ("A5.txt", "A6.txt", "Correggi.txt", "Motore.txt")}
+    e.verifica(ingressi == {"A5.txt": ["json_a1", "baseline"], "A6.txt": ["schede_input"],
+                            "Correggi.txt": ["correzione", "json_a1", "allegato"], "Motore.txt": ["comando", "busta"]},
+               "Copilot Studio pieno: ogni prompt ha in fondo i suoi ingressi", str(ingressi))
+    noti = cs.segnaposto_noti()
+    buono = (cs.ARGOMENTI / "Correggi_ciclo.yaml").read_text(encoding="utf-8")
+    difetti = {"segnaposto": buono.replace("<<ID_FLUSSO_NFR_Motore>>", "<<ID_FLUSSO_Altro>>"),
+               "globale": buono.replace("Topic.periodo", "Global.allegato", 1),
+               "id": buono.replace("id: sendActivity_motore", "id: cancelAllDialogs_fine"),
+               "trigger": buono.replace("kind: OnActivity", "kind: OnRecognizedIntent")}
+    e.verifica(not cs.controlla_argomento(buono, noti) and all(cs.controlla_argomento(t, noti) for t in difetti.values()),
+               "Copilot Studio pieno: il controllo degli argomenti trova segnaposto ignoti, globali fuori elenco, id "
+               "ripetuti e trigger diversi da OnActivity",
+               str({k: cs.controlla_argomento(t, noti) for k, t in difetti.items()}))
+
+    codice_busta, ingressi_busta = busta.leggi_busta(busta.PROVA)
+    e.verifica(codice_busta == busta.codice_motore() and set(ingressi_busta) == {"A1", "Input_A1"},
+               "busta K9: il foglio _Motore contiene esattamente il codice del motore attuale (se no: python "
+               "09_Copilot_Studio/prepara_busta.py)")
+    _, codice_uscita, riga = busta.esegui_come_il_prompt(busta.PROVA)
+    attesa = busta.ATTESO.read_text(encoding="utf-8").strip().splitlines()[-1]
+    e.verifica(codice_uscita == 0 and json.loads(riga) == json.loads(attesa)
+               and json.loads(riga)["impronta_codice"] == busta.impronta(codice_busta),
+               "busta K9: il motore riunito dai blocchi stampa la riga di K9_atteso.txt, con l'impronta del suo codice",
+               riga[:300])
+    codice_vuota, ingressi_vuota = busta.leggi_busta(busta.VUOTA)
+    e.verifica(codice_vuota == codice_busta and ingressi_vuota == {},
+               "busta K9: la busta vuota ha lo stesso codice e nessun ingresso")
 
 
 MOTIVAZIONI_NFR01 = {"impatto": "Grave: importi medi triplicati nel Report trimestrale frodi.",
@@ -1158,7 +1194,7 @@ def main():
     test_versione_mappa(e)
     test_precontrollo(e)
     test_kit_copilot_studio(e)
-    test_a1_copilot_studio(e)
+    test_copilot_studio_pieno(e)
     test_schede(e)
     test_spiegazioni(e)
     test_diagnosi(e)

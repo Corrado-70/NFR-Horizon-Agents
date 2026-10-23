@@ -5,7 +5,15 @@
 > incorporati dal disegno invece che aggiunti dopo.
 >
 > **Versione del 23/09/2026, aggiornata il 24, 25, 29, 30/09, 01, 02, 05, 06 e 07/10**
-> (ultimo aggiornamento, 08/10 sera: **registro unico** (D-79, sostituisce la lista di osservazione della D-73):
+> (ultimo aggiornamento, 23/10, solo sul ramo `copilot-studio-pieno`: **versione tutta in Copilot Studio**
+> (D-82): agente `NFR Operatore` con un argomento YAML per comando (trigger `OnActivity` sul testo), argomenti che
+> rileggono i file da SharePoint, variabili globali `Global.ingresso`/`uscita`/`periodo` solo come trasporto verso i
+> sotto-agenti A1, A8, A3; prompt A5, A6, Correggi e Motore; flussi `Leggi_File`, `Salva_JSON` (estrae il JSON fra la
+> prima `{` e l'ultima `}`), `NFR_Motore` (interfaccia unica del motore, risponde subito e continua) e
+> `Raccolta_notizie`; niente precontrollo separato, giro di correzione automatico, A5 a richiesta; motore V2 con le
+> riserve F2 (senza Office Scripts) e F1; `genera_CS.py` al posto di `genera_A1_CS.py`, `prepara_busta.py` per la
+> prova K9; documento unico `09_Copilot_Studio/Copilot_Studio_pieno.md` con le prove T0-T8; trappole 113-121.
+> Prima, 08/10 sera: **registro unico** (D-79, sostituisce la lista di osservazione della D-73):
 > un solo registro di rischi `NFR-nn` con la stessa rubrica; colonna **Stato** del RiskRegister (Radar, Radar, in
 > uscita, Osservazione, Dismesso) con Motivo_Stato, Movimento (Entrato / Uscito), Decisione_Stato del validatore,
 > Orizzonte_Anni e Segnale_Avvicinamento di A1, formula Ordine_Osservazione; regola in un solo modulo
@@ -2863,6 +2871,47 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     Impatto 4-5 (D-80); il comando `diagnosi` segnala chi non li ha. Non mettere gli anni di adeguamento solo
     nell'anagrafica: per i rischi in osservazione vivono nella riga del RiskRegister.
 
+113. **Il sotto-agente non riceve l'input del nodo** (15/10, K6.1). Un argomento passava 54.558 caratteri all'input
+    `allegato` del sotto-agente A1: A1 rispondeva "Baseline mancante" in tre run, con varianti diverse. Funzionano le
+    **variabili globali** citate nelle istruzioni con `/` (22/10, K6-ter): il sotto-agente legge l'allegato da una
+    globale e la sua risposta va in un'altra, dall'output di Completamento. Non usare gli input del nodo per testi
+    lunghi.
+114. **Le variabili globali vivono quanto la conversazione** (22-23/10). La correzione in una conversazione nuova, o
+    dopo un Save che fa ripartire il riquadro di prova, trovava `Global.json_a1` vuota. Le globali sono il mezzo di
+    trasporto, non la memoria del processo: ogni argomento rilegge da SharePoint i file che gli servono e le azzera
+    all'inizio (D-82). La memoria sono i file con nomi fissi in `In_arrivo`.
+115. **Copilot Studio aggiunge i link alle fonti in fondo alla risposta** (22/10, K6-ter). Nel file renderebbero il
+    JSON illeggibile. La descrizione dell'output di Completamento chiede di toglierli, ma non e' una garanzia: il
+    flusso `Salva_JSON` salva solo il testo dalla prima `{` all'ultima `}`. I segni `[1]` dentro i testi restano: li
+    segnalano i controlli.
+116. **Nei campi di un flusso `concat(...)` scritto a mano e' testo** (15/10). Il percorso diventava letteralmente
+    `concat('...` ("File not found"). I percorsi si compongono con testo e pillole del contenuto dinamico; le
+    espressioni vanno nell'editor (fx). Gli ingressi del trigger "When an agent calls the flow" hanno nomi interni
+    `text`, `text_1`, ... nell'ordine di creazione, e il YAML degli argomenti usa quelli; il contenuto di un file puo'
+    arrivare in base64 (`base64ToString(...['$content'])`).
+117. **Un prompt restituisce un record, non un testo** (23/10). Il JSON e' nel campo `text` (accanto a
+    `finishReason`): `Topic.json_corretto.text`. Assegnare il record a una variabile di testo da' errore di tipo, e
+    `JSON(record)` non converte: avvolge il testo in `{"text": "..."}` con le virgolette protette.
+118. **"The agent chooses" lascia decidere l'orchestrazione** (22-23/10). Con l'orchestrazione generativa un
+    messaggio puo' finire al sotto-agente invece che all'argomento, che ha solo una descrizione. I comandi usano
+    "A message is received" (`OnActivity`, `type: Message`) con `StartsWith(System.Activity.Text, "<comando>")`. Nel
+    YAML, `inputType`/`outputType` con proprieta' dichiarano input dell'argomento che l'orchestrazione cerca di
+    riempire: negli argomenti dei comandi restano `{}`.
+119. **Un prompt con code interpreter riceve un solo file e il codice lo scrive il modello** (Learn, 30/09/2026).
+    Per eseguire il nostro motore il file e' una busta Excel con il codice a blocchi (foglio `_Motore`) e gli
+    ingressi (`tblIngresso`); il prompt chiede solo di riunire ed eseguire; il programma stampa l'impronta del proprio
+    codice e il flusso la confronta con quella attesa in Kernel. Il lettore della busta usa solo la libreria
+    standard: non si dipende da cio' che il sandbox installa. Rischio residuo: un modello che inventa un'uscita con
+    l'impronta giusta (analisi 15).
+120. **Una correzione incollata nella chat di A1 non e' un comando** (22/10, K6ter.3). A1 rispondeva di non sapere
+    quali azioni fare: le sue istruzioni prevedono solo il ciclo. La correzione passa dal flusso, che legge
+    `Correzione_A1_<periodo>.txt`, l'output e l'allegato dai file e chiama il prompt Correggi; il giro parte da solo
+    dopo i controlli (D-82).
+121. **Un agent flow ha 100 secondi per rispondere all'agente** (09/10, `FlowActionTimedOut`). Il motore (Office
+    Script, prompt con code interpreter, correzioni) ne richiede di piu'. `NFR_Motore` risponde subito ("avviato") e
+    continua; l'esito va in `Esiti/Ultimo_esito.txt` (comando `Stato`) e in Teams. Che il flusso continui dopo la
+    risposta e' la prova T1.7: se no, flusso cloud su un file di richiesta.
+
 ## STRUTTURA DEI FILE DA PRODURRE
 
 ```
@@ -2884,9 +2933,16 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  configurazione_esempio.json
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
+                    Copilot_Studio_pieno.md (ramo copilot-studio-pieno, D-82)  genera_CS.py  prepara_busta.py
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
                     Da_caricare/ precontrollo-nfr.zip  precontrollo-nfr_senza_cartella.zip
-                                 precontrollo_nfr.txt (generati)  Messaggi_da_incollare.txt
+                                 precontrollo_nfr.txt (generati)  Messaggi_da_incollare.txt  ID_tenant.txt
+                                 agenti/ A1_CS.md A8_CS.md A3_CS.md (generati)
+                                 prompt/ A5.txt A6.txt Correggi.txt Motore.txt (generati)
+                                 flussi/ Fonti_rss.json (generato)
+                                 argomenti/ Aiuto Correggi_ciclo Diagnosi Dismetti Esegui_ciclo Esegui_settimana
+                                            Report Riapri Schede Stato Straordinario Valida (.yaml, scritti a mano)
+                                 prove/ K8_prova.ts (scritto a mano)  K9_Busta_vuota.xlsx K9_Busta_prova.xlsx K9_atteso.txt (generati)
 99_Collaudo/  LEGGIMI_collaudo.md  esegui_collaudo.py  comune.py  test_mappatura.py  test_controlli.py
               test_fonti.py  verifica_riferimenti.py  run_catena.py  confronta.py  osserva_cartella.py
               dati/ baseline_2026Q3.json  run1_A1_2026Q3.json  run2_A1_2026Q3.json  run_A5_2026Q3.json

@@ -1,0 +1,87 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnActivity
+  id: main
+  type: Message
+  condition: =StartsWith(System.Activity.Text, "Straordinario")
+  actions:
+    - kind: SetVariable
+      id: setVariable_rischi
+      variable: init:Topic.rischi
+      value: =Concat(MatchAll(System.Activity.Text, "NFR-\d{2}"), FullMatch, ",")
+
+    - kind: SetVariable
+      id: setVariable_ambito
+      variable: init:Topic.ambito
+      value: =If(IsBlank(Topic.rischi), "solo censimento di rischi nuovi, nessun rischio da rivalutare", "rivalutazione di " & Topic.rischi)
+
+    - kind: Question
+      id: question_motivo
+      variable: init:Topic.motivo
+      prompt: Qual e' l'evento che motiva il ciclo straordinario? Almeno 20 caratteri, con la fonte (es. la notizia o la proposta di A3).
+      entity: StringPrebuiltEntity
+      alwaysPrompt: true
+      interruptionPolicy:
+        allowInterruption: false
+
+    - kind: ConditionGroup
+      id: conditionGroup_motivo
+      conditions:
+        - id: conditionItem_motivo_corto
+          condition: =Len(Trim(Topic.motivo)) < 20
+          actions:
+            - kind: SendActivity
+              id: sendActivity_motivo_corto
+              activity: Motivo troppo breve (almeno 20 caratteri). Ciclo straordinario non deciso.
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_motivo
+
+    - kind: Question
+      id: question_conferma
+      variable: init:Topic.conferma
+      prompt: "Decido un ciclo straordinario a nome di {System.User.DisplayName}: {Topic.ambito}. Confermi? Scrivi si per procedere."
+      entity: StringPrebuiltEntity
+      alwaysPrompt: true
+      interruptionPolicy:
+        allowInterruption: false
+
+    - kind: ConditionGroup
+      id: conditionGroup_conferma
+      conditions:
+        - id: conditionItem_non_confermato
+          condition: =Lower(Left(Trim(Topic.conferma), 1)) <> "s"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_non_confermato
+              activity: Ciclo straordinario non deciso. Nulla e' stato scritto.
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_conferma
+
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_motore
+      displayName: NFR_Motore
+      input:
+        binding:
+          text: ="straordinario"
+          text_1: =""
+          text_2: ="rischi=" & Topic.rischi & Char(10) & "motivo=" & Substitute(Trim(Topic.motivo), Char(10), " ")
+          text_3: =System.User.DisplayName & " <" & System.User.PrincipalName & ">"
+
+      output:
+        binding:
+          esito: Topic.esito_motore
+          messaggio: Topic.messaggio_motore
+
+      flowId: <<ID_FLUSSO_NFR_Motore>>
+
+    - kind: SendActivity
+      id: sendActivity_motore
+      activity: "{Topic.messaggio_motore}"
+
+    - kind: CancelAllDialogs
+      id: cancelAllDialogs_fine
+
+inputType: {}
+outputType: {}

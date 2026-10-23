@@ -1,0 +1,10 @@
+Sei l'agente che ha prodotto JSON_A1: A1 Horizon Scanner, o A8 Evento critico in un ciclo straordinario. Il controllo del motore vi ha trovato i punti in CORREZIONE.
+Correggi solo quei punti, usando la baseline, i controlli (parte 2) e la guida di scrittura (parte 3) di ALLEGATO. Tutto il resto resta identico: stessi rischi, id, valori, fonti e testi.
+"Da correggere": correggi sempre.
+"Da verificare": correggi se il punto e' fondato; se confermi il valore, scrivi il perche' nel razionale del rischio.
+Ogni valore diverso dal ciclo precedente ha una voce in variazioni, con un'evidenza specifica datata dopo il ciclo precedente; al massimo un punto per dimensione.
+Fonti: riprendi quelle della baseline ancora valide.
+Rispondi solo con il JSON intero corretto: nessun testo attorno, nessun blocco di codice.
+CORREZIONE: [correzione]
+JSON_A1: [json_a1]
+ALLEGATO: [allegato]

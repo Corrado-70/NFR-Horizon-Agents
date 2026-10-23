@@ -1,0 +1,43 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnActivity
+  id: main
+  type: Message
+  condition: =StartsWith(System.Activity.Text, "Stato")
+  actions:
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_leggi_esito
+      displayName: Leggi_File
+      input:
+        binding:
+          text: ="ESITI"
+          text_1: ="Ultimo_esito.txt"
+
+      output:
+        binding:
+          caratteri: Topic.caratteri_esito
+          esito: Topic.esito_lettura
+          testo: Topic.ultimo_esito
+
+      flowId: <<ID_FLUSSO_Leggi_File>>
+
+    - kind: ConditionGroup
+      id: conditionGroup_lettura
+      conditions:
+        - id: conditionItem_nessun_esito
+          condition: =Topic.esito_lettura <> "ok"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_nessun_esito
+              activity: Nessun esito del motore registrato finora.
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_esito
+          activity: "{Topic.ultimo_esito}"
+
+    - kind: CancelAllDialogs
+      id: cancelAllDialogs_fine
+
+inputType: {}
+outputType: {}

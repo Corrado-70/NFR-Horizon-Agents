@@ -1,0 +1,179 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnActivity
+  id: main
+  type: Message
+  condition: =StartsWith(System.Activity.Text, "Esegui_ciclo")
+  actions:
+    - kind: SetVariable
+      id: setVariable_azzera_ingresso
+      variable: Global.ingresso
+      value: =Blank()
+
+    - kind: SetVariable
+      id: setVariable_azzera_uscita
+      variable: Global.uscita
+      value: =Blank()
+
+    - kind: SetVariable
+      id: setVariable_periodo
+      variable: Global.periodo
+      value: =Match(System.Activity.Text, "\d{4}Q[1-4](-S[1-9])?").FullMatch
+
+    - kind: ConditionGroup
+      id: conditionGroup_periodo
+      conditions:
+        - id: conditionItem_periodo_mancante
+          condition: =IsBlank(Global.periodo)
+          actions:
+            - kind: Question
+              id: question_periodo
+              variable: Global.periodo
+              prompt: Quale periodo? Per esempio 2027Q1, oppure 2027Q1-S1 per un ciclo straordinario.
+              entity: StringPrebuiltEntity
+              alwaysPrompt: true
+              interruptionPolicy:
+                allowInterruption: false
+
+    - kind: ConditionGroup
+      id: conditionGroup_formato
+      conditions:
+        - id: conditionItem_formato_errato
+          condition: =Not(IsMatch(Trim(Global.periodo), "\d{4}Q[1-4](-S[1-9])?"))
+          actions:
+            - kind: SendActivity
+              id: sendActivity_formato_errato
+              activity: "Periodo non valido: {Global.periodo}. Scrivi per esempio Esegui_ciclo 2027Q1 oppure Esegui_ciclo 2027Q1-S1."
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_formato
+
+    - kind: SetVariable
+      id: setVariable_con_a5
+      variable: init:Topic.con_a5
+      value: =EndsWith(Trim(System.Activity.Text), " A5")
+
+    - kind: SetVariable
+      id: setVariable_straordinario
+      variable: init:Topic.straordinario
+      value: ="-S" in Global.periodo
+
+    - kind: SetVariable
+      id: setVariable_agente
+      variable: init:Topic.agente
+      value: =If(Topic.straordinario, "A8", "A1")
+
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_leggi_input
+      displayName: Leggi_File
+      input:
+        binding:
+          text: ="BASE"
+          text_1: ="Input_A1_" & Global.periodo & ".txt"
+
+      output:
+        binding:
+          caratteri: Topic.caratteri_input
+          esito: Topic.esito_lettura
+          testo: Global.ingresso
+
+      flowId: <<ID_FLUSSO_Leggi_File>>
+
+    - kind: ConditionGroup
+      id: conditionGroup_lettura
+      conditions:
+        - id: conditionItem_lettura_fallita
+          condition: =Topic.esito_lettura <> "ok"
+          actions:
+            - kind: SendActivity
+              id: sendActivity_lettura_fallita
+              activity: "Allegato Input_A1_{Global.periodo}.txt non trovato in Archivio_Cicli ({Topic.esito_lettura}). Lo scrive il comando Valida a fine ciclo, o Straordinario per un periodo -S."
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_lettura
+
+    - kind: SendActivity
+      id: sendActivity_avvio
+      activity: "Allegato letto: {Topic.caratteri_input} caratteri. Avvio di {Topic.agente}: possono servire alcuni minuti."
+
+    - kind: ConditionGroup
+      id: conditionGroup_agente
+      conditions:
+        - id: conditionItem_a8
+          condition: =Topic.straordinario
+          actions:
+            - kind: BeginDialog
+              id: beginDialog_a8
+              displayName: A8 Evento critico
+              dialog: <<ID_AGENTE_A8>>
+              output:
+                binding:
+                  output: Global.uscita
+
+      elseActions:
+        - kind: BeginDialog
+          id: beginDialog_a1
+          displayName: A1 Horizon Scanner
+          dialog: <<ID_AGENTE_A1>>
+          output:
+            binding:
+              output: Global.uscita
+
+    - kind: ConditionGroup
+      id: conditionGroup_uscita
+      conditions:
+        - id: conditionItem_uscita_vuota
+          condition: =Len(Global.uscita) < 1000
+          actions:
+            - kind: SendActivity
+              id: sendActivity_uscita_vuota
+              activity: "L'agente non ha prodotto il JSON del ciclo. Inizio della risposta: {Left(Global.uscita, 300)}"
+
+            - kind: CancelAllDialogs
+              id: cancelAllDialogs_uscita
+
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_salva
+      displayName: Salva_JSON
+      input:
+        binding:
+          text: ="A1_" & Global.periodo & ".json"
+          text_1: =Global.uscita
+
+      output:
+        binding:
+          caratteri: Topic.caratteri_salvati
+          esito: Topic.esito_salvataggio
+
+      flowId: <<ID_FLUSSO_Salva_JSON>>
+
+    - kind: SendActivity
+      id: sendActivity_salvato
+      activity: "{Topic.esito_salvataggio}: In_arrivo/A1_{Global.periodo}.json, {Topic.caratteri_salvati} caratteri salvati su {Len(Global.uscita)} prodotti."
+
+    - kind: InvokeFlowAction
+      id: invokeFlowAction_motore
+      displayName: NFR_Motore
+      input:
+        binding:
+          text: ="registra_ciclo"
+          text_1: =Global.periodo
+          text_2: =If(Topic.con_a5, "A5", "")
+          text_3: =System.User.DisplayName & " <" & System.User.PrincipalName & ">"
+
+      output:
+        binding:
+          esito: Topic.esito_motore
+          messaggio: Topic.messaggio_motore
+
+      flowId: <<ID_FLUSSO_NFR_Motore>>
+
+    - kind: SendActivity
+      id: sendActivity_motore
+      activity: "{Topic.messaggio_motore}"
+
+    - kind: CancelAllDialogs
+      id: cancelAllDialogs_fine
+
+inputType: {}
+outputType: {}

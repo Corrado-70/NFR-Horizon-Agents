@@ -11,6 +11,16 @@ Data: 11/10/2026. Richiesta dell'utente:
 Approfondisce la CS-2 di `14_Tre_strade.md` (14.5), che resta il quadro delle tre strade. Fatti verificati su
 Microsoft Learn l'11/10/2026, fonti in fondo.
 
+> **Nota del 23/10/2026.** Sul ramo `copilot-studio-pieno` la V2 e' progettata per la costruzione (D-82,
+> `NFR_Emerging_Risk_Agents/09_Copilot_Studio/Copilot_Studio_pieno.md`, sezione 6), con una riserva nuova, **F2**, se
+> Office Scripts non e' disponibile:
+> - un registro dati `NFR_Dati.xlsx` scritto dal Python del code interpreter (openpyxl: nessun grafico da perdere);
+> - la presentazione con i grafici in un file che lo legge con Power Query, oppure HTML (A-16);
+> - gli ingressi nella busta con il connettore standard Excel Online.
+>
+> La "busta" del prompt con code interpreter (un solo file in ingresso, Learn 30/09/2026) e' gia' pronta per la prova
+> K9: codice a blocchi nel foglio `_Motore`, ingressi in `tblIngresso`, impronta del codice stampata dal programma.
+
 ## 15.0 In breve
 
 1. **Il Python di oggi ha tre parti che in Copilot Studio non girano cosi' come sono.**

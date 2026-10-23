@@ -1,0 +1,138 @@
+[
+ {
+  "codice": "FNT-01",
+  "nome": "BCE Vigilanza bancaria, comunicati",
+  "indirizzo": "https://www.bankingsupervision.europa.eu/rss/press.html",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-02",
+  "nome": "BCE Vigilanza bancaria, pubblicazioni",
+  "indirizzo": "https://www.bankingsupervision.europa.eu/rss/pub.html",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-03",
+  "nome": "EBA, notizie e comunicati",
+  "indirizzo": "https://www.eba.europa.eu/news-press/news/rss.xml",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-04",
+  "nome": "ESMA, notizie",
+  "indirizzo": "https://www.esma.europa.eu/rss.xml",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-05",
+  "nome": "Banca d'Italia, aggiornamenti del sito",
+  "indirizzo": "https://www.bancaditalia.it/util/index.rss.html?lingua=it",
+  "escludi": [
+   "cambi di riferimento",
+   "annuncio",
+   "titoli",
+   "graduatoria",
+   "concors",
+   "assunzion",
+   "bilancia dei pagamenti",
+   "questioni di economia",
+   "consolidated financial statement"
+  ],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-06",
+  "nome": "Commissione europea, sala stampa",
+  "indirizzo": "https://ec.europa.eu/commission/presscorner/api/rss?language=it",
+  "escludi": [],
+  "max_voci": 15
+ },
+ {
+  "codice": "FNT-07",
+  "nome": "FSB, pubblicazioni e comunicati",
+  "indirizzo": "https://www.fsb.org/feed/",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-08",
+  "nome": "BIS, comunicati (incluso il Comitato di Basilea)",
+  "indirizzo": "https://www.bis.org/doclist/all_pressrels.rss",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-09",
+  "nome": "Commissione europea, strategia digitale",
+  "indirizzo": "https://digital-strategy.ec.europa.eu/en/rss.xml",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-10",
+  "nome": "ACN, CSIRT Italia: avvisi e allerte",
+  "indirizzo": "https://www.acn.gov.it/portale/feedrss/-/journal/rss/20119/723192",
+  "escludi": [],
+  "max_voci": 25
+ },
+ {
+  "codice": "FNT-11",
+  "nome": "CERT-EU, threat intelligence",
+  "indirizzo": "https://cert.europa.eu/publications/threat-intelligence-rss",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-12",
+  "nome": "CERT-EU, security advisories",
+  "indirizzo": "https://cert.europa.eu/publications/security-advisories-rss",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-13",
+  "nome": "NCSC Regno Unito, notizie e guide",
+  "indirizzo": "https://www.ncsc.gov.uk/api/1/services/v1/all-rss-feed.xml",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-14",
+  "nome": "Europol, notizie",
+  "indirizzo": "https://www.europol.europa.eu/cms/api/rss/news",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-15",
+  "nome": "BleepingComputer, stampa specializzata cyber",
+  "indirizzo": "https://www.bleepingcomputer.com/feed/",
+  "escludi": [],
+  "max_voci": 15
+ },
+ {
+  "codice": "FNT-16",
+  "nome": "Aeronautica Militare, notizie meteo e clima",
+  "indirizzo": "https://www.meteoam.it/it/rss",
+  "escludi": [],
+  "max_voci": 15
+ },
+ {
+  "codice": "FNT-17",
+  "nome": "ANSA, Economia",
+  "indirizzo": "https://www.ansa.it/sito/notizie/economia/economia_rss.xml",
+  "escludi": [],
+  "max_voci": 20
+ },
+ {
+  "codice": "FNT-18",
+  "nome": "Il Sole 24 Ore, Finanza",
+  "indirizzo": "https://www.ilsole24ore.com/rss/finanza.xml",
+  "escludi": [],
+  "max_voci": 20
+ }
+]

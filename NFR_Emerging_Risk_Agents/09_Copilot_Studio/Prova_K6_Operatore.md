@@ -1,5 +1,7 @@
 # Prova K6: l'Operatore NFR esegue A1 e salva in SharePoint (CS-1, argomento a passi fissi)
 
+> **Sul ramo `copilot-studio-pieno` (D-82, 23/10)** questa prova e' la storia: il seguito e' `Copilot_Studio_pieno.md`. Li' le variabili globali si chiamano `Global.ingresso`, `Global.uscita` e `Global.periodo`; le istruzioni di A1 sono `Da_caricare/agenti/A1_CS.md`, generate da `genera_CS.py`, che sostituisce `genera_A1_CS.py` e `Da_caricare/A1_Horizon_Scanner_CS.md` citati qui sotto. La correzione non passa dalla conversazione del lancio ma dai file (trappole 114 e 120).
+
 Prova K6 dell'opzione 2 (`Analisi_Architettura/12_Due_opzioni.md`, 12.4; piano 10, 10.12), decisa il 09/10 dopo la
 prima tornata della prova K0 (`Prova_con_Copilot_Studio.md`).
 

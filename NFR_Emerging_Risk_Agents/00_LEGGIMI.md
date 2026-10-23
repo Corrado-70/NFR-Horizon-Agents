@@ -5,7 +5,9 @@ finanziari (NFR) emergenti di una banca significativa dell'area euro.
 Pacchetto completo e collaudato a secco; nel tenant della Banca gira la
 variante locale (Agent Builder e script sul PC, dal 24/09/2026). Copilot
 Studio e' in prova (D-70, `09_Copilot_Studio`): la strada e' la decisione
-aperta A-15.
+aperta A-15. Sul ramo `copilot-studio-pieno` c'e' il progetto della versione
+tutta in Copilot Studio, senza Python sul PC (D-82,
+`09_Copilot_Studio/Copilot_Studio_pieno.md`).
 
 > **Chi usa il sistema** (analista, validatore) legge solo
 > `00_GUIDA_PASSO_PASSO.md`: cosa fare ogni settimana e ogni trimestre, come
@@ -129,14 +131,40 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 09_Copilot_Studio/Prova_K6_Operatore.md                prova K6 (CS-1, 09/10): un Operatore con un argomento a passi fissi legge l'allegato di A1 da SharePoint, lo passa al sotto-agente A1 e salva il JSON in Archivio_Cicli\In_arrivo con un agent flow; cartelle di lettura e scrittura; tabella dei risultati
 09_Copilot_Studio/Prove_CS1.md                         prove di fattibilita' della CS-1 dopo l'allineamento (TODO B5): domande all'IT e alla DPO, K6, K4 qualita' di A1, K11 piu' utenti, K12 A7, K7a sincronizzazione, K7b Excel senza nessuno davanti; tabella dei risultati
 09_Copilot_Studio/prepara_kit.py                       per chi mantiene il pacchetto: compone lo script della skill dai moduli del pacchetto e i file da caricare
-09_Copilot_Studio/genera_A1_CS.py                      per chi mantiene il pacchetto: compone l'A1 per Copilot Studio con variabili globali (K6-ter) dall'A1 attuale
+09_Copilot_Studio/Copilot_Studio_pieno.md              versione tutta in Copilot Studio (D-82, ramo copilot-studio-pieno): progetto (agenti, comunicazione via file e variabili globali, flussi, comandi, motore V2 e riserve F2/F1), sequenza di creazione con prove T0-T8, strade alternative, tabella dei risultati
+09_Copilot_Studio/genera_CS.py                         per chi mantiene il pacchetto: compone istruzioni dei sotto-agenti e testi dei prompt dagli A*.md attuali, l'elenco dei feed, e controlla gli argomenti YAML
+09_Copilot_Studio/prepara_busta.py                     per chi mantiene il pacchetto (serve openpyxl): la busta del motore per la prova K9, con il codice del precontrollo a blocchi, e la riga attesa
 09_Copilot_Studio/precontrollo-nfr/SKILL.md            istruzioni della skill precontrollo-nfr (scritte a mano)
 09_Copilot_Studio/precontrollo-nfr/scripts/precontrollo_nfr.py  script unico della skill (generato da prepara_kit.py: precontrollo, controlli, validatore, parti del razionale, schema di A1)
 09_Copilot_Studio/Da_caricare/precontrollo-nfr.zip     la skill da caricare nella nuova esperienza (opzione 2), cartella precontrollo-nfr alla radice (generato)
 09_Copilot_Studio/Da_caricare/precontrollo-nfr_senza_cartella.zip  la stessa skill con SKILL.md alla radice dello zip, se la prima e' rifiutata (generato)
 09_Copilot_Studio/Da_caricare/precontrollo_nfr.txt     lo script della skill in .txt, da allegare in chat con il Code interpreter (opzione 1; generato)
 09_Copilot_Studio/Da_caricare/Messaggi_da_incollare.txt  i messaggi di ogni test della prova di Copilot Studio
-09_Copilot_Studio/Da_caricare/A1_Horizon_Scanner_CS.md  istruzioni di A1 per Copilot Studio: allegato letto da {Global.allegato}, JSON anche in {Global.json_a1} (K6-ter, 22/10; generato)
+09_Copilot_Studio/Da_caricare/ID_tenant.txt            i segnaposto degli argomenti YAML (flussi, sotto-agenti) e dove trovare i valori nel tenant (scritto a mano)
+09_Copilot_Studio/Da_caricare/agenti/A1_CS.md          istruzioni del sotto-agente A1: allegato da {Global.ingresso}, JSON in {Global.uscita} (generato)
+09_Copilot_Studio/Da_caricare/agenti/A8_CS.md          istruzioni del sotto-agente A8: allegato dello straordinario da {Global.ingresso}, documenti in Analisi_Esterne/Eventi (generato)
+09_Copilot_Studio/Da_caricare/agenti/A3_CS.md          istruzioni del sotto-agente A3: baseline da {Global.ingresso}, settimana da {Global.periodo} (generato)
+09_Copilot_Studio/Da_caricare/prompt/A5.txt            prompt A5 Challenger, ingressi json_a1 e baseline (generato)
+09_Copilot_Studio/Da_caricare/prompt/A6.txt            prompt A6 Schede, ingresso schede_input (generato)
+09_Copilot_Studio/Da_caricare/prompt/Correggi.txt      prompt del giro di correzione di A1/A8, ingressi correzione, json_a1, allegato (generato)
+09_Copilot_Studio/Da_caricare/prompt/Motore.txt        prompt con code interpreter che esegue il codice della busta, ingressi comando e busta (generato)
+09_Copilot_Studio/Da_caricare/flussi/Fonti_rss.json    i feed approvati di fonti.md per il flusso Raccolta_notizie (generato)
+09_Copilot_Studio/Da_caricare/prove/K8_prova.ts        Office Script della prova K8: righe in una tabella, ricalcolo, errori e grafici, su una copia del registro
+09_Copilot_Studio/Da_caricare/prove/K9_Busta_vuota.xlsx  busta del motore senza ingressi, da riempire dal flusso NFR_Motore (generato)
+09_Copilot_Studio/Da_caricare/prove/K9_Busta_prova.xlsx  busta del motore con un output di A1 e il suo allegato dei dati del collaudo (generato)
+09_Copilot_Studio/Da_caricare/prove/K9_atteso.txt      impronta attesa del codice e riga attesa del motore sulla busta di prova (generato)
+09_Copilot_Studio/Da_caricare/argomenti/Aiuto.yaml     argomento Aiuto: elenco dei comandi
+09_Copilot_Studio/Da_caricare/argomenti/Correggi_ciclo.yaml  argomento Correggi_ciclo: un giro di correzione dal motore
+09_Copilot_Studio/Da_caricare/argomenti/Diagnosi.yaml  argomento Diagnosi: lettura delle valutazioni del ciclo
+09_Copilot_Studio/Da_caricare/argomenti/Dismetti.yaml  argomento Dismetti: motivazione, conferma, motore
+09_Copilot_Studio/Da_caricare/argomenti/Esegui_ciclo.yaml  argomento Esegui_ciclo: Input_A1 da SharePoint, sotto-agente A1 o A8, Salva_JSON, motore
+09_Copilot_Studio/Da_caricare/argomenti/Esegui_settimana.yaml  argomento Esegui_settimana: baseline, sotto-agente A3, Salva_JSON, motore
+09_Copilot_Studio/Da_caricare/argomenti/Report.yaml    argomento Report: report del ciclo per il comitato
+09_Copilot_Studio/Da_caricare/argomenti/Riapri.yaml    argomento Riapri: conferma, motore
+09_Copilot_Studio/Da_caricare/argomenti/Schede.yaml    argomento Schede: schede dei rischi con A6
+09_Copilot_Studio/Da_caricare/argomenti/Stato.yaml     argomento Stato: ultimo esito del motore
+09_Copilot_Studio/Da_caricare/argomenti/Straordinario.yaml  argomento Straordinario: motivo, conferma, motore
+09_Copilot_Studio/Da_caricare/argomenti/Valida.yaml    argomento Valida: conferma a nome dell'utente collegato, motore
 99_Collaudo/LEGGIMI_collaudo.md                        cosa verifica la suite e con quali dati
 99_Collaudo/esegui_collaudo.py                         lancia tutta la suite (catena in tre processi; --mirato la salta se non e' cambiato niente che la riguardi)
 99_Collaudo/comune.py                                  percorsi e utilita' della suite

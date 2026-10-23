@@ -1,0 +1,19 @@
+IDENTIFICATIVI DEL TENANT PER GLI ARGOMENTI YAML (Copilot Studio pieno, D-82)
+
+Gli argomenti in argomenti/*.yaml chiamano flussi e sotto-agenti con identificativi che esistono solo nel vostro
+ambiente. Nei file ci sono i segnaposto qui sotto, sempre gli stessi. Si trovano una volta (guida
+Copilot_Studio_pieno.md, passo T1.6), si scrivono qui accanto e poi, per ogni argomento, in Blocco note:
+Modifica -> Sostituisci (Ctrl+H) -> "Sostituisci tutto", un segnaposto alla volta. Nessun programma da lanciare.
+
+Dove si trovano: in un argomento di prova si aggiunge dall'interfaccia il nodo dello strumento o del sotto-agente,
+poi menu ... in alto a destra -> Open code editor. Si copia il valore della riga indicata, senza virgolette.
+
+<<ID_FLUSSO_Leggi_File>>     riga "flowId:" del nodo Leggi_File                     valore: ____________________
+<<ID_FLUSSO_Salva_JSON>>     riga "flowId:" del nodo Salva_JSON                     valore: ____________________
+<<ID_FLUSSO_NFR_Motore>>     riga "flowId:" del nodo NFR_Motore                     valore: ____________________
+<<ID_AGENTE_A1>>             riga "dialog:" del nodo del sotto-agente A1 Horizon Scanner   valore: ____________________
+<<ID_AGENTE_A8>>             riga "dialog:" del nodo del sotto-agente A8 Evento critico    valore: ____________________
+<<ID_AGENTE_A3>>             riga "dialog:" del nodo del sotto-agente A3 Interim Update    valore: ____________________
+
+Se il nodo del sotto-agente nel code editor non ha la riga "dialog:" ma un'altra forma, incollare quel YAML nella
+chat con Claude (passo T1.6): si adeguano gli argomenti e si aggiorna questo file.

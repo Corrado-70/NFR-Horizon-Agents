@@ -1,0 +1,7 @@
+PROVA K9: COSA DEVE STAMPARE IL MOTORE (Copilot Studio pieno, D-82)
+
+Impronta attesa del codice (impronta_codice e impronta_busta): 60172932e323
+Blocchi del foglio _Motore: 4, 110,957 caratteri
+
+Riga attesa sulla busta di prova K9_Busta_prova.xlsx, comando precontrollo (identica, a parte l'ordine dei campi):
+{"motore": "05b626090872", "comando": "precontrollo", "impronta_codice": "60172932e323", "impronta_busta": "60172932e323", "codice_uscita": 0, "esito": "Precontrollo dell'output di A1 (2026Q4): nessun rilievo.", "impronta_output": "79e6cb648606", "correzione": ""}

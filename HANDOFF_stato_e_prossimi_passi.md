@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10, ramo `copilot-studio-pieno`: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1267,6 +1267,49 @@ se la nota torna sugli stessi rischi.
   - un Excel riassuntivo delle classificazioni della metodologia, generato quando la rubrica era a 6 livelli: va
     rigenerato se serve;
   - una mail sui fogli del workbook.
+
+## 2-duotricesies. 23/10: ramo `copilot-studio-pieno`, progetto della versione tutta in Copilot Studio (D-82)
+
+Richiesta dell'utente (23/10): un ramo dedicato alla versione Copilot Studio piena, con tutti gli agenti, i prompt, la
+comunicazione, i YAML, la sequenza esatta di creazione con prove passo passo e le strade alternative. Indicazioni:
+comunicazione con file di lavoro in SharePoint poi messi in variabili globali; niente passi inutili (precontrollo
+forse superfluo, A5 a richiesta); motore V2, con la domanda su cosa succede senza Office Scripts; prima consegna
+"tutto, motore a prove". Il ramo e' autorizzato dall'utente (eccezione esplicita alla regola "solo main").
+
+Prima, lo stesso giorno, sul ramo main: YAML dell'argomento `Correzione A1` costruito con l'utente. Fatti accertati
+sul tenant:
+- nodo flusso `InvokeFlowAction` con `flowId` e ingressi `text`/`text_1`;
+- nodo prompt `InvokeAIBuilderModelAction` con `aIModelId`, `output: binding: predictionOutput`;
+- record con i campi `finishReason` e `text`.
+
+La correzione in una conversazione nuova trovava `Global.json_a1` vuota (trappola 114).
+
+Fatto, tutto in `NFR_Emerging_Risk_Agents/09_Copilot_Studio/`:
+- `Copilot_Studio_pieno.md`, documento unico:
+  - disegno: agente `NFR Operatore`, comandi come argomenti con trigger `OnActivity` sul testo, argomenti che
+    rileggono i file;
+  - comunicazione: cartelle, file di lavoro, tre globali (`periodo`, `ingresso`, `uscita`);
+  - agenti: sotto-agenti A1, A8, A3; prompt A5, A6, Correggi, Motore; A4 e A7 restano in Agent Builder;
+  - flussi `Leggi_File`, `Salva_JSON` (estrae il JSON), `NFR_Motore` (risponde subito e continua; giro di correzione
+    automatico, al massimo 2), `Raccolta_notizie`;
+  - motore V2, F2 senza Office Scripts (registro dati con openpyxl e presentazione con Power Query o HTML), F1;
+  - prove T0-T8, strade alternative, tabella dei risultati.
+- `genera_CS.py` al posto di `genera_A1_CS.py`:
+  - genera `agenti/A1_CS.md` (7.931 caratteri), `A8_CS.md` (7.846), `A3_CS.md` (7.597);
+  - genera `prompt/A5.txt`, `A6.txt`, `Correggi.txt`, `Motore.txt` e `flussi/Fonti_rss.json`;
+  - controlla i 12 argomenti YAML.
+- `Da_caricare/argomenti/*.yaml`, 12 comandi, con i segnaposto di `ID_tenant.txt`.
+- `prepara_busta.py`: la busta K9 (`prove/K9_Busta_vuota.xlsx`, `K9_Busta_prova.xlsx`) con il codice del precontrollo
+  a blocchi e un lettore xlsx a sola libreria standard; impronta attesa e riga in `K9_atteso.txt`. Gira sul PC come
+  dovra' girare nel prompt.
+- `prove/K8_prova.ts`: Office Script della prova K8.
+- Collaudo: `test_copilot_studio_pieno` al posto di `test_a1_copilot_studio` (test_controlli 292/292,
+  verifica_riferimenti 31/31).
+- Documentazione: DECISIONI (D-82, nota in A-15), TODO (B9), PROMPT_MASTER (trappole 113-121, struttura), 00_LEGGIMI.
+
+Da fare in Banca: le prove T0-T8 nell'ordine. T0.1 (Office Scripts), T4 (K9) e T5 (K8) decidono la strada del motore;
+il codice del motore e' la consegna successiva. Dopo ogni modifica agli A*.md o agli argomenti: `genera_CS.py`; dopo
+`prepara_kit.py`: `prepara_busta.py`.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

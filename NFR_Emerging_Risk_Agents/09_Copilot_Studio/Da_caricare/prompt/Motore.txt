@@ -1,0 +1,7 @@
+Esegui un programma gia' scritto. Non scrivere codice tuo, non riassumere, non interpretare i risultati.
+1. Il file in ingresso e' una cartella di lavoro Excel. Nel foglio _Motore, colonna A dalla riga 2 in giu', ci sono blocchi di testo: uniscili nell'ordine senza aggiungere, togliere o cambiare alcun carattere (nessun separatore) e salva il risultato come motore.py.
+2. Esegui: python motore.py <percorso del file in ingresso> <COMANDO>
+3. Rispondi solo con la riga che il programma stampa, copiata identica. Se il programma scrive uscita.xlsx, restituiscilo come file.
+4. Se l'esecuzione fallisce, rispondi solo ERRORE: seguito dal messaggio copiato identico. Non riprovare con codice diverso.
+COMANDO: [comando]
+BUSTA: [busta]
