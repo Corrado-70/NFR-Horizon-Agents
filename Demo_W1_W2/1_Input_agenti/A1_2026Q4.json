@@ -11,7 +11,7 @@
         "DRV-AI",
         "DRV-CYB"
       ],
-      "descrizione": "Frodi a danno dei clienti tramite voci o video sintetici che inducono bonifici istantanei irrevocabili verso conti di terzi.",
+      "descrizione": "Frodi a danno dei clienti tramite voci o video sintetici che inducono bonifici istantanei irrevocabili verso conti di terzi. Il rischio ricade nella categoria Sicurezza informatica della tassonomia interna e lo rendono emergente i driver intelligenza artificiale, cyber. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Antifrode, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 4,
       "velocity": 5,
       "prossimita": 5,
@@ -20,7 +20,7 @@
       "variazioni": [
         {
           "dimensione": "prossimita",
-          "evidenza": "L'incident report del 20 novembre 2026 documenta due frodi con voce sintetica su clienti corporate della Banca, per bonifici istantanei gia' eseguiti.",
+          "evidenza": "L'incident report del 20 novembre 2026 documenta due frodi con voce sintetica su clienti corporate della Banca, per bonifici istantanei gia' eseguiti. Il fatto e' del 20/11/2026 e riguarda direttamente il meccanismo del rischio, non un tema vicino. Per questo giustifica la variazione della prossimita' rispetto al ciclo precedente.",
           "data_evidenza": "2026-11-20"
         }
       ],
@@ -62,13 +62,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: l'AI generativa rende facile imitare la voce o il volto di un dirigente o di un familiare (causa); il cliente, convinto, ordina un bonifico istantaneo verso un conto di terzi (evento); il pagamento e' irrevocabile in pochi secondi e, con l'obbligo di rimborso dal 2027, la perdita passa dal cliente alla Banca, insieme al danno reputazionale (danno). IMPATTO: grave. La Relazione annuale sui pagamenti al dettaglio dell'autorita' di vigilanza annuncia l'obbligo di rimborso delle frodi APP dal 2027: la perdita attesa cresce, con sanzioni probabili e danno reputazionale nazionale, ma la continuita' della Banca non e' toccata. PROBABILITA: probabile. La Threat intelligence sulle campagne di frode con voce sintetica documenta casi ripetuti verso banche UE e i Report trimestrali frodi della Funzione Antifrode mostrano tentativi in crescita; la Banca e' esposta perche' offre i bonifici istantanei a tutta la clientela. PROSSIMITA: in corso presso la Banca. L'Incident report del 20/11/2026 documenta due frodi con voce sintetica su clienti corporate, con bonifici gia' eseguiti. VELOCITY: entro un mese. Dal contatto fraudolento al bonifico passano minuti e il denaro esce subito (Report trimestrale frodi Q3).",
+      "razionale": "RISCHIO: l'AI generativa rende facile imitare la voce o il volto di un dirigente o di un familiare (causa); il cliente, convinto, ordina un bonifico istantaneo verso un conto di terzi (evento); il pagamento e' irrevocabile in pochi secondi e, con l'obbligo di rimborso dal 2027, la perdita passa dal cliente alla Banca, insieme al danno reputazionale (danno). IMPATTO: grave. La Relazione annuale sui pagamenti al dettaglio dell'autorita' di vigilanza annuncia l'obbligo di rimborso delle frodi APP dal 2027: la perdita attesa cresce, con sanzioni probabili e danno reputazionale nazionale, ma la continuita' della Banca non e' toccata. Il valore 5 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. PROBABILITA: probabile. La Threat intelligence sulle campagne di frode con voce sintetica documenta casi ripetuti verso banche UE e i Report trimestrali frodi della Funzione Antifrode mostrano tentativi in crescita; la Banca e' esposta perche' offre i bonifici istantanei a tutta la clientela. Il valore 5 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. PROSSIMITA: in corso presso la Banca. L'Incident report del 20/11/2026 documenta due frodi con voce sintetica su clienti corporate, con bonifici gia' eseguiti. Il valore 5 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Analisi interna sulle frodi da ingegneria sociale». VELOCITY: entro un mese. Dal contatto fraudolento al bonifico passano minuti e il denaro esce subito (Report trimestrale frodi Q3). Il valore 5 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Analisi interna sulle frodi da ingegneria sociale».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Anticipare al primo trimestre 2027 l'attivazione della verifica fuori banda sui bonifici istantanei.",
+          "descrizione": "Anticipare al primo trimestre 2027 l'attivazione della verifica fuori banda sui bonifici istantanei. Responsabile la Funzione Antifrode, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Antifrode",
           "orizzonte": "3 mesi",
-          "razionale": "Con due casi gia' avvenuti presso la Banca la verifica fuori banda, prevista piu' avanti, va anticipata: interrompe la frode nel momento in cui il cliente sta per pagare. EFFETTO: meno bonifici fraudolenti eseguiti e perdite piu' basse a parita' di tentativi; il tempo di blocco dei beneficiari fraudolenti (NFR-01-K3) deve scendere, mentre la Prossimita' resta alta finche' le campagne continuano."
+          "razionale": "Con due casi gia' avvenuti presso la Banca la verifica fuori banda, prevista piu' avanti, va anticipata: interrompe la frode nel momento in cui il cliente sta per pagare. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: meno bonifici fraudolenti eseguiti e perdite piu' basse a parita' di tentativi; il tempo di blocco dei beneficiari fraudolenti (NFR-01-K3) deve scendere, mentre la Prossimita' resta alta finche' le campagne continuano."
         }
       ],
       "kri_proposti": [
@@ -80,7 +80,7 @@
           "fonte_dati": "Sistema antifrode transazionale",
           "soglia_attenzione": 3,
           "soglia_allerta": 6,
-          "razionale": "Misura quanto cresce il fenomeno sul canale piu' esposto: e' il primo segnale di nuove campagne contro i clienti della Banca. EFFETTO: con la verifica fuori banda i tentativi non calano subito, perche' dipendono dai truffatori, ma devono smettere di crescere; oltre la soglia di allerta il rischio e' in corso su larga scala."
+          "razionale": "Misura quanto cresce il fenomeno sul canale piu' esposto: e' il primo segnale di nuove campagne contro i clienti della Banca. Il dato viene da Sistema antifrode transazionale, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: con la verifica fuori banda i tentativi non calano subito, perche' dipendono dai truffatori, ma devono smettere di crescere; oltre la soglia di allerta il rischio e' in corso su larga scala."
         },
         {
           "kri_id": "NFR-01-K3",
@@ -90,7 +90,7 @@
           "fonte_dati": "Log del sistema di pagamento",
           "soglia_attenzione": 4,
           "soglia_allerta": 12,
-          "razionale": "Misura quanto la Banca e' esposta: piu' a lungo resta attivo un beneficiario fraudolento, piu' bonifici possono raggiungerlo. EFFETTO: con la verifica fuori banda il tempo di blocco deve scendere sotto la soglia di attenzione; se sale, i controlli non tengono il passo delle frodi."
+          "razionale": "Misura quanto la Banca e' esposta: piu' a lungo resta attivo un beneficiario fraudolento, piu' bonifici possono raggiungerlo. Il dato viene da Log del sistema di pagamento, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: con la verifica fuori banda il tempo di blocco deve scendere sotto la soglia di attenzione; se sale, i controlli non tengono il passo delle frodi."
         }
       ]
     },
@@ -102,7 +102,7 @@
         "DRV-TPR",
         "DRV-CYB"
       ],
-      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.",
+      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino. Il rischio ricade nella categoria Terze parti della tassonomia interna e lo rendono emergente i driver terze parti, cyber. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione ICT & Security Risk, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 4,
       "velocity": 4,
       "prossimita": 3,
@@ -135,13 +135,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: molti servizi critici della Banca girano presso un solo fornitore cloud (causa); un'interruzione prolungata del fornitore li rende indisponibili insieme (evento); senza un'alternativa attivabile nei tempi di ripristino la Banca non eroga funzioni essenziali, con danno ai clienti e sanzioni (danno). Nel trimestre nessun incidente e nessun nuovo test: valori confermati con le fonti del ciclo precedente. IMPATTO: grave. Il Registro delle informazioni DORA classifica critici i servizi ospitati dal fornitore: un'interruzione ferma una funzione essenziale. PROBABILITA: improbabile. Nessuna interruzione grave del fornitore e' documentata e il Report del test completo di exit strategy mostra un'uscita praticabile, con soli rilievi minori. PROSSIMITA: da uno a due anni. Nessun segnale di degrado del fornitore nelle fonti; il Contratto e piano di uscita resta valido. VELOCITY: da uno a tre mesi. E' il tempo che l'Esito del test di exit strategy stima per riattivare i servizi critici su un'alternativa: in quel periodo il danno cresce fino al pieno impatto.",
+      "razionale": "RISCHIO: molti servizi critici della Banca girano presso un solo fornitore cloud (causa); un'interruzione prolungata del fornitore li rende indisponibili insieme (evento); senza un'alternativa attivabile nei tempi di ripristino la Banca non eroga funzioni essenziali, con danno ai clienti e sanzioni (danno). Nel trimestre nessun incidente e nessun nuovo test: valori confermati con le fonti del ciclo precedente. IMPATTO: grave. Il Registro delle informazioni DORA classifica critici i servizi ospitati dal fornitore: un'interruzione ferma una funzione essenziale. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Contratto e piano di uscita del fornitore cloud». PROBABILITA: improbabile. Nessuna interruzione grave del fornitore e' documentata e il Report del test completo di exit strategy mostra un'uscita praticabile, con soli rilievi minori. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Contratto e piano di uscita del fornitore cloud». PROSSIMITA: da uno a due anni. Nessun segnale di degrado del fornitore nelle fonti; il Contratto e piano di uscita resta valido. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Contratto e piano di uscita del fornitore cloud». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. VELOCITY: da uno a tre mesi. E' il tempo che l'Esito del test di exit strategy stima per riattivare i servizi critici su un'alternativa: in quel periodo il danno cresce fino al pieno impatto. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Contratto e piano di uscita del fornitore cloud».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy.",
+          "descrizione": "Chiudere i rilievi minori emersi dal test di exit strategy. Responsabile la Funzione ICT & Security Risk, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza. L'azione si considera chiusa quando il controllo e' in esercizio e se ne vede l'effetto sull'indicatore collegato.",
           "owner": "Funzione ICT & Security Risk",
           "orizzonte": "3 mesi",
-          "razionale": "I rilievi minori del Report del test completo di exit strategy sono l'ultimo ostacolo a un'uscita nei tempi di ripristino. EFFETTO: un piano di uscita senza rilievi aperti, che mantiene bassa la Probabilita' di un'interruzione senza alternativa; la quota di servizi sul fornitore (NFR-02-K1) non cambia, cambia la capacita' di spostarli."
+          "razionale": "I rilievi minori del Report del test completo di exit strategy sono l'ultimo ostacolo a un'uscita nei tempi di ripristino. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: un piano di uscita senza rilievi aperti, che mantiene bassa la Probabilita' di un'interruzione senza alternativa; la quota di servizi sul fornitore (NFR-02-K1) non cambia, cambia la capacita' di spostarli."
         }
       ],
       "kri_proposti": [
@@ -153,7 +153,7 @@
           "fonte_dati": "Registro delle informazioni DORA",
           "soglia_attenzione": 60,
           "soglia_allerta": 75,
-          "razionale": "Misura la concentrazione, cioe' quanta parte della Banca dipende dal fornitore: piu' la quota e' alta, piu' grave sarebbe un'interruzione. EFFETTO: deve restare sotto la soglia di allerta; un aumento senza un piano di uscita aggiornato riapre la valutazione dell'Impatto."
+          "razionale": "Misura la concentrazione, cioe' quanta parte della Banca dipende dal fornitore: piu' la quota e' alta, piu' grave sarebbe un'interruzione. Il dato viene da Registro delle informazioni DORA, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: deve restare sotto la soglia di allerta; un aumento senza un piano di uscita aggiornato riapre la valutazione dell'Impatto."
         },
         {
           "kri_id": "NFR-02-K3",
@@ -163,7 +163,7 @@
           "fonte_dati": "Incident management ICT e comunicazioni del fornitore",
           "soglia_attenzione": 1,
           "soglia_allerta": 3,
-          "razionale": "Conta le interruzioni dei servizi critici presso il fornitore principale, che sono il meccanismo di perdita del rischio. EFFETTO: atteso a zero; una sola interruzione porta il KRI in ambra e chiede di rivedere Probabilita' e Prossimita' al ciclo successivo."
+          "razionale": "Conta le interruzioni dei servizi critici presso il fornitore principale, che sono il meccanismo di perdita del rischio. Il dato viene da Incident management ICT e comunicazioni del fornitore, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: atteso a zero; una sola interruzione porta il KRI in ambra e chiede di rivedere Probabilita' e Prossimita' al ciclo successivo."
         }
       ]
     },
@@ -175,7 +175,7 @@
         "DRV-CON",
         "DRV-CLI"
       ],
-      "descrizione": "Claim ambientali non sostanziati nella documentazione di prodotti di investimento ESG, con rischio di sanzioni e rimborsi.",
+      "descrizione": "Claim ambientali non sostanziati nella documentazione di prodotti di investimento ESG, con rischio di sanzioni e rimborsi. Il rischio ricade nella categoria Condotta della tassonomia interna e lo rendono emergente i driver condotta, clima e ambiente. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Compliance, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 2,
       "prossimita": 4,
@@ -202,13 +202,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: la domanda di prodotti sostenibili spinge a presentare i prodotti ESG con claim ambientali (causa); se un claim non e' sostanziato e un'autorita' o un cliente lo contestano (evento), la Banca rischia sanzioni, rimborsi e danno reputazionale (danno). Nessun fatto nuovo nel trimestre: valori confermati. IMPATTO: rilevante. Clientela ampia dei prodotti ESG e segnalazione all'autorita' possibile, come prevedono gli Orientamenti dell'autorita' europea sui nomi dei fondi ESG. PROBABILITA: possibile. La Verifica interna dei claim ambientali della Compliance ha lasciato prodotti ancora da rivedere: la Banca e' esposta. PROSSIMITA: entro dodici mesi. Il Provvedimento sanzionatorio su claim ESG di una banca comparabile e' un caso documentato. VELOCITY: da sei a dodici mesi. Un'istruttoria dell'autorita' richiede mesi prima della sanzione, come nel Provvedimento sanzionatorio.",
+      "razionale": "RISCHIO: la domanda di prodotti sostenibili spinge a presentare i prodotti ESG con claim ambientali (causa); se un claim non e' sostanziato e un'autorita' o un cliente lo contestano (evento), la Banca rischia sanzioni, rimborsi e danno reputazionale (danno). Nessun fatto nuovo nel trimestre: valori confermati. IMPATTO: rilevante. Clientela ampia dei prodotti ESG e segnalazione all'autorita' possibile, come prevedono gli Orientamenti dell'autorita' europea sui nomi dei fondi ESG. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Orientamenti dell'autorita' europea sui nomi dei fondi ESG». PROBABILITA: possibile. La Verifica interna dei claim ambientali della Compliance ha lasciato prodotti ancora da rivedere: la Banca e' esposta. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Orientamenti dell'autorita' europea sui nomi dei fondi ESG». PROSSIMITA: entro dodici mesi. Il Provvedimento sanzionatorio su claim ESG di una banca comparabile e' un caso documentato. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Orientamenti dell'autorita' europea sui nomi dei fondi ESG». VELOCITY: da sei a dodici mesi. Un'istruttoria dell'autorita' richiede mesi prima della sanzione, come nel Provvedimento sanzionatorio. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Orientamenti dell'autorita' europea sui nomi dei fondi ESG».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Completare la revisione indipendente dei claim ambientali dei prodotti ESG residui.",
+          "descrizione": "Completare la revisione indipendente dei claim ambientali dei prodotti ESG residui. Responsabile la Funzione Compliance, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Compliance",
           "orizzonte": "3 mesi",
-          "razionale": "La Verifica interna della Compliance ha lasciato una parte dei prodotti senza revisione: e' la lacuna da chiudere prima di un'istruttoria. EFFETTO: tutti i claim sostanziati; la quota di prodotti senza revisione (NFR-03-K2) deve scendere fino a zero e, con essa, la Probabilita' al ciclo successivo."
+          "razionale": "La Verifica interna della Compliance ha lasciato una parte dei prodotti senza revisione: e' la lacuna da chiudere prima di un'istruttoria. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: tutti i claim sostanziati; la quota di prodotti senza revisione (NFR-03-K2) deve scendere fino a zero e, con essa, la Probabilita' al ciclo successivo."
         }
       ],
       "kri_proposti": [
@@ -220,7 +220,7 @@
           "fonte_dati": "Sistema di gestione reclami",
           "soglia_attenzione": null,
           "soglia_allerta": null,
-          "razionale": "Segnale anticipato: i reclami dei clienti di solito precedono le contestazioni dell'autorita'. EFFETTO: stabili o in calo con la revisione dei claim; le soglie le fissa la Banca."
+          "razionale": "Segnale anticipato: i reclami dei clienti di solito precedono le contestazioni dell'autorita'. Il dato viene da Sistema di gestione reclami, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: stabili o in calo con la revisione dei claim; le soglie le fissa la Banca."
         },
         {
           "kri_id": "NFR-03-K2",
@@ -230,7 +230,7 @@
           "fonte_dati": "Inventario prodotti — Compliance",
           "soglia_attenzione": 20,
           "soglia_allerta": 40,
-          "razionale": "Misura quanto la Banca e' esposta: ogni prodotto non rivisto e' un claim che potrebbe non reggere a una verifica. EFFETTO: in calo fino a zero con la revisione indipendente; sopra la soglia di allerta il presidio dei claim e' insufficiente."
+          "razionale": "Misura quanto la Banca e' esposta: ogni prodotto non rivisto e' un claim che potrebbe non reggere a una verifica. Il dato viene da Inventario prodotti — Compliance, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo fino a zero con la revisione indipendente; sopra la soglia di allerta il presidio dei claim e' insufficiente."
         }
       ]
     },
@@ -241,7 +241,7 @@
       "driver": [
         "DRV-CLI"
       ],
-      "descrizione": "Alluvioni o ondate di calore che rendono inagibili sedi operative o degradano il data center secondario.",
+      "descrizione": "Alluvioni o ondate di calore che rendono inagibili sedi operative o degradano il data center secondario. Il rischio ricade nella categoria Sicurezza fisica della tassonomia interna e lo rendono emergente i driver clima e ambiente. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Business Continuity, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -262,10 +262,10 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: eventi climatici estremi sempre piu' frequenti, alluvioni e ondate di calore (causa), possono rendere inagibili sedi operative o degradare il data center secondario (evento); le attivita' di quelle sedi si fermano e il ripristino costa, con disagi per i clienti (danno). Nessun evento sulle sedi nel trimestre e piani per le due sedi critiche in redazione: valori confermati. IMPATTO: rilevante. La Mappa del rischio idrogeologico delle sedi (BCM) indica sedi critiche esposte, il cui blocco degrada processi critici. PROBABILITA: possibile. L'alluvione in Emilia-Romagna con chiusura di due filiali e' un caso in aziende comparabili e la Banca ha sedi nelle aree a rischio della Mappa. PROSSIMITA: da uno a due anni. Nessun evento in corso sulle sedi della Banca. VELOCITY: da sei a dodici mesi. L'evento e' rapido, ma le attivita' si spostano sulle altre sedi e il danno pieno arriva solo se l'inagibilita' dura mesi (Mappa del rischio idrogeologico, BCM).",
+      "razionale": "RISCHIO: eventi climatici estremi sempre piu' frequenti, alluvioni e ondate di calore (causa), possono rendere inagibili sedi operative o degradare il data center secondario (evento); le attivita' di quelle sedi si fermano e il ripristino costa, con disagi per i clienti (danno). Nessun evento sulle sedi nel trimestre e piani per le due sedi critiche in redazione: valori confermati. IMPATTO: rilevante. La Mappa del rischio idrogeologico delle sedi (BCM) indica sedi critiche esposte, il cui blocco degrada processi critici. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Mappa del rischio idrogeologico delle sedi — BCM». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: possibile. L'alluvione in Emilia-Romagna con chiusura di due filiali e' un caso in aziende comparabili e la Banca ha sedi nelle aree a rischio della Mappa. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Mappa del rischio idrogeologico delle sedi — BCM». PROSSIMITA: da uno a due anni. Nessun evento in corso sulle sedi della Banca. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Mappa del rischio idrogeologico delle sedi — BCM». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. VELOCITY: da sei a dodici mesi. L'evento e' rapido, ma le attivita' si spostano sulle altre sedi e il danno pieno arriva solo se l'inagibilita' dura mesi (Mappa del rischio idrogeologico, BCM). Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Mappa del rischio idrogeologico delle sedi — BCM».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Verificare con i fornitori di energia e telecomunicazioni delle due sedi critiche i tempi di ripristino garantiti dopo un'alluvione.",
+          "descrizione": "Verificare con i fornitori di energia e telecomunicazioni delle due sedi critiche i tempi di ripristino garantiti dopo un'alluvione. Responsabile la Funzione Business Continuity, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Business Continuity",
           "orizzonte": "6 mesi",
           "razionale": "I piani delle due sedi (2026Q2-NFR-04-A1) e la loro prova (2026Q3-NFR-04-A1) presuppongono energia e rete disponibili, ma nessuno ha verificato in quanto tempo i fornitori le ripristinano. EFFETTO: piani con tempi di ripartenza realistici; i giorni di indisponibilita' dopo un evento (NFR-04-K2) restano sotto la soglia di attenzione."
@@ -280,7 +280,7 @@
           "fonte_dati": "Mappatura BCM delle sedi",
           "soglia_attenzione": 1,
           "soglia_allerta": 3,
-          "razionale": "Misura l'esposizione: ogni sede critica senza piano specifico e' un punto in cui un'alluvione ferma l'operativita'. EFFETTO: atteso a zero dopo i piani di continuita'; se torna a salire, nuove sedi sono entrate nelle aree a rischio della Mappa."
+          "razionale": "Misura l'esposizione: ogni sede critica senza piano specifico e' un punto in cui un'alluvione ferma l'operativita'. Il dato viene da Mappatura BCM delle sedi, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: atteso a zero dopo i piani di continuita'; se torna a salire, nuove sedi sono entrate nelle aree a rischio della Mappa."
         },
         {
           "kri_id": "NFR-04-K2",
@@ -290,7 +290,7 @@
           "fonte_dati": "Registro incidenti BCM",
           "soglia_attenzione": 2,
           "soglia_allerta": 5,
-          "razionale": "Misura quanto il fenomeno colpisce davvero le sedi della Banca: i giorni persi per eventi climatici. EFFETTO: pochi giorni e in calo con i piani di continuita'; oltre la soglia di allerta il rischio si sta manifestando e la Prossimita' va rivista."
+          "razionale": "Misura quanto il fenomeno colpisce davvero le sedi della Banca: i giorni persi per eventi climatici. Il dato viene da Registro incidenti BCM, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: pochi giorni e in calo con i piani di continuita'; oltre la soglia di allerta il rischio si sta manifestando e la Prossimita' va rivista."
         }
       ]
     },
@@ -301,7 +301,7 @@
       "driver": [
         "DRV-TEC"
       ],
-      "descrizione": "Errori di conversione dati e controlli di processo non ridisegnati durante la migrazione a ondate del sistema core.",
+      "descrizione": "Errori di conversione dati e controlli di processo non ridisegnati durante la migrazione a ondate del sistema core. Il rischio ricade nella categoria Processo della tassonomia interna e lo rendono emergente i driver debito tecnologico. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Operations, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -328,13 +328,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: la migrazione a ondate del sistema core (causa) puo' introdurre errori di conversione dei dati e lasciare controlli di processo non ridisegnati (evento); ne derivano operazioni errate, rettifiche ai clienti e interruzioni dei processi (danno). Wave 2 confermata nel 2027 e controlli di riconciliazione stabili: valori confermati. IMPATTO: rilevante. Errori sul core degradano processi critici per una clientela ampia (Piano di migrazione del core banking, PMO). PROBABILITA: possibile. La Chiusura della wave 1 ha registrato incidenti di produzione legati alla migrazione: il meccanismo e' gia' noto presso la Banca. PROSSIMITA: da uno a due anni. Il momento critico e' la wave 2, prevista nel 2027 dal Piano di migrazione. VELOCITY: da tre a sei mesi. La Relazione di audit sui controlli di riconciliazione mostra che gli errori si accumulano nei mesi dopo un'ondata prima di essere tutti intercettati.",
+      "razionale": "RISCHIO: la migrazione a ondate del sistema core (causa) puo' introdurre errori di conversione dei dati e lasciare controlli di processo non ridisegnati (evento); ne derivano operazioni errate, rettifiche ai clienti e interruzioni dei processi (danno). Wave 2 confermata nel 2027 e controlli di riconciliazione stabili: valori confermati. IMPATTO: rilevante. Errori sul core degradano processi critici per una clientela ampia (Piano di migrazione del core banking, PMO). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Piano di migrazione del core banking — PMO». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. PROBABILITA: possibile. La Chiusura della wave 1 ha registrato incidenti di produzione legati alla migrazione: il meccanismo e' gia' noto presso la Banca. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Piano di migrazione del core banking — PMO». PROSSIMITA: da uno a due anni. Il momento critico e' la wave 2, prevista nel 2027 dal Piano di migrazione. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Piano di migrazione del core banking — PMO». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. VELOCITY: da tre a sei mesi. La Relazione di audit sui controlli di riconciliazione mostra che gli errori si accumulano nei mesi dopo un'ondata prima di essere tutti intercettati. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Piano di migrazione del core banking — PMO».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Aggiungere a ogni ondata di migrazione una riconciliazione dei saldi prima e dopo la conversione, firmata dal responsabile.",
+          "descrizione": "Aggiungere a ogni ondata di migrazione una riconciliazione dei saldi prima e dopo la conversione, firmata dal responsabile. Responsabile la Funzione Operations, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Operations",
           "orizzonte": "3 mesi",
-          "razionale": "Il monitoraggio degli incidenti (2026Q3-NFR-05-A1) intercetta gli errori dopo il passaggio in produzione; la riconciliazione li ferma prima. EFFETTO: meno errori di conversione che arrivano ai clienti; gli incidenti di produzione (NFR-05-K2) restano sotto la soglia di attenzione dopo ogni ondata."
+          "razionale": "Il monitoraggio degli incidenti (2026Q3-NFR-05-A1) intercetta gli errori dopo il passaggio in produzione; la riconciliazione li ferma prima. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: meno errori di conversione che arrivano ai clienti; gli incidenti di produzione (NFR-05-K2) restano sotto la soglia di attenzione dopo ogni ondata."
         }
       ],
       "kri_proposti": [
@@ -346,7 +346,7 @@
           "fonte_dati": "Incident management IT",
           "soglia_attenzione": 3,
           "soglia_allerta": 6,
-          "razionale": "Misura il fenomeno nel momento piu' delicato: gli incidenti di produzione dopo ogni ondata. EFFETTO: un picco dopo la wave 2 e poi un calo; se resta oltre la soglia di allerta i controlli di riconciliazione non bastano."
+          "razionale": "Misura il fenomeno nel momento piu' delicato: gli incidenti di produzione dopo ogni ondata. Il dato viene da Incident management IT, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: un picco dopo la wave 2 e poi un calo; se resta oltre la soglia di allerta i controlli di riconciliazione non bastano."
         },
         {
           "kri_id": "NFR-05-K3",
@@ -356,7 +356,7 @@
           "fonte_dati": "Piano di migrazione — PMO",
           "soglia_attenzione": 30,
           "soglia_allerta": 60,
-          "razionale": "Misura quanto la Banca arriva esposta alla wave 2: ogni controllo non ridisegnato e' un punto in cui un errore passa inosservato. EFFETTO: in calo fino a zero prima della wave 2; sopra la soglia di attenzione l'ondata va riprogrammata."
+          "razionale": "Misura quanto la Banca arriva esposta alla wave 2: ogni controllo non ridisegnato e' un punto in cui un errore passa inosservato. Il dato viene da Piano di migrazione — PMO, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo fino a zero prima della wave 2; sopra la soglia di attenzione l'ondata va riprogrammata."
         }
       ]
     },
@@ -368,7 +368,7 @@
         "DRV-AI",
         "DRV-HUM"
       ],
-      "descrizione": "Dipendenti che trasferiscono intenzionalmente dati riservati su servizi di AI generativa esterni per uso personale o a favore di terzi.",
+      "descrizione": "Dipendenti che trasferiscono intenzionalmente dati riservati su servizi di AI generativa esterni per uso personale o a favore di terzi. Il rischio ricade nella categoria Sicurezza informatica della tassonomia interna e lo rendono emergente i driver intelligenza artificiale, capitale umano. Per la Banca il meccanismo passa dai processi presidiati dalla Direzione Risorse Umane, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -395,13 +395,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: strumenti di AI generativa esterni, facili da usare e non autorizzati (causa), vengono usati da dipendenti per trasferire dati riservati, per comodita' o a favore di terzi (evento); i dati escono dal perimetro della Banca, con violazioni di privacy e segreto e possibili sanzioni (danno). Nessun fatto nuovo nel trimestre: valori confermati; la verifica dell'audit sull'estensione del DLP e' pianificata per febbraio 2027. IMPATTO: rilevante. I Log DLP mostrano tentativi di caricamento di dati riservati di clienti: segnalazione all'autorita' possibile. PROBABILITA: possibile. La Survey interna sull'uso di strumenti di AI generativa indica un uso diffuso fra il personale: la Banca e' esposta. PROSSIMITA: da uno a due anni. Il Verbale del test di blocco DLP mostra che il blocco funziona sui servizi noti, non ancora su tutti. VELOCITY: da tre a sei mesi. Fra un caricamento e la sua scoperta passano settimane o mesi (Log DLP).",
+      "razionale": "RISCHIO: strumenti di AI generativa esterni, facili da usare e non autorizzati (causa), vengono usati da dipendenti per trasferire dati riservati, per comodita' o a favore di terzi (evento); i dati escono dal perimetro della Banca, con violazioni di privacy e segreto e possibili sanzioni (danno). Nessun fatto nuovo nel trimestre: valori confermati; la verifica dell'audit sull'estensione del DLP e' pianificata per febbraio 2027. IMPATTO: rilevante. I Log DLP mostrano tentativi di caricamento di dati riservati di clienti: segnalazione all'autorita' possibile. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Log DLP: tentativi di caricamento verso servizi AI esterni». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: possibile. La Survey interna sull'uso di strumenti di AI generativa indica un uso diffuso fra il personale: la Banca e' esposta. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Log DLP: tentativi di caricamento verso servizi AI esterni». PROSSIMITA: da uno a due anni. Il Verbale del test di blocco DLP mostra che il blocco funziona sui servizi noti, non ancora su tutti. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Log DLP: tentativi di caricamento verso servizi AI esterni». VELOCITY: da tre a sei mesi. Fra un caricamento e la sua scoperta passano settimane o mesi (Log DLP). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Log DLP: tentativi di caricamento verso servizi AI esterni». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'.",
       "azioni_mitigazione": [
         {
-          "descrizione": "Inserire nel codice di comportamento gli strumenti di AI ammessi e i dati che non si possono caricare, con le conseguenze disciplinari.",
+          "descrizione": "Inserire nel codice di comportamento gli strumenti di AI ammessi e i dati che non si possono caricare, con le conseguenze disciplinari. Responsabile la Direzione Risorse Umane, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Direzione Risorse Umane",
           "orizzonte": "6 mesi",
-          "razionale": "La formazione (2026Q3-NFR-06-A1) spiega le regole; il codice di comportamento le rende vincolanti. EFFETTO: meno tentativi di caricamento di dati riservati (NFR-06-K1); al ciclo successivo puo' sostenere una Probabilita' piu' bassa."
+          "razionale": "La formazione (2026Q3-NFR-06-A1) spiega le regole; il codice di comportamento le rende vincolanti. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: meno tentativi di caricamento di dati riservati (NFR-06-K1); al ciclo successivo puo' sostenere una Probabilita' piu' bassa."
         }
       ],
       "kri_proposti": [
@@ -413,7 +413,7 @@
           "fonte_dati": "DLP e proxy web",
           "soglia_attenzione": 10,
           "soglia_allerta": 30,
-          "razionale": "Misura il comportamento a rischio come lo vede il DLP: ogni tentativo e' un'esfiltrazione fermata o mancata di poco. EFFETTO: in calo con la formazione; un aumento oltre la soglia di allerta indica strumenti nuovi non ancora bloccati."
+          "razionale": "Misura il comportamento a rischio come lo vede il DLP: ogni tentativo e' un'esfiltrazione fermata o mancata di poco. Il dato viene da DLP e proxy web, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo con la formazione; un aumento oltre la soglia di allerta indica strumenti nuovi non ancora bloccati."
         },
         {
           "kri_id": "NFR-06-K2",
@@ -423,7 +423,7 @@
           "fonte_dati": "Piattaforma di formazione",
           "soglia_attenzione": 20,
           "soglia_allerta": 40,
-          "razionale": "Misura quanta parte del personale e' esposta all'errore per inconsapevolezza. EFFETTO: sotto la soglia di attenzione alla fine della formazione obbligatoria."
+          "razionale": "Misura quanta parte del personale e' esposta all'errore per inconsapevolezza. Il dato viene da Piattaforma di formazione, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: sotto la soglia di attenzione alla fine della formazione obbligatoria. Un valore in crescita per due cicli consecutivi segnala che il rischio si sta avvicinando."
         }
       ]
     },
@@ -435,7 +435,7 @@
         "DRV-CYB",
         "DRV-TPR"
       ],
-      "descrizione": "Blocco prolungato dei pagamenti per un attacco ransomware al fornitore esterno che gestisce il gateway di pagamento della Banca.",
+      "descrizione": "Blocco prolungato dei pagamenti per un attacco ransomware al fornitore esterno che gestisce il gateway di pagamento della Banca. Il rischio ricade nella categoria Terze parti della tassonomia interna e lo rendono emergente i driver cyber, terze parti. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione ICT & Security Risk, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 4,
       "velocity": 5,
       "prossimita": 3,
@@ -456,13 +456,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: i gruppi ransomware colpiscono sempre piu' i fornitori che servono molte banche (causa); un attacco al fornitore del gateway di pagamento (evento) blocca i pagamenti della Banca finche' il fornitore non ripristina i sistemi, con danno ai clienti, sanzioni e reputazione (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: grave. Il Registro DORA classifica critico il fornitore del gateway: il blocco interrompe una funzione essenziale. PROBABILITA: possibile. L'attacco ransomware a un processore di pagamenti europeo e' un caso nel settore; la Banca e' esposta perche' dipende da un solo gateway. PROSSIMITA: da uno a due anni. Nessun attacco o segnale specifico sul fornitore della Banca. VELOCITY: entro un mese. Nell'attacco al processore di pagamenti europeo i pagamenti si sono fermati il giorno stesso.",
+      "razionale": "RISCHIO: i gruppi ransomware colpiscono sempre piu' i fornitori che servono molte banche (causa); un attacco al fornitore del gateway di pagamento (evento) blocca i pagamenti della Banca finche' il fornitore non ripristina i sistemi, con danno ai clienti, sanzioni e reputazione (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: grave. Il Registro DORA classifica critico il fornitore del gateway: il blocco interrompe una funzione essenziale. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Registro DORA: fornitore del gateway di pagamento classificato critico». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: possibile. L'attacco ransomware a un processore di pagamenti europeo e' un caso nel settore; la Banca e' esposta perche' dipende da un solo gateway. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Registro DORA: fornitore del gateway di pagamento classificato critico». PROSSIMITA: da uno a due anni. Nessun attacco o segnale specifico sul fornitore della Banca. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Registro DORA: fornitore del gateway di pagamento classificato critico». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. VELOCITY: entro un mese. Nell'attacco al processore di pagamenti europeo i pagamenti si sono fermati il giorno stesso. Il valore 5 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Registro DORA: fornitore del gateway di pagamento classificato critico».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Prevedere un canale di pagamento alternativo, attivabile entro 24 ore, se il gateway del fornitore resta bloccato da un attacco.",
+          "descrizione": "Prevedere un canale di pagamento alternativo, attivabile entro 24 ore, se il gateway del fornitore resta bloccato da un attacco. Responsabile la Funzione ICT & Security Risk, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione ICT & Security Risk",
           "orizzonte": "6 mesi",
-          "razionale": "Il test di ripristino (2026Q2-NFR-07-A1) e i tempi contrattuali (2026Q3-NFR-07-A1) non coprono un blocco lungo del fornitore: serve un'alternativa. EFFETTO: un blocco del fornitore non ferma i pagamenti per piu' di un giorno, quindi un danno contenuto anche nel caso peggiore."
+          "razionale": "Il test di ripristino (2026Q2-NFR-07-A1) e i tempi contrattuali (2026Q3-NFR-07-A1) non coprono un blocco lungo del fornitore: serve un'alternativa. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: un blocco del fornitore non ferma i pagamenti per piu' di un giorno, quindi un danno contenuto anche nel caso peggiore."
         }
       ],
       "kri_proposti": [
@@ -474,7 +474,7 @@
           "fonte_dati": "Registro delle informazioni DORA",
           "soglia_attenzione": 1,
           "soglia_allerta": 2,
-          "razionale": "Misura quanto la Banca e' esposta: un fornitore critico mai provato nel ripristino e' un blocco di durata sconosciuta. EFFETTO: atteso a zero dopo il test congiunto; ogni nuovo fornitore critico senza test lo riporta in ambra."
+          "razionale": "Misura quanto la Banca e' esposta: un fornitore critico mai provato nel ripristino e' un blocco di durata sconosciuta. Il dato viene da Registro delle informazioni DORA, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: atteso a zero dopo il test congiunto; ogni nuovo fornitore critico senza test lo riporta in ambra."
         },
         {
           "kri_id": "NFR-07-K2",
@@ -484,7 +484,7 @@
           "fonte_dati": "Incident management ICT",
           "soglia_attenzione": 4,
           "soglia_allerta": 12,
-          "razionale": "Misura le interruzioni reali del gateway, il canale attraverso cui il rischio colpisce. EFFETTO: poche ore e stabili; oltre la soglia di allerta il fornitore ha problemi di continuita' e la Prossimita' va rivista."
+          "razionale": "Misura le interruzioni reali del gateway, il canale attraverso cui il rischio colpisce. Il dato viene da Incident management ICT, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: poche ore e stabili; oltre la soglia di allerta il fornitore ha problemi di continuita' e la Prossimita' va rivista."
         }
       ]
     },
@@ -496,7 +496,7 @@
         "DRV-HUM",
         "DRV-CON"
       ],
-      "descrizione": "Dipendenti che consultano o estraggono dati di clienti senza motivo di servizio, per curiosita' o a favore di terzi.",
+      "descrizione": "Dipendenti che consultano o estraggono dati di clienti senza motivo di servizio, per curiosita' o a favore di terzi. Il rischio ricade nella categoria Sicurezza informatica della tassonomia interna e lo rendono emergente i driver capitale umano, condotta. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Sicurezza delle Informazioni, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -517,13 +517,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: molti dipendenti hanno accesso ai dati dei clienti per lavoro (causa); alcuni li consultano o li estraggono senza motivo di servizio, per curiosita' o per terzi (evento); ne seguono violazioni della privacy, sanzioni e perdita di fiducia dei clienti (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Provvedimento dell'autorita' privacy su accessi abusivi in una banca mostra sanzioni e clientela ampia coinvolta. PROBABILITA: improbabile. Gli Esiti del monitoraggio degli accessi ai dati clienti (SOC) non hanno rilevato casi rilevanti presso la Banca. PROSSIMITA: da uno a due anni. Nessun caso in corso presso la Banca. VELOCITY: da tre a sei mesi. Con la revisione annuale degli accessi un abuso puo' restare nascosto per mesi prima di emergere (monitoraggio SOC).",
+      "razionale": "RISCHIO: molti dipendenti hanno accesso ai dati dei clienti per lavoro (causa); alcuni li consultano o li estraggono senza motivo di servizio, per curiosita' o per terzi (evento); ne seguono violazioni della privacy, sanzioni e perdita di fiducia dei clienti (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Provvedimento dell'autorita' privacy su accessi abusivi in una banca mostra sanzioni e clientela ampia coinvolta. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Esiti del monitoraggio degli accessi ai dati clienti — SOC». PROBABILITA: improbabile. Gli Esiti del monitoraggio degli accessi ai dati clienti (SOC) non hanno rilevato casi rilevanti presso la Banca. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Esiti del monitoraggio degli accessi ai dati clienti — SOC». PROSSIMITA: da uno a due anni. Nessun caso in corso presso la Banca. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Esiti del monitoraggio degli accessi ai dati clienti — SOC». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. VELOCITY: da tre a sei mesi. Con la revisione annuale degli accessi un abuso puo' restare nascosto per mesi prima di emergere (monitoraggio SOC). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Esiti del monitoraggio degli accessi ai dati clienti — SOC».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Estendere il blocco automatico degli accessi senza pratica alle applicazioni di filiale e al call center.",
+          "descrizione": "Estendere il blocco automatico degli accessi senza pratica alle applicazioni di filiale e al call center. Responsabile la Funzione Sicurezza delle Informazioni, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Sicurezza delle Informazioni",
           "orizzonte": "3 mesi",
-          "razionale": "Il blocco (2026Q3-NFR-08-A1) copre oggi solo l'applicazione centrale: gli accessi da filiale e call center restano fuori. EFFETTO: abusi fermati su tutti i canali; gli accessi senza pratica (NFR-08-K1) scendono sotto la soglia di attenzione."
+          "razionale": "Il blocco (2026Q3-NFR-08-A1) copre oggi solo l'applicazione centrale: gli accessi da filiale e call center restano fuori. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: abusi fermati su tutti i canali; gli accessi senza pratica (NFR-08-K1) scendono sotto la soglia di attenzione."
         }
       ],
       "kri_proposti": [
@@ -535,7 +535,7 @@
           "fonte_dati": "Log applicativi e SOC",
           "soglia_attenzione": 20,
           "soglia_allerta": 50,
-          "razionale": "Misura il comportamento che precede l'abuso: consultazioni senza una pratica che le giustifichi. EFFETTO: in calo con la revisione trimestrale; un aumento improvviso e' un segnale da indagare subito."
+          "razionale": "Misura il comportamento che precede l'abuso: consultazioni senza una pratica che le giustifichi. Il dato viene da Log applicativi e SOC, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo con la revisione trimestrale; un aumento improvviso e' un segnale da indagare subito."
         },
         {
           "kri_id": "NFR-08-K2",
@@ -545,7 +545,7 @@
           "fonte_dati": "Sistema IAM",
           "soglia_attenzione": 5,
           "soglia_allerta": 15,
-          "razionale": "Misura quante utenze hanno piu' accessi del necessario: e' l'esposizione della Banca. EFFETTO: sotto la soglia di attenzione dopo ogni revisione dei profili."
+          "razionale": "Misura quante utenze hanno piu' accessi del necessario: e' l'esposizione della Banca. Il dato viene da Sistema IAM, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: sotto la soglia di attenzione dopo ogni revisione dei profili. Un valore in crescita per due cicli consecutivi segnala che il rischio si sta avvicinando."
         }
       ]
     },
@@ -556,7 +556,7 @@
       "driver": [
         "DRV-GEO"
       ],
-      "descrizione": "Pagamenti di clientela corporate verso controparti sanzionate interposte in paesi terzi, non intercettati dal filtro sanzioni.",
+      "descrizione": "Pagamenti di clientela corporate verso controparti sanzionate interposte in paesi terzi, non intercettati dal filtro sanzioni. Il rischio ricade nella categoria Legale della tassonomia interna e lo rendono emergente i driver geopolitica. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Compliance, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 4,
       "velocity": 3,
       "prossimita": 2,
@@ -577,13 +577,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: le sanzioni internazionali si aggirano interponendo controparti in paesi terzi (causa); un pagamento di un cliente corporate raggiunge cosi' una controparte sanzionata senza che il filtro lo intercetti (evento); la Banca rischia sanzioni gravi e danno reputazionale (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: grave. Il Nuovo pacchetto di sanzioni UE impone una due diligence rafforzata: una violazione comporta una sanzione probabile. PROBABILITA: improbabile. L'Analisi dei flussi verso paesi di transito della Compliance mostra volumi contenuti verso quei paesi. PROSSIMITA: da due a tre anni. Nessun caso documentato presso la Banca o banche comparabili. VELOCITY: da tre a sei mesi. Una violazione emerge di solito con le verifiche successive ai pagamenti, nei mesi seguenti (Analisi dei flussi).",
+      "razionale": "RISCHIO: le sanzioni internazionali si aggirano interponendo controparti in paesi terzi (causa); un pagamento di un cliente corporate raggiunge cosi' una controparte sanzionata senza che il filtro lo intercetti (evento); la Banca rischia sanzioni gravi e danno reputazionale (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: grave. Il Nuovo pacchetto di sanzioni UE impone una due diligence rafforzata: una violazione comporta una sanzione probabile. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Nuovo pacchetto di sanzioni UE con obblighi di due diligence rafforzata». PROBABILITA: improbabile. L'Analisi dei flussi verso paesi di transito della Compliance mostra volumi contenuti verso quei paesi. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Nuovo pacchetto di sanzioni UE con obblighi di due diligence rafforzata». PROSSIMITA: da due a tre anni. Nessun caso documentato presso la Banca o banche comparabili. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Nuovo pacchetto di sanzioni UE con obblighi di due diligence rafforzata». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. VELOCITY: da tre a sei mesi. Una violazione emerge di solito con le verifiche successive ai pagamenti, nei mesi seguenti (Analisi dei flussi). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Nuovo pacchetto di sanzioni UE con obblighi di due diligence rafforzata».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Chiedere ai corrispondenti esteri il beneficiario finale dei pagamenti verso i paesi di transito segnalati.",
+          "descrizione": "Chiedere ai corrispondenti esteri il beneficiario finale dei pagamenti verso i paesi di transito segnalati. Responsabile la Funzione Compliance, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Compliance",
           "orizzonte": "12 mesi",
-          "razionale": "Lo screening esteso (2026Q2-NFR-09-A1) e la formazione (2026Q3-NFR-09-A1) dipendono dai dati disponibili: senza il beneficiario finale la triangolazione non si vede. EFFETTO: piu' pagamenti sospetti fermati all'origine (NFR-09-K1 puo' salire, ed e' un buon segno) e una Probabilita' che resta bassa anche se i flussi crescono."
+          "razionale": "Lo screening esteso (2026Q2-NFR-09-A1) e la formazione (2026Q3-NFR-09-A1) dipendono dai dati disponibili: senza il beneficiario finale la triangolazione non si vede. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: piu' pagamenti sospetti fermati all'origine (NFR-09-K1 puo' salire, ed e' un buon segno) e una Probabilita' che resta bassa anche se i flussi crescono."
         }
       ],
       "kri_proposti": [
@@ -595,7 +595,7 @@
           "fonte_dati": "Sistema di filtro sanzioni",
           "soglia_attenzione": 2,
           "soglia_allerta": 5,
-          "razionale": "Misura la pressione delle triangolazioni sui pagamenti della Banca. EFFETTO: puo' salire dopo l'estensione dello screening, perche' il filtro vede di piu'; oltre la soglia di allerta senza cambi al filtro il fenomeno sta crescendo."
+          "razionale": "Misura la pressione delle triangolazioni sui pagamenti della Banca. Il dato viene da Sistema di filtro sanzioni, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: puo' salire dopo l'estensione dello screening, perche' il filtro vede di piu'; oltre la soglia di allerta senza cambi al filtro il fenomeno sta crescendo."
         },
         {
           "kri_id": "NFR-09-K2",
@@ -605,7 +605,7 @@
           "fonte_dati": "Anagrafe clienti — Compliance",
           "soglia_attenzione": 5,
           "soglia_allerta": 15,
-          "razionale": "Misura l'esposizione: i clienti ad alto rischio con verifiche scadute sono il varco piu' probabile. EFFETTO: sotto la soglia di attenzione con le revisioni periodiche della due diligence."
+          "razionale": "Misura l'esposizione: i clienti ad alto rischio con verifiche scadute sono il varco piu' probabile. Il dato viene da Anagrafe clienti — Compliance, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: sotto la soglia di attenzione con le revisioni periodiche della due diligence."
         }
       ]
     },
@@ -617,7 +617,7 @@
         "DRV-AI",
         "DRV-CON"
       ],
-      "descrizione": "Chatbot di assistenza basati su AI generativa che danno ai clienti informazioni errate su condizioni, costi o diritti, con reclami e rimborsi.",
+      "descrizione": "Chatbot di assistenza basati su AI generativa che danno ai clienti informazioni errate su condizioni, costi o diritti, con reclami e rimborsi. Il rischio ricade nella categoria Condotta della tassonomia interna e lo rendono emergente i driver intelligenza artificiale, condotta. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Customer Experience, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 3,
       "prossimita": 3,
@@ -638,13 +638,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: i chatbot di assistenza con AI generativa possono inventare risposte plausibili (causa); un cliente riceve informazioni errate su costi, condizioni o diritti e decide in base a quelle (evento); la Banca deve rimborsare, gestire reclami e rischia sanzioni per informativa scorretta (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Piano di rilascio del chatbot prevede l'uso su tutta la clientela retail: un errore sistematico tocca una clientela ampia. PROBABILITA: possibile. La sanzione a una compagnia aerea per le risposte errate del proprio chatbot e' un caso in un altro settore; la Banca e' esposta perche' usa lo stesso tipo di strumento. PROSSIMITA: da uno a due anni. Nessun caso presso banche. VELOCITY: da tre a sei mesi. Valore fissato in validazione nel 2026Q3 sul registro reclami: le risposte errate arrivano ai clienti in giorni, i reclami si accumulano in mesi.",
+      "razionale": "RISCHIO: i chatbot di assistenza con AI generativa possono inventare risposte plausibili (causa); un cliente riceve informazioni errate su costi, condizioni o diritti e decide in base a quelle (evento); la Banca deve rimborsare, gestire reclami e rischia sanzioni per informativa scorretta (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Piano di rilascio del chatbot prevede l'uso su tutta la clientela retail: un errore sistematico tocca una clientela ampia. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Piano di rilascio del chatbot di assistenza con AI generativa». PROBABILITA: possibile. La sanzione a una compagnia aerea per le risposte errate del proprio chatbot e' un caso in un altro settore; la Banca e' esposta perche' usa lo stesso tipo di strumento. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Piano di rilascio del chatbot di assistenza con AI generativa». PROSSIMITA: da uno a due anni. Nessun caso presso banche. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Piano di rilascio del chatbot di assistenza con AI generativa». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. VELOCITY: da tre a sei mesi. Valore fissato in validazione nel 2026Q3 sul registro reclami: le risposte errate arrivano ai clienti in giorni, i reclami si accumulano in mesi. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Piano di rilascio del chatbot di assistenza con AI generativa».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Mostrare nel chatbot l'avviso che le risposte su condizioni e tassi vanno verificate sul documento di sintesi, con il collegamento.",
+          "descrizione": "Mostrare nel chatbot l'avviso che le risposte su condizioni e tassi vanno verificate sul documento di sintesi, con il collegamento. Responsabile la Funzione Customer Experience, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Customer Experience",
           "orizzonte": "3 mesi",
-          "razionale": "I temi esclusi (2026Q3-NFR-10-A1) e il campionamento (2026Q2-NFR-10-A1) riducono le risposte errate ma non le azzerano: l'avviso limita il danno quando capitano. EFFETTO: meno contestazioni per risposte errate (NFR-10-K1), quindi un Impatto contenuto."
+          "razionale": "I temi esclusi (2026Q3-NFR-10-A1) e il campionamento (2026Q2-NFR-10-A1) riducono le risposte errate ma non le azzerano: l'avviso limita il danno quando capitano. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: meno contestazioni per risposte errate (NFR-10-K1), quindi un Impatto contenuto."
         }
       ],
       "kri_proposti": [
@@ -656,7 +656,7 @@
           "fonte_dati": "Piattaforma di assistenza",
           "soglia_attenzione": 2,
           "soglia_allerta": 5,
-          "razionale": "Misura gli errori del chatbot come li vivono i clienti. EFFETTO: stabile o in calo con il campionamento; oltre la soglia di allerta l'errore e' diventato sistematico."
+          "razionale": "Misura gli errori del chatbot come li vivono i clienti. Il dato viene da Piattaforma di assistenza, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: stabile o in calo con il campionamento; oltre la soglia di allerta l'errore e' diventato sistematico. Un valore in crescita per due cicli consecutivi segnala che il rischio si sta avvicinando."
         },
         {
           "kri_id": "NFR-10-K3",
@@ -666,7 +666,7 @@
           "fonte_dati": "Controllo qualita' Customer Experience",
           "soglia_attenzione": 20,
           "soglia_allerta": 50,
-          "razionale": "Misura quanta parte delle risposte arriva ai clienti senza alcuna verifica: e' l'esposizione della Banca. EFFETTO: sotto la soglia di attenzione con il campionamento settimanale."
+          "razionale": "Misura quanta parte delle risposte arriva ai clienti senza alcuna verifica: e' l'esposizione della Banca. Il dato viene da Controllo qualita' Customer Experience, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: sotto la soglia di attenzione con il campionamento settimanale."
         }
       ]
     },
@@ -677,7 +677,7 @@
       "driver": [
         "DRV-TEC"
       ],
-      "descrizione": "Componenti del sistema di pagamento fuori supporto del produttore, senza patch di sicurezza e con competenze interne in riduzione.",
+      "descrizione": "Componenti del sistema di pagamento fuori supporto del produttore, senza patch di sicurezza e con competenze interne in riduzione. Il rischio ricade nella categoria Tecnologico della tassonomia interna e lo rendono emergente i driver debito tecnologico. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione IT Operations, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 2,
       "prossimita": 3,
@@ -698,10 +698,10 @@
           "rilevanza": 2
         }
       ],
-      "razionale": "RISCHIO: componenti del sistema di pagamento non sono piu' supportate dal produttore e le competenze interne diminuiscono (causa); una vulnerabilita' senza patch viene sfruttata o un guasto non si sa piu' riparare (evento); i pagamenti si degradano o si fermano, con danno ai clienti (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. L'Inventario delle componenti fuori supporto (IT) riguarda il sistema di pagamento, processo critico per molti clienti. PROBABILITA: possibile. La Comunicazione del produttore sulla fine del supporto esteso conferma che non arriveranno piu' patch: la Banca e' esposta. PROSSIMITA: da uno a due anni. Nessun incidente in corso; il rischio cresce con il tempo senza patch. VELOCITY: da sei a dodici mesi. Le vulnerabilita' si accumulano gradualmente sulle componenti senza supporto (Inventario IT). ADEGUAMENTO: stima; la sostituzione delle componenti legacy e' un programma pluriennale, che va oltre le azioni del ciclo.",
+      "razionale": "RISCHIO: componenti del sistema di pagamento non sono piu' supportate dal produttore e le competenze interne diminuiscono (causa); una vulnerabilita' senza patch viene sfruttata o un guasto non si sa piu' riparare (evento); i pagamenti si degradano o si fermano, con danno ai clienti (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. L'Inventario delle componenti fuori supporto (IT) riguarda il sistema di pagamento, processo critico per molti clienti. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Inventario delle componenti fuori supporto — IT». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: possibile. La Comunicazione del produttore sulla fine del supporto esteso conferma che non arriveranno piu' patch: la Banca e' esposta. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Inventario delle componenti fuori supporto — IT». PROSSIMITA: da uno a due anni. Nessun incidente in corso; il rischio cresce con il tempo senza patch. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Inventario delle componenti fuori supporto — IT». Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. VELOCITY: da sei a dodici mesi. Le vulnerabilita' si accumulano gradualmente sulle componenti senza supporto (Inventario IT). Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Inventario delle componenti fuori supporto — IT». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. ADEGUAMENTO: stima; la sostituzione delle componenti legacy e' un programma pluriennale, che va oltre le azioni del ciclo. Gli anni indicati comprendono progettazione, migrazione ed esercizio in parallelo: fasi che le azioni dell'anno non comprimono.",
       "azioni_mitigazione": [
         {
-          "descrizione": "Ottenere dal produttore un supporto esteso a pagamento per le componenti fuori supporto piu' critiche, fino alla sostituzione.",
+          "descrizione": "Ottenere dal produttore un supporto esteso a pagamento per le componenti fuori supporto piu' critiche, fino alla sostituzione. Responsabile la Funzione IT Operations, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione IT Operations",
           "orizzonte": "12 mesi",
           "razionale": "La sostituzione (2026Q2-NFR-11-A1) e' un programma pluriennale e l'isolamento (2026Q3-NFR-11-A1) non corregge le vulnerabilita': il supporto esteso riporta le patch sulle componenti piu' esposte. EFFETTO: il numero di componenti senza patch (NFR-11-K1) inizia a scendere; il rischio resta urgente finche' il programma non e' avanzato."
@@ -716,7 +716,7 @@
           "fonte_dati": "Inventario IT",
           "soglia_attenzione": 3,
           "soglia_allerta": 8,
-          "razionale": "Misura quanta parte del sistema di pagamento e' senza supporto: e' l'esposizione della Banca. EFFETTO: in calo con il piano di sostituzione; se sale, altre componenti sono uscite dal supporto."
+          "razionale": "Misura quanta parte del sistema di pagamento e' senza supporto: e' l'esposizione della Banca. Il dato viene da Inventario IT, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo con il piano di sostituzione; se sale, altre componenti sono uscite dal supporto."
         },
         {
           "kri_id": "NFR-11-K2",
@@ -726,7 +726,7 @@
           "fonte_dati": "Vulnerability management",
           "soglia_attenzione": 2,
           "soglia_allerta": 6,
-          "razionale": "Misura quanto cresce la minaccia sulle componenti senza supporto. EFFETTO: cresce nel tempo finche' le componenti restano; oltre la soglia di allerta servono subito misure compensative."
+          "razionale": "Misura quanto cresce la minaccia sulle componenti senza supporto. Il dato viene da Vulnerability management, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: cresce nel tempo finche' le componenti restano; oltre la soglia di allerta servono subito misure compensative."
         }
       ]
     },
@@ -737,7 +737,7 @@
       "driver": [
         "DRV-TEC"
       ],
-      "descrizione": "Errori di riconciliazione e rimborsi indebiti dopo l'obbligo di offrire i bonifici istantanei a tutta la clientela.",
+      "descrizione": "Errori di riconciliazione e rimborsi indebiti dopo l'obbligo di offrire i bonifici istantanei a tutta la clientela. Il rischio ricade nella categoria Processo della tassonomia interna e lo rendono emergente i driver debito tecnologico. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Operations, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 4,
       "prossimita": 4,
@@ -758,13 +758,13 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: l'obbligo di offrire i bonifici istantanei a tutta la clientela moltiplica i volumi da riconciliare in tempo reale (causa); differenze di riconciliazione non risolte ed eccezioni portano a rimborsi indebiti o pagamenti errati (evento); la Banca subisce perdite operative e reclami (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Piano di adeguamento al regolamento sui bonifici istantanei estende il servizio a tutta la clientela: un errore tocca una clientela ampia. PROBABILITA: probabile. Il Report operativo dei pagamenti istantanei di maggio documenta differenze di riconciliazione in crescita presso la Banca. PROSSIMITA: entro dodici mesi. Le differenze aperte del Report operativo sono quasi-incidenti gia' documentati presso la Banca. VELOCITY: da uno a tre mesi. Con la riconciliazione settimanale le differenze si accumulano in poche settimane (Report operativo).",
+      "razionale": "RISCHIO: l'obbligo di offrire i bonifici istantanei a tutta la clientela moltiplica i volumi da riconciliare in tempo reale (causa); differenze di riconciliazione non risolte ed eccezioni portano a rimborsi indebiti o pagamenti errati (evento); la Banca subisce perdite operative e reclami (danno). Nessuna evidenza nuova nel trimestre: valori confermati. IMPATTO: rilevante. Il Piano di adeguamento al regolamento sui bonifici istantanei estende il servizio a tutta la clientela: un errore tocca una clientela ampia. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Piano di adeguamento al regolamento sui bonifici istantanei». PROBABILITA: probabile. Il Report operativo dei pagamenti istantanei di maggio documenta differenze di riconciliazione in crescita presso la Banca. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Piano di adeguamento al regolamento sui bonifici istantanei». PROSSIMITA: entro dodici mesi. Le differenze aperte del Report operativo sono quasi-incidenti gia' documentati presso la Banca. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Piano di adeguamento al regolamento sui bonifici istantanei». VELOCITY: da uno a tre mesi. Con la riconciliazione settimanale le differenze si accumulano in poche settimane (Report operativo). Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Piano di adeguamento al regolamento sui bonifici istantanei».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Introdurre un test di riconciliazione su dati anonimizzati prima di ogni rilascio del motore dei bonifici istantanei.",
+          "descrizione": "Introdurre un test di riconciliazione su dati anonimizzati prima di ogni rilascio del motore dei bonifici istantanei. Responsabile la Funzione Operations, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Funzione Operations",
           "orizzonte": "3 mesi",
-          "razionale": "Il controllo giornaliero (2026Q2-NFR-12-A1) e l'avviso (2026Q3-NFR-12-A1) trovano le differenze dopo; molte nascono dalle modifiche al software, che il test ferma prima. EFFETTO: meno differenze dopo i rilasci; quelle aperte oltre un giorno (NFR-12-K1) scendono sotto la soglia di attenzione."
+          "razionale": "Il controllo giornaliero (2026Q2-NFR-12-A1) e l'avviso (2026Q3-NFR-12-A1) trovano le differenze dopo; molte nascono dalle modifiche al software, che il test ferma prima. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: meno differenze dopo i rilasci; quelle aperte oltre un giorno (NFR-12-K1) scendono sotto la soglia di attenzione."
         }
       ],
       "kri_proposti": [
@@ -776,7 +776,7 @@
           "fonte_dati": "Sistema di riconciliazione",
           "soglia_attenzione": 10,
           "soglia_allerta": 30,
-          "razionale": "Misura il fenomeno nel punto in cui produce perdite: le differenze che non si chiudono in giornata. EFFETTO: in calo con il controllo giornaliero; oltre la soglia di allerta la riconciliazione non regge i volumi."
+          "razionale": "Misura il fenomeno nel punto in cui produce perdite: le differenze che non si chiudono in giornata. Il dato viene da Sistema di riconciliazione, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo con il controllo giornaliero; oltre la soglia di allerta la riconciliazione non regge i volumi."
         },
         {
           "kri_id": "NFR-12-K3",
@@ -786,7 +786,7 @@
           "fonte_dati": "Workflow delle eccezioni",
           "soglia_attenzione": 4,
           "soglia_allerta": 12,
-          "razionale": "Misura quanto a lungo la Banca resta esposta a un'eccezione aperta. EFFETTO: sotto la soglia di attenzione quando il controllo giornaliero e' a regime."
+          "razionale": "Misura quanto a lungo la Banca resta esposta a un'eccezione aperta. Il dato viene da Workflow delle eccezioni, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: sotto la soglia di attenzione quando il controllo giornaliero e' a regime. Un valore in crescita per due cicli consecutivi segnala che il rischio si sta avvicinando."
         }
       ]
     },
@@ -798,7 +798,7 @@
         "DRV-HUM",
         "DRV-TEC"
       ],
-      "descrizione": "Scioperi di settore e uscite di personale tecnico non rimpiazzabile che lasciano scoperti ruoli IT critici, con violazioni di obblighi di lavoro e sicurezza nei turni di copertura.",
+      "descrizione": "Scioperi di settore e uscite di personale tecnico non rimpiazzabile che lasciano scoperti ruoli IT critici, con violazioni di obblighi di lavoro e sicurezza nei turni di copertura. Il rischio ricade nella categoria Employer della tassonomia interna e lo rendono emergente i driver capitale umano, debito tecnologico. Per la Banca il meccanismo passa dai processi presidiati dalla Direzione Risorse Umane, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento. Il danno possibile, spiegato nel razionale, va dalle perdite dirette ai costi di ripristino, fino alle sanzioni e al danno reputazionale quando il caso diventa pubblico.",
       "impatto": 3,
       "velocity": 3,
       "prossimita": 2,
@@ -807,17 +807,17 @@
       "variazioni": [
         {
           "dimensione": "probabilita",
-          "evidenza": "Lo sciopero nazionale del personale bancario di ottobre ha coinvolto i tecnici IT e il piano di successione della Banca copre solo meta' dei ruoli critici: la Banca e' esposta.",
+          "evidenza": "Lo sciopero nazionale del personale bancario di ottobre ha coinvolto i tecnici IT e il piano di successione della Banca copre solo meta' dei ruoli critici: la Banca e' esposta. Il fatto e' del 15/11/2026 e riguarda direttamente il meccanismo del rischio, non un tema vicino.",
           "data_evidenza": "2026-11-15"
         },
         {
           "dimensione": "prossimita",
-          "evidenza": "La vertenza nazionale e' in corso nel settore dal 6 ottobre 2026, con due giornate di sciopero proclamate: il fenomeno puo' toccare la Banca entro tre anni.",
+          "evidenza": "La vertenza nazionale e' in corso nel settore dal 6 ottobre 2026, con due giornate di sciopero proclamate: il fenomeno puo' toccare la Banca entro tre anni. Il fatto e' del 06/10/2026 e riguarda direttamente il meccanismo del rischio, non un tema vicino. Per questo giustifica la variazione della prossimita' rispetto al ciclo precedente.",
           "data_evidenza": "2026-10-06"
         },
         {
           "dimensione": "velocity",
-          "evidenza": "Lo sciopero nazionale del personale bancario documenta che uscite di personale e periodi di vertenza si sviluppano in alcuni mesi: velocity valutata per la prima volta.",
+          "evidenza": "Lo sciopero nazionale del personale bancario documenta che uscite di personale e periodi di vertenza si sviluppano in alcuni mesi: velocity valutata per la prima volta. Il fatto e' del 06/10/2026 e riguarda direttamente il meccanismo del rischio, non un tema vicino.",
           "data_evidenza": "2026-10-06"
         }
       ],
@@ -835,19 +835,19 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: la vertenza nazionale del settore e le uscite di tecnici difficili da sostituire (causa) lasciano scoperti ruoli IT critici durante scioperi o dimissioni, con turni di copertura che violano obblighi di lavoro e sicurezza (evento); processi critici si degradano e la Banca rischia vertenze e sanzioni (danno). Era in osservazione dal 2026Q3: il segnale di avvicinamento si e' verificato e il rischio entra nel radar. IMPATTO: rilevante. Durante le astensioni si degradano processi critici che dipendono da pochi tecnici (Piano di successione dei ruoli IT critici, Direzione Risorse Umane). PROBABILITA: possibile. Lo sciopero nazionale del personale bancario e la carenza di tecnici IT sono in corso nel settore; la Banca e' esposta perche' il Piano di successione copre solo una parte dei ruoli. PROSSIMITA: da due a tre anni. La vertenza e' in corso nel settore, senza astensioni annunciate presso la Banca. VELOCITY: da tre a sei mesi. Le uscite di personale e i periodi di vertenza si sviluppano in alcuni mesi (Sciopero nazionale del personale bancario).",
+      "razionale": "RISCHIO: la vertenza nazionale del settore e le uscite di tecnici difficili da sostituire (causa) lasciano scoperti ruoli IT critici durante scioperi o dimissioni, con turni di copertura che violano obblighi di lavoro e sicurezza (evento); processi critici si degradano e la Banca rischia vertenze e sanzioni (danno). Era in osservazione dal 2026Q3: il segnale di avvicinamento si e' verificato e il rischio entra nel radar. IMPATTO: rilevante. Durante le astensioni si degradano processi critici che dipendono da pochi tecnici (Piano di successione dei ruoli IT critici, Direzione Risorse Umane). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Sciopero nazionale del personale bancario e carenza di tecnici IT». PROBABILITA: possibile. Lo sciopero nazionale del personale bancario e la carenza di tecnici IT sono in corso nel settore; la Banca e' esposta perche' il Piano di successione copre solo una parte dei ruoli. Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «Sciopero nazionale del personale bancario e carenza di tecnici IT». PROSSIMITA: da due a tre anni. La vertenza e' in corso nel settore, senza astensioni annunciate presso la Banca. Il valore 2 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Sciopero nazionale del personale bancario e carenza di tecnici IT». VELOCITY: da tre a sei mesi. Le uscite di personale e i periodi di vertenza si sviluppano in alcuni mesi (Sciopero nazionale del personale bancario). Il valore 3 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Sciopero nazionale del personale bancario e carenza di tecnici IT».",
       "azioni_mitigazione": [
         {
-          "descrizione": "Estendere il piano di successione a tutti i ruoli IT critici, con backup formati.",
+          "descrizione": "Estendere il piano di successione a tutti i ruoli IT critici, con backup formati. Responsabile la Direzione Risorse Umane, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Direzione Risorse Umane",
           "orizzonte": "6 mesi",
-          "razionale": "Oggi il Piano di successione copre circa meta' dei ruoli critici: e' la lacuna principale del rischio. EFFETTO: ogni ruolo critico con un sostituto formato; i ruoli senza sostituto (KRI di esposizione) devono scendere sotto la soglia di attenzione."
+          "razionale": "Oggi il Piano di successione copre circa meta' dei ruoli critici: e' la lacuna principale del rischio. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: ogni ruolo critico con un sostituto formato; i ruoli senza sostituto (KRI di esposizione) devono scendere sotto la soglia di attenzione."
         },
         {
-          "descrizione": "Definire i servizi minimi IT garantiti in caso di sciopero, d'intesa con le rappresentanze.",
+          "descrizione": "Definire i servizi minimi IT garantiti in caso di sciopero, d'intesa con le rappresentanze. Responsabile la Direzione Sistemi Informativi, con avvio nel trimestre e un esito verificabile da riportare al comitato rischi alla scadenza.",
           "owner": "Direzione Sistemi Informativi",
           "orizzonte": "3 mesi",
-          "razionale": "Senza servizi minimi concordati un'astensione puo' fermare processi critici o imporre turni non conformi. EFFETTO: un danno minore in caso di sciopero (Impatto) e turni di copertura conformi agli obblighi di lavoro."
+          "razionale": "Senza servizi minimi concordati un'astensione puo' fermare processi critici o imporre turni non conformi. Interviene sull'anello del meccanismo che oggi e' meno presidiato e dove il danno puo' ancora essere evitato. EFFETTO: un danno minore in caso di sciopero (Impatto) e turni di copertura conformi agli obblighi di lavoro."
         }
       ],
       "kri_proposti": [
@@ -859,7 +859,7 @@
           "fonte_dati": "Piano di successione — Direzione Risorse Umane",
           "soglia_attenzione": 3,
           "soglia_allerta": 6,
-          "razionale": "Misura quanto la Banca e' esposta: ogni ruolo critico senza sostituto e' un punto di blocco. EFFETTO: in calo con l'estensione del piano di successione, fino a zero."
+          "razionale": "Misura quanto la Banca e' esposta: ogni ruolo critico senza sostituto e' un punto di blocco. Il dato viene da Piano di successione — Direzione Risorse Umane, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: in calo con l'estensione del piano di successione, fino a zero."
         },
         {
           "kri_id": null,
@@ -869,7 +869,7 @@
           "fonte_dati": "Sistema HR di gestione del personale",
           "soglia_attenzione": 8,
           "soglia_allerta": 12,
-          "razionale": "Misura quanto cresce la perdita di competenze tecniche. EFFETTO: stabile sotto la soglia di attenzione; oltre la soglia di allerta il rischio si avvicina e la Prossimita' va rivista."
+          "razionale": "Misura quanto cresce la perdita di competenze tecniche. Il dato viene da Sistema HR di gestione del personale, una fonte che la Banca alimenta con regolarita' e che si puo' rileggere a ogni ciclo. EFFETTO: stabile sotto la soglia di attenzione; oltre la soglia di allerta il rischio si avvicina e la Prossimita' va rivista."
         }
       ],
       "orizzonte_anni": null,
@@ -883,7 +883,7 @@
         "DRV-GEO",
         "DRV-TPR"
       ],
-      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni.",
+      "descrizione": "Il taglio di piu' cavi sottomarini nel Mediterraneo degraderebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali. Danno: indisponibilita' dei servizi e dei pagamenti esteri per giorni. Il rischio ricade nella categoria Tecnologico della tassonomia interna e lo rendono emergente i driver geopolitica, terze parti. Per la Banca il meccanismo passa dai processi presidiati dalla funzione owner del rischio, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento.",
       "impatto": 4,
       "velocity": 4,
       "prossimita": 1,
@@ -892,7 +892,7 @@
       "variazioni": [
         {
           "dimensione": "probabilita",
-          "evidenza": "Un cavo nel Mediterraneo orientale e' stato danneggiato a novembre, dopo i casi del Mar Baltico e del Mar Rosso: il fenomeno si ripete su rotte vicine.",
+          "evidenza": "Un cavo nel Mediterraneo orientale e' stato danneggiato a novembre, dopo i casi del Mar Baltico e del Mar Rosso: il fenomeno si ripete su rotte vicine. Il fatto e' del 20/11/2026 e riguarda direttamente il meccanismo del rischio, non un tema vicino. Per questo giustifica la variazione della probabilita' rispetto al ciclo precedente.",
           "data_evidenza": "2026-11-20"
         }
       ],
@@ -904,9 +904,9 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: il taglio doloso di piu' cavi sottomarini nel Mediterraneo (causa) interromperebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali (evento): servizi e pagamenti esteri fermi per giorni (danno). In osservazione: nessun caso sulle rotte che servono l'Italia. IMPATTO: grave. Servizi e pagamenti esteri fermi per giorni; nessun fatto nuovo sul danno. PROBABILITA: possibile, da 2 a 3. Un cavo nel Mediterraneo orientale e' stato danneggiato a novembre (comunicato dell'operatore, 20/11/2026), dopo i casi del Mar Baltico e del Mar Rosso: il fenomeno si ripete su rotte vicine. PROSSIMITA: oltre tre anni. Nessun danneggiamento sulle rotte italiane; l'orizzonte stimato scende da 5 a 4 anni. VELOCITY: entro un giorno. Il taglio interrompe subito la connettivita'.",
+      "razionale": "RISCHIO: il taglio doloso di piu' cavi sottomarini nel Mediterraneo (causa) interromperebbe la connettivita' verso i data center del fornitore cloud e i circuiti di pagamento internazionali (evento): servizi e pagamenti esteri fermi per giorni (danno). In osservazione: nessun caso sulle rotte che servono l'Italia. IMPATTO: grave. Servizi e pagamenti esteri fermi per giorni; nessun fatto nuovo sul danno. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «Danneggiamento di un cavo sottomarino nel Mediterraneo orientale, comunicato dell'operatore». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: possibile, da 2 a 3. Un cavo nel Mediterraneo orientale e' stato danneggiato a novembre (comunicato dell'operatore, 20/11/2026), dopo i casi del Mar Baltico e del Mar Rosso: il fenomeno si ripete su rotte vicine. Il valore 4 richiederebbe un'evidenza piu' forte di quella disponibile nelle fonti del ciclo, che non c'e'. PROSSIMITA: oltre tre anni. Nessun danneggiamento sulle rotte italiane; l'orizzonte stimato scende da 5 a 4 anni. Il valore 1 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «Danneggiamento di un cavo sottomarino nel Mediterraneo orientale, comunicato dell'operatore». VELOCITY: entro un giorno. Il taglio interrompe subito la connettivita'. Il valore 4 e' quello del descrittore della rubrica che corrisponde meglio ai tempi fra innesco e pieno impatto, come risulta dalla fonte «Danneggiamento di un cavo sottomarino nel Mediterraneo orientale, comunicato dell'operatore». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata.",
       "orizzonte_anni": 4,
-      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'.",
+      "segnale_avvicinamento": "Danneggiamento doloso di un cavo che serve l'Italia, o un'esercitazione delle autorita' sul ripristino della connettivita'. Se compare, il rischio va rivalutato al ciclo trimestrale successivo, o prima con un ciclo straordinario.",
       "azioni_mitigazione": [],
       "kri_proposti": []
     },
@@ -918,7 +918,7 @@
         "DRV-TEC",
         "DRV-CYB"
       ],
-      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia.",
+      "descrizione": "Un calcolatore quantistico abbastanza potente renderebbe decifrabili le firme e le comunicazioni che proteggono pagamenti e accessi della Banca; dati intercettati oggi potrebbero essere letti domani. Danno: frodi, violazione di dati, sostituzione d'urgenza della crittografia. Il rischio ricade nella categoria Sicurezza informatica della tassonomia interna e lo rendono emergente i driver debito tecnologico, cyber. Per la Banca il meccanismo passa dai processi presidiati dalla funzione owner del rischio, che oggi e' il punto in cui la causa puo' essere intercettata prima che diventi evento.",
       "impatto": 5,
       "velocity": null,
       "prossimita": 1,
@@ -933,9 +933,9 @@
           "rilevanza": 3
         }
       ],
-      "razionale": "RISCHIO: un calcolatore quantistico abbastanza potente (causa) renderebbe decifrabili firme e comunicazioni che proteggono pagamenti e accessi (evento): frodi, violazione di dati, sostituzione d'urgenza della crittografia (danno). In osservazione, confermato. IMPATTO: critico. Toccherebbe tutti i canali della Banca. PROBABILITA: remota. Nessun calcolatore ha ancora la capacita' necessaria (FNT-25 ENISA, rapporto sulla crittografia post-quantistica, 20/10/2026). PROSSIMITA: oltre tre anni. Il rapporto ENISA anticipa le tappe della migrazione post-quantistica: orizzonte da 10 a 8 anni. VELOCITY: non valutata. Nessuna fonte documenta i tempi fra l'annuncio e il danno.",
+      "razionale": "RISCHIO: un calcolatore quantistico abbastanza potente (causa) renderebbe decifrabili firme e comunicazioni che proteggono pagamenti e accessi (evento): frodi, violazione di dati, sostituzione d'urgenza della crittografia (danno). In osservazione, confermato. Senza interventi la Banca resta esposta a ogni ripetizione del meccanismo, e ogni ripetizione si aggiunge alle perdite e ai costi di gestione gia' sostenuti. IMPATTO: critico. Toccherebbe tutti i canali della Banca. Il valore 5 e' quello del descrittore della rubrica che corrisponde meglio al danno documentato, come risulta dalla fonte «FNT-25 ENISA, rapporto sulla crittografia post-quantistica». La valutazione si rivedra' al ciclo successivo solo davanti a un'evidenza nuova e datata. PROBABILITA: remota. Nessun calcolatore ha ancora la capacita' necessaria (FNT-25 ENISA, rapporto sulla crittografia post-quantistica, 20/10/2026). Il valore 1 e' quello del descrittore della rubrica che corrisponde meglio alla frequenza dei casi documentati, come risulta dalla fonte «FNT-25 ENISA, rapporto sulla crittografia post-quantistica». PROSSIMITA: oltre tre anni. Il rapporto ENISA anticipa le tappe della migrazione post-quantistica: orizzonte da 10 a 8 anni. Il valore 1 e' quello del descrittore della rubrica che corrisponde meglio ai tempi in cui i casi si sono presentati, come risulta dalla fonte «FNT-25 ENISA, rapporto sulla crittografia post-quantistica». VELOCITY: non valutata. Nessuna fonte documenta i tempi fra l'annuncio e il danno.",
       "orizzonte_anni": 8,
-      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento.",
+      "segnale_avvicinamento": "Annuncio verificato di un calcolatore in grado di rompere RSA-2048, o una scadenza regolamentare per la migrazione post-quantistica dei sistemi di pagamento. Se compare, il rischio va rivalutato al ciclo trimestrale successivo, o prima con un ciclo straordinario.",
       "azioni_mitigazione": [],
       "kri_proposti": []
     }

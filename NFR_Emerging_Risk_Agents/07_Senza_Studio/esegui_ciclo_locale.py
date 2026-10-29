@@ -160,7 +160,7 @@ import input_a1                          # noqa: E402
 import lucchetto                         # noqa: E402  un solo analista alla volta scrive (D-83)
 import radar                             # noqa: E402  regola del registro unico (D-79)
 from fonti import codici_ammessi, leggi_fonti   # noqa: E402
-from precontrollo import ciclo_di, conta, impronta, messaggio_correzione, precontrolla, riga_esito   # noqa: E402
+from precontrollo import ciclo_di, conta, conta_testi, impronta, messaggio_correzione, precontrolla, riga_esito   # noqa: E402
 from precontrollo import agente as agente_di   # noqa: E402  A1 per un trimestre, A8 per uno straordinario (D-77)
 from valida_output import carica_json, valida   # noqa: E402
 
@@ -2070,6 +2070,7 @@ def comando_precontrollo(arg, conf):
     esito = precontrolla(payload, baseline, carica_json(file_kernel(conf, "schema_output_A1.json")))
     ciclo = ciclo_di(payload, baseline)
     da_correggere, da_verificare = conta(esito)
+    testi = conta_testi(esito)                       # D-86: testi troppo corti (C10), da allungare o da saltare
     file = conf["cartella_uscita"] / "Cicli" / ciclo / f"Correzione_A1_{ciclo}.txt"
     firma = f"Impronta dell'output di {agente_di(ciclo)}: {impronta(payload)}"
     # D-84: con nessun punto da correggere l'output e' quello che A5 (facoltativo) puo' esaminare: il suo allegato.
@@ -2077,11 +2078,11 @@ def comando_precontrollo(arg, conf):
                    if not da_correggere else None)
     if da_correggere:
         input_a1.togli_a5(conf["cartella_uscita"], ciclo)
-    if not da_correggere and not da_verificare:
+    if not da_correggere and not da_verificare and not testi:
         if file.exists():
             file.unlink()                            # messaggio di un output precedente: non vale piu'
         print(f"{riga_esito(ciclo, esito)} Ora il comando trimestrale; se si usa A5 (facoltativo), prima allegargli "
-              f"{allegato_a5.name} e scrivere \"Esegui i nove controlli\".\n{firma}")
+              f"{allegato_a5.name} e scrivere \"Esegui i controlli\".\n{firma}")
         return 0
     testo = messaggio_correzione(ciclo, esito)
     _cartella(conf, "Cicli", ciclo)
@@ -2091,6 +2092,9 @@ def comando_precontrollo(arg, conf):
           f"{agente_di(ciclo)})\n\n{testo}\n"
           + (f"Dopo la risposta di {agente_di(ciclo)}: salvarla di nuovo e ripetere il precontrollo. Il registro non e' stato toccato."
              if da_correggere else
+             (f"Testi troppo corti (C10): conviene dare il messaggio ad {agente_di(ciclo)} perche' li allunghi e ripetere il "
+              "precontrollo; si puo' anche saltare e lanciare trimestrale: in validazione saranno osservazioni. "
+              if testi else "") +
              "Nessun punto ferma il ciclo: si puo' lanciare trimestrale (questi punti andranno nella colonna Segnalazioni "
              f"del foglio Validazione), oppure chiedere prima ad {agente_di(ciclo)} di rivederli. Allegato per A5, se lo "
              f"usi: {allegato_a5}"))
@@ -2906,6 +2910,11 @@ def comando_schede(arg, conf):
         msg_pdf = f"Avviso: PDF delle schede non prodotto ({type(ex).__name__}: {ex}); il file Excel c'e'."
     print(f"Schede del ciclo {ciclo}: {len(dati['rischi'])} rischi, "
           f"{'testi di A6 controllati' if uscita_a6 else 'testi di A1 dal registro (senza A6)'}.\nFile: {file}\n{msg_pdf}")
+    corti = schede.testi_corti_a6(dati, uscita_a6) if uscita_a6 else []
+    if corti:                                        # D-88: le schede sono scritte; i testi si possono far allungare
+        print(f"Testi di A6 troppo corti: {len(corti)} (lunghezze minime nelle istruzioni di A6). Le schede sono scritte; "
+              "conviene dare ad A6 questo elenco nella stessa chat perche' li allunghi, poi rilanciare schede con la "
+              "nuova risposta:\n  - " + "\n  - ".join(corti))
 
 
 PARAMETRI_DA_CONSERVARE = ["cicloCorrente", "settimanaCorrente", "moscaX", "moscaYDefault", "quadroNote",   # quadroNote: D-72

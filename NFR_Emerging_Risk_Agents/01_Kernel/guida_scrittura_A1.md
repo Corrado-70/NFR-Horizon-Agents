@@ -15,11 +15,36 @@
 
 I tuoi testi finiscono nel registro e nelle schede dei rischi per il comitato: chi legge non conosce le fonti e deve capire perche' un rischio conta e da dove viene ogni numero.
 
+> D-86 (29/10/2026): la tabella qui sotto e' la stessa di 07_Senza_Studio/controlli_a5.py (LUNGHEZZE): il controllo C10
+> usa i minimi; il collaudo (verifica_riferimenti.py) verifica che coincidano. I massimi dello schema restano il limite.
+
+## Lunghezze dei testi
+Scrivi testi completi, non sintetici: ogni testo deve stare almeno al minimo e conviene avvicinarsi al consigliato. Un testo piu' corto del minimo e' un rilievo C10: lo script ti chiede di allungarlo. Le lunghezze sono in caratteri, spazi compresi.
+
+| Testo | Minimo | Consigliato fino a |
+|---|---|---|
+| descrizione del rischio | 500 | 900 |
+| razionale, parte RISCHIO: | 300 | 450 |
+| razionale, ogni parte IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (VELOCITY null esclusa) | 300 | 400 |
+| razionale, parte ADEGUAMENTO: (se anni_adeguamento non e' null) | 150 | 300 |
+| evidenza di una variazione | 250 | 500 |
+| segnale di avvicinamento (se lo scrivi) | 150 | 300 |
+| azione: descrizione | 200 | 400 |
+| azione: razionale (con EFFETTO:) | 300 | 600 |
+| KRI: razionale (con EFFETTO:) | 300 | 600 |
+| ciclo straordinario, analisi_evento: evento | 300 | 700 |
+| ciclo straordinario, analisi_evento: catena_causale | 600 | 1300 |
+| ciclo straordinario, analisi_evento: effetto su ogni rischio toccato | 150 | 350 |
+| ciclo straordinario, analisi_evento: uso di ogni documento | 100 | 250 |
+| ciclo straordinario, analisi_evento: limiti | 150 | 500 |
+
+Si allunga con contenuto, non con ripetizioni: piu' dettagli sul meccanismo, sui processi e sui fornitori della Banca toccati, sui fatti delle fonti e sul perche' del valore. Niente frasi generiche.
+
 ## Categoria di rischio
 event_type e' il codice della categoria della tassonomia interna (sezione "Categorie di rischio" delle istruzioni) in cui ricade la perdita per la Banca. Un rischio della baseline con un codice di Basilea (L1-01 ... L1-07) va riclassificato: scrivi la categoria in cui ricade il suo meccanismo di perdita, senza cambiare id ne' valori (non e' un cambio di meccanismo). Se il meccanismo non ricade in nessuna categoria in perimetro (per esempio una frode o un tema di financial crime), scrivi "FP" (fuori perimetro) e nel razionale perche': la funzione di rischio lo togliera' dal registro. Un rischio nuovo non e' mai FP: un tema fuori perimetro va fra i fenomeni non censiti (motivo fuori_perimetro).
 
 ## Descrizione del rischio
-Da 3 a 5 frasi, comprensibili senza leggere le fonti:
+Da 5 a 8 frasi (500-900 caratteri), comprensibili senza leggere le fonti:
 1. il meccanismo di perdita: la causa (cosa lo innesca), l'evento (cosa accade alla Banca), il danno (perdita, sanzione, clienti, continuita');
 2. dove tocca la Banca: processi, sistemi, fornitori o clientela esposti;
 3. perche' e' emergente oggi: il driver e cio' che sta cambiando.
@@ -27,7 +52,7 @@ Niente punteggi, niente frasi generiche ("contesto in evoluzione"), niente elenc
 
 ## Razionale
 Le parti in quest'ordine, ognuna con la sua etichetta seguita dai due punti:
-- RISCHIO: il fenomeno in termini di rischio per la Banca, in 2-3 frasi: causa, evento, danno e quanto la Banca e' esposta. Non ripete la descrizione e non motiva i numeri.
+- RISCHIO: il fenomeno in termini di rischio per la Banca, in 3-5 frasi: causa, evento, danno e quanto la Banca e' esposta. Non ripete la descrizione e non motiva i numeri.
 - IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: per ciascuna, il valore e
   1. il descrittore della rubrica a cui corrisponde;
   2. il fatto che lo sostiene, con il documento e la data (lo stesso riferimento delle fonti);

@@ -1,4 +1,4 @@
-"""Funzioni amministrative dell'archivio e del registro (D-83, tappa M5; D-85, proposta). Solo per il manutentore.
+"""Funzioni amministrative dell'archivio e del registro (D-83, tappa M5; D-85): solo in modalita' Admin.
 
 Regola di fondo: NIENTE SI CANCELLA SUBITO. Cio' che un'operazione toglie va in un parcheggio,
 Archivio_Cicli/_Parcheggio/<data_ora>_<operazione>/, con un atto (atto.json: chi, quando, perche', chi ha deciso,
@@ -23,10 +23,11 @@ Comandi:
   svuota [--esegui]              cancella per sempre i parcheggi piu' vecchi di giorni_parcheggio (anteprima senza
                                  --esegui); l'elenco di cio' che si cancella resta nella traccia
 
-Chi: solo con "ruolo": "manutentore" in configurazione.json (D-85, proposta). Ogni operazione che scrive prende il
-lucchetto del registro. Configurazione (facoltativa): backup_da_tenere (10), giorni_log (90), giorni_parcheggio (30).
+Chi: solo in modalita' Admin (D-85, decisione dell'utente del 29/10/2026): nell'app il pulsante "Admin...", che
+dopo una conferma (lascia la traccia) apre la finestra delle operazioni; da riga di comando l'opzione --admin, scritta apposta. Ogni
+operazione che scrive prende il lucchetto del registro. Configurazione (facoltativa): backup_da_tenere (10), giorni_log (90), giorni_parcheggio (30).
 
-Uso: python amministrazione.py [--workbook F --kernel C --cartella-uscita C] <comando> [opzioni]
+Uso: python amministrazione.py --admin [--workbook F --kernel C --cartella-uscita C] <comando> [opzioni]
 """
 
 import argparse
@@ -59,14 +60,17 @@ def impostazioni(conf_grezza):
     return {k: int(conf_grezza.get(k, v)) for k, v in PREDEFINITI.items()}
 
 
-def autorizzato(conf_grezza):
-    return str(conf_grezza.get("ruolo") or "").strip().lower() == "manutentore"
+def controlla_admin(admin):
+    if not admin:
+        raise Fermo("Le funzioni amministrative si usano in modalita' Admin (D-85): nell'app il pulsante Admin "
+                    "(chiede conferma); da riga di comando aggiungere --admin prima del comando.")
 
 
-def controlla_ruolo(conf_grezza):
-    if not autorizzato(conf_grezza):
-        raise Fermo("Le funzioni amministrative sono del manutentore (D-85): su questo PC configurazione.json non ha "
-                    "\"ruolo\": \"manutentore\". Chiedere a chi mantiene il pacchetto.")
+def segna_admin(conf, conf_grezza, attiva):
+    """La traccia della modalita' Admin accesa o spenta nell'app (chi, quando, su quale PC)."""
+    atto = {"operazione": "modalita_admin_" + ("accesa" if attiva else "spenta"),
+            "quando": dt.datetime.now().replace(microsecond=0).isoformat(), **chi(conf_grezza)}
+    return traccia(conf, atto)
 
 
 def controlla_motivo(motivo, decisore=None, minimo=MOTIVO_MINIMO):
@@ -322,7 +326,7 @@ def annulla(conf, conf_grezza, nome, motivo):
     controlla_motivo(motivo, minimo=10)
     cartella = Path(conf["cartella_uscita"]) / PARCHEGGIO / nome
     if not (cartella / "atto.json").exists():
-        raise Fermo(f"Parcheggio {nome} non trovato (python amministrazione.py parcheggi per l'elenco).")
+        raise Fermo(f"Parcheggio {nome} non trovato (python amministrazione.py --admin parcheggi per l'elenco).")
     atto = json.loads((cartella / "atto.json").read_text(encoding="utf-8"))
     if atto.get("stato") != "attivo":
         raise Fermo(f"Il parcheggio {nome} e' {atto.get('stato')}: niente da rimettere.")
@@ -416,15 +420,10 @@ def svuota(conf, conf_grezza, motivo, adesso=None):
 
 # ------------------------------------------------------------ riga di comando
 def _conf(arg):
-    """Le cartelle come per il motore (configurazione.json, o le opzioni comuni); ruolo e tempi da configurazione.json.
-    NFR_RUOLO (variabile d'ambiente) vale solo per il collaudo, come NFR_ATTESA_LUCCHETTO."""
+    """Le cartelle come per il motore (configurazione.json, o le opzioni comuni); utente e tempi da configurazione.json."""
     from esegui_ciclo_locale import configurazione
     import installazione
-    conf = configurazione(arg)
-    grezza = installazione.carica_configurazione(QUI / "configurazione.json")
-    if os.environ.get("NFR_RUOLO"):
-        grezza = {**grezza, "ruolo": os.environ["NFR_RUOLO"]}
-    return conf, grezza
+    return configurazione(arg), installazione.carica_configurazione(QUI / "configurazione.json")
 
 
 def _ciclo_corrente(conf):
@@ -449,7 +448,8 @@ def _versione(percorso):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Funzioni amministrative dell'archivio e del registro (solo manutentore)")
+    p = argparse.ArgumentParser(description="Funzioni amministrative dell'archivio e del registro (modalita' Admin)")
+    p.add_argument("--admin", action="store_true", help="modalita' Admin: senza, nessuna operazione (D-85)")
     p.add_argument("--workbook")
     p.add_argument("--kernel")
     p.add_argument("--cartella-uscita", dest="cartella_uscita")
@@ -475,8 +475,8 @@ def main(argv=None):
     sv.add_argument("--esegui", action="store_true")
     arg = p.parse_args(argv)
     try:
+        controlla_admin(arg.admin)
         conf, grezza = _conf(arg)
-        controlla_ruolo(grezza)
         return esegui(arg, conf, grezza)
     except (Fermo, lucchetto.Occupato) as ex:
         print(f"FERMATO — niente e' stato toccato.\n{ex}")
@@ -485,7 +485,7 @@ def main(argv=None):
         nome = type(ex).__name__
         if nome == "Fermo":                          # i fermi del motore (baseline, inizializza)
             print(f"FERMATO dopo lo spostamento nel parcheggio: {ex}\nL'operazione si annulla con: python "
-                  "amministrazione.py annulla --parcheggio <nome> --motivo \"...\" (python amministrazione.py parcheggi).")
+                  "amministrazione.py --admin annulla --parcheggio <nome> --motivo \"...\" (python amministrazione.py --admin parcheggi).")
             return 1
         print(f"ERRORE TECNICO — {nome}: {ex}")
         return 2
@@ -509,10 +509,10 @@ def esegui(arg, conf, grezza):
         if arg.esegui and scelti:
             with lucchetto.preso(uscita, "pulizia", utente):
                 cartella, _ = parcheggia(conf, grezza, "pulizia", [p for p, _ in scelti], "pulizia dell'archivio")
-            print(f"Spostato nel parcheggio: {cartella}\nSi annulla con: python amministrazione.py annulla --parcheggio "
+            print(f"Spostato nel parcheggio: {cartella}\nSi annulla con: python amministrazione.py --admin annulla --parcheggio "
                   f"{cartella.name} --motivo \"...\"")
         elif scelti:
-            print("Per spostarli nel parcheggio: python amministrazione.py pulizia --esegui")
+            print("Per spostarli nel parcheggio: python amministrazione.py --admin pulizia --esegui")
         return 0
     if arg.comando == "ritorno":
         if arg.conferma.strip() != arg.ciclo.strip():
@@ -523,7 +523,7 @@ def esegui(arg, conf, grezza):
                                                 corrente, _rigenera, _versione)
         print(f"Registro tornato al ciclo {arg.ciclo} validato (era al {corrente}). Nel parcheggio {cartella.name}: "
               f"{len(atto['elementi'])} elementi (registro di prima, periodi dopo {arg.ciclo}, baseline, allegati, knowledge "
-              f"di A7).\nSi annulla, finche' nessuno scrive nel registro, con: python amministrazione.py annulla "
+              f"di A7).\nSi annulla, finche' nessuno scrive nel registro, con: python amministrazione.py --admin annulla "
               f"--parcheggio {cartella.name} --motivo \"...\"")
         for s in settimane:
             a3 = next(iter(sorted((cartella / "archivio" / "Settimane" / s.name).glob("A3_*.json"))), None)
@@ -553,7 +553,7 @@ def esegui(arg, conf, grezza):
             cartella, atto = ripartenza(conf, grezza, arg.motivo.strip(), arg.decisore.strip(), crea)
         print(f"Ripartenza da zero: il vecchio registro e l'archivio dei cicli sono nel parcheggio {cartella.name} "
               f"({len(atto['elementi'])} elementi). Si annulla, finche' nessuno scrive nel registro nuovo, con: python "
-              f"amministrazione.py annulla --parcheggio {cartella.name} --motivo \"...\"")
+              f"amministrazione.py --admin annulla --parcheggio {cartella.name} --motivo \"...\"")
         return 0
     if arg.comando == "svuota":
         scelti = da_svuotare(conf, grezza)
@@ -565,7 +565,7 @@ def esegui(arg, conf, grezza):
         for c, a in scelti:
             print(f"  {c.name}: {a.get('operazione')} di {a.get('utente')} ({a.get('stato')})")
         if not arg.esegui:
-            print("Per cancellarli per sempre: python amministrazione.py svuota --esegui")
+            print("Per cancellarli per sempre: python amministrazione.py --admin svuota --esegui")
             return 0
         atto = svuota(conf, grezza, f"svuota: parcheggi piu' vecchi di {giorni} giorni")
         print(f"Cancellati {len(atto['cancellati'])} parcheggi; l'elenco resta in {TRACCIA}.")

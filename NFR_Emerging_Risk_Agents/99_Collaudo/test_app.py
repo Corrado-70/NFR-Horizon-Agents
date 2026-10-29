@@ -258,7 +258,7 @@ class AmbienteFinto:
         self.uscita = Path(uscita)
         self.risposte, self.conferme, self.moduli = list(risposte), list(conferme), list(moduli)
         self.esiti = esiti or {}                     # comando -> lista di (codice, uscita), consumata in ordine
-        self.comandi, self.appunti, self.aperti, self.messaggi, self.chiusure = [], [], [], [], []
+        self.comandi, self.appunti, self.aperti, self.messaggi, self.chiusure, self.richiesti = [], [], [], [], [], []
 
     def esegui(self, argomenti, script=None):
         comando = argomenti[0] if not script else Path(script).stem
@@ -283,6 +283,7 @@ class AmbienteFinto:
         self.chiusure.append(str(file))
 
     def chiedi(self, titolo, campi):
+        self.richiesti.append((titolo, campi))
         return self.moduli.pop(0) if self.moduli else None
 
     def conferma(self, domanda):
@@ -363,7 +364,7 @@ def test_flussi(e):
         flussi.Flussi(amb, conf, cartella_allegati=Path(tmp) / "allegati").trimestrale()
         e.verifica([c[0] for c in amb.comandi] == ["baseline", "precontrollo", "trimestrale"]
                    and "--challenger" in amb.comandi[2] and str(amb.comandi[2][-1]).endswith("A5_2027Q2.json")
-                   and "Esegui i nove controlli" in amb.appunti and (Path(tmp) / "allegati" / "A5" / "Input_A5_2027Q2.txt").exists(),
+                   and "Esegui i controlli" in amb.appunti and (Path(tmp) / "allegati" / "A5" / "Input_A5_2027Q2.txt").exists(),
                    "flusso trimestrale: A5 proposto dopo il precontrollo superato; si' -> A5 con Input_A5, trimestrale --challenger",
                    f"{amb.comandi}\n{amb.appunti}")
         amb = AmbienteFinto(u, risposte=[json.dumps(a1_q2)], conferme=[],
@@ -373,6 +374,30 @@ def test_flussi(e):
         flussi.Flussi(amb, dict(conf, chiedi_a5=False), cartella_allegati=Path(tmp) / "allegati").trimestrale()
         e.verifica(amb.comandi[-1][0] == "trimestrale" and "--challenger" not in amb.comandi[-1],
                    "flusso trimestrale: con chiedi_a5 = false nessuna domanda e niente A5", amb.comandi)
+
+        # D-86: testi troppo corti (C10): si' -> messaggio ad A1 nella stessa chat e nuovo precontrollo; no -> si prosegue
+        corti = "Precontrollo dell'output di A1 (2027Q2): 0 punti da correggere, 0 da verificare, 3 rischi con testi troppo corti (C10)."
+
+        def precontrollo_corti(amb, arg):
+            _scrivi(u / "Cicli" / "2027Q2" / "Correzione_A1_2027Q2.txt", "Testi troppo corti (C10: ...)")
+            return corti
+        (u / ingresso.CARTELLA / "A1_2027Q2.json").unlink(missing_ok=True)      # nessuna risposta gia' copiata
+        amb = AmbienteFinto(u, risposte=[json.dumps(a1_q2), json.dumps(a1_q2)], conferme=[True],
+                            esiti={"baseline": [(0, "Baseline scritta")],
+                                   "precontrollo": [(0, precontrollo_corti), (0, "Precontrollo dell'output di A1 (2027Q2): nessun rilievo.")],
+                                   "trimestrale": [(0, "Ciclo 2027Q2 scritto")]})
+        flussi.Flussi(amb, dict(conf, chiedi_a5=False), cartella_allegati=Path(tmp) / "allegati").trimestrale()
+        e.verifica([c[0] for c in amb.comandi] == ["baseline", "precontrollo", "precontrollo", "trimestrale"]
+                   and amb.appunti[1].startswith("Testi troppo corti"),
+                   "flusso trimestrale: testi troppo corti (C10), si' -> A1 li allunga nella stessa chat, nuovo precontrollo",
+                   f"{amb.comandi}\n{amb.appunti}")
+        (u / ingresso.CARTELLA / "A1_2027Q2.json").unlink(missing_ok=True)
+        amb = AmbienteFinto(u, risposte=[json.dumps(a1_q2)], conferme=[False],
+                            esiti={"baseline": [(0, "Baseline scritta")], "precontrollo": [(0, precontrollo_corti)],
+                                   "trimestrale": [(0, "Ciclo 2027Q2 scritto")]})
+        flussi.Flussi(amb, dict(conf, chiedi_a5=False), cartella_allegati=Path(tmp) / "allegati").trimestrale()
+        e.verifica([c[0] for c in amb.comandi] == ["baseline", "precontrollo", "trimestrale"],
+                   "flusso trimestrale: testi troppo corti (C10), no -> si prosegue con trimestrale (osservazioni)", amb.comandi)
         _scrivi(u / "Baseline_corrente.json", {"ciclo_precedente": "2026Q4", "ciclo_da_valutare": "2027Q1"})
 
         # risposta tagliata in due parti
@@ -386,6 +411,30 @@ def test_flussi(e):
         flussi.Flussi(amb, conf).validazione()
         e.verifica(amb.chiusure == [str(conf["workbook"])] and amb.comandi == [["valida", "--periodo", "2026Q4", "--validatore", "Comitato Rischi"]],
                    "flusso validazione: registro aperto e atteso chiuso, valida del ciclo corrente con chi valida", amb.comandi)
+
+        # schede con A6 troppo sintetico (D-88): si' -> elenco ad A6 nella stessa chat, schede rilanciate
+        a6 = {"ciclo": "2026Q4", "schede": [{"id_rischio": "NFR-01", "descrizione_estesa": "Testo della scheda. " * 20,
+                                             "dimensioni": [{"dimensione": d, "spiegazione": "Perche' del valore validato, con il fatto e il documento."}
+                                                            for d in ("impatto", "probabilita", "prossimita", "velocity")],
+                                             "fonti": [{"riferimento": "Report frodi", "a_sostegno_di": "Sostiene l'impatto."}]}]}
+        _scrivi(u / "Cicli" / "2026Q4" / "Input_A6_2026Q4.json", {"ciclo": "2026Q4", "rischi": []})
+        corti = ("Schede del ciclo 2026Q4: 1 rischi, testi di A6 controllati.\nTesti di A6 troppo corti: 1 (lunghezze minime "
+                 "nelle istruzioni di A6). Le schede sono scritte:\n  - NFR-01, descrizione_estesa 400 caratteri (minimo 1000)")
+        amb = AmbienteFinto(u, risposte=[json.dumps(a6), json.dumps(a6)], conferme=[True, True],
+                            esiti={"schede-input": [(0, "Input di A6 scritto")],
+                                   "schede": [(0, corti), (0, "Schede del ciclo 2026Q4: 1 rischi, testi di A6 controllati.")]})
+        flussi.Flussi(amb, conf, cartella_allegati=Path(tmp) / "allegati").schede()
+        e.verifica([c[0] for c in amb.comandi][:3] == ["schede-input", "schede", "schede"]
+                   and any("NFR-01, descrizione_estesa 400 caratteri (minimo 1000)" in a and "allungalo" in a for a in amb.appunti),
+                   "flusso schede: testi di A6 troppo corti, si' -> elenco ad A6 nella stessa chat, schede rilanciate",
+                   f"{amb.comandi}\n{amb.appunti}")
+        (u / ingresso.CARTELLA / "A6_2026Q4.json").unlink(missing_ok=True)
+        amb = AmbienteFinto(u, risposte=[json.dumps(a6)], conferme=[True, False],
+                            esiti={"schede-input": [(0, "Input di A6 scritto")], "schede": [(0, corti)]})
+        flussi.Flussi(amb, conf, cartella_allegati=Path(tmp) / "allegati").schede()
+        e.verifica([c[0] for c in amb.comandi][:2] == ["schede-input", "schede"] and amb.comandi.count(["schede", "--payload",
+                   str(u / ingresso.CARTELLA / "A6_2026Q4.json")]) == 1,
+                   "flusso schede: testi di A6 troppo corti, no -> si tengono le schede scritte", amb.comandi)
 
         # settimanale: fermo, correzione per A3, poi scritta
         a3 = carica(DATI / "run_A3_2026-10-12.json")
@@ -401,37 +450,114 @@ def test_flussi(e):
                    "flusso settimanale: raccolta, A3 con l'allegato, fermo con la correzione per A3, poi scritta",
                    f"{amb.comandi}\n{amb.appunti}")
 
-        # amministrazione (tappa M5): solo il manutentore; pulizia con anteprima e conferma; ritorno con il modulo
+        # amministrazione (tappa M5): solo in modalita' Admin (D-85); un'operazione per pulsante della finestra Admin
         amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}])
-        flussi.Flussi(amb, conf).amministrazione()
-        e.verifica(not amb.comandi and any("manutentore" in m for _, m in amb.messaggi),
-                   "amministrazione: senza ruolo manutentore nessun comando, e il perche'", amb.messaggi)
-        cm = dict(conf, ruolo="manutentore")
-        amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}], conferme=[True],
+        flussi.Flussi(amb, conf).amministrazione("Pulizia")
+        e.verifica(not amb.comandi and any("Admin" in m for _, m in amb.messaggi),
+                   "amministrazione: senza la modalita' Admin nessun comando, e il perche'", amb.messaggi)
+
+        def in_admin(amb):
+            f = flussi.Flussi(amb, conf)
+            f.admin = True
+            return f
+        amb = AmbienteFinto(u, conferme=[True],
                             esiti={"amministrazione": [(0, "Pulizia (anteprima): 3 elementi\nPer spostarli nel parcheggio: "
-                                                           "python amministrazione.py pulizia --esegui"), (0, "Spostato")]})
-        flussi.Flussi(amb, cm).amministrazione()
-        e.verifica(amb.comandi == [["amministrazione", "pulizia"], ["amministrazione", "pulizia", "--esegui"]],
-                   "amministrazione: pulizia, prima l'anteprima e poi, confermata, lo spostamento nel parcheggio", amb.comandi)
-        amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}], conferme=[False],
-                            esiti={"amministrazione": [(0, "Pulizia (anteprima): niente da spostare.")]})
-        flussi.Flussi(amb, cm).amministrazione()
-        e.verifica(amb.comandi == [["amministrazione", "pulizia"]], "amministrazione: niente da spostare, nessuna domanda")
-        amb = AmbienteFinto(u, moduli=[{"operazione": "Ritorno"}, {"ciclo": "2026Q3", "motivo": "m" * 25, "decisore": "Comitato",
-                                                                    "conferma": "2026Q3"}])
-        flussi.Flussi(amb, cm).amministrazione()
-        e.verifica(amb.comandi == [["amministrazione", "ritorno", "--ciclo", "2026Q3", "--motivo", "m" * 25, "--decisore",
-                                    "Comitato", "--conferma", "2026Q3"]],
-                   "amministrazione: ritorno con ciclo, motivo, decisore e la conferma scritta", amb.comandi)
+                                                           "python amministrazione.py --admin pulizia --esegui"), (0, "Spostato")]})
+        in_admin(amb).amministrazione("Pulizia")
+        e.verifica(amb.comandi == [["amministrazione", "--admin", "pulizia"], ["amministrazione", "--admin", "pulizia", "--esegui"]],
+                   "Admin -> Pulizia: prima l'anteprima e poi, confermata, lo spostamento nel parcheggio", amb.comandi)
+        amb = AmbienteFinto(u, conferme=[False], esiti={"amministrazione": [(0, "Pulizia (anteprima): niente da spostare.")]})
+        in_admin(amb).amministrazione("Pulizia")
+        e.verifica(amb.comandi == [["amministrazione", "--admin", "pulizia"]], "Admin -> Pulizia: niente da spostare, nessuna domanda")
+        # Ritorno: le scelte sono i cicli validati prima del corrente (2026Q4 qui)
+        _scrivi(u / "Cicli" / "2026Q2" / "Validazione_2026Q2.json", {})
+        amb = AmbienteFinto(u, moduli=[{"ciclo": "2026Q3", "motivo": "m" * 25, "decisore": "Comitato", "conferma": "2026Q3"}])
+        in_admin(amb).amministrazione("Ritorno")
+        campo = next(c for c in amb.richiesti[0][1] if c[0] == "ciclo")
+        e.verifica(campo[3] == ["2026Q2", "2026Q3"] and campo[2] == "2026Q3" and campo[4] is True
+                   and amb.comandi == [["amministrazione", "--admin", "ritorno", "--ciclo", "2026Q3", "--motivo", "m" * 25,
+                                        "--decisore", "Comitato", "--conferma", "2026Q3"]],
+                   "Admin -> Ritorno: elenco dei cicli validati prima del corrente, motivo, decisore, conferma scritta",
+                   f"{amb.richiesti}\n{amb.comandi}")
+        # Annulla: le scelte sono i parcheggi attivi
+        _scrivi(u / "_Parcheggio" / "20261029_101500_ritorno" / "atto.json",
+                {"operazione": "ritorno", "quando": "2026-10-29T10:15:00", "utente": "Prova", "stato": "attivo", "elementi": []})
+        amb = AmbienteFinto(u, moduli=[{"parcheggio": "20261029_101500_ritorno   (ritorno del 2026-10-29 10:15:00 di Prova)",
+                                        "motivo": "annullo la prova"}])
+        in_admin(amb).amministrazione("Annulla")
+        e.verifica(amb.richiesti[0][1][0][3][0].startswith("20261029_101500_ritorno") and amb.comandi ==
+                   [["amministrazione", "--admin", "annulla", "--parcheggio", "20261029_101500_ritorno", "--motivo", "annullo la prova"]],
+                   "Admin -> Annulla: elenco dei parcheggi attivi, il nome passa ad amministrazione.py", f"{amb.richiesti}\n{amb.comandi}")
+        # Nuovo registro: solo se non c'e'; inizializza e baseline del motore
+        amb = AmbienteFinto(u, moduli=[{"ciclo_precedente": "2025Q4", "settimana": "2026-01-05"}])
+        in_admin(amb).amministrazione("Nuovo registro")
+        e.verifica(amb.comandi == [["inizializza", "--ciclo-precedente", "2025Q4", "--settimana", "2026-01-05"], ["baseline"]],
+                   "Admin -> Nuovo registro: inizializza con il trimestre prima del primo da valutare, poi baseline", amb.comandi)
+        _scrivi(conf["workbook"], "registro")
+        amb = AmbienteFinto(u)
+        in_admin(amb).amministrazione("Nuovo registro")
+        e.verifica(not amb.comandi and any("Ripartenza" in m for _, m in amb.messaggi),
+                   "Admin -> Nuovo registro con il registro gia' presente: niente, rimanda a Ripartenza", amb.messaggi)
+        amb = AmbienteFinto(u, moduli=[{"motivo": "r" * 25, "decisore": "Prova", "ciclo_precedente": "2025Q4",
+                                        "settimana": "2026-01-05", "conferma": "R.xlsx"}])
+        in_admin(amb).amministrazione("Ripartenza")
+        e.verifica(amb.comandi == [["amministrazione", "--admin", "ripartenza", "--motivo", "r" * 25, "--decisore", "Prova",
+                                    "--ciclo-precedente", "2025Q4", "--settimana", "2026-01-05", "--conferma", "R.xlsx"]],
+                   "Admin -> Ripartenza: motivo, decisore, trimestre di partenza, settimana, conferma", amb.comandi)
+        conf["workbook"].unlink()
 
         # annullato: nessuna risposta
         amb = AmbienteFinto(u)
         try:
-            flussi.Flussi(amb, conf).chiedi_ad_agente("A5", [], "Esegui i nove controlli", "2026Q4")
+            flussi.Flussi(amb, conf).chiedi_ad_agente("A5", [], "Esegui i controlli", "2026Q4")
             annullato = False
         except flussi.Annullato:
             annullato = True
         e.verifica(annullato, "flusso: senza risposta il processo si interrompe (Annullato), niente di scritto")
+
+
+def test_aiuto(e):
+    """L'aiuto dell'app viene dalla guida (29/10): ogni pulsante dei processi ha la sua riga nella tabella "I processi",
+    ogni argomento dell'aiuto ha la sua sezione, il testo si converte senza perdere grassetti."""
+    import re
+    import aiuto
+    sorgente = (CAMPO / "app_nfr.py").read_text(encoding="utf-8")
+    voci = sorgente.split("voci = [", 1)[1].split("]\n", 1)[0]
+    nomi = re.findall(r'\("([^"]+)", (?:self\.flussi|lambda)', voci)
+    righe_guida = aiuto.pulsanti()
+    e.verifica(len(nomi) == 12 and set(nomi) == set(righe_guida),
+               "aiuto: ogni pulsante dei processi dell'app ha la sua riga nella tabella 'I processi' della guida, e viceversa",
+               f"app {nomi}\nguida {sorgente and sorted(righe_guida)}")
+    t = aiuto.suggerimento("Trimestre")
+    e.verifica(t.startswith("Trimestre\nChe cosa fa l'app: ") and "Che cosa fai tu: " in t and "**" not in t and "`" not in t,
+               "aiuto: il suggerimento del pulsante e' la riga della guida, senza i segni del markdown", t)
+    e.verifica("guida" in aiuto.suggerimento("Inesistente", voci={}), "aiuto: un pulsante senza riga rimanda alla guida")
+    argomenti = aiuto.argomenti()
+    titoli = [t for t, _ in argomenti]
+    mancanti = [n for n in nomi + ["Prossimo passo", "Admin", "Aiuto (F1)"] if f"Pulsante {n}" not in titoli]
+    e.verifica(not mancanti and "Menu Altro" in titoli and "I pulsanti del passo in corso" in titoli
+               and all(testo.startswith("#") for _, testo in argomenti),
+               "aiuto: un argomento per pulsante dell'app (\"Pulsante ...\"), il menu Altro e i pulsanti del passo in corso",
+               f"mancano {mancanti}\n{titoli}")
+    import flussi
+    e.verifica(list(aiuto.operazioni_admin()) == flussi.OPERAZIONI_ADMIN,
+               "aiuto: le operazioni della finestra Admin sono quelle della tabella 'Pulsante Admin' della guida",
+               f"{list(aiuto.operazioni_admin())}\n{flussi.OPERAZIONI_ADMIN}")
+    for titolo, testo in argomenti:
+        pezzi = [x for _, r in aiuto.righe(testo) for x, _ in r]
+        if any("**" in x for x in pezzi):
+            e.verifica(False, f"aiuto: grassetti chiusi in '{titolo}'", [x for x in pezzi if "**" in x][:3])
+            break
+    else:
+        e.verifica(True, "aiuto: tutte le sezioni convertite, nessun ** rimasto (grassetti anche a cavallo di due righe)")
+    comandi = [(titolo, m.group(0)) for titolo, testo in argomenti
+               for m in [re.search(r"python\b|\.py\b|esegui_ciclo_locale|--[a-z]", testo)] if m]
+    comandi += [(n, "suggerimento") for n, (app, tu) in righe_guida.items() if re.search(r"python\b|`|--[a-z]", app + tu)]
+    e.verifica(not comandi, "aiuto: solo l'uso dell'app, nessun comando da scrivere (python, .py, opzioni --) negli "
+               "argomenti e nei suggerimenti", comandi)
+    e.verifica({"Altro", "Con A5 Challenger", "Agenti", "▶ Prossimo passo", "Admin...", "Aiuto (F1)"} <= set(aiuto.parti_finestra()),
+               "aiuto: le parti della finestra (Prossimo passo, A5, Agenti, Altro) hanno la loro riga nella guida",
+               list(aiuto.parti_finestra()))
 
 
 def test_cmd(e):
@@ -455,6 +581,7 @@ def main():
     test_ingresso(e)
     test_stato(e)
     test_flussi(e)
+    test_aiuto(e)
     test_cmd(e)
     return 0 if e.stampa() else 1
 

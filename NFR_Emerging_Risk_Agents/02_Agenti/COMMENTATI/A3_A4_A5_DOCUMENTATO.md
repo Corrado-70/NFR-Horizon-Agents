@@ -98,6 +98,10 @@ zero in silenzio.
 - "Mai una persona nominata": il parere circola in Teams; i nomi nelle notizie
   non aggiungono informazione sul rischio della Banca.
 - Notizie: il foglio aggrega le notizie scritte da A3; A4 non scrive nulla.
+- Parere "approfondito e motivato" (D-88, 29/10): il fatto in quattro-sei frasi, una o due frasi per ogni categoria
+  (anche per quelle non toccate), l'anello del meccanismo per ogni rischio toccato, un paragrafo sulla coerenza con la
+  baseline, il perche' di ogni verifica suggerita. Richiesta dell'utente: "il news assessor potrebbe essere un po'
+  piu' prolisso". Nessuna lunghezza contata dallo script: il parere resta in chat.
   Promettere che la notizia compaia li' sarebbe falso.
 
 ## Struttura della risposta
@@ -137,7 +141,7 @@ Agent Builder: nessuna knowledge source. Per lo stesso motivo A5 **non** ha la
 frase "Usa sempre lo strumento di ricerca file", che hanno A1, A3 e A4: le due
 istruzioni sono in conflitto per scelta, non per svista.
 
-## I nove controlli
+## I controlli (C1-C10)
 Ogni controllo ha una controparte in `07_Senza_Studio/controlli_a5.py` nella
 misura in cui e' esprimibile come regola (vedi `04_Riferimenti/controlli_e_model_risk.md`, tabella dei
 controlli). Il 30/09/2026 (D-49...D-56) i controlli sono stati ridotti a cio'
@@ -220,6 +224,18 @@ anche un tipo diverso da quello della baseline e' un'Osservazione (un KRI non
 cambia natura). Il prompt chiede ad A5 anche che i tipi siano "coerenti con
 cio' che misurano": e' giudizio, lo script non lo controlla.
 
+### C10 — Testi
+Dal 29/10 (D-86): A1 scriveva testi troppo sintetici (descrizioni di una riga,
+razionali di poche parole per parte). La guida di scrittura ha la tabella
+"Lunghezze dei testi" (minimo e consigliato, in caratteri), che A5 riceve
+nella parte 3 del suo allegato; lo stesso elenco e' `LUNGHEZZE` in
+`controlli_a5.py` e il collaudo controlla che coincidano. Per A5 un testo
+sotto il minimo e' un Bloccante (va corretto); lo script ne fa un rilievo per
+rischio e lo porta in validazione come Osservazione: non ferma il ciclo. Il
+precontrollo propone di farli allungare ad A1 nella stessa chat; chi lavora
+puo' dire di no e proseguire. Un razionale senza le etichette (scritto prima
+della D-68) si misura intero, contro la somma dei minimi delle sue parti.
+
 ## Esito
 "Da rivedere" se almeno un Bloccante. Dal 06/10 (D-71) A5 e' **facoltativo** e
 nessun suo rilievo ferma il ciclo: lo script trasforma i suoi Bloccanti in
@@ -238,6 +254,13 @@ Decisione D-40 (25/09): le schede di focus sui rischi sono un file a parte
 rispetto al registro, e i loro testi lunghi li scrive un agente dedicato. Il
 registro resta compatto (descrizione e razionale brevi di A1); la scheda
 spiega a chi non conosce il tema.
+
+## Lunghezze (D-88, 29/10)
+descrizione_estesa 1000-2000 caratteri, spiegazione di ogni dimensione 400-800 (Velocity non valutata: una frase),
+a_sostegno_di 100-300: piu' lunghe di quelle di A1 (D-86), perche' la scheda spiega a chi non conosce il tema. Le
+stesse in `schede.LUNGHEZZE_A6` (il collaudo le confronta con le istruzioni). Un testo piu' corto non ferma le
+schede: il comando `schede` le scrive e ne da' l'elenco ("Testi di A6 troppo corti: N"); l'app propone di darlo ad
+A6 nella stessa chat e rilancia le schede con la risposta nuova. Lo schema di A6 ha i massimi alzati (2500 e 900).
 
 ## Ruolo
 A6 non valuta: spiega una valutazione gia' validata. Per questo si lancia
@@ -311,8 +334,13 @@ la ricerca della knowledge trova il pezzo giusto (un file unico di decine di KB 
 aggiornato si reindicizza subito.
 
 **Regole del prompt e perche'.**
-- REGISTRATO / CALCOLATO / LETTURA MIA: il rischio vero di un agente che spiega e' presentare una ricostruzione
-  plausibile come se fosse il motivo di chi ha deciso. Dichiarare la natura di ogni frase lo rende verificabile.
+- Prima persona (D-87, 29/10): "le valutazioni del registro sono tue", "Ho dato Impatto 4 perche'...", nessun nome
+  di agente (nei file della knowledge "A1" e "A8" sono lui), il validatore nominato sempre. Fino al 29/10 A7 doveva
+  etichettare ogni frase REGISTRATO / CALCOLATO / LETTURA MIA, con una sezione Limiti fissa: l'utente ha notato che
+  "mette sempre le mani avanti", e il prompt glielo chiedeva. Resta la protezione per cui le etichette erano nate (il
+  rischio vero di un agente che spiega e' presentare una ricostruzione plausibile come il motivo di chi ha deciso):
+  il perche' e' la motivazione scritta nel file, i conti si rifanno con i numeri del file, e solo cio' che il file
+  non dice va scritto come "(lettura di oggi, non nel registro)". "Non nel registro: ..." solo se manca un dato.
 - Nessun valore nuovo: come A4 e A6, A7 non valuta (D-41); per "dovrebbe essere piu' alto?" indica il descrittore
   e l'evidenza che servirebbe.
 - Fenomeni non censiti: il motivo lo scrive A1 nel ciclo (campo `fenomeni_non_censiti`); se manca, A7 cerca nei
@@ -324,10 +352,16 @@ aggiornato si reindicizza subito.
 - Richieste di modifica (regola 8, riscritta il 07/10 sera, D-76): A7 non modifica e non ha un modo manutenzione;
   indica la via (riapri e valida per i valori, celle gialle, testi a mano poi baseline, dismetti).
 
-**Rubrica**: sezioni 1, 2, 3, 8 (dimensioni, rilevanza delle fonti, regole di variazione, urgenza). Prompt 6.891
-caratteri dal 07/10 sera (D-76; 6.575 fino al 07/10 pomeriggio).
+**Rubrica**: sezioni 1, 2, 3, 8 (dimensioni, rilevanza delle fonti, regole di variazione, urgenza). Prompt 7.769
+caratteri dal 29/10 (D-87; 6.891 dal 07/10 sera, D-76; 6.575 fino al 07/10 pomeriggio).
 
 # A8 Evento critico (D-77, 07/10/2026)
+
+**Lunghezze (D-88, 29/10).** A8 scrive lo stesso JSON di A1 e riceve la stessa guida: le lunghezze dei testi dei
+rischi (D-86) valgono anche per lui. La tabella ha in piu' le righe dell'analisi dell'evento (evento 300-700,
+catena_causale 600-1300, effetto su ogni rischio toccato 150-350, uso di ogni documento 100-250, limiti 150-500):
+C10 ne fa un'Osservazione sul ciclo (id_rischio null). Le istruzioni di A8 non cambiano (7.993 caratteri: non c'e'
+spazio, e non serve: la tabella e' nell'allegato).
 
 **Perche' esiste.** Il ciclo straordinario (D-75) rivaluta pochi rischi per un evento che non puo' aspettare il
 trimestre. A1 e' scritto per valutare tutto il registro con la stessa profondita'; per un evento serve l'opposto:

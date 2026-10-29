@@ -82,12 +82,26 @@ def esegui(argomenti, cartella_uscita, utente="", su_riga=None, script=MOTORE, o
             "cosa_fare": COSA_FARE["DOPO IL SALVATAGGIO" if dopo else fascia]}
 
 
-PRECONTROLLO = re.compile(r"Precontrollo dell'output di A[18] \(([^)]+)\): (?:nessun rilievo|(\d+) punti da correggere, (\d+) da verificare)")
+PRECONTROLLO = re.compile(r"Precontrollo dell'output di A[18] \(([^)]+)\): (?:nessun rilievo|(\d+) punti da correggere, (\d+) da "
+                          r"verificare(?:, (\d+) rischi con testi troppo corti)?)")
+
+
+TESTI_A6 = re.compile(r"Testi di A6 troppo corti: (\d+)")
+
+
+def testi_corti_a6(uscita):
+    """(quanti, [righe dell'elenco]) dei testi di A6 troppo corti dall'uscita del comando schede (D-88); (0, [])."""
+    m = TESTI_A6.search(uscita or "")
+    if not m:
+        return 0, []
+    righe = uscita[m.end():].splitlines()
+    return int(m.group(1)), [r.strip()[2:] for r in righe if r.strip().startswith("- ")]
 
 
 def esito_precontrollo(uscita):
-    """(punti da correggere, punti da verificare) dalla prima riga del comando precontrollo; None se non c'e'."""
+    """(punti da correggere, punti da verificare, rischi con testi troppo corti) dalla prima riga del comando
+    precontrollo; None se non c'e'."""
     m = PRECONTROLLO.search(uscita)
     if not m:
         return None
-    return (int(m.group(2) or 0), int(m.group(3) or 0))
+    return (int(m.group(2) or 0), int(m.group(3) or 0), int(m.group(4) or 0))

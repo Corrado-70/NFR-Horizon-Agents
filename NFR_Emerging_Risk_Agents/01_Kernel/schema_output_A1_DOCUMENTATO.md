@@ -111,7 +111,7 @@ esprimibile nello schema: lo verifica la scrittura settimanale.
 
 ## A5 — esito
 
-`ciclo`, `esito` (Approvato / Da rivedere), `rilievi[]` (controllo C1-C9,
+`ciclo`, `esito` (Approvato / Da rivedere), `rilievi[]` (controllo C1-C10,
 id_rischio o null, gravita' Bloccante/Osservazione, descrizione), `sintesi`.
 Gli stessi campi li produce `controlli_a5.py`: i due esiti si leggono e si
 combinano allo stesso modo. Tutti i rilievi vanno nel registro: colonna
@@ -125,14 +125,15 @@ Bloccanti dell'agente superati erano marcati BLOCCANTE SUPERATO).
 ## A6 — schede dei rischi
 
 `ciclo`; `schede[]`, una per rischio del ciclo: `id_rischio`,
-`descrizione_estesa` (300-1800 caratteri; il prompt chiede 400-1500: il
+`descrizione_estesa` (300-2500 caratteri; il prompt chiede 1000-2000, D-88: il
 fenomeno in termini di rischio, senza i motivi dei punteggi),
 `dimensioni[]` (esattamente quattro: `dimensione` fra impatto, probabilita,
-prossimita, velocity; `spiegazione` 40-600 caratteri, il prompt chiede 80-500:
+prossimita, velocity; `spiegazione` 40-900 caratteri, il prompt chiede 400-800:
 perche' il valore, con le informazioni e i documenti, partendo dalla
 motivazione di A1, D-68; per una
 Velocity non valutata si spiega perche' manca), `fonti[]` (`riferimento` identico a quello dell'input,
-`a_sostegno_di` 10-400 caratteri). Cio' che lo schema non puo' vedere lo
+`a_sostegno_di` 10-400 caratteri, il prompt chiede 100-300). Sotto le lunghezze del prompt le schede escono
+lo stesso, con l'elenco dei testi da allungare (`schede.testi_corti_a6`, D-88). Cio' che lo schema non puo' vedere lo
 controlla `07_Senza_Studio/schede.py` (`controlla_a6`): stessi rischi
 dell'input, quattro dimensioni diverse, stesse fonti, nessun numero fuori dai dati
 del rischio e dalla rubrica. Destinazione: il file `Schede_<ciclo>.xlsx`, mai
@@ -172,7 +173,7 @@ esattamente quella usata per scrivere i payload di prova.
 
 Accanto alla baseline lo script scrive l'**allegato di A1**
 `Input_A1_<ciclo>.txt` (D-69, `07_Senza_Studio/input_a1.py`): un testo in tre
-parti, la baseline (lo stesso JSON), i nove controlli di A5
+parti, la baseline (lo stesso JSON), i dieci controlli di A5
 (`controlli_A5.md`) e la guida di scrittura (`guida_scrittura_A1.md`). Lo
 riscrive ogni volta che aggiorna la baseline e toglie quello del ciclo
 precedente. Con `baseline --uscita <file>` scrive solo il file indicato.

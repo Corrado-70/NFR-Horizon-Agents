@@ -7,6 +7,8 @@ installato; se il PC non ha ancora il pacchetto del 23/10, prima i passi dell'ap
 
 ## Che cosa porta questo pacchetto
 
+- **Aiuto nell'app** (pulsante Aiuto o F1): un argomento per pulsante, preso dalla guida; passando con il mouse su un
+  pulsante compare che cosa fa.
 - **App piu' esplicita**: la fascia blu dice processo e fase, il passo in corso il comando in esecuzione con il tempo
   trascorso; domande e moduli vengono in primo piano con un suono; "Ho chiuso Excel: controlla ora". Dopo il
   precontrollo superato l'app chiede se passare anche da **A5** (`chiedi_a5`).
@@ -17,11 +19,21 @@ installato; se il PC non ha ancora il pacchetto del 23/10, prima i passi dell'ap
 - **Report al comitato anche in HTML** (tappa M4): `valida` e `report` scrivono accanto al PDF
   `Report_comitato_<ciclo>.html`, da aprire nel browser, con le schede di tutti i rischi; esce solo se i suoi numeri
   tornano con quelli di Excel; l'elenco di tutti i report e' `Cicli\Indice_report.html` (4).
-- **Amministrazione** (tappa M5, solo il manutentore): pulizia dell'archivio, ritorno a un ciclo validato, ripartenza
-  da zero, annullamento; niente si cancella subito, tutto va nel parcheggio con l'atto (3-quater). Decisione aperta
-  A-18 (chi puo' usarla e i tempi), con la proposta gia' nel pacchetto.
-- **Niente da reincollare negli agenti, kernel e struttura del registro invariati** (versione `2026-10-09`): nessun
-  `aggiorna-registro`, nessuna copia nella library Kernel.
+- **Amministrazione** (tappa M5, pulsante **Admin...** della finestra, D-85): pulizia dell'archivio,
+  ritorno a un ciclo validato, ripartenza da zero, annullamento; niente si cancella subito, tutto va nel parcheggio
+  con l'atto (3-quater).
+- **Testi di A1 piu' lunghi e controllo C10** (D-86): la guida di scrittura fissa per ogni testo un minimo e un
+  consigliato (descrizione 500-900 caratteri, ogni parte del razionale 300-400, azioni e KRI 300-600...); un testo
+  piu' corto e' il rilievo **C10**: per A5 un Bloccante, nel precontrollo l'app chiede se farlo allungare ad A1 nella
+  stessa chat (si puo' dire di no), in validazione un'Osservazione. Le risposte di A1 diventano circa il doppio: piu'
+  spesso servira' "continua".
+- **A7 risponde in prima persona** (D-87), come chi ha proposto le valutazioni e le difende, senza nominare gli
+  altri agenti e senza cautele di rito; dopo una rettifica: "avevo proposto..., il validatore ha deciso...".
+- **Schede di A6, analisi dell'evento di A8 e pareri di A4 piu' estesi** (D-88): A6 ha lunghezze minime (descrizione
+  1000-2000 caratteri, 400-800 per ogni valore) e l'app propone di fargli allungare i testi corti; l'analisi dell'evento
+  di A8 entra nelle lunghezze di C10; A4 scrive un parere piu' disteso.
+- **Da reincollare: A4, A5, A6 e A7**; nella library Kernel quattro file aggiornati (passo 3-bis). Struttura del registro invariata
+  (versione `2026-10-09`): nessun `aggiorna-registro`.
 
 ## Passi
 
@@ -45,8 +57,16 @@ rimedio e' scritto sotto); il file e' in `Archivio_Cicli\Verifiche_PC\`.
 - Se l'attivita' pianificata o i collegamenti non si possono creare: a mano (sezione 1, "Raccolta notizie
   automatica"; tasto destro su `NFR.cmd` -> Invia a -> Desktop).
 
-**3. Solo sul PC del manutentore**: in `configurazione.json` (Blocco note) aggiungere `"ruolo": "manutentore",` per
-avere Altro -> Amministrazione (3-quater). Sugli altri PC non si scrive.
+**3. Amministrazione**: niente da configurare. Il pulsante **Admin...** apre, dopo una conferma che lascia la traccia,
+la finestra delle operazioni, ognuna spiegata e con il suo pulsante (Aiuto -> "Pulsante Admin", D-85).
+
+**3-bis. Kernel, A4, A5, A6 e A7** (D-86, D-87, D-88)
+- Copiare nella library **Kernel** (la cartella della voce `kernel` di `configurazione.json`), sostituendoli, i quattro
+  file di `NFR_Emerging_Risk_Agents\01_Kernel`: `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`,
+  `schema_output_A6.json`.
+  Lo script li mette negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze.
+- Agent Builder: **reincollare le istruzioni di A4, A5, A6 e A7** (`NFR_Emerging_Risk_Agents\02_Agenti\A4_News_Assessor.md`,
+  `A5_Challenger.md`, `A6_Schede.md`, `A7_Assistente_registro.md`). A1, A3 e A8 non cambiano.
 
 **4. L'app.** Doppio clic sul collegamento **NFR Horizon Scan** del Desktop (o su `NFR.cmd`).
 
@@ -63,6 +83,15 @@ Nuove:
 - **app**: durante il trimestre la fascia e il passo in corso dicono sempre che cosa succede; la domanda "Passare alla
   validazione adesso?" viene in primo piano; "Ho chiuso Excel: controlla ora" prosegue dopo aver chiuso Excel; dopo il
   precontrollo superato compare la domanda su A5;
+- **lunghezze dei testi (C10)**: nel trimestre di prova `Input_A1_<ciclo>.txt` ha nella parte 3 la tabella "Lunghezze
+  dei testi"; se A1 risponde corto, l'app dice quanti rischi hanno testi troppo corti e propone il messaggio per
+  allungarli; dopo la correzione il precontrollo non li segnala piu'; A5 (reincollato) segnala C10 come Bloccante e in
+  validazione compare come osservazione; annotare se le risposte di A1 si tagliano piu' spesso (V-B);
+- **A7 in prima persona**: le domande 2, 5 e 9 del copione `04_Riferimenti\Prove\Prova_A7.md`; A7 risponde "ho dato...",
+  dopo una rettifica "avevo proposto..., il validatore ha deciso...", senza nominare A1 o A5 e senza cautele di rito;
+- **schede di A6 (D-88)**: dopo la validazione di prova, Schede con A6: se A6 scrive corto, l'app lo dice e propone
+  l'elenco per la stessa chat; con la risposta nuova le schede si rifanno; annotare quanto sono lunghe le schede;
+- **A4 (D-88)**: un parere su una notizia di prova e' piu' disteso nelle sei sezioni;
 - **installazione (M3)**: `installa.cmd` arriva in fondo; la Verifica del PC ha `Excel via COM` OK e le righe
   `FullName` e `AutoSaveOn` (V-F: annotare cosa dicono); sul Desktop c'e' il collegamento, in Invia a la voce "NFR
   notizie manuali" (provarla su un file: finisce in `News_Inbox\<lunedi'>\Manuali`); sul PC della raccolta, in
@@ -70,7 +99,8 @@ Nuove:
 - **report HTML (M4)**: dopo la validazione del ciclo di prova c'e' `Report_comitato_<ciclo>.html` accanto al PDF; si
   apre con un doppio clic, il clic su un ID apre la scheda del rischio, i numeri sono quelli del PDF; l'uscita di
   `valida` dice "Cancello: N numeri uguali";
-- **amministrazione (M5), sul registro di prova** (PC del manutentore, configurazione della prova): Amministrazione ->
+- **amministrazione (M5), sul registro di prova** (configurazione della prova): pulsante Admin (conferma, titolo con
+  ADMIN, traccia in `Archivio_Cicli\Amministrazione`), poi nella finestra Admin ->
   pulizia (anteprima e poi spostamento), parcheggi, annulla della pulizia; poi un ritorno al ciclo validato prima
   di quello corrente e il suo annullamento (lo stato dell'app torna com'era).
 - **collaudo completo sul PC** (chi mantiene il pacchetto): `python NFR_Emerging_Risk_Agents\99_Collaudo\esegui_collaudo.py`

@@ -1,6 +1,6 @@
 """Test senza Excel delle funzioni amministrative (D-83, tappa M5, 29/10/2026) su un archivio finto.
 
-  1. solo il manutentore ("ruolo": "manutentore");
+  1. solo in modalita' Admin (D-85): senza --admin nessuna operazione;
   2. pulizia: anteprima di cio' che si sposta (tentativi e versioni dei report dei cicli validati, backup oltre gli
      ultimi N, In_arrivo dei periodi chiusi, log vecchi), parcheggio con l'atto e la traccia, annullamento;
   3. ritorno indietro: controlli (ciclo validato, Excel validato, prima del corrente, motivo e decisore), registro
@@ -46,7 +46,7 @@ def archivio(t):
     u, k = t / "Archivio_Cicli", t / "Kernel"
     reg = t / "Report" / "NFR_Registro.xlsx"
     conf = {"cartella_uscita": u, "workbook": reg, "kernel": k, "news_inbox": t / "News", "utente": "Manutentore"}
-    grezza = {"ruolo": "manutentore", "utente": "Manutentore", "backup_da_tenere": 3, "giorni_log": 90, "giorni_parcheggio": 30}
+    grezza = {"utente": "Manutentore", "backup_da_tenere": 3, "giorni_log": 90, "giorni_parcheggio": 30}
     scrivi(reg, "registro di adesso (2026Q4 scritto)")
     for c, eta in (("2026Q2", 120), ("2026Q3", 30)):
         scrivi(u / "Cicli" / c / f"Validazione_{c}.json", {"periodo": c}, eta)
@@ -72,13 +72,21 @@ def archivio(t):
     return conf, grezza
 
 
-def test_ruolo(e):
-    try:
-        amm.controlla_ruolo({"ruolo": "analista"})
-        fermo = False
-    except amm.Fermo:
-        fermo = True
-    e.verifica(fermo and amm.autorizzato({"ruolo": "Manutentore"}), "solo il manutentore (ruolo in configurazione.json)")
+def test_admin(e):
+    import contextlib
+    import io
+    with tempfile.TemporaryDirectory() as tmp:
+        (Path(tmp) / "Archivio").mkdir()
+        uscita = io.StringIO()
+        with contextlib.redirect_stdout(uscita):
+            senza = amm.main(["--cartella-uscita", str(Path(tmp) / "Archivio"), "parcheggi"])
+            con = amm.main(["--admin", "--cartella-uscita", str(Path(tmp) / "Archivio"), "parcheggi"])
+        conf = {"cartella_uscita": Path(tmp) / "Archivio"}
+        amm.segna_admin(conf, {"utente": "Manutentore"}, True)
+        tracce = list((Path(tmp) / "Archivio" / amm.TRACCIA).glob("*_modalita_admin_accesa.json"))
+    e.verifica(senza == 1 and "modalita' Admin" in uscita.getvalue() and con == 0 and tracce,
+               "solo in modalita' Admin: senza --admin fermo con il perche', con --admin si lavora; l'accensione nell'app "
+               "lascia la traccia", uscita.getvalue())
 
 
 def test_pulizia(e, conf, grezza):
@@ -231,7 +239,7 @@ def test_conferma(e, conf, grezza):
 
 def main():
     e = Esito("Funzioni amministrative: parcheggio, pulizia, ritorno, annulla, ripartenza, svuota (senza Excel)")
-    test_ruolo(e)
+    test_admin(e)
     with tempfile.TemporaryDirectory() as tmp:
         conf, grezza = archivio(Path(tmp))
         test_pulizia(e, conf, grezza)

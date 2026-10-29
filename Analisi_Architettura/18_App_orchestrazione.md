@@ -125,6 +125,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Schermi 1920x1080 con la scala al 100, 125 e 150%: si apre ingrandita, uscita del motore leggibile | simulazione dello schermo |
 | [x] | Divisore trascinabile fra passo in corso e uscita; riquadro della risposta alto e visibile dopo l'incolla; riga dell'esito sotto il riquadro (richiesta dell'utente del 23/10) | simulazione a 100% e 150% |
 | [x] | `NFR.cmd`: ASCII, cartella dello script, UTF-8, `pyw`/`pythonw`/`python` | `test_app.py` |
+| [x] | Aiuto nell'app dalla guida (richiesta dell'utente del 29/10): pulsante "Aiuto (F1)" con gli argomenti principali e "Apri la guida completa"; suggerimenti sui pulsanti dalla tabella "I processi"; nessuna copia dei testi (`aiuto.py`) | `test_app.py` (test_aiuto); prova della finestra con Xvfb |
 | [x] | Che cosa sta facendo l'app, sempre detto (richiesta dell'utente del 29/10, dopo la prima prova in Banca): nella fascia il processo e la fase; nel passo in corso il comando in esecuzione con il tempo trascorso e la durata attesa, la domanda o il modulo in attesa, l'attesa della chiusura di Excel; domande e moduli in primo piano con un suono; "Ho chiuso Excel: controlla ora" controlla davvero il file; a fine processo quale processo e' finito e quando | prova della finestra con Xvfb (testi di ogni fase); in Banca |
 | [~] | Uso vero: un trimestre di prova dall'app, con gli agenti in Agent Builder e il registro di prova | in Banca, B5-bis |
 | [~] | Link degli agenti da "Copia collegamento" che aprono la chat (V-A) | in Banca, B5-bis |
@@ -179,7 +180,7 @@ Pulizia dell'archivio e "ritorno indietro nel tempo". Regola di fondo: **niente 
 toglie va in un **parcheggio** (`Archivio_Cicli/_Parcheggio/<data_ora>_<operazione>/`) con un atto che dice chi, quando,
 perche' e che cosa. Si svuota solo con un comando a parte e dopo un tempo minimo. Ogni operazione prende il lucchetto,
 chiede la conferma scritta (ritorno e ripartenza), lascia la traccia in `Archivio_Cicli/Amministrazione/` e si annulla
-rimettendo a posto il parcheggio. In `amministrazione.py` e nella voce Altro -> Amministrazione dell'app.
+rimettendo a posto il parcheggio. In `amministrazione.py` e nella finestra del pulsante Admin dell'app.
 
 | Stato | Voce | Dove si verifica |
 |---|---|---|
@@ -191,8 +192,8 @@ rimettendo a posto il parcheggio. In `amministrazione.py` e nella voce Altro -> 
 | [~] | Ripartenza con Excel vero | sul registro di prova in Banca |
 | [x] | **Svuota il parcheggio**: solo i parcheggi piu' vecchi di `giorni_parcheggio`, anteprima e poi `--esegui`; l'elenco nella traccia | `test_amministrazione.py` |
 | [x] | Settimane dopo C: elencate dopo il ritorno con il comando `settimanale --payload` dal loro `A3_<lunedi'>.json` parcheggiato | `test_amministrazione.py` |
-| [~] | Chi puo' farlo: `"ruolo": "manutentore"` (proposta D-85; decisione aperta A-18 in DECISIONI); governance: "Storia riscritta" in `controlli_e_model_risk.md` | da decidere (A-18) |
-| [x] | Guida 3-quater, 0.3 (ruolo e tempi), Altro, 5, 7; README, 00_LEGGIMI, PROMPT_MASTER (trappole 137-138), TODO, HANDOFF; `AGGIORNAMENTO_IN_BANCA.md` del 29/10 | `verifica_riferimenti.py` |
+| [x] | Chi puo' farlo: modalita' Admin (D-85, decisione dell'utente del 29/10): pulsante Admin dell'app che apre, dopo una conferma tracciata, la finestra delle operazioni (con Nuovo registro e i moduli con le scelte); `--admin` da riga di comando; governance: "Storia riscritta" in `controlli_e_model_risk.md` | `test_app.py`, `test_amministrazione.py`; prova della finestra |
+| [x] | Guida 3-quater, 0.3 (tempi), Admin, Altro, 5, 7; README, 00_LEGGIMI, PROMPT_MASTER (trappole 137-138), TODO, HANDOFF; `AGGIORNAMENTO_IN_BANCA.md` del 29/10 | `verifica_riferimenti.py` |
 
 ## 18.6 Verifiche in Banca (TODO B5-bis)
 

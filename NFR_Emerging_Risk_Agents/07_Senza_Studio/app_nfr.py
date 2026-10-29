@@ -24,6 +24,8 @@ import webbrowser
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
+import aiuto
+import amministrazione
 import appunti
 import esecutore
 import flussi
@@ -38,6 +40,44 @@ DURATA = {"precontrollo": "pochi secondi, senza Excel", "griglia": "Excel in bac
           "verifica_pc": "meno di un minuto, apre il registro in sola lettura",
           "amministrazione": "da pochi secondi (parcheggi, pulizia) a qualche minuto con Excel (ritorno, ripartenza)"}
 DURATA_EXCEL = "Excel in background, di solito qualche minuto"
+NESSUN_PROCESSO = ("Nessun processo in corso. Passa con il mouse su un pulsante per sapere che cosa fa; Aiuto (F1) per "
+                   "la guida dell'app e dei processi.")
+STILI_AIUTO = {"titolo": ("Segoe UI", 14, "bold"), "sottotitolo": ("Segoe UI", 11, "bold"), "voce": ("Segoe UI", 10),
+               "elenco": ("Segoe UI", 10), "testo": ("Segoe UI", 10), "codice": ("Consolas", 9)}
+
+
+class Suggerimento:
+    """Il riquadro che compare passando con il mouse su un pulsante: il testo viene dalla guida (aiuto.py)."""
+
+    def __init__(self, widget, testo):
+        self.widget, self.testo, self.finestra, self.attesa = widget, testo, None, None
+        widget.bind("<Enter>", lambda ev: self._prepara(), add="+")
+        widget.bind("<Leave>", lambda ev: self._chiudi(), add="+")
+        widget.bind("<ButtonPress>", lambda ev: self._chiudi(), add="+")
+
+    def _prepara(self):
+        self._chiudi()
+        self.attesa = self.widget.after(600, self._mostra)
+
+    def _mostra(self):
+        testo = self.testo() if callable(self.testo) else self.testo
+        if not testo:
+            return
+        x = self.widget.winfo_rootx() + 10
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 4
+        self.finestra = tk.Toplevel(self.widget)
+        self.finestra.wm_overrideredirect(True)
+        self.finestra.wm_geometry(f"+{x}+{y}")
+        tk.Label(self.finestra, text=testo, justify="left", wraplength=560, background="#FFFDE7", relief="solid",
+                 borderwidth=1, font=("Segoe UI", 9), padx=8, pady=6).pack()
+
+    def _chiudi(self):
+        if self.attesa:
+            self.widget.after_cancel(self.attesa)
+            self.attesa = None
+        if self.finestra:
+            self.finestra.destroy()
+            self.finestra = None
 
 
 class AmbienteTk:
@@ -169,19 +209,26 @@ class App:
                 ("Testi a mano", self.flussi.testi_a_mano), ("Parere di A4", self.flussi.parere_a4),
                 ("Chiedi ad A7", self.flussi.assistente_a7), ("Diagnosi", self.flussi.diagnosi), ("Dismetti", self.flussi.dismetti)]
         self.pulsanti = [self.prossimo]
+        guida_pulsanti = aiuto.pulsanti()             # dalla tabella "I processi" della guida
+        parti = aiuto.parti_finestra()
+        Suggerimento(self.prossimo, parti.get("▶ Prossimo passo", ""))
         for i, (testo, azione) in enumerate(voci):
             b = ttk.Button(processi, text=testo, command=lambda a=azione, n=testo: self.avvia(a, n))
             b.grid(row=i // 6, column=i % 6, sticky="ew", padx=2, pady=2)
+            Suggerimento(b, aiuto.suggerimento(testo, voci=guida_pulsanti))
             self.pulsanti.append(b)
         for c in range(6):
             processi.columnconfigure(c, weight=1)
         opzioni = ttk.Frame(processi)
         opzioni.grid(row=2, column=0, columnspan=6, sticky="w", pady=(4, 0))
-        ttk.Checkbutton(opzioni, text="Con A5 Challenger (facoltativo)", variable=self.con_a5).pack(side="left")
+        casella_a5 = ttk.Checkbutton(opzioni, text="Con A5 Challenger (facoltativo)", variable=self.con_a5)
+        casella_a5.pack(side="left")
+        Suggerimento(casella_a5, parti.get("Con A5 Challenger", ""))
         ttk.Label(opzioni, text="   Agenti:").pack(side="left")
         self.origine = tk.StringVar(value=self.flussi.origine)
         scelta = ttk.Combobox(opzioni, textvariable=self.origine, values=list(flussi.ingresso.ORIGINI), state="readonly", width=16)
         scelta.pack(side="left")
+        Suggerimento(scelta, parti.get("Agenti", ""))
         scelta.bind("<<ComboboxSelected>>", lambda ev: setattr(self.flussi, "origine", self.origine.get()))
         altro = ttk.Menubutton(opzioni, text="Altro")
         menu = tk.Menu(altro, tearoff=False)
@@ -189,20 +236,26 @@ class App:
         menu.add_command(label="Apri l'archivio", command=lambda: self.amb.apri(self.conf["cartella_uscita"]))
         menu.add_command(label="Aggiorna lo stato", command=self.aggiorna_stato)
         menu.add_command(label="Verifica del PC", command=lambda: self.avvia(self.flussi.verifica_pc, "Verifica del PC"))
-        menu.add_command(label="Amministrazione (manutentore)...",
-                         command=lambda: self.avvia(self.flussi.amministrazione, "Amministrazione"))
         menu.add_separator()
         menu.add_command(label="Togli il lucchetto rimasto (sblocca)", command=lambda: self.avvia(self.flussi.sblocca, "Sblocca"))
         menu.add_command(label="Ricostruisci la griglia di validazione",
                          command=lambda: self.avvia(lambda: self.flussi.motore("griglia"), "Griglia di validazione"))
         altro["menu"] = menu
         altro.pack(side="left", padx=12)
+        Suggerimento(altro, parti.get("Altro", ""))
+        b_admin = ttk.Button(opzioni, text="Admin...", command=self.apri_admin)     # D-85
+        b_admin.pack(side="left", padx=(0, 12))
+        Suggerimento(b_admin, parti.get("Admin...", ""))
+        b_aiuto = ttk.Button(opzioni, text="Aiuto (F1)", command=self.apri_aiuto)
+        b_aiuto.pack(side="left")
+        Suggerimento(b_aiuto, "La guida dell'app e dei processi principali, presa da 00_GUIDA_PASSO_PASSO.md.")
+        self.root.bind("<F1>", lambda ev: self.apri_aiuto())
 
         # Passo in corso e uscita del motore divisi da un divisore trascinabile (richiesta dell'utente del 23/10).
         divisore = ttk.PanedWindow(self.root, orient="vertical")
         divisore.pack(fill="both", expand=True, padx=10, pady=(8, 10))
         self.passo = ttk.LabelFrame(divisore, text="Passo in corso", padding=8)
-        self.istruzioni = ttk.Label(self.passo, text="Nessun processo in corso.", justify="left", font=("Segoe UI", 10))
+        self.istruzioni = ttk.Label(self.passo, text=NESSUN_PROCESSO, justify="left", font=("Segoe UI", 10))
         self.istruzioni.pack(anchor="w", fill="x")
         self.passo.bind("<Configure>", lambda ev: self.istruzioni.config(wraplength=max(300, ev.width - 30)))
         bottoni = ttk.Frame(self.passo)
@@ -355,6 +408,113 @@ class App:
         self.fase("prosegue")
         return risposta
 
+    # ------------------------------------------------------------ modalita' Admin (D-85)
+    def apri_admin(self):
+        """Il pulsante Admin: dopo una conferma (che lascia la traccia) apre la finestra delle funzioni amministrative,
+        una per operazione con la spiegazione della guida (tabella "Pulsante Admin") e il suo pulsante. Finche' la
+        finestra e' aperta l'app e' in modalita' Admin; chiuderla la spegne (anche questo resta nella traccia)."""
+        if getattr(self, "finestra_admin", None) and self.finestra_admin.winfo_exists():
+            self.finestra_admin.lift()
+            return
+        if not messagebox.askyesno(
+                "NFR Horizon Scan - modalita' Admin",
+                "La finestra Admin contiene le funzioni amministrative: nuovo registro, pulizia dell'archivio, ritorno a "
+                "un ciclo validato, annullamento, ripartenza da zero, parcheggi, svuotamento.\n\nNiente si cancella "
+                "subito (tutto va nel parcheggio con l'atto), ma ritorno e ripartenza cambiano la storia del registro: si "
+                "fanno solo su decisione della funzione di rischio.\n\nAprire la finestra Admin? Resta traccia di chi "
+                "l'ha aperta e quando.", parent=self.root):
+            return
+        self._admin(True)
+        f = self.finestra_admin = tk.Toplevel(self.root)
+        f.title("NFR Horizon Scan - Admin")
+        f.protocol("WM_DELETE_WINDOW", self.chiudi_admin)
+        corpo = ttk.Frame(f, padding=12)
+        corpo.pack(fill="both", expand=True)
+        ttk.Label(corpo, text="Funzioni amministrative (modalita' Admin)", font=("Segoe UI", 13, "bold")).grid(
+            row=0, column=0, columnspan=2, sticky="w")
+        ttk.Label(corpo, text="Niente si cancella subito, tranne con Svuota: cio' che un'operazione toglie va nel parcheggio "
+                              "con l'atto e si puo' annullare. L'esito di ogni operazione e' nell'uscita della finestra "
+                              "principale.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=2, sticky="w",
+                                                                                   pady=(4, 10))
+        spiegazioni = aiuto.operazioni_admin()
+        for n, op in enumerate(flussi.OPERAZIONI_ADMIN, start=2):
+            serve, chiede = spiegazioni.get(op, ("", ""))
+            ttk.Button(corpo, text=op, width=18,
+                       command=lambda o=op: self.avvia(lambda: self.flussi.amministrazione(o), f"Admin: {o}")).grid(
+                row=n, column=0, sticky="nw", pady=4, padx=(0, 12))
+            ttk.Label(corpo, text=f"{serve}\nChiede: {chiede}" if chiede else serve, wraplength=600, justify="left").grid(
+                row=n, column=1, sticky="w", pady=4)
+        sotto = ttk.Frame(corpo)
+        sotto.grid(row=len(flussi.OPERAZIONI_ADMIN) + 2, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        ttk.Button(sotto, text="Aiuto: Pulsante Admin", command=lambda: self.apri_aiuto("Pulsante Admin")).pack(side="left")
+        ttk.Button(sotto, text="Chiudi (spegne la modalita' Admin)", command=self.chiudi_admin).pack(side="right")
+
+    def chiudi_admin(self):
+        if getattr(self, "finestra_admin", None) and self.finestra_admin.winfo_exists():
+            self.finestra_admin.destroy()
+        self.finestra_admin = None
+        self._admin(False)
+
+    def _admin(self, attiva):
+        self.flussi.admin = attiva
+        self.root.title("NFR Horizon Scan" + ("  —  ADMIN" if attiva else ""))
+        try:
+            amministrazione.segna_admin(self.conf, self.conf, attiva)
+        except Exception as ex:                      # noqa: BLE001 - la traccia non deve impedire di lavorare
+            self.scrivi_log(f"(traccia della modalita' Admin non scritta: {ex})", "avviso")
+        self.mostra("Modalita' Admin: finestra Admin aperta." if attiva else "Modalita' Admin spenta.",
+                    "avviso" if attiva else "info")
+
+    # ------------------------------------------------------------ aiuto (dalla guida)
+    def apri_aiuto(self, argomento=0):
+        """Una finestra con gli argomenti della guida (aiuto.ARGOMENTI) a sinistra e il testo a destra. Il testo e'
+        quello di 00_GUIDA_PASSO_PASSO.md, letto ogni volta: nessuna copia da tenere allineata."""
+        voci = aiuto.argomenti()
+        if isinstance(argomento, str):               # per titolo (per esempio "Pulsante Admin")
+            argomento = next((k for k, (titolo, _) in enumerate(voci) if titolo == argomento), 0)
+        if getattr(self, "finestra_aiuto", None) and self.finestra_aiuto.winfo_exists():
+            self.finestra_aiuto.destroy()
+        f = self.finestra_aiuto = tk.Toplevel(self.root)
+        f.title("NFR Horizon Scan - Aiuto")
+        f.geometry(f"{int(self.root.winfo_screenwidth() * 0.55)}x{int(self.root.winfo_screenheight() * 0.75)}")
+        if not voci:
+            ttk.Label(f, text=f"Guida non trovata: {aiuto.GUIDA}", padding=12).pack()
+            return
+        corpo = ttk.PanedWindow(f, orient="horizontal")
+        corpo.pack(fill="both", expand=True, padx=8, pady=8)
+        elenco = tk.Listbox(corpo, font=("Segoe UI", 10), activestyle="none", exportselection=False, width=34)
+        for titolo, _ in voci:
+            elenco.insert("end", titolo)
+        testo = scrolledtext.ScrolledText(corpo, wrap="word", font=STILI_AIUTO["testo"], padx=12, pady=8)
+        for stile, carattere in STILI_AIUTO.items():
+            rientro = 24 if stile in ("voce", "elenco") else 0
+            testo.tag_configure(stile, font=carattere, spacing1=6 if stile in ("titolo", "sottotitolo") else 1,
+                                lmargin2=rientro)
+            testo.tag_configure(stile + "_g", font=(carattere[0], carattere[1], "bold"), lmargin2=rientro)
+        corpo.add(elenco, weight=1)
+        corpo.add(testo, weight=4)
+
+        def mostra(_=None):
+            scelti = elenco.curselection()
+            if not scelti:
+                return
+            testo.config(state="normal")
+            testo.delete("1.0", "end")
+            for stile, pezzi in aiuto.righe(voci[scelti[0]][1]):
+                for pezzo, grassetto in pezzi:
+                    testo.insert("end", pezzo, stile + ("_g" if grassetto else ""))
+                testo.insert("end", "\n")
+            testo.config(state="disabled")
+            testo.yview_moveto(0)
+        elenco.bind("<<ListboxSelect>>", mostra)
+        elenco.selection_set(argomento)
+        mostra()
+        sotto = ttk.Frame(f, padding=(8, 0, 8, 8))
+        sotto.pack(fill="x")
+        ttk.Label(sotto, text=f"Dalla guida: {aiuto.GUIDA.name}", foreground="#555555").pack(side="left")
+        ttk.Button(sotto, text="Chiudi", command=f.destroy).pack(side="right")
+        ttk.Button(sotto, text="Apri la guida completa", command=lambda: self.amb.apri(aiuto.GUIDA)).pack(side="right", padx=6)
+
     # ------------------------------------------------------------ messaggi
     def scrivi_log(self, testo, tag=None):
         self.log.insert("end", testo + "\n", tag or ())
@@ -385,10 +545,16 @@ class App:
         finestra.focus_force()
         valori, esito = {}, {}
         ttk.Label(finestra, text=titolo, font=("Segoe UI", 11, "bold")).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=8)
-        for i, (chiave, etichetta, predefinito) in enumerate(campi, start=1):
+        for i, campo in enumerate(campi, start=1):
+            chiave, etichetta, predefinito = campo[:3]
+            scelte = campo[3] if len(campo) > 3 else None
             ttk.Label(finestra, text=etichetta, wraplength=380).grid(row=i, column=0, sticky="w", padx=10, pady=3)
             v = tk.StringVar(value=predefinito)
-            ttk.Entry(finestra, textvariable=v, width=60).grid(row=i, column=1, padx=10, pady=3)
+            if scelte:                               # elenco a discesa; con solo_scelte non si scrive altro
+                ttk.Combobox(finestra, textvariable=v, values=list(scelte), width=58,
+                             state="readonly" if len(campo) > 4 and campo[4] else "normal").grid(row=i, column=1, padx=10, pady=3)
+            else:
+                ttk.Entry(finestra, textvariable=v, width=60).grid(row=i, column=1, padx=10, pady=3)
             valori[chiave] = v
 
         def ok():

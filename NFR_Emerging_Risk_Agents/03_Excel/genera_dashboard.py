@@ -3719,7 +3719,7 @@ def foglio_metodologia(wb):
     riga("CHI PRODUCE I NUMERI", "", sezione_="trimestrale")
     riga("Ciclo trimestrale", "A1 legge le fonti e valuta ogni rischio; lo script verifica le regole (si ferma solo se il "
                              "registro diventerebbe incoerente) e scrive nel registro; A5, un secondo agente facoltativo che "
-                             "vede solo la valutazione e la baseline, la controlla con nove controlli. Le segnalazioni dei "
+                             "vede solo la valutazione e la baseline, la controlla con dieci controlli. Le segnalazioni dei "
                              "controlli e di A5 passano al validatore, che accetta, rettifica o respinge ogni valore proposto "
                              "e motiva le segnalazioni da motivare (D-71).")
     riga("Ciclo settimanale", "A3 valuta le notizie della settimana. Le notizie non cambiano nessuno score: segnalano "

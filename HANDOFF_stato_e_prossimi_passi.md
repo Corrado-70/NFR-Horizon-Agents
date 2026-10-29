@@ -1379,19 +1379,51 @@ da Windows), riferimenti 31/31; catena con due verifiche nuove (2b: HTML da `val
 presentazione ha i testi nuovi nel generatore: rigenerarla sul PC.
 
 **Tappa M5** (amministrazione, 29/10): `amministrazione.py` (parcheggi, pulizia con anteprima, ritorno a un ciclo
-validato, annulla, ripartenza da zero, svuota), voce Altro -> Amministrazione nell'app, solo con `"ruolo":
-"manutentore"`. Niente si cancella subito: parcheggio con l'atto e la traccia; il ritorno si annulla solo se nessuno ha
+validato, annulla, ripartenza da zero, svuota), nell'app il pulsante Admin, solo in modalita' Admin
+(D-85, decisa dall'utente il 29/10: pulsante Admin... che apre la finestra delle operazioni, una per pulsante, dopo una conferma e
+tracciata; `--admin` da riga di comando). Niente si cancella subito: parcheggio con l'atto e la traccia; il ritorno si annulla solo se nessuno ha
 scritto nel registro. Collaudo: `test_amministrazione.py` 19/19, `test_app.py` 55/55 (fuori da Windows); catena,
 gruppo 9 in fondo alla catena principale (pulizia, ritorno e annullamento con Excel), da lanciare sul PC. Trappole
-137-138. **Proposte in attesa di decisione dell'utente**: chi puo' usare l'amministrazione e i tempi (A-18, proposta
-D-85: solo il manutentore; 10 backup, 90 giorni di log, 30 di parcheggio).
+137-138. Tempi (D-85): 10 backup, 90 giorni di log, 30 di parcheggio, modificabili in configurazione.
 
 **Pacchetto per la Banca (29/10)**: `AGGIORNAMENTO_IN_BANCA.md` riscritto per il pacchetto del 29/10 (sopra quello del
 23/10, che resta in appendice): estrarre, rinominare i tre `.cmd` se lo zip arriva per posta, `installa.cmd`,
-`ruolo` sul PC del manutentore; le verifiche da fare in Banca, tutte alla fine (scelta dell'utente), sono nello stesso
+il pulsante Admin per l'amministrazione; le verifiche da fare in Banca, tutte alla fine (scelta dell'utente), sono nello stesso
 file e in 18.6.
 
-**Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC; la decisione A-18.
+**Aiuto nell'app** (29/10, richiesta dell'utente): `aiuto.py` legge la guida; pulsante "Aiuto (F1)" con gli argomenti
+principali e suggerimenti sui pulsanti dalla tabella "I processi". `test_app.py` 61/61 (fuori da Windows). Trappola 139.
+
+**Aiuto per pulsante e finestra Admin** (29/10, richieste dell'utente): il capitolo dell'app della guida ha una sezione
+per pulsante ("Pulsante Settimana", ..., "Pulsante Admin", "Menu Altro", "I pulsanti del passo in corso"); l'aiuto mostra
+quelle sezioni (lette dalla guida, nessun elenco da tenere), senza comandi Python; le sezioni dei processi della guida
+(1, 2, 2-bis, 3, 3-bis, 3-ter, 3-quater) rimandano al pulsante. Admin e' un pulsante che apre una finestra con le
+operazioni (Nuovo registro, Pulizia, Ritorno, Annulla, Ripartenza, Parcheggi, Svuota), spiegate dalla tabella della
+guida, e moduli con le scelte (cicli validati, parcheggi attivi, trimestri). `test_app.py` 67/67 fuori da Windows.
+
+**Lunghezze dei testi e C10** (29/10, D-86, richiesta dell'utente: "l'agente e' troppo sintetico"): tabella "Lunghezze
+dei testi" nella guida di scrittura (minimo e consigliato, fascia alta delle proposte) e `controlli_a5.LUNGHEZZE`, uguali
+(lo controlla `verifica_riferimenti.py`); controllo nuovo C10 (Bloccante per A5, Osservazione nello script e in
+validazione, contato a parte dal precontrollo, che con l'app propone di farli allungare ad A1 nella stessa chat). Il
+prompt di A5 (7.667 caratteri) prende ora dalla rubrica solo le sezioni 1-2; la tabella e' nella parte 3 di
+`Input_A5`. Dati di prova (`99_Collaudo/dati/run1-run4`) e input della demo riscritti con testi lunghi (stesse
+valutazioni, stessi rilievi degli altri controlli); kit di Copilot Studio rigenerato; template Excel rigenerato (una
+cella del foglio Metodologia). Collaudo senza Excel: controlli 296/296, riferimenti 32/32, app 69/69 (fuori da
+Windows). Da fare sul PC: catena completa, `esegui_demo.py` (demo e `REPORT_demo.md` sui dati nuovi), presentazione;
+sul ramo `copilot-studio-pieno`: `git merge main` e `genera_CS.py`. Trappola 140.
+
+**A7 in prima persona** (29/10, D-87, richiesta dell'utente: "A7 mette sempre le mani avanti"): A7 parla come
+autore delle valutazioni, non nomina gli altri agenti, dopo una rettifica "avevo proposto..., il validatore ha
+deciso..."; tolte le etichette REGISTRATO / CALCOLATO / LETTURA MIA e i Limiti fissi; resta "(lettura di oggi, non nel
+registro)" per cio' che il file non dice. Prompt 7.769 caratteri, risposte "approfondite e motivate", il perche' per esteso; knowledge invariata. Copione `Prova_A7.md` aggiornato.
+
+**Testi piu' lunghi per A6, A8 e A4** (29/10, D-88): A6 con lunghezze minime (`schede.LUNGHEZZE_A6`: 1000-2000,
+400-800, 100-300; schema di A6 con i massimi alzati), controllo che non ferma (il comando `schede` elenca i testi
+corti, l'app propone di farli allungare ad A6 nella stessa chat); analisi dell'evento di A8 nella tabella delle
+lunghezze e in C10 (dati `run4` allungati); A4 con un parere piu' disteso (prompt 6.089 caratteri; A6 6.040). Collaudo
+senza Excel: controlli 301/301, riferimenti 33/33, app 71/71. Trappola 141.
+
+**Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

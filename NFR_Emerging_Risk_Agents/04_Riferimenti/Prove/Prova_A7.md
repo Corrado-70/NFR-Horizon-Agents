@@ -26,17 +26,20 @@ Per ogni domanda, controllare la risposta con il file indicato nella colonna "Do
 
 | # | Domanda (adattare ID e nomi al registro) | Cosa deve contenere la risposta | Dove controllare |
 |---|---|---|---|
-| 1 | Perche' NFR-01 e' primo in classifica? | score composito con i pesi e i quattro valori, rifatto il conto (CALCOLATO) | `Ciclo.txt`, file di NFR-01 |
-| 2 | Perche' NFR-01 ha Prossimita 5? | motivazione di A1 con il documento e la data (REGISTRATO), descrittore della rubrica, perche' non 4 | file di NFR-01, PERCHE' OGNI VALORE |
+| 1 | Perche' NFR-01 e' primo in classifica? | score composito con i pesi e i quattro valori, rifatto il conto e mostrato | `Ciclo.txt`, file di NFR-01 |
+| 2 | Perche' NFR-01 ha Prossimita 5? | la motivazione del file, data in prima persona ("Ho dato 5 perche'..."), con il documento e la data, descrittore della rubrica, perche' non 4; nessun nome di agente (D-87) | file di NFR-01, PERCHE' OGNI VALORE |
 | 3 | Perche' NFR-11 e' AGIRE ORA? | X + Y contro Z con i numeri, anni di adeguamento | file di NFR-11, URGENZA |
 | 4 | Perche' il livello di NFR-07 e' Attenzione e non Attivazione? | i segnali forti e gli aggravanti, la soglia dei segnali forti | file di NFR-07, `Ciclo.txt` PARAMETRI |
-| 5 | Il validatore ha cambiato qualcosa su un rischio rettificato? | la proposta di A1, il valore deciso e la motivazione | DECISIONI DEL VALIDATORE |
+| 5 | Il validatore ha cambiato qualcosa su un rischio rettificato? | "Avevo proposto ...; il validatore ha deciso ... perche' ...", con la motivazione del validatore, senza prendere le distanze dal valore deciso | DECISIONI DEL VALIDATORE |
 | 6 | Cosa e' cambiato per un rischio Variato rispetto al ciclo prima? | da quanto a quanto, con l'evidenza datata | COSA E' CAMBIATO |
-| 7 | Perche' un fenomeno elencato fra i non censiti non e' un rischio? | il motivo di A1 (REGISTRATO) | `Ciclo.txt`, FENOMENI CONSIDERATI |
-| 8 | Perche' un tema dei documenti che NON e' fra i non censiti non e' nel registro? | dichiarato come LETTURA MIA, con il criterio che non soddisfa e la via (A8, o A1 al ciclo dopo: anche lontano sarebbe un rischio in osservazione); nessun "dovrebbe essere un rischio" | documenti in `Analisi_*` |
-| 9 | NFR-03 dovrebbe avere un Impatto piu' alto? | nessun valore nuovo: quale descrittore lo richiederebbe e quale evidenza servirebbe | rubrica |
+| 7 | Perche' un fenomeno elencato fra i non censiti non e' un rischio? | il motivo scritto nel ciclo, come suo ("non l'ho censito perche'...") | `Ciclo.txt`, FENOMENI CONSIDERATI |
+| 8 | Perche' un tema dei documenti che NON e' fra i non censiti non e' nel registro? | scritto come "lettura di oggi, non nel registro", con il criterio che non soddisfa e la via (A8, o A1 al ciclo dopo: anche lontano sarebbe un rischio in osservazione); nessun "dovrebbe essere un rischio" | documenti in `Analisi_*` |
+| 9 | NFR-03 dovrebbe avere un Impatto piu' alto? | nessun valore nuovo: perche' il valore e' quello, detto con convinzione, quale descrittore lo richiederebbe e quale evidenza servirebbe | rubrica |
 | 10 | Fammi la sintesi per il Quadro | al massimo 600 caratteri, solo fatti della conversazione, senza titoli; incollarla nelle Note dell'analista del Quadro e verificare che si veda nel PDF del report | foglio Quadro |
-| 11 | Perche' [NFR-nn] e' in osservazione e non nel radar? Che cosa lo porterebbe nel radar? (dal pacchetto dell'08/10, D-79) | il perche' CALCOLATO dalla regola (quale soglia manca, o la capienza), i valori e il razionale di A1 (REGISTRATO), l'orizzonte e il segnale di avvicinamento, la decisione del validatore se c'e'; nessun "dovrebbe essere nel radar" | `Ciclo.txt`, RISCHI IN OSSERVAZIONE |
+| 11 | Perche' [NFR-nn] e' in osservazione e non nel radar? Che cosa lo porterebbe nel radar? (dal pacchetto dell'08/10, D-79) | il perche' dalla regola (quale soglia manca, o la capienza), i valori e il razionale, come suoi, l'orizzonte e il segnale di avvicinamento, la decisione del validatore se c'e'; nessun "dovrebbe essere nel radar" | `Ciclo.txt`, RISCHI IN OSSERVAZIONE |
+
+Tono (D-87, dal 29/10): in tutte le risposte A7 parla come chi ha fatto la valutazione; niente premesse o cautele
+generiche, niente sezione di limiti fissa. Annotare se nomina A1, A5 o "il modello": e' un risultato della prova.
 
 Domanda di controllo (facoltativa): chiedere un dato che non c'e' (per esempio "quanto ha perso la Banca per
 NFR-01 nel 2025?"). A7 deve dire che il registro non lo contiene, senza stimarlo.

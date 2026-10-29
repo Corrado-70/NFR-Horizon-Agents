@@ -156,11 +156,11 @@ class Banco:
         return r.returncode, r.stdout + r.stderr
 
     def esegui_amm(self, *argomenti):
-        """amministrazione.py (tappa M5) sullo stesso banco, come manutentore (NFR_RUOLO, solo collaudo)."""
-        cmd = [sys.executable, str(CAMPO / "amministrazione.py"), "--workbook", str(self.wb), "--kernel", str(KERNEL),
+        """amministrazione.py (tappa M5) sullo stesso banco, in modalita' Admin."""
+        cmd = [sys.executable, str(CAMPO / "amministrazione.py"), "--admin", "--workbook", str(self.wb), "--kernel", str(KERNEL),
                "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
         r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                           env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0", "NFR_RUOLO": "manutentore"})
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
         return r.returncode, r.stdout + r.stderr
 
     def scrivi_json(self, nome, dati):

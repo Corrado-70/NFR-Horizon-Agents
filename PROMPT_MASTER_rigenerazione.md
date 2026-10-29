@@ -473,7 +473,7 @@ Conseguenze di progetto, obbligatorie:
   valutazione deliberata; mai una cifra, mai una persona, non scrive. Baseline solo
   dall'allegato `Input_A3_A4.txt` (AU7, D-83).
 - **A5 Challenger** (trimestrale, dopo A1, **facoltativo** dal 06/10, D-71):
-  nove controlli C1-C9 su input ristretto (output di A1 + baseline, mai le
+  dieci controlli C1-C10 su input ristretto (output di A1 + baseline, mai le
   notizie); i suoi rilievi non fermano il ciclo: vanno nella colonna
   Segnalazioni della griglia e un suo Bloccante chiede la Motivazione. Ferma
   solo lo script, per l'integrita' del registro.
@@ -489,7 +489,10 @@ Conseguenze di progetto, obbligatorie:
   (Razionale, perche' di ogni valore, perche' ed effetto di azioni e KRI: di A1).
 - **A7 Assistente del registro** (su richiesta, D-72): spiega in chat il perche'
   delle valutazioni (anche dei fenomeni non censiti e dei rischi in
-  osservazione) distinguendo registrato, calcolato e sua lettura; knowledge
+  osservazione) in prima persona, come autore delle valutazioni (D-87: non nomina
+  gli altri agenti; dopo una rettifica "avevo proposto..., il validatore ha
+  deciso..."), con il perche' registrato e i conti rifatti, e segnala solo la
+  "lettura di oggi, non nel registro"; knowledge
   scritta dallo script (cartella `Spiegazioni`); non propone valori e non scrive.
 - **A8 Evento critico** (nel ciclo straordinario deciso dalla funzione di rischio,
   D-75, D-77): stesso allegato `Input_A8_<AAAAQn-Sk>.txt` e stesso schema di A1, piu'
@@ -676,7 +679,7 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   `^N-[0-9]{8}-[0-9]{2}$`, fonte per esteso, **codice_fonte
   `^(FNT-[0-9]{2}|MAN)$`**, rischio_collegato o null, segnale, impatti
   ESATTAMENTE 7; flag_proposti.
-- `schema_output_A5.json`: esito Approvato/Da rivedere, rilievi C1-C9 con
+- `schema_output_A5.json`: esito Approvato/Da rivedere, rilievi C1-C10 con
   gravita' Bloccante/Osservazione. Lo stesso formato lo producono i controlli
   meccanizzati: i due esiti si combinano (si procede solo se entrambi approvano).
 - `mappatura_campi.json`: la mappa UNICA campo -> colonna, con
@@ -712,14 +715,14 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   `non_nel_workbook` (ogni campo degli schemi senza colonna, con la sua
   destinazione); `liste_sharepoint` (copie delle tabelle senza colonne formula).
 - `schema_output_A6.json`: ciclo; schede (id_rischio, descrizione_estesa
-  300-1800, dimensioni ESATTAMENTE 4 con dimensione fra impatto,
-  probabilita, prossimita, velocity e spiegazione 40-500, fonti con
+  300-2500 (D-88), dimensioni ESATTAMENTE 4 con dimensione fra impatto,
+  probabilita, prossimita, velocity e spiegazione 40-900, fonti con
   riferimento e a_sostegno_di). Cio' che lo schema non vede (stessi rischi
   dell'input, cinque valori diversi, fonti identiche, nessun numero fuori dai
   dati) lo controlla `schede.controlla_a6`.
 - `schema_output_A1_DOCUMENTATO.md`: i quattro schemi campo per campo, la
   baseline e l'input delle schede.
-- `controlli_A5.md` (D-69): il **testo unico dei nove controlli** C1-C9, un
+- `controlli_A5.md` (D-69): il **testo unico dei dieci controlli** C1-C10 (C10, D-86: le lunghezze dei testi), un
   punto elenco ciascuno ("- C1 Completezza: ..."), righe `>` di nota. C8 dice
   anche "non ripete un'azione aperta della baseline". Lo leggono
   `componi_prompt.py` (`{{CONTROLLI}}` nel modello di A5) e `input_a1.py`
@@ -733,7 +736,8 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   la frase "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" nella parte PROBABILITA quando le fonti
   non dicono se la Banca e' esposta): come A1 scrive la descrizione (3-5 frasi:
   meccanismo causa-evento-danno, dove tocca la Banca, perche' emergente; niente
-  punteggi), il razionale in parti (per ogni valore: descrittore, fatto con
+  punteggi; dal D-86 5-8 frasi e la tabella "Lunghezze dei testi" con minimo e consigliato per ogni testo, la
+  stessa di `controlli_a5.LUNGHEZZE`), il razionale in parti (per ogni valore: descrittore, fatto con
   documento e data, **perche' non il valore vicino**, da/a o fonti ancora
   valide; "Attribuisci a un documento solo cio' che il documento dice"), le
   azioni (verbo, oggetto, risultato verificabile; quale anello interrompe;
@@ -748,10 +752,11 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
 
 - Modelli in `02_Agenti/modelli/A1.md, A3.md, A4.md, A5.md, A6.md` con segnaposto
   `{{TASSONOMIA}}`, `{{RUBRICA:1,3}}` (sezioni numerate), `{{FONTI}}` (elenco
-  compatto codice/nome/canale, fonti escluse omesse), `{{CONTROLLI}}` (i nove
+  compatto codice/nome/canale, fonti escluse omesse), `{{CONTROLLI}}` (i
   controlli di `controlli_A5.md`, D-69: il modello di A5 tiene il titolo
-  "# I nove controlli", la frase "Esegui tutti e nove..." e, dopo, la riga
-  sull'esito; non ha piu' una copia dei controlli).
+  "# I controlli", la frase "Eseguili tutti, per ogni rischio." e, dopo, la riga
+  sull'esito; non ha piu' una copia dei controlli; dal D-86 prende dalla rubrica
+  solo le sezioni 1 e 2, la tabella delle lunghezze e' nella parte 3 di `Input_A5`).
 - `componi_prompt.py` genera i prompt operativi (`A1_Horizon_Scanner.md` ...),
   esclude le righe `>`, e con `--verifica` esce con errore se un prompt e' fuori
   data o supera 8.000 caratteri. I prompt generati non si modificano a mano.
@@ -839,7 +844,7 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   tipo", accorpando meccanismi e riempiendo tipi deboli); lo script li scrive
   tutti "Nuovo". Il perche' e' in `COMMENTATI/A1_Horizon_Scanner_DOCUMENTATO.md`.
 - A3: tre canali, codice_fonte, sette impatti, elenco fonti `{{FONTI}}`,
-  rubrica 5-6. A5: C1-C9 con gravita', stessa numerazione ma contenuto del
+  rubrica 5-6. A5: C1-C10 con gravita' (C10 dal 29/10, D-86), stessa numerazione ma contenuto del
   30/09: C1 stesso event type; C2 una variazione per ogni valore cambiato; C3
   data, specificita', un punto (Velocity da null libera); C4 un rischio = un
   meccanismo, Velocity solo con i tempi documentati, "un numero senza fonte
@@ -850,11 +855,11 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   parere (e non promette che la notizia compaia nel foglio Notizie).
 - **A6**: ruolo (spiega, non valuta), input = solo `Input_A6_<ciclo>.json`
   (niente notizie, knowledge o ricerche: come A5, la frase "usa sempre lo
-  strumento di ricerca" NON c'e'), sette regole (una scheda per rischio; valori
+  strumento di ricerca" NON c'e'), otto regole (una scheda per rischio; valori
   intoccabili; **ogni numero deve stare nei dati del rischio o nella
-  rubrica**; descrizione estesa 400-1500 caratteri = il fenomeno in termini di
+  rubrica**; descrizione estesa 1000-2000 caratteri (D-88, `schede.LUNGHEZZE_A6`) = il fenomeno in termini di
   rischio (causa, evento, danno), senza i motivi dei punteggi; quattro
-  spiegazioni di 80-500 caratteri (per una Velocity null: "non valutata" e
+  spiegazioni di 400-800 caratteri, a_sostegno_di 100-300, testi completi e non sintetici (per una Velocity null: "non valutata" e
   perche') con le informazioni e i documenti, **partendo dalle `motivazioni`
   di A1 e senza attribuire a un documento cio' che A1 non gli attribuisce**
   (D-68), e, per un valore rettificato, il motivo del validatore; fonti
@@ -1639,8 +1644,20 @@ openpyxl (solo per il file delle schede). Moduli:
   chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
   `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
   dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
-- **Amministrazione** (D-83, tappa M5; chi: A-18, proposta D-85): `amministrazione.py`, solo con `"ruolo":
-  "manutentore"` (NFR_RUOLO solo nel collaudo), opzioni comuni del motore, lucchetto per ogni operazione che
+- **Aiuto dell'app** (29/10): `aiuto.py` legge `00_GUIDA_PASSO_PASSO.md` a ogni apertura: `ARGOMENTI` (titolo nel
+  menu, inizio del titolo della sezione), `pulsanti()` dalla tabella "I processi", `parti_finestra()` dalla
+  tabella "La finestra, dall'alto in basso", `righe()` (blocchi: righe di un paragrafo o punto elenco unite
+  prima del grassetto, tabelle come voci con i nomi delle colonne). Nell'app: pulsante "Aiuto (F1)" (finestra con
+  elenco e testo, "Apri la guida completa") e `Suggerimento` sui pulsanti. `test_app.py` verifica che ogni
+  pulsante dell'app abbia la sua riga nella guida, che ogni argomento trovi la sua sezione e che negli argomenti e
+  nei suggerimenti non ci siano comandi da scrivere: gli argomenti sono le sottosezioni "dall'app" del capitolo
+  dell'app (una per processo, solo pulsanti e finestre), piu' "Leggere i risultati" e "Dove sono i file".
+- **Amministrazione** (D-83, tappa M5; chi: D-85): `amministrazione.py`, solo in modalita' Admin (`--admin` prima del
+  comando, altrimenti Fermo; nell'app il pulsante Admin... apre, dopo una conferma, la finestra delle operazioni
+  (`flussi.OPERAZIONI_ADMIN`, spiegazioni da `aiuto.operazioni_admin()`, cioe' dalla tabella "Pulsante Admin" della
+  guida; moduli con le scelte: cicli validati prima del corrente, parcheggi attivi, trimestri recenti); traccia
+  `modalita_admin_accesa|spenta` in `Amministrazione/` all'apertura e alla chiusura della finestra, ADMIN nel titolo;
+  `flussi.admin` e `--admin` su ogni comando), opzioni comuni del motore, lucchetto per ogni operazione che
   scrive. **Niente si cancella subito**: `parcheggia` sposta in `Archivio_Cicli/_Parcheggio/<data_ora>_<op>/`
   ogni elemento come (radice: archivio, registro o spiegazioni; percorso relativo), dopo aver scritto `atto.json`
   (chi, quando, motivo, decisore, impronte) e una traccia in `Amministrazione/`; doppioni e file dentro cartelle
@@ -1655,7 +1672,8 @@ openpyxl (solo per il file delle schede). Moduli:
   `ripartenza`: tutto l'archivio tranne parcheggi, traccia, lucchetto, Log e Verifiche_PC, piu' registro e
   knowledge; poi `comando_inizializza` e `comando_baseline`. `svuota`: solo parcheggi piu' vecchi di
   `giorni_parcheggio`, traccia prima della cancellazione. Conferma scritta: ciclo (ritorno) o nome del registro
-  (ripartenza). Nell'app: Altro -> Amministrazione (flussi.amministrazione: modulo, anteprima, conferma).
+  (ripartenza). Nell'app: finestra Admin (flussi.amministrazione(operazione): modulo con le scelte, anteprima,
+  conferma); "Nuovo registro" = inizializza e baseline del motore, solo se il registro non c'e'.
 - **Report al comitato in HTML** (D-83, tappa M4): `report_html.py`, dal prototipo dell'analisi 16 (che ne e' ora un
   involucro: un solo codice). La `Vista` ricalcola in Python le viste del registro dalle tabelle dati, dai nomi
   definiti e dall'anagrafica (regole delle formule di `genera_dashboard.py`; lo score composito e' quello scritto
@@ -2041,7 +2059,7 @@ stampa solo i fallimenti). Dall'08/10 (M1, D-78):
    correggere" e righe "NFR-01 · C9: ...", campo in piu' = errore di schema col
    nome del campo; comando senza registro (codice 1 e file, 0 con soli punti da
    verificare, 0 senza file con output pulito, messaggio vecchio cancellato,
-   fermo senza baseline); allegato: nove controlli senza note, stesso testo nel
+   fermo senza baseline); allegato: i dieci controlli senza note, stesso testo nel
    prompt composto di A5, baseline identica, guida senza righe `>`, file del
    ciclo prima sostituito (non gli altri), kernel senza i file nuovi = sola baseline;
    `leggi_baseline` restituisce la baseline scritta e rifiuta un testo senza la
@@ -2063,8 +2081,9 @@ stampa solo i fallimenti). Dall'08/10 (M1, D-78):
    finti** (RSS, Atom, senza data, finestra, esclusioni, max_voci, doppioni fra
    due giorni, fonte giu'), senza rete.
 5. `verifica_riferimenti.py`: prompt aggiornati; codici di tassonomia identici
-   ovunque; C1-C9 in schema, kernel (`controlli_A5.md`), prompt composto di A5,
-   documentazione, governance, codice (C4 assente dal codice); il modello di A5
+   ovunque; C1-C10 in schema, kernel (`controlli_A5.md`), prompt composto di A5,
+   documentazione, governance, codice (C4 assente dal codice); tabella "Lunghezze dei testi" della guida di
+   scrittura = `controlli_a5.LUNGHEZZE` (D-86); il modello di A5
    ha `{{CONTROLLI}}` e nessuna riga "- Cn " (D-69); numeri di passo documentati = modelli; campi derivati
    documentati = implementati; formule e nomi del manuale = template; indice di
    00_LEGGIMI = file presenti; comandi e opzioni della guida e dei README =
@@ -2787,7 +2806,10 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     CALCOLATO (score, urgenza, livello rifatti con i numeri) e LETTURA MIA. Per
     "perche' questo tema non e' un rischio" serve un motivo registrato nel ciclo:
     per questo A1 scrive `fenomeni_non_censiti`; senza, ogni risposta sarebbe una
-    ricostruzione.
+    ricostruzione. Dal 29/10 (D-87) A7 parla in prima persona e non etichetta
+    ogni frase (le etichette lo facevano mettere le mani avanti): resta l'obbligo
+    di dare come perche' la motivazione scritta nel file e di segnalare come
+    "lettura di oggi, non nel registro" cio' che il file non dice.
 88. **La knowledge di Agent Builder si scrive a file piccoli e con nomi fissi**
     (07/10). Un file aggiornato si reindicizza subito, uno nuovo puo' aspettare
     l'indicizzazione giornaliera; un file unico di decine di KB viene letto a
@@ -2816,7 +2838,7 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     ciclo prima (Esito Invariata, non da rivalidare): ogni ciclo ha la lista
     intera. Una voce respinta o promossa non si riporta; una voce esistente
     respinta in validazione torna ai valori del ciclo prima.
-91. **Un controllo nuovo va dove c'e' spazio, senza codici nuovi** (07/10, D-73).
+91. **Un controllo nuovo va dove c'e' spazio, senza codici nuovi** (07/10, D-73; per le lunghezze dei testi vedi 140).
     Il prompt di A5 e' a 7.962 caratteri e include `controlli_A5.md`: le regole
     della lista stanno nella guida di scrittura dell'allegato di A1 e i controlli
     solo nello script, con i codici esistenti (C1 per codici e promozioni, C5 per
@@ -3073,6 +3095,25 @@ l'ultimo usato in tutti e due i rami.)
 138. **Un ritorno si annulla solo se nessuno ha scritto dopo** (29/10). Rimettere il registro di prima sopra un registro
     in cui un collega ha gia' scritto un ciclo perderebbe quel lavoro senza avviso: l'atto conserva l'impronta del
     registro lasciato dal ritorno e `annulla` la confronta.
+139. **La guida e' anche il testo dell'aiuto dell'app** (29/10). Rinominare un titolo di sezione elencato in
+    `aiuto.ARGOMENTI`, la tabella "I processi" o un pulsante dell'app senza la sua riga toglie testo all'aiuto senza
+    errori: `test_app.py` (test_aiuto) lo controlla. Un grassetto della guida puo' andare a capo: si uniscono le righe
+    del paragrafo prima di cercare i `**`, altrimenti il grassetto si sposta (visto nella prova della finestra).
+140. **C10, le lunghezze dei testi, e' un codice nuovo** (29/10, D-86; supera la trappola 91 per questo caso). La regola
+    "senza codici nuovi" non regge quando il rilievo deve arrivare con un nome suo al validatore e ad A5: C10 e' entrato
+    nell'elenco in schema A5, kernel, prompt composto, documentazione, governance e codice tutti insieme
+    (`verifica_riferimenti.py` conta da C1 a C10: le espressioni cercano `C\d+`, non `C\d`). Il prompt di A5 non
+    aveva spazio: la sezione 3 della rubrica (regole fra due cicli) e' uscita dal suo modello, che rimanda ai
+    controlli C2-C6, e la tabella delle lunghezze viaggia nella parte 3 dell'allegato `Input_A5`. Le lunghezze stanno
+    in un posto solo nel codice (`controlli_a5.LUNGHEZZE`) e nella guida di scrittura: il collaudo le confronta. Un
+    test che modifica apposta un testo corto deve ignorare C10 (`pulito` in `test_controlli.py`), altrimenti fallisce
+    per una ragione che non e' la sua.
+141. **Le lunghezze di A6 non fermano le schede** (29/10, D-88). Per A1 un testo corto e' un rilievo C10 che va in
+    validazione; per A6 non c'e' validazione dopo: il comando `schede` scrive comunque le schede e stampa "Testi di A6
+    troppo corti: N" con l'elenco in righe "  - ", che l'app legge (`esecutore.testi_corti_a6`) solo con uscita OK. Le
+    righe "- " di un fermo restano quelle di `controlla_a6`: i due elenchi non si mescolano. La spiegazione di una
+    Velocity non valutata e' esclusa dal minimo. Una risposta finta di A6 nei test deve rispettare i minimi dello
+    schema (spiegazione almeno 40 caratteri), altrimenti `chiedi_ad_agente` la scarta e il flusso si interrompe.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3096,7 +3137,7 @@ l'ultimo usato in tutti e due i rami.)
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
                   installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py  report_html.py
-                  amministrazione.py
+                  amministrazione.py  aiuto.py
                   NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)

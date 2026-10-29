@@ -7,7 +7,8 @@ dismissione, parere di A4...) e' una funzione che parla con il mondo solo attrav
   - copia(testo)                    mette un testo negli appunti (la richiesta per l'agente, una correzione);
   - risposta(agente, istruzioni)    aspetta la risposta copiata dall'agente (appunti o file); None = annullato;
   - attendi_chiusura(file)          aspetta che il registro aperto in Excel sia chiuso;
-  - chiedi(titolo, campi)           un modulo da compilare (dict) o None;
+  - chiedi(titolo, campi)           un modulo da compilare (dict) o None; un campo e' (chiave, etichetta,
+                                    predefinito[, scelte[, solo_scelte]]): con le scelte un elenco a discesa;
   - conferma(domanda)               si' o no;
   - mostra(testo, tipo)             un messaggio (info, avviso, errore, ok).
 La finestra (app_nfr.py) realizza l'Ambiente con tkinter; il collaudo con un Ambiente finto, senza persona ne' Excel.
@@ -34,9 +35,27 @@ AMMINISTRAZIONE = QUI / "amministrazione.py"
 
 # Messaggi base degli agenti (guida, sezione 8).
 MESSAGGI = {"A1": "Esegui il ciclo", "A8": "Esegui il ciclo straordinario", "A3": "Esegui l'aggiornamento settimanale",
-            "A5": "Esegui i nove controlli", "A6": "Scrivi le schede", "A4": "Dammi il parere su questa notizia: "}
+            "A5": "Esegui i controlli", "A6": "Scrivi le schede", "A4": "Dammi il parere su questa notizia: "}
 NOMI = {"A1": "A1 Horizon Scanner", "A3": "A3 Interim Update", "A4": "A4 News Assessor", "A5": "A5 Challenger",
         "A6": "A6 Schede dei rischi", "A7": "A7 Assistente del registro", "A8": "A8 Evento critico"}
+
+
+# Le operazioni della finestra Admin (D-85), nell'ordine della tabella "Pulsante Admin" della guida.
+OPERAZIONI_ADMIN = ["Nuovo registro", "Pulizia", "Ritorno", "Annulla", "Ripartenza", "Parcheggi", "Svuota"]
+
+
+def trimestri_recenti(oggi, quanti=12):
+    """I trimestri chiusi piu' recenti, dal piu' vecchio: le scelte per 'trimestre prima del primo da valutare'."""
+    k = oggi.year * 4 + (oggi.month - 1) // 3 - 1          # il trimestre prima di quello di oggi
+    return [f"{x // 4}Q{x % 4 + 1}" for x in range(k - quanti + 1, k + 1)]
+
+
+def cicli_validati(uscita, prima_di=None):
+    """I cicli dell'archivio con Validazione_<ciclo>.json, dal piu' vecchio; con prima_di solo quelli prima."""
+    cartella = Path(uscita) / "Cicli"
+    cicli = sorted(c.name for c in cartella.iterdir() if c.is_dir() and (c / f"Validazione_{c.name}.json").exists()) \
+        if cartella.is_dir() else []
+    return [c for c in cicli if not prima_di or c < prima_di]
 
 
 class Annullato(Exception):
@@ -46,7 +65,7 @@ class Annullato(Exception):
 def configurazione():
     """Le chiavi del motore (esegui_ciclo_locale.configurazione) piu' quelle dell'app da configurazione.json:
     link_agenti (piatto o per versione degli agenti), validatore_predefinito, raccolta_su_questo_pc, agenti (Agent Builder
-    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti, chiedi_a5, ruolo (manutentore: Amministrazione)."""
+    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti, chiedi_a5."""
     import esegui_ciclo_locale
     conf = esegui_ciclo_locale.configurazione(argparse.Namespace())
     grezza = {}
@@ -55,8 +74,7 @@ def configurazione():
     conf.update(link_agenti=grezza.get("link_agenti") or {}, validatore_predefinito=grezza.get("validatore_predefinito") or "",
                 raccolta_su_questo_pc=bool(grezza.get("raccolta_su_questo_pc", True)),
                 agenti=grezza.get("agenti") if grezza.get("agenti") in ingresso.ORIGINI else ingresso.ORIGINI[0],
-                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)), chiedi_a5=bool(grezza.get("chiedi_a5", True)),
-                ruolo=str(grezza.get("ruolo") or ""))
+                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)), chiedi_a5=bool(grezza.get("chiedi_a5", True)))
     return conf
 
 
@@ -67,6 +85,7 @@ class Flussi:
         self.uscita = Path(conf["cartella_uscita"])
         self.schemi = schemi or ingresso.carica_schemi(conf["kernel"])
         self.allegati = Path(cartella_allegati or Path(os.environ.get("USERPROFILE") or Path.home()) / "NFR_Da_allegare")
+        self.admin = False                           # modalita' Admin (D-85): la accende la casella della finestra
 
     # ------------------------------------------------------------ mattoni
     def esito(self, testo, tipo):
@@ -181,8 +200,14 @@ class Flussi:
             conti = esecutore.esito_precontrollo(pre["uscita"])
             if pre["fascia"] == "ERRORE TECNICO" or conti is None:
                 raise Annullato("precontrollo non riuscito")
-            da_correggere, da_verificare = conti
-            if not da_correggere and not (da_verificare and self.amb.conferma(
+            da_correggere, da_verificare, testi = conti
+            # D-86: testi troppo corti (C10) = da allungare, ma si puo' saltare: in validazione restano osservazioni
+            if not da_correggere and testi and self.amb.conferma(
+                    f"{agente} e' stato troppo sintetico: {testi} rischi hanno testi sotto le lunghezze minime (descrizione, "
+                    f"razionale, azioni o KRI). Chiedergli di allungarli nella stessa chat (consigliato)? No = si prosegue: "
+                    "in validazione resteranno come osservazioni."):
+                pass                                 # al messaggio di correzione, qui sotto
+            elif not da_correggere and not (da_verificare and self.amb.conferma(
                     f"Il precontrollo ha {da_verificare} punti da verificare (andrebbero in validazione come segnalazioni). "
                     f"Farli rivedere prima ad {agente}?")):
                 break
@@ -268,6 +293,15 @@ class Flussi:
                  or self.chiedi_ad_agente("A6", [self.uscita / "Cicli" / ciclo / f"Input_A6_{ciclo}.json"], MESSAGGI["A6"], ciclo))
             while True:
                 es = self.motore("schede", "--payload", r["file"])
+                quanti, corti = esecutore.testi_corti_a6(es["uscita"]) if es["fascia"] == "OK" else (0, [])
+                # D-88: schede scritte ma testi troppo corti: si propone di farli allungare ad A6 (si puo' saltare)
+                if es["fascia"] == "OK" and quanti and self.amb.conferma(
+                        f"A6 e' stato troppo sintetico: {quanti} testi delle schede sono sotto le lunghezze minime. "
+                        "Chiedergli di allungarli nella stessa chat (consigliato)? No = si tengono le schede come sono."):
+                    self.amb.copia(ingresso.messaggio_correzione("A6", [f"testo troppo corto, allungalo con contenuto "
+                                                                        f"(non con ripetizioni): {x}" for x in corti]))
+                    r = self.chiedi_ad_agente("A6", [], "", ciclo, nuova_chat=False)
+                    continue
                 if es["fascia"] != "FERMATO":
                     break
                 self.amb.copia(ingresso.messaggio_correzione("A6", [x.strip(" -") for x in es["uscita"].splitlines()
@@ -356,21 +390,26 @@ class Flussi:
     def diagnosi(self):
         return self.motore("diagnosi")
 
-    def amministrazione(self):
-        """Tappa M5 (solo il manutentore, D-85): pulizia, ritorno a un ciclo validato, annullamento, ripartenza da zero,
-        parcheggi, svuota. Niente si cancella subito (tranne svuota, dopo il tempo minimo): tutto va nel parcheggio
-        con l'atto. Le operazioni le fa amministrazione.py; qui le domande e le conferme."""
-        if self.conf.get("ruolo", "").strip().lower() != "manutentore":
-            self.amb.mostra("Le funzioni amministrative sono del manutentore (D-85): su questo PC configurazione.json non "
-                            "ha \"ruolo\": \"manutentore\".", "avviso")
+    def amministrazione(self, operazione=None):
+        """Tappa M5 (solo in modalita' Admin, D-85): un'operazione della finestra Admin (OPERAZIONI_ADMIN). Niente si
+        cancella subito (tranne svuota, dopo il tempo minimo): tutto va nel parcheggio con l'atto. Le operazioni le fa
+        amministrazione.py (Nuovo registro: inizializza e baseline del motore); qui i moduli, con le scelte possibili, e
+        le conferme. Senza operazione la chiede (riga di comando dell'app o collaudo)."""
+        if not self.admin:
+            self.amb.mostra("Le funzioni amministrative si usano in modalita' Admin (D-85): pulsante Admin della finestra.",
+                            "avviso")
             return None
-        dati = self.amb.chiedi("Amministrazione (manutentore): niente si cancella, tutto va nel parcheggio con l'atto", [
-            ("operazione", "Operazione: pulizia, ritorno, annulla, ripartenza, parcheggi, svuota", "pulizia")])
-        if not dati:
-            return None
-        op = dati["operazione"].strip().lower()
-        m = lambda *a: self.motore(*a, script=AMMINISTRAZIONE)
+        if operazione is None:
+            dati = self.amb.chiedi("Amministrazione (modalita' Admin)", [
+                ("operazione", "Operazione: " + ", ".join(o.lower() for o in OPERAZIONI_ADMIN), "pulizia", OPERAZIONI_ADMIN)])
+            if not dati:
+                return None
+            operazione = dati["operazione"]
+        op = operazione.strip().lower()
+        m = lambda *a: self.motore("--admin", *a, script=AMMINISTRAZIONE)
         decisore = self.conf.get("validatore_predefinito") or ""
+        lunedi = (dt.date.today() - dt.timedelta(days=dt.date.today().weekday())).isoformat()
+        trimestri = trimestri_recenti(dt.date.today())
         if op == "parcheggi":
             return m("parcheggi")
         if op in ("pulizia", "svuota"):
@@ -379,26 +418,55 @@ class Flussi:
             domanda = ("Spostare nel parcheggio gli elementi dell'anteprima (righe qui sopra)?" if op == "pulizia" else
                        "Cancellare PER SEMPRE i parcheggi elencati qui sopra? L'elenco resta nella traccia.")
             return m(op, "--esegui") if pronto and self.amb.conferma(domanda) else es
+        if op == "nuovo registro":
+            if Path(self.conf["workbook"]).exists():
+                self.amb.mostra(f"Il registro c'e' gia' ({Path(self.conf['workbook']).name}): per ricominciare da zero si usa "
+                                "Ripartenza, che mette il vecchio nel parcheggio.", "avviso")
+                return None
+            d = self.amb.chiedi("Nuovo registro, vuoto", [
+                ("ciclo_precedente", "Trimestre PRIMA del primo da valutare (es. 2025Q4 per cominciare dal 2026Q1)",
+                 trimestri[-1], trimestri),
+                ("settimana", "Lunedi' della settimana corrente del registro (AAAA-MM-GG)", lunedi)])
+            if not d:
+                return None
+            es = self.motore("inizializza", "--ciclo-precedente", d["ciclo_precedente"], "--settimana", d["settimana"])
+            return self.motore("baseline") if es["fascia"] == "OK" else es
         if op == "ritorno":
-            d = self.amb.chiedi("Ritorno a un ciclo validato (il registro torna quello validato di quel ciclo)", [
-                ("ciclo", "Ciclo validato a cui tornare (es. 2026Q3)", ""), ("motivo", "Perche' (almeno 20 caratteri)", ""),
-                ("decisore", "Chi ha deciso", decisore), ("conferma", "Riscrivi il ciclo per confermare", "")])
+            s = stato.leggi(self.conf)
+            corrente = s["ciclo_corrente"]
+            cicli = cicli_validati(self.uscita, prima_di=corrente)
+            if not cicli:
+                self.amb.mostra(f"Nessun ciclo validato prima del corrente ({corrente or 'nessuno'}): niente a cui tornare.",
+                                "avviso")
+                return None
+            d = self.amb.chiedi(f"Ritorno a un ciclo validato (ora il ciclo corrente e' {corrente})", [
+                ("ciclo", "Ciclo validato a cui tornare: il registro torna com'era alla sua validazione", cicli[-1], cicli, True),
+                ("motivo", "Perche' (almeno 20 caratteri; resta nell'atto)", ""), ("decisore", "Chi ha deciso", decisore),
+                ("conferma", "Riscrivi il ciclo per confermare", "")])
             return m("ritorno", "--ciclo", d["ciclo"], "--motivo", d["motivo"], "--decisore", d["decisore"],
                      "--conferma", d["conferma"]) if d else None
         if op == "annulla":
-            m("parcheggi")
+            import amministrazione as amm
+            attivi = [f"{c.name}   ({a.get('operazione')} del {str(a.get('quando', '')).replace('T', ' ')} di {a.get('utente')})"
+                      for c, a in amm.elenco_parcheggi(self.conf) if a.get("stato") == "attivo"]
+            if not attivi:
+                self.amb.mostra("Nessun parcheggio da rimettere a posto.", "info")
+                return None
             d = self.amb.chiedi("Annullare un'operazione (rimettere a posto un parcheggio)", [
-                ("parcheggio", "Nome del parcheggio (dall'elenco nell'uscita)", ""), ("motivo", "Perche' (almeno 10 caratteri)", "")])
-            return m("annulla", "--parcheggio", d["parcheggio"], "--motivo", d["motivo"]) if d else None
+                ("parcheggio", "Parcheggio da rimettere a posto", attivi[-1], attivi, True),
+                ("motivo", "Perche' (almeno 10 caratteri)", "")])
+            return m("annulla", "--parcheggio", d["parcheggio"].split()[0], "--motivo", d["motivo"]) if d else None
         if op == "ripartenza":
             nome = Path(self.conf["workbook"]).name
             d = self.amb.chiedi("Ripartenza da zero: registro nuovo, il vecchio e l'archivio dei cicli nel parcheggio", [
                 ("motivo", "Perche' (almeno 20 caratteri)", ""), ("decisore", "Chi ha deciso", decisore),
-                ("ciclo_precedente", "Trimestre PRIMA del primo da valutare (es. 2026Q3)", ""),
+                ("ciclo_precedente", "Trimestre PRIMA del primo da valutare (es. 2025Q4 per cominciare dal 2026Q1)",
+                 trimestri[-1], trimestri),
+                ("settimana", "Lunedi' della settimana corrente del registro nuovo (AAAA-MM-GG)", lunedi),
                 ("conferma", f"Riscrivi il nome del registro ({nome}) per confermare", "")])
             return m("ripartenza", "--motivo", d["motivo"], "--decisore", d["decisore"], "--ciclo-precedente",
-                     d["ciclo_precedente"], "--conferma", d["conferma"]) if d else None
-        self.amb.mostra(f"Operazione {op!r} sconosciuta: pulizia, ritorno, annulla, ripartenza, parcheggi o svuota.", "avviso")
+                     d["ciclo_precedente"], "--settimana", d["settimana"], "--conferma", d["conferma"]) if d else None
+        self.amb.mostra(f"Operazione {operazione!r} sconosciuta: " + ", ".join(OPERAZIONI_ADMIN) + ".", "avviso")
         return None
 
     def verifica_pc(self):

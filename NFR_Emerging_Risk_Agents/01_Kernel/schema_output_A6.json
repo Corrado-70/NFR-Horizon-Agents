@@ -16,7 +16,7 @@
         "required": ["id_rischio", "descrizione_estesa", "dimensioni", "fonti"],
         "properties": {
           "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
-          "descrizione_estesa": {"type": "string", "minLength": 300, "maxLength": 1800},
+          "descrizione_estesa": {"type": "string", "minLength": 300, "maxLength": 2500},
           "dimensioni": {
             "type": "array",
             "minItems": 4,
@@ -27,7 +27,7 @@
               "required": ["dimensione", "spiegazione"],
               "properties": {
                 "dimensione": {"type": "string", "enum": ["impatto", "probabilita", "prossimita", "velocity"]},
-                "spiegazione": {"type": "string", "minLength": 40, "maxLength": 600}
+                "spiegazione": {"type": "string", "minLength": 40, "maxLength": 900}
               }
             }
           },

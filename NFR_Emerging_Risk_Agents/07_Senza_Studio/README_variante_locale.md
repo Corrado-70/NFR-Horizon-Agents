@@ -166,7 +166,7 @@ library `Kernel`: le regole non sono copiate qui.
    Stampa anche l'impronta dell'output controllato (D-70), la stessa che
    stampa la skill di Copilot Studio sullo stesso output.
 3. Facoltativo (D-71), in A5: allegare `Input_A5_<ciclo>.txt` (output di A1 e baseline, scritto dal precontrollo),
-   scrivere "Esegui i nove controlli". Salvare la risposta come `A5_<ciclo>.json`.
+   scrivere "Esegui i controlli". Salvare la risposta come `A5_<ciclo>.json`.
 4. `python esegui_ciclo_locale.py trimestrale --payload A1_<ciclo>.json [--challenger A5_<ciclo>.json]`
    - codice 1: fermato, workbook intatto. Ferma solo un difetto di integrita'
      (schema, C1, C2, C7, identificativi dei KRI): dare ad A1 il messaggio
@@ -274,9 +274,9 @@ possono essere in Agent Builder o in Copilot Studio (casella "Agenti": stessi no
 comandi scritti a mano restano validi: l'app lancia gli stessi. Passo per passo: guida, sezione "L'app NFR: uso passo
 per passo"; configurazione: guida, sezioni 0.2 (punto 3-bis), 0.2-bis e 0.3.
 
-## Amministrazione (tappa M5, solo il manutentore)
+## Amministrazione (tappa M5, modalita' Admin)
 
-`python amministrazione.py parcheggi | pulizia [--esegui] | ritorno --ciclo C ... | annulla --parcheggio N ... | ripartenza ... | svuota [--esegui]`, anche da Altro nell'app con `"ruolo": "manutentore"` in `configurazione.json`. Niente si cancella subito: cio' che si toglie va in `Archivio_Cicli/_Parcheggio/` con l'atto e la traccia in `Archivio_Cicli/Amministrazione/`, e si annulla. Guida, sezione 3-quater.
+`python amministrazione.py --admin parcheggi | pulizia [--esegui] | ritorno --ciclo C ... | annulla --parcheggio N ... | ripartenza ... | svuota [--esegui]`; nell'app dal pulsante Admin..., che apre la finestra delle operazioni (D-85). Niente si cancella subito: cio' che si toglie va in `Archivio_Cicli/_Parcheggio/` con l'atto e la traccia in `Archivio_Cicli/Amministrazione/`, e si annulla. Guida, sezione 3-quater.
 
 ## Piu' analisti sullo stesso registro (D-83)
 

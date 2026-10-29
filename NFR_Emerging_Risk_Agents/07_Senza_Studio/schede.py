@@ -228,6 +228,36 @@ def controlla_a6(ingresso, uscita, testo_rubrica=""):
     return problemi
 
 
+# D-88: lunghezze dei testi di A6 (caratteri, spazi compresi): (campo, minimo, consigliato fino a). Le stesse sono nelle
+# istruzioni di A6 (02_Agenti/modelli/A6.md, regole 4-6); il collaudo le confronta. Piu' lunghe di quelle di A1: la
+# scheda spiega a chi non conosce il tema. Un testo piu' corto non ferma le schede: il comando lo dice e l'app propone
+# di farlo allungare ad A6 nella stessa chat.
+LUNGHEZZE_A6 = [("descrizione_estesa", 1000, 2000), ("spiegazione", 400, 800), ("a_sostegno_di", 100, 300)]
+
+
+def testi_corti_a6(ingresso, uscita):
+    """I testi dell'output di A6 sotto il minimo di LUNGHEZZE_A6: ["NFR-01, descrizione_estesa 640 caratteri (minimo
+    1000)", ...]. La spiegazione di una Velocity non valutata puo' essere breve."""
+    minimo = {campo: m for campo, m, _ in LUNGHEZZE_A6}
+    valori = {r["id_rischio"]: r.get("valori") or {} for r in ingresso.get("rischi", [])}
+    corti = []
+
+    def misura(rid, dove, testo, campo):
+        n = len(str(testo or "").strip())
+        if n < minimo[campo]:
+            corti.append(f"{rid}, {dove} {n} caratteri (minimo {minimo[campo]})")
+    for s in uscita.get("schede", []):
+        rid = s.get("id_rischio")
+        misura(rid, "descrizione_estesa", s.get("descrizione_estesa"), "descrizione_estesa")
+        for d in s.get("dimensioni", []):
+            if not (d.get("dimensione") == "velocity" and valori.get(rid, {}).get("velocity") is None):
+                misura(rid, f"spiegazione di {d.get('dimensione')}", d.get("spiegazione"), "spiegazione")
+        for f in s.get("fonti", []):
+            misura(rid, f"a_sostegno_di della fonte '{str(f.get('riferimento'))[:30]}'", f.get("a_sostegno_di"),
+                   "a_sostegno_di")
+    return corti
+
+
 # ================================================================ 3. file delle schede
 BLU_NOTTE, BLU_MEDIO, BLU_CHIARO, BLU_DIM = "1F3864", "2F5597", "DEEAF6", "2E75B6"
 ROSSO, AMBRA, GRIGIO = "C00000", "FFC000", "A6A6A6"

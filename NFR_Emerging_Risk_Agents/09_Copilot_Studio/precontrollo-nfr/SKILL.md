@@ -1,6 +1,6 @@
 ---
 name: precontrollo-nfr
-description: Precontrollo della Banca sull'output JSON di A1 Horizon Scanner (registro dei rischi NFR emergenti), da fare prima di consegnarlo. Esegue senza modificarlo lo script scripts/precontrollo_nfr.py sull'output di A1 e sull'allegato Input_A1 del ciclo, e dice cosa correggere (schema, controlli meccanizzati C1-C9, parti del razionale). Usala ogni volta che hai scritto o corretto l'output JSON di A1, prima di consegnarlo, e quando l'utente chiede il precontrollo.
+description: Precontrollo della Banca sull'output JSON di A1 Horizon Scanner (registro dei rischi NFR emergenti), da fare prima di consegnarlo. Esegue senza modificarlo lo script scripts/precontrollo_nfr.py sull'output di A1 e sull'allegato Input_A1 del ciclo, e dice cosa correggere (schema, controlli meccanizzati C1-C10, parti del razionale). Usala ogni volta che hai scritto o corretto l'output JSON di A1, prima di consegnarlo, e quando l'utente chiede il precontrollo.
 ---
 
 # Precontrollo NFR dell'output di A1

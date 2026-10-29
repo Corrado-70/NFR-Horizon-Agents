@@ -26,6 +26,8 @@ import json
 import re
 from pathlib import Path
 
+import controlli_a5
+
 FILE_CONTROLLI = "controlli_A5.md"
 FILE_GUIDA = "guida_scrittura_A1.md"
 PREFISSO = "Input_A1"
@@ -128,6 +130,7 @@ def scrivi_allegato_a3_a4(cartella, baseline, oggi):
 PREFISSO_A5 = "Input_A5"
 INIZIO_OUTPUT = "=== 1. OUTPUT DI A1 ==="
 INIZIO_BASELINE_A5 = "=== 2. BASELINE ==="
+INIZIO_LUNGHEZZE_A5 = "=== 3. LUNGHEZZE DEI TESTI (C10, D-86) ==="
 
 
 def componi_a5(payload, baseline, oggi):
@@ -136,7 +139,9 @@ def componi_a5(payload, baseline, oggi):
     return (f"INPUT DI A5 PER IL CICLO {ciclo}: l'output di {autore} da esaminare e la baseline su cui e' stato scritto, "
             f"scritto da esegui_ciclo_locale.py il {oggi}, da non modificare a mano.\n\n"
             f"{INIZIO_OUTPUT}\n{json.dumps(payload, ensure_ascii=False, indent=2)}\n\n"
-            f"{INIZIO_BASELINE_A5}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n")
+            f"{INIZIO_BASELINE_A5}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n\n"
+            f"{INIZIO_LUNGHEZZE_A5}\nLunghezze minime dei testi dell'output (caratteri, spazi compresi): un testo piu' corto "
+            f"e' un rilievo C10.\n{controlli_a5.tabella_lunghezze()}\n")
 
 
 def leggi_a5(testo):

@@ -1,6 +1,6 @@
-# Controlli di A5 Challenger (C1-C9)
+# Controlli di A5 Challenger (C1-C10)
 
-> Fonte unica dei nove controlli (D-69, 02/10/2026). Lo stesso testo entra:
+> Fonte unica dei dieci controlli (D-69, 02/10/2026; C10 dal 29/10/2026, D-86). Lo stesso testo entra:
 > - nelle istruzioni di A5 (segnaposto {{CONTROLLI}} di 02_Agenti/componi_prompt.py);
 > - nell'allegato Input_A1_<ciclo>.txt che lo script scrive con la baseline
 >   (07_Senza_Studio/input_a1.py): A1 verifica il proprio output con gli stessi
@@ -21,6 +21,11 @@
 > validazione come "Da motivare", con i due valori: decide il validatore. Il testo di C5 qui sotto non cambia (il
 > prompt di A5 e' a 7.990 caratteri).
 
+> D-86 (29/10/2026): C10 Testi. I minimi delle lunghezze sono nella guida di scrittura (parte 3 dell'allegato di A1,
+> sezione "Lunghezze dei testi") e nella parte 3 dell'allegato di A5; lo script li prende da controlli_a5.LUNGHEZZE (il
+> collaudo verifica che la tabella della guida sia la stessa). Nel precontrollo un testo troppo corto va corretto da A1
+> (si puo' saltare dall'app); alla scrittura e in validazione e' un'Osservazione, anche quando lo segnala A5.
+
 - C1 Completezza: ogni rischio di "rischi" della baseline (il radar) e' valutato, con la stessa categoria; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline.
 - C2 Variazioni: una voce per ogni valore cambiato rispetto alla baseline e solo per quelli; nessuna per un rischio nuovo.
 - C3 Evidenza delle variazioni: data_evidenza dopo data_riferimento_precedente e non dopo data_riferimento; evidenza specifica, non una frase generica; nessun valore cambiato di piu' di un punto (una velocity prima null puo' entrare con qualunque valore).
@@ -30,3 +35,4 @@
 - C7 Rilettura KRI: ogni kri_id riletto e' in vigore nella baseline e compare una sola volta.
 - C8 Azioni (sempre Osservazione): owner e' una funzione, mai una persona; l'azione e' pertinente al meccanismo di perdita e non ripete un'azione aperta della baseline.
 - C9 KRI: due per rischio del radar, uno di Esposizione e uno di Evoluzione, coerenti con cio' che misurano; fonte_dati identificabile; soglie entrambe o nessuna, soglia_allerta >= soglia_attenzione; valore crescente = peggio; un kri_id valorizzato esiste in baseline ed e' dello stesso rischio; nessun kri_id ripetuto.
+- C10 Testi: nessun testo sotto il minimo della parte 3 dell'allegato (descrizione, parti del razionale, evidenze, segnale, azioni, KRI, analisi dell'evento); piu' corto = Bloccante, troppo sintetico.
