@@ -177,9 +177,9 @@ compilato (sezione 0.3) e i link degli agenti (sezione 0.2, punto 3-bis). Se la 
 | **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71) |
 | **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
 | **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
-| **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V; il testo resta visibile e un nuovo Ctrl+V lo sostituisce), sotto la **riga dell'esito** (in verde "Ricevuto: A1, … caratteri, salvato in In_arrivo\\A1_<ciclo>.json", in arancio una risposta tagliata, di un altro agente o fuori formato), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso il registro, Annulla il passo |
+| **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V; il testo resta visibile e un nuovo Ctrl+V lo sostituisce), sotto la **riga dell'esito** (in verde "Ricevuto: A1, … caratteri, salvato in In_arrivo\\A1_<ciclo>.json", in arancio una risposta tagliata, di un altro agente o fuori formato), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso Excel: controlla ora, Annulla il passo. Il passo in corso dice sempre che cosa sta facendo l'app: "Esecuzione del comando trimestrale in corso da 1:25 (Excel in background, di solito qualche minuto)", "In attesa della risposta di A1", "In attesa che tu chiuda il registro in Excel", "In attesa della tua risposta alla domanda: ..." |
 | **Divisore** | fra il passo in corso e l'uscita dei comandi: si trascina per dare piu' spazio all'una o all'altra |
-| **Fascia dell'esito e uscita** | l'esito dell'ultimo comando (verde OK, arancio FERMATO, rosso ERRORE TECNICO) e l'uscita dei comandi riga per riga. Ogni comando lascia un log in `Archivio_Cicli\Log\` |
+| **Fascia dell'esito e uscita** | mentre un processo lavora, in blu il processo e la fase ("In corso: Trimestre - comando precontrollo in esecuzione"); poi l'esito dell'ultimo comando (verde OK, arancio FERMATO, rosso ERRORE TECNICO) e l'uscita dei comandi riga per riga. Ogni comando lascia un log in `Archivio_Cicli\Log\` |
 
 Su uno schermo 1920x1080 (o piu' piccolo) la finestra si apre a tutto schermo, anche con la scala di Windows al 150%.
 
@@ -228,6 +228,8 @@ Casi particolari:
 | **Chiedi ad A7** | apre A7 | fai le tue domande in chat (sezione 8) |
 | **Diagnosi** | `diagnosi`: l'esito nell'uscita | leggi le misure (sezione 9) |
 | **Dismetti** | modulo con rischio, motivazione, decisore; `dismetti` | compili il modulo (decide la funzione di rischio) |
+
+**Domande e moduli.** Quando l'app chiede qualcosa (per esempio "Ciclo ... scritto. Passare alla validazione adesso?" o chi valida) la finestra viene in primo piano con un suono, e il passo in corso riporta la domanda: finche' non rispondi i pulsanti dei processi restano grigi. **Registro aperto per la validazione**: l'app si accorge da sola che hai chiuso Excel; se dopo la chiusura e' ancora in attesa, premi "Ho chiuso Excel: controlla ora" (se il file risulta ancora aperto in Excel lo dice e aspetta).
 
 **Interrompere e riprendere.** "Annulla il passo" (o la chiusura della finestra) ferma il processo senza danni: il
 registro si scrive solo dentro i comandi. Al riavvio, il "Prossimo passo" riparte dal punto giusto; se la risposta di

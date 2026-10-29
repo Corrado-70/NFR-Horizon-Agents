@@ -125,6 +125,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Schermi 1920x1080 con la scala al 100, 125 e 150%: si apre ingrandita, uscita del motore leggibile | simulazione dello schermo |
 | [x] | Divisore trascinabile fra passo in corso e uscita; riquadro della risposta alto e visibile dopo l'incolla; riga dell'esito sotto il riquadro (richiesta dell'utente del 23/10) | simulazione a 100% e 150% |
 | [x] | `NFR.cmd`: ASCII, cartella dello script, UTF-8, `pyw`/`pythonw`/`python` | `test_app.py` |
+| [x] | Che cosa sta facendo l'app, sempre detto (richiesta dell'utente del 29/10, dopo la prima prova in Banca): nella fascia il processo e la fase; nel passo in corso il comando in esecuzione con il tempo trascorso e la durata attesa, la domanda o il modulo in attesa, l'attesa della chiusura di Excel; domande e moduli in primo piano con un suono; "Ho chiuso Excel: controlla ora" controlla davvero il file; a fine processo quale processo e' finito e quando | prova della finestra con Xvfb (testi di ogni fase); in Banca |
 | [~] | Uso vero: un trimestre di prova dall'app, con gli agenti in Agent Builder e il registro di prova | in Banca, B5-bis |
 | [~] | Link degli agenti da "Copia collegamento" che aprono la chat (V-A) | in Banca, B5-bis |
 

@@ -1642,7 +1642,7 @@ openpyxl (solo per il file delle schede). Moduli:
 - **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
   poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
   prossimo passo, un pulsante per processo, passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
-  "Scegli file...", "Ho chiuso il registro", "Annulla il passo", log con l'esito colorato. **L'app non contiene
+  "Scegli file...", "Ho chiuso Excel: controlla ora" (controlla che il registro non sia piu' aperto), "Annulla il passo", log con l'esito colorato. **L'app non contiene
   regole**: i processi sono in `flussi.py`, scritti contro un `Ambiente` (esegui, apri, copia, risposta,
   attendi_chiusura, chiedi, conferma, mostra) che la finestra realizza e il collaudo simula (`AmbienteFinto` di
   `test_app.py`). Ogni processo gira in un thread; le chiamate alla finestra passano da una coda al thread di tkinter.
