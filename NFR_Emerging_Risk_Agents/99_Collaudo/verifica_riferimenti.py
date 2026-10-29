@@ -155,6 +155,9 @@ def verifica_guida(e):
     import esegui_ciclo_locale as campo
     import raccogli_notizie
     import confronta
+    import installa
+    import notizie_manuali
+    import verifica_pc
     comandi, opzioni = set(), set()
     parser_ciclo = None
     orig = argparse.ArgumentParser.parse_args
@@ -165,7 +168,7 @@ def verifica_guida(e):
         raise SystemExit(0)
     argparse.ArgumentParser.parse_args = cattura
     try:
-        for modulo in (campo, raccogli_notizie, confronta):
+        for modulo in (campo, raccogli_notizie, confronta, installa, verifica_pc, notizie_manuali):
             try:
                 modulo.main(["confronta.py"] if modulo is confronta else [])
             except SystemExit:
@@ -187,7 +190,7 @@ def verifica_guida(e):
         # Il nome del comando, anche dopo le opzioni comuni (--workbook "..." --cartella-uscita ...); anche aggiorna-registro.
         citati = set(re.findall(r'esegui_ciclo_locale\.py (?:--[\w-]+ (?:"[^"]*"|\S+) )*([\w-]+)', t))
         e.verifica(citati and citati <= comandi, f"8. comandi citati in {doc.name} esistono", str(sorted(citati - comandi)))
-        opz = set(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", t)) - {"--version", "--upgrade", "--force-reinstall"}   # opzioni di python/pip, non degli script
+        opz = set(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", t)) - {"--version", "--upgrade", "--force-reinstall", "--user"}   # opzioni di python/pip, non degli script
         e.verifica(opz <= opzioni, f"8. opzioni citate in {doc.name} esistono", str(sorted(opz - opzioni)))
 
 

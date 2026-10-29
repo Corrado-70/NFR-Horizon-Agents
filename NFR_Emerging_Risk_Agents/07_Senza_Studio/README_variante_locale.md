@@ -263,7 +263,7 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
 
 ## L'app NFR (D-83)
 
-Doppio clic su `NFR.cmd`: la finestra mostra lo stato del processo e il prossimo passo e guida ogni processo
+Installazione su un PC nuovo: doppio clic su `installa.cmd` (tappa M3: moduli, configurazione con una finestra, collegamenti, raccolta pianificata, Verifica del PC; guida, sezione 0.3). Poi doppio clic sul collegamento **NFR Horizon Scan** del Desktop, o su `NFR.cmd`: la finestra mostra lo stato del processo e il prossimo passo e guida ogni processo
 (settimana, trimestre, straordinario, validazione, schede e report, riapertura, testi a mano, parere di A4). Per ogni
 agente prepara gli allegati, apre l'agente (`link_agenti` in `configurazione.json`) e mette la richiesta negli
 appunti; la risposta si incolla nel riquadro dell'app (o, con `ascolta_appunti`, basta premere Copia). Gli agenti

@@ -30,6 +30,7 @@ PASSI = [
     ("Validatore, controlli A5, esempi, consistenza", [sys.executable, str(QUI / "test_controlli.py")]),
     ("Elenco fonti e raccolta notizie", [sys.executable, str(QUI / "test_fonti.py")]),
     ("Piu' analisti: lucchetto e copia di lavoro", [sys.executable, str(QUI / "test_app.py")]),
+    ("Installazione e Verifica del PC", [sys.executable, str(QUI / "test_installazione.py")]),
     ("Riferimenti incrociati", [sys.executable, str(QUI / "verifica_riferimenti.py")]),
     (CATENA, [sys.executable, str(QUI / "run_catena.py")]),
 ]

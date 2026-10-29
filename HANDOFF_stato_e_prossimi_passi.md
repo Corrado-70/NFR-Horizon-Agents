@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; la sezione 2-duotricesies, versione tutta in Copilot Studio, e' sul ramo `copilot-studio-pieno`).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; **29/10: prima prova dell'app in Banca, app piu' esplicita, A5 proposto dopo il precontrollo, tappe M3, M4, M5: sezione 2-quatertricesies**; la sezione 2-duotricesies, versione tutta in Copilot Studio, e' sul ramo `copilot-studio-pieno`).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1351,6 +1351,23 @@ configurazione); istruzioni di aggiornamento in `AGGIORNAMENTO_IN_BANCA.md` alla
 
 **Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
 (report HTML).
+
+## 2-quatertricesies. 29/10: prima prova dell'app in Banca; tappe M3, M4, M5
+
+**Prova in Banca** (l'utente, 29/10): trimestre dall'app fino alla scrittura (A1, precontrollo, correzione, precontrollo
+superato, `trimestrale` OK) e validazione. Problemi trovati: i pulsanti grigi sembravano un'app bloccata mentre l'app
+aspettava una domanda finita dietro al browser o la chiusura di Excel; A5 si poteva scegliere solo prima di premere
+Trimestre. Corretti (commit 863b20b): fascia con processo e fase, passo in corso con il comando e il tempo trascorso,
+domande e moduli in primo piano, "Ho chiuso Excel: controlla ora"; poi la domanda su A5 a precontrollo superato
+(`chiedi_a5`). L'utente considera M1 e M2 a posto; le verifiche in Banca (18.6) si fanno alla fine, dopo M5.
+
+**Tappa M3** (installazione, 29/10): `installa.cmd` e `installa.py` (moduli con pip --user o dalla cartella
+`pacchetti`, configurazione con una finestra, collegamenti Desktop e Invia a, attivita' della raccolta, `attrib +P`,
+Verifica del PC), `installazione.py` (parti senza effetti, collaudate), `verifica_pc.py` (anche da Altro nell'app),
+`notizie_manuali.py` e `NFR_notizie_manuali.cmd`. Collaudo: `test_installazione.py` 29/29, `test_app.py` 49/49 (47
+fuori da Windows), riferimenti 31/31; prova della finestra della configurazione con Xvfb (trappola 134). Trappole
+132-134. Da provare in Banca: pip dietro il proxy, schtasks e collegamenti (V-E), Verifica del PC con Excel (V-F).
+Proposte usate in attesa di decisione dell'utente: nessuna per M3.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

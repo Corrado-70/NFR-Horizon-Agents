@@ -34,7 +34,8 @@ COLORI = {"ok": "#2E7D32", "avviso": "#B26A00", "errore": "#C62828", "info": "#1
 AGGIORNA_MS = 30000
 # Che cosa aspettarsi da un comando del motore, scritto nel passo in corso mentre lavora (richiesta dell'utente del 29/10).
 DURATA = {"precontrollo": "pochi secondi, senza Excel", "griglia": "Excel in background, meno di un minuto",
-          "sblocca": "pochi secondi, senza Excel", "raccogli_notizie": "qualche minuto, legge le fonti in rete"}
+          "sblocca": "pochi secondi, senza Excel", "raccogli_notizie": "qualche minuto, legge le fonti in rete",
+          "verifica_pc": "meno di un minuto, apre il registro in sola lettura"}
 DURATA_EXCEL = "Excel in background, di solito qualche minuto"
 
 
@@ -186,6 +187,7 @@ class App:
         menu.add_command(label="Apri il registro (sola consultazione)", command=lambda: self.amb.apri(self.conf["workbook"]))
         menu.add_command(label="Apri l'archivio", command=lambda: self.amb.apri(self.conf["cartella_uscita"]))
         menu.add_command(label="Aggiorna lo stato", command=self.aggiorna_stato)
+        menu.add_command(label="Verifica del PC", command=lambda: self.avvia(self.flussi.verifica_pc, "Verifica del PC"))
         menu.add_separator()
         menu.add_command(label="Togli il lucchetto rimasto (sblocca)", command=lambda: self.avvia(self.flussi.sblocca, "Sblocca"))
         menu.add_command(label="Ricostruisci la griglia di validazione",

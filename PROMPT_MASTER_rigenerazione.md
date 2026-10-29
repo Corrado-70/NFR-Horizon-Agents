@@ -1639,6 +1639,25 @@ openpyxl (solo per il file delle schede). Moduli:
   chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
   `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
   dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
+- **Installazione** (D-83, tappa M3): `installa.cmd` (ASCII, a capo di Windows per le etichette `goto`, `py -3` poi
+  `python`) lancia `installa.py`, sette passi con l'esito: Python 3.10+ e tkinter; moduli provati in un processo nuovo
+  (`import win32com.client, pythoncom`: un pywin32 a meta' non passa) e installati con `pip install --user`, dalla
+  rete o con `--no-index --find-links` dalla cartella `pacchetti` (accanto a `07_Senza_Studio` o al pacchetto);
+  `configurazione.json` da una finestra tkinter (Sfoglia per le cartelle, link dei sette agenti per versione: link
+  piatti = della versione in uso, l'altra vuota; `installazione.unisci` conserva le voci sconosciute e scrive i
+  link nel formato per versione appena ce ne sono due; la precedente resta `configurazione_<data>.json.precedente`);
+  collegamenti `.lnk` con PowerShell e WScript.Shell (`[Environment]::GetFolderPath('Desktop'|'SendTo')`, apici
+  raddoppiati): l'app con `pythonw.exe` e "Invia a -> NFR notizie manuali" (`NFR_notizie_manuali.cmd` ->
+  `notizie_manuali.py`: copia in `News_Inbox/<lunedi'>/Manuali`, mai sovrascrivere: `Nome (2).pdf`); attivita'
+  **NFR raccolta notizie** con `schtasks /create /xml /f` (XML in UTF-16, lunedi' 7:00, InteractiveToken,
+  LeastPrivilege, StartWhenAvailable, solo con la rete) solo se `raccolta_su_questo_pc`; a richiesta `attrib +P`
+  sulle cartelle sincronizzate. Le parti senza effetti sul sistema sono in `installazione.py` (le prova
+  `test_installazione.py` anche fuori da Windows). **Verifica del PC** (`verifica_pc.py`, anche da Altro
+  nell'app): righe OK / ATTENZIONE / NO con il rimedio (Python, moduli, configurazione, cartelle scrivibili, file
+  del kernel e template, registro chiuso e poi Excel via COM in sola lettura con versione, `FullName` e
+  `AutoSaveOn` (V-F), lucchetto preso e lasciato, appunti, link, collegamenti, attivita'); file in
+  `Archivio_Cicli/Verifiche_PC/`; codice 1 solo con un NO. `chiedi_a5` (predefinito vero): con la casella A5 non
+  spuntata, a precontrollo superato `flussi.valutazione` chiede se passare da A5.
 - **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
   poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
   prossimo passo, un pulsante per processo, passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
@@ -2999,6 +3018,16 @@ l'ultimo usato in tutti e due i rami.)
     `<nome>_posta.zip`: lo stesso contenuto di git archive, con quei file rinominati `.txt` in coda, e in
     `AGGIORNAMENTO_IN_BANCA.md` il passo per rinominarli dopo l'estrazione. Prima di consegnare si controllano anche
     gli zip annidati del kit.
+    Dal 29/10 i `.cmd` sono tre: `NFR.cmd`, `installa.cmd`, `NFR_notizie_manuali.cmd`.
+132. **I `.cmd` con etichette vanno salvati con gli a capo di Windows** (29/10). Con i soli LF `cmd.exe` puo' non trovare
+    un'etichetta di `goto` (salti a vuoto); `installa.cmd` e `NFR_notizie_manuali.cmd` usano `goto fine`. Il collaudo
+    (`test_installazione.py`) controlla ASCII e CRLF.
+133. **Un pacchetto appena installato con pip si prova in un processo nuovo** (29/10). La cartella dei pacchetti
+    dell'utente creata da `pip install --user` non e' nel `sys.path` del Python che ha lanciato pip: un `import` nello
+    stesso processo direbbe "manca" anche a installazione riuscita. `installazione.prova_import` usa un sottoprocesso.
+134. **I link piatti della configurazione sono della versione in uso** (29/10). La finestra di `installa.py` li leggeva
+    per entrambe le versioni e al salvataggio li copiava anche in Copilot Studio (trovato con la prova della finestra):
+    l'altra versione parte vuota e si scrive solo se compilata.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3021,6 +3050,8 @@ l'ultimo usato in tutti e due i rami.)
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
+                  installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py
+                  NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)
                     Da_caricare/ precontrollo-nfr.zip  precontrollo-nfr_senza_cartella.zip

@@ -344,6 +344,32 @@ def test_flussi(e):
                    "flusso ripreso: la risposta gia' copiata si usa (nessuna richiesta ad A1), poi precontrollo e trimestrale",
                    f"{amb.comandi}\n{amb.appunti}")
 
+        # A5 proposto dopo il precontrollo superato (casella non spuntata): si' -> A5 con il suo allegato, poi --challenger
+        _scrivi(u / "Cicli" / "2027Q1" / "Validazione_2027Q1.json", {})
+        _scrivi(u / "Baseline_corrente.json", {"ciclo_precedente": "2027Q1", "ciclo_da_valutare": "2027Q2"})
+        _scrivi(u / "Input_A5_2027Q2.txt", "allegato di A5")
+        _scrivi(u / "Input_A1_2027Q2.txt", "allegato di A1")
+        a1_q2 = dict(a1, ciclo="2027Q2")
+        a5 = dict(carica(DATI / "run_A5_2026Q4.json"), ciclo="2027Q2")
+        amb = AmbienteFinto(u, risposte=[json.dumps(a1_q2), json.dumps(a5)], conferme=[True, False],
+                            esiti={"baseline": [(0, "Baseline scritta")],
+                                   "precontrollo": [(0, "Precontrollo dell'output di A1 (2027Q2): nessun rilievo.")],
+                                   "trimestrale": [(0, "Ciclo 2027Q2 scritto")]})
+        flussi.Flussi(amb, conf, cartella_allegati=Path(tmp) / "allegati").trimestrale()
+        e.verifica([c[0] for c in amb.comandi] == ["baseline", "precontrollo", "trimestrale"]
+                   and "--challenger" in amb.comandi[2] and str(amb.comandi[2][-1]).endswith("A5_2027Q2.json")
+                   and "Esegui i nove controlli" in amb.appunti and (Path(tmp) / "allegati" / "A5" / "Input_A5_2027Q2.txt").exists(),
+                   "flusso trimestrale: A5 proposto dopo il precontrollo superato; si' -> A5 con Input_A5, trimestrale --challenger",
+                   f"{amb.comandi}\n{amb.appunti}")
+        amb = AmbienteFinto(u, risposte=[json.dumps(a1_q2)], conferme=[],
+                            esiti={"baseline": [(0, "Baseline scritta")],
+                                   "precontrollo": [(0, "Precontrollo dell'output di A1 (2027Q2): nessun rilievo.")],
+                                   "trimestrale": [(0, "Ciclo 2027Q2 scritto")]})
+        flussi.Flussi(amb, dict(conf, chiedi_a5=False), cartella_allegati=Path(tmp) / "allegati").trimestrale()
+        e.verifica(amb.comandi[-1][0] == "trimestrale" and "--challenger" not in amb.comandi[-1],
+                   "flusso trimestrale: con chiedi_a5 = false nessuna domanda e niente A5", amb.comandi)
+        _scrivi(u / "Baseline_corrente.json", {"ciclo_precedente": "2026Q4", "ciclo_da_valutare": "2027Q1"})
+
         # risposta tagliata in due parti
         testo = json.dumps(a1, indent=1)
         amb = AmbienteFinto(u, risposte=[testo[:len(testo) // 2], testo[len(testo) // 2:]])

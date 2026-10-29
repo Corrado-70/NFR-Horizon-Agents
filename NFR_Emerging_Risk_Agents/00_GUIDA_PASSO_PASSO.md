@@ -98,6 +98,9 @@ TECNICO** vuol dire un problema del PC (sezione 7).
 
 ### Raccolta notizie automatica ogni lunedi' (una volta sola)
 
+Sul PC della raccolta la pianifica `installa.cmd` (sezione 0.3, punto 3), come attivita' **NFR raccolta notizie**.
+A mano, se le regole del PC non lo permettono a `installa.cmd`:
+
 1. Menu Start, aprire **Utilita' di pianificazione**, poi *Crea attivita' di base*.
 2. Nome: `Raccolta notizie NFR`. Attivazione: *Settimanale*, lunedi', ore 7:00.
 3. Azione: *Avvio programma*. Programma: `python`. Argomenti:
@@ -174,9 +177,9 @@ compilato (sezione 0.3) e i link degli agenti (sezione 0.2, punto 3-bis). Se la 
 | **Stato** (due righe) | il ciclo corrente (scritto, DA VALIDARE, VALIDATO, RIAPERTO; report e schede pronti o da fare), il prossimo periodo, la settimana (raccolta, A3, scritta, validata), il registro (libero o in uso da chi). Si aggiorna da solo ogni mezzo minuto; e' lo stesso per tutti i colleghi, perche' si legge dall'archivio condiviso |
 | **▶ Prossimo passo** | il passo che lo stato propone, con chi lo deve fare (analista o validatore) e perche'. Un clic e parte |
 | **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Testi a mano, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti |
-| **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71) |
+| **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71). Se non e' spuntata, l'app lo chiede comunque a precontrollo superato, prima di scrivere il ciclo (`chiedi_a5`, sezione 0.3) |
 | **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
-| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
+| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC** (le righe nell'uscita, il file in `Archivio_Cicli\Verifiche_PC`; sezione 0.3), togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
 | **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V; il testo resta visibile e un nuovo Ctrl+V lo sostituisce), sotto la **riga dell'esito** (in verde "Ricevuto: A1, … caratteri, salvato in In_arrivo\\A1_<ciclo>.json", in arancio una risposta tagliata, di un altro agente o fuori formato), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso Excel: controlla ora, Annulla il passo. Il passo in corso dice sempre che cosa sta facendo l'app: "Esecuzione del comando trimestrale in corso da 1:25 (Excel in background, di solito qualche minuto)", "In attesa della risposta di A1", "In attesa che tu chiuda il registro in Excel", "In attesa della tua risposta alla domanda: ..." |
 | **Divisore** | fra il passo in corso e l'uscita dei comandi: si trascina per dare piu' spazio all'una o all'altra |
 | **Fascia dell'esito e uscita** | mentre un processo lavora, in blu il processo e la fase ("In corso: Trimestre - comando precontrollo in esecuzione"); poi l'esito dell'ultimo comando (verde OK, arancio FERMATO, rosso ERRORE TECNICO) e l'uscita dei comandi riga per riga. Ogni comando lascia un log in `Archivio_Cicli\Log\` |
@@ -217,7 +220,7 @@ Casi particolari:
 | Pulsante | Che cosa fa l'app | Che cosa fai tu |
 |---|---|---|
 | **Settimana** | raccolta delle notizie se manca (solo sul PC della raccolta); apre `News_Inbox\<lunedi'>\Manuali`; A3 con `Input_A3_A4.txt`; `settimanale`; se A3 va corretto, il messaggio negli appunti; propone la validazione delle notizie | metti in Manuali i file a mano; i tre gesti con A3; decidi se validare |
-| **Trimestre** | controlla che il ciclo prima sia validato; `baseline`; A1 con `Input_A1_<ciclo>.txt`; `precontrollo` (sempre: pochi secondi, senza Excel) con il giro di correzione nella stessa chat; A5 se la casella e' spuntata; `trimestrale` (un fermo: stesso giro di correzione); propone la validazione | i tre gesti con A1 (e A5); se il precontrollo ha solo punti "da verificare", scegli se farli rivedere ad A1 o lasciarli al validatore |
+| **Trimestre** | controlla che il ciclo prima sia validato; `baseline`; A1 con `Input_A1_<ciclo>.txt`; `precontrollo` (sempre: pochi secondi, senza Excel) con il giro di correzione nella stessa chat; A5 se la casella e' spuntata, altrimenti la domanda "Passare anche da A5 Challenger prima di scrivere il ciclo?"; `trimestrale` (un fermo: stesso giro di correzione); propone la validazione | i tre gesti con A1 (e A5); se il precontrollo ha solo punti "da verificare", scegli se farli rivedere ad A1 o lasciarli al validatore |
 | **Straordinario** | modulo con rischi, motivo, decisore, data; `baseline --straordinario`; A8 con `Input_A8_<periodo>.txt`; precontrollo; `trimestrale`; propone la validazione | compili il modulo (decide la funzione di rischio); allega ad A8 anche i documenti dell'evento |
 | **Validazione** | chiede chi valida (proposto `validatore_predefinito`); apre il registro in Excel, visibile; aspetta che tu lo chiuda; `valida` (che rigenera il report). Se la validazione non passa, riapre il registro per correggere; poi propone le schede | lavori nelle celle gialle del foglio Validazione (sezione 3), salvi e chiudi Excel |
 | **Schede** | `schede-input`; chiede se usare A6; A6 con `Input_A6_<ciclo>.json` e `schede` (con il giro di correzione), oppure `schede` con i testi di A1; il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
@@ -564,22 +567,42 @@ link alle fonti: l'app li ignora.
 
 ### 0.3 Sul proprio PC (ogni analista, dopo 0.1 e 0.2)
 
-1. Chiedere all'informatica: **Python 3.10 o piu' recente** e, da un Prompt
-   dei comandi, `pip install pywin32 pypac openpyxl` (`pypac` serve solo alla
-   raccolta notizie, per trovare da solo il proxy come fa il browser;
-   `openpyxl` solo al comando `schede`, per il file delle schede). Serve
-   anche Excel desktop. Verifica: nel Prompt dei comandi `python --version`
-   deve rispondere `Python 3.10` o un numero piu' alto; `python -c
-   "import win32com.client, pythoncom;
-   win32com.client.Dispatch('Excel.Application')"` non deve rispondere niente
-   (nessun messaggio = tutto a posto: apre e chiude Excel invisibile). Non
-   basta provare solo `import win32com`: non intercetta un pywin32 installato
-   a meta' (vedi "No module named 'pythoncom'" nella tabella degli errori).
+1. Chiedere all'informatica **Python 3.10 o piu' recente** (python.org o Software Center, con l'opzione "Add
+   python.exe to PATH" e tcl/tk, che python.org include di default). Serve anche Excel desktop. I moduli
+   (`pywin32`, `openpyxl`, `pypac`) li installa `installa.cmd` al punto 3.
 2. Sincronizzare con OneDrive (pulsante "Sincronizza" di SharePoint) le
    raccolte `Kernel`, `Report_Trimestrali`, `Archivio_Cicli`, `News_Inbox`.
-3. Nella cartella degli script (`07_Senza_Studio`) copiare
-   `configurazione_esempio.json` in `configurazione.json` e compilarlo con Blocco note
-   (le barre dei percorsi vanno raddoppiate, `\\`, come nell'esempio):
+3. **Doppio clic su `installa.cmd`** (cartella degli script, `07_Senza_Studio`; tappa M3). Si apre il Prompt dei
+   comandi con i passi numerati, ognuno con il suo esito (OK, ATTENZIONE, NO):
+   1. Python e tkinter;
+   2. i moduli che mancano, installati con pip solo per il tuo utente (nessun diritto di amministratore). Se il
+      proxy della Banca blocca pip, il messaggio lo dice: su un PC con la rete libera si scaricano i pacchetti con
+      `python -m pip download pywin32 openpyxl pypac -d pacchetti` (stesso Python, 64 bit) e si copia la cartella
+      `pacchetti` accanto a `07_Senza_Studio`; rilanciando `installa.cmd` si installano da li';
+   3. **la finestra della configurazione**: le quattro cartelle sincronizzate (pulsante Sfoglia), il tuo nome, chi
+      valida di solito, se questo e' il PC della raccolta del lunedi', le opzioni dell'app e i link dei sette agenti
+      per la versione scelta (Agent Builder o Copilot Studio). Con una configurazione che c'e' gia' i valori sono
+      proposti; la precedente resta accanto (`configurazione_<data>.json.precedente`);
+   4. i collegamenti: **NFR Horizon Scan** sul Desktop e **Invia a -> NFR notizie manuali** (tasto destro su un
+      file: lo copia in `News_Inbox\<lunedi'>\Manuali`);
+   5. solo sul PC della raccolta, l'attivita' pianificata **NFR raccolta notizie** ogni lunedi' alle 7 (se il PC
+      e' spento, appena si accende; sezione "Raccolta notizie automatica");
+   6. a richiesta, le cartelle sincronizzate "sempre su questo dispositivo" (consigliato);
+   7. la **Verifica del PC**: una riga per voce, salvata in `Archivio_Cicli\Verifiche_PC\`. Le righe NO vanno
+      sistemate (il rimedio e' scritto sotto); se non e' chiaro, mandare il file a chi mantiene il pacchetto.
+
+   Rilanciare `installa.cmd` non fa danni (per esempio per cambiare un link): ogni passo controlla prima che cosa
+   c'e'. Opzioni: `python installa.py --senza-finestra` (tiene la configurazione com'e'), `--senza-collegamenti`,
+   `--senza-attivita`, `--solo-verifica`. La verifica si rifa' quando serve anche dall'app (Altro -> Verifica del PC)
+   o con `python verifica_pc.py` (`--senza-excel` per non aprire il registro).
+
+   **A mano, senza `installa.cmd`** (se le regole del PC non lo lasciano partire): da un Prompt dei comandi
+   `pip install pywin32 pypac openpyxl` (`pypac` serve solo alla raccolta notizie, per trovare il proxy come fa il
+   browser; `openpyxl` solo al file delle schede). Verifica: `python -c "import win32com.client, pythoncom;
+   win32com.client.Dispatch('Excel.Application')"` non deve rispondere niente (non basta `import win32com`: non
+   intercetta un pywin32 installato a meta', sezione 7). Poi nella cartella degli script copiare
+   `configurazione_esempio.json` in `configurazione.json` e compilarlo con Blocco note (le barre dei percorsi vanno
+   raddoppiate, `\\`, come nell'esempio). Le voci, che la finestra di `installa.cmd` scrive da sola:
 
    | Voce | Che cosa scrivere | Chi la usa |
    |---|---|---|
@@ -593,6 +616,7 @@ link alle fonti: l'app li ignora.
    | `raccolta_su_questo_pc` | `true` solo sul PC che raccoglie le notizie il lunedi'; sugli altri `false` | app |
    | `agenti` | `Agent Builder` o `Copilot Studio`: la versione degli agenti proposta all'avvio (si cambia nella finestra) | app |
    | `ascolta_appunti` | `true`: basta premere Copia sotto la risposta; `false`: si incolla sempre nel riquadro | app |
+   | `chiedi_a5` | `true` (predefinito): a precontrollo superato, se la casella A5 non e' spuntata, l'app chiede se passare anche da A5; `false`: nessuna domanda, A5 solo con la casella | app |
    | `link_agenti` | i link degli agenti (sezione 0.2, punto 3-bis): `{"A1": "https://...", "A3": "...", ...}`; con le due versioni, `{"Agent Builder": {"A1": ...}, "Copilot Studio": {"A1": ...}}`. Un link vuoto: l'agente si apre a mano | app |
    | `cartella_lavoro` | facoltativa: dove lo script tiene la copia di lavoro del registro (di solito non serve) | script |
 4. Verificare che la cartella `03_Excel`, **fianco a fianco** con
@@ -616,8 +640,8 @@ link alle fonti: l'app li ignora.
    proxy: chiedere all'informatica, oppure rinunciare al canale rss e proseguire
    con i siti dell'agente e i file in `Manuali`.
 
-7. Prova dell'app: doppio clic su `NFR.cmd`. Si apre la finestra con lo stato in alto; se il registro non c'e'
-   ancora, il prossimo passo e' la baseline (0.4). Conviene un collegamento sul Desktop.
+7. Prova dell'app: doppio clic sul collegamento **NFR Horizon Scan** del Desktop (o su `NFR.cmd`). Si apre la
+   finestra con lo stato in alto; se il registro non c'e' ancora, il prossimo passo e' la baseline (0.4).
 
 Da qui in avanti: ogni passo si fa dall'app (sezione "L'app NFR: uso passo per passo") o con i comandi nel Prompt dei
 comandi, dalla cartella degli script; **il registro Excel deve essere chiuso** (anche per i colleghi) mentre lo script
@@ -1215,7 +1239,9 @@ c'e' gia'.
 | Agent Builder disattivato o cambiato | gli agenti non scrivono nulla: il registro resta integro | ricreare gli agenti (sezione 0.2) con le istruzioni archiviate |
 | Il PC dell'analista non e' disponibile | lo script gira su qualunque PC con Python, pywin32, Excel e le cartelle sincronizzate | ripetere la sezione 0.3 su un altro PC |
 | `can't open file ... esegui_ciclo_locale.py` | il Prompt dei comandi non e' nella cartella degli script | rifare il `cd` verso la cartella degli script |
-| `No module named 'win32com'` | manca pywin32 | `pip install pywin32` |
+| `No module named 'win32com'` | manca pywin32 | `installa.cmd` (sezione 0.3), oppure `pip install pywin32` |
+| `installa.cmd`: `NO: mancano ancora ...` dopo pip | pip non ha potuto scaricare i pacchetti (proxy, certificati) o la cartella `pacchetti` e' di un altro Python | il messaggio dice la strada: cartella `pacchetti` scaricata su un PC con la rete libera con lo stesso Python, oppure l'IT |
+| `installa.cmd`: `ATTENZIONE: attivita' non creata` o collegamento non creato | le regole del PC non lasciano creare attivita' pianificate o collegamenti all'utente | a mano: sezione "Raccolta notizie automatica" e tasto destro -> Invia a -> Desktop; oppure l'IT |
 | `No module named 'openpyxl'` (comando `schede`) | manca openpyxl | `pip install openpyxl` |
 | `No module named 'pythoncom'` (spesso dentro `ERRORE TECNICO`) | pywin32 installato a meta' | `python -m pip install --upgrade --force-reinstall pywin32`, poi verificare con il comando del punto 1 della sezione 0.3. Se compare anche "No module named 'pywin32_postinstall'" tentando `python -m pywin32_postinstall -install`, ignorarlo: nelle versioni recenti di pywin32 (visto: 312) quel modulo non esiste piu' e non serve, basta il reinstall. |
 | `ATTENZIONE: ... non raggiungibile` solo su **alcune** fonti (spesso stesso dominio), ma i siti si aprono nel browser | `urllib` da solo non legge il file di autoconfigurazione del proxy (PAC) che il browser usa; quelle fonti vanno instradate sul proxy | verificare `pip show pypac` (deve essere installato: punto 1 della sezione 0.3); se manca, `pip install pypac` e rilanciare |

@@ -45,7 +45,7 @@ class Annullato(Exception):
 def configurazione():
     """Le chiavi del motore (esegui_ciclo_locale.configurazione) piu' quelle dell'app da configurazione.json:
     link_agenti (piatto o per versione degli agenti), validatore_predefinito, raccolta_su_questo_pc, agenti (Agent Builder
-    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti."""
+    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti, chiedi_a5."""
     import esegui_ciclo_locale
     conf = esegui_ciclo_locale.configurazione(argparse.Namespace())
     grezza = {}
@@ -54,7 +54,7 @@ def configurazione():
     conf.update(link_agenti=grezza.get("link_agenti") or {}, validatore_predefinito=grezza.get("validatore_predefinito") or "",
                 raccolta_su_questo_pc=bool(grezza.get("raccolta_su_questo_pc", True)),
                 agenti=grezza.get("agenti") if grezza.get("agenti") in ingresso.ORIGINI else ingresso.ORIGINI[0],
-                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)))
+                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)), chiedi_a5=bool(grezza.get("chiedi_a5", True)))
     return conf
 
 
@@ -187,7 +187,11 @@ class Flussi:
             self.amb.copia(self.correzione_a1(periodo).read_text(encoding="utf-8"))
             r = self.chiedi_ad_agente(agente, [], "", periodo, nuova_chat=False)
         a5 = None
-        if con_a5:
+        # A5 facoltativo (D-71): con la casella spuntata si fa; altrimenti l'app lo propone qui, a precontrollo superato,
+        # quando la scelta si capisce (richiesta dell'utente del 29/10). chiedi_a5 = false in configurazione: niente domanda.
+        if con_a5 or (self.conf.get("chiedi_a5", True) and self.amb.conferma(
+                f"Precontrollo dell'output di {agente} superato. Passare anche da A5 Challenger prima di scrivere il ciclo? "
+                "(Facoltativo: controlla la plausibilita' delle valutazioni; i suoi rilievi vanno in validazione.)")):
             a5 = self.chiedi_ad_agente("A5", [self.uscita / f"Input_A5_{periodo}.txt"], MESSAGGI["A5"], periodo)
         while True:
             argomenti = ["trimestrale", "--payload", r["file"]] + (["--challenger", a5["file"]] if a5 else [])
@@ -349,6 +353,14 @@ class Flussi:
 
     def diagnosi(self):
         return self.motore("diagnosi")
+
+    def verifica_pc(self):
+        """Verifica del PC (tappa M3): una riga per voce nell'uscita, il file nell'archivio (Verifiche_PC)."""
+        es = self.motore(script=QUI / "verifica_pc.py")
+        if es["fascia"] != "OK":
+            self.amb.mostra("Verifica del PC: ci sono punti NO (righe qui sopra). Sistemarli, anche con installa.cmd, "
+                            "e rifare la verifica.", "avviso")
+        return es
 
     def sblocca(self):
         dati = self.amb.chiedi("Togliere il lucchetto del registro (solo se e' rimasto per errore)",

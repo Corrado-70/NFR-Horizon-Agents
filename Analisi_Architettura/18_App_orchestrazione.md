@@ -143,16 +143,21 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Demo rigenerata (23/10) e `REPORT_demo.md` riallineato (report da `valida`, PDF delle schede, prompt archiviati, riapertura, allegati di A3 e A4) |
 | [x] | Commit e push: 68b891f su `main` (23/10) |
 
-## 18.3 Tappa M3: installazione e Verifica del PC (da fare, circa 1,5 giorni)
+## 18.3 Tappa M3: installazione e Verifica del PC (fatta il 29/10/2026; prove sul PC in Banca)
 
-| Stato | Voce |
-|---|---|
-| [ ] | `installa.cmd` + `installa.py`: Python 3.10+, tkinter, pywin32, openpyxl, pypac; `pip install --user` di cio' che manca, con un messaggio chiaro se il proxy blocca |
-| [ ] | `configurazione.json` con dialoghi: cartelle sincronizzate, link dei 7 agenti, utente, validatore, PC della raccolta |
-| [ ] | Collegamento sul Desktop "NFR Horizon Scan"; "Invia a -> NFR notizie manuali" |
-| [ ] | Attivita' pianificata della raccolta (`schtasks /create /xml`) solo sul PC della raccolta; `attrib +P` |
-| [ ] | Verifica del PC dall'app, riga per riga: moduli, Excel via COM, `AutoSaveOn` e `FullName`, cartelle scrivibili, lucchetto, link; file da mandare al manutentore |
-| [ ] | Guida, sezione 0 riscritta attorno a `installa.cmd`; collaudo dell'installatore su una cartella di prova |
+| Stato | Voce | Dove si verifica |
+|---|---|---|
+| [x] | `installa.cmd` + `installa.py`: Python 3.10+, tkinter, pywin32 (con pythoncom), openpyxl, pypac provati in un processo nuovo; `pip install --user` di cio' che manca, dalla rete o dalla cartella `pacchetti` (`--no-index`); messaggio chiaro se il proxy blocca, con la strada della cartella | `test_installazione.py` |
+| [~] | pip dietro il proxy della Banca, oppure la cartella `pacchetti` | in Banca |
+| [x] | `configurazione.json` da una finestra: quattro cartelle con Sfoglia, utente, validatore, PC della raccolta, opzioni dell'app (appunti, `chiedi_a5`), versione e link dei 7 agenti; valori proposti da quella che c'e', voci sconosciute conservate, precedente accanto | `test_installazione.py`; prova della finestra con Xvfb (ha trovato la trappola 134) |
+| [x] | Collegamento sul Desktop "NFR Horizon Scan" (pythonw, senza console); "Invia a -> NFR notizie manuali" (`notizie_manuali.py`: cartella Manuali del lunedi', mai sovrascrivere) | `test_installazione.py` (script e copia) |
+| [~] | Collegamenti creati davvero su Windows (V-E) | in Banca |
+| [x] | Attivita' pianificata della raccolta (`schtasks /create /xml`, UTF-16, lunedi' 7:00, senza privilegi, appena possibile se il PC era spento) solo sul PC della raccolta; `attrib +P` a richiesta | `test_installazione.py` (XML) |
+| [~] | schtasks permesso all'utente (V-E) | in Banca |
+| [x] | Verifica del PC (`verifica_pc.py`, Altro -> Verifica del PC): Python, moduli, configurazione, cartelle scrivibili, kernel e template, registro chiuso, Excel via COM con versione, `AutoSaveOn` e `FullName` (V-F), lucchetto, appunti, link, collegamenti, attivita'; file in `Archivio_Cicli/Verifiche_PC/` | `test_installazione.py` (senza Excel) |
+| [~] | Verifica del PC con Excel vero (V-F) | in Banca |
+| [x] | Guida, sezione 0.3 riscritta attorno a `installa.cmd` (a mano come alternativa), raccolta, Altro, sezione 7; 00_LEGGIMI, README, PROMPT_MASTER (trappole 132-134), TODO | `verifica_riferimenti.py` (comandi e opzioni citati) |
+| [x] | Domanda su A5 a precontrollo superato (richiesta del 29/10; `chiedi_a5`) | `test_app.py` |
 
 ## 18.4 Tappa M4: report HTML al comitato (da fare, 3-4 giorni)
 
