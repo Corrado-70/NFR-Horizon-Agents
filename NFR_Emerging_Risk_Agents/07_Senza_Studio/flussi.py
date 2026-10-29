@@ -30,6 +30,7 @@ import ingresso
 import stato
 
 QUI = Path(__file__).resolve().parent
+AMMINISTRAZIONE = QUI / "amministrazione.py"
 
 # Messaggi base degli agenti (guida, sezione 8).
 MESSAGGI = {"A1": "Esegui il ciclo", "A8": "Esegui il ciclo straordinario", "A3": "Esegui l'aggiornamento settimanale",
@@ -45,7 +46,7 @@ class Annullato(Exception):
 def configurazione():
     """Le chiavi del motore (esegui_ciclo_locale.configurazione) piu' quelle dell'app da configurazione.json:
     link_agenti (piatto o per versione degli agenti), validatore_predefinito, raccolta_su_questo_pc, agenti (Agent Builder
-    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti, chiedi_a5."""
+    o Copilot Studio: la versione in uso all'avvio), ascolta_appunti, chiedi_a5, ruolo (manutentore: Amministrazione)."""
     import esegui_ciclo_locale
     conf = esegui_ciclo_locale.configurazione(argparse.Namespace())
     grezza = {}
@@ -54,7 +55,8 @@ def configurazione():
     conf.update(link_agenti=grezza.get("link_agenti") or {}, validatore_predefinito=grezza.get("validatore_predefinito") or "",
                 raccolta_su_questo_pc=bool(grezza.get("raccolta_su_questo_pc", True)),
                 agenti=grezza.get("agenti") if grezza.get("agenti") in ingresso.ORIGINI else ingresso.ORIGINI[0],
-                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)), chiedi_a5=bool(grezza.get("chiedi_a5", True)))
+                ascolta_appunti=bool(grezza.get("ascolta_appunti", True)), chiedi_a5=bool(grezza.get("chiedi_a5", True)),
+                ruolo=str(grezza.get("ruolo") or ""))
     return conf
 
 
@@ -353,6 +355,51 @@ class Flussi:
 
     def diagnosi(self):
         return self.motore("diagnosi")
+
+    def amministrazione(self):
+        """Tappa M5 (solo il manutentore, D-85): pulizia, ritorno a un ciclo validato, annullamento, ripartenza da zero,
+        parcheggi, svuota. Niente si cancella subito (tranne svuota, dopo il tempo minimo): tutto va nel parcheggio
+        con l'atto. Le operazioni le fa amministrazione.py; qui le domande e le conferme."""
+        if self.conf.get("ruolo", "").strip().lower() != "manutentore":
+            self.amb.mostra("Le funzioni amministrative sono del manutentore (D-85): su questo PC configurazione.json non "
+                            "ha \"ruolo\": \"manutentore\".", "avviso")
+            return None
+        dati = self.amb.chiedi("Amministrazione (manutentore): niente si cancella, tutto va nel parcheggio con l'atto", [
+            ("operazione", "Operazione: pulizia, ritorno, annulla, ripartenza, parcheggi, svuota", "pulizia")])
+        if not dati:
+            return None
+        op = dati["operazione"].strip().lower()
+        m = lambda *a: self.motore(*a, script=AMMINISTRAZIONE)
+        decisore = self.conf.get("validatore_predefinito") or ""
+        if op == "parcheggi":
+            return m("parcheggi")
+        if op in ("pulizia", "svuota"):
+            es = m(op)
+            pronto = es["fascia"] == "OK" and f"{op} --esegui" in es["uscita"]
+            domanda = ("Spostare nel parcheggio gli elementi dell'anteprima (righe qui sopra)?" if op == "pulizia" else
+                       "Cancellare PER SEMPRE i parcheggi elencati qui sopra? L'elenco resta nella traccia.")
+            return m(op, "--esegui") if pronto and self.amb.conferma(domanda) else es
+        if op == "ritorno":
+            d = self.amb.chiedi("Ritorno a un ciclo validato (il registro torna quello validato di quel ciclo)", [
+                ("ciclo", "Ciclo validato a cui tornare (es. 2026Q3)", ""), ("motivo", "Perche' (almeno 20 caratteri)", ""),
+                ("decisore", "Chi ha deciso", decisore), ("conferma", "Riscrivi il ciclo per confermare", "")])
+            return m("ritorno", "--ciclo", d["ciclo"], "--motivo", d["motivo"], "--decisore", d["decisore"],
+                     "--conferma", d["conferma"]) if d else None
+        if op == "annulla":
+            m("parcheggi")
+            d = self.amb.chiedi("Annullare un'operazione (rimettere a posto un parcheggio)", [
+                ("parcheggio", "Nome del parcheggio (dall'elenco nell'uscita)", ""), ("motivo", "Perche' (almeno 10 caratteri)", "")])
+            return m("annulla", "--parcheggio", d["parcheggio"], "--motivo", d["motivo"]) if d else None
+        if op == "ripartenza":
+            nome = Path(self.conf["workbook"]).name
+            d = self.amb.chiedi("Ripartenza da zero: registro nuovo, il vecchio e l'archivio dei cicli nel parcheggio", [
+                ("motivo", "Perche' (almeno 20 caratteri)", ""), ("decisore", "Chi ha deciso", decisore),
+                ("ciclo_precedente", "Trimestre PRIMA del primo da valutare (es. 2026Q3)", ""),
+                ("conferma", f"Riscrivi il nome del registro ({nome}) per confermare", "")])
+            return m("ripartenza", "--motivo", d["motivo"], "--decisore", d["decisore"], "--ciclo-precedente",
+                     d["ciclo_precedente"], "--conferma", d["conferma"]) if d else None
+        self.amb.mostra(f"Operazione {op!r} sconosciuta: pulizia, ritorno, annulla, ripartenza, parcheggi o svuota.", "avviso")
+        return None
 
     def verifica_pc(self):
         """Verifica del PC (tappa M3): una riga per voce nell'uscita, il file nell'archivio (Verifiche_PC)."""

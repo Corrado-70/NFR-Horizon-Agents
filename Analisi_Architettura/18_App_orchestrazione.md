@@ -173,29 +173,26 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | `valida` pubblica PDF e HTML insieme; lo stato dell'app guarda anche l'HTML ("pronto, PDF e HTML" / "solo PDF") | `test_app.py`; catena (2b) |
 | [x] | Guida (sezioni 4, 5, 9, app), README, 00_LEGGIMI, PROMPT_MASTER (trappole 135-136), TODO, analisi 16; testi della presentazione nel generatore | `verifica_riferimenti.py`; la presentazione (.pptx) si rigenera sul PC con Excel |
 
-## 18.5 Tappa M5: funzioni amministrative (da fare; richiesta dell'utente del 23/10/2026)
+## 18.5 Tappa M5: funzioni amministrative (fatta il 29/10/2026; richiesta dell'utente del 23/10/2026)
 
-Pulizia dell'archivio e "ritorno indietro nel tempo" di N trimestri. Regola di fondo: **niente si cancella subito**.
-Tutto cio' che si toglie va in un **parcheggio** (`Archivio_Cicli/_Parcheggio/<data_ora>_<operazione>/`) con un atto
-che dice chi, quando, perche' e che cosa. Si svuota solo con un comando a parte e dopo un tempo minimo. Ogni operazione:
-- prende il lucchetto;
-- chiede conferma scrivendo il nome del ciclo;
-- lascia la traccia in `Archivio_Cicli/Amministrazione/`;
-- si annulla rimettendo a posto il parcheggio.
+Pulizia dell'archivio e "ritorno indietro nel tempo". Regola di fondo: **niente si cancella subito**. Tutto cio' che si
+toglie va in un **parcheggio** (`Archivio_Cicli/_Parcheggio/<data_ora>_<operazione>/`) con un atto che dice chi, quando,
+perche' e che cosa. Si svuota solo con un comando a parte e dopo un tempo minimo. Ogni operazione prende il lucchetto,
+chiede la conferma scritta (ritorno e ripartenza), lascia la traccia in `Archivio_Cicli/Amministrazione/` e si annulla
+rimettendo a posto il parcheggio. In `amministrazione.py` e nella voce Altro -> Amministrazione dell'app.
 
-In una voce "Amministrazione" dell'app, protetta da una conferma; anche da riga di comando.
-
-| Stato | Voce |
-|---|---|
-| [ ] | **Pulizia dell'archivio**: i tentativi fermati (`Cicli/<c>/tentativo_<ora>/`) dei cicli validati; i `Backup` oltre gli ultimi N (o piu' vecchi di N giorni); le versioni precedenti dei report; `In_arrivo` (Originali, Precedenti) dei periodi chiusi; i `Log` vecchi. Anteprima di cio' che si sposta e dello spazio liberato, poi tutto nel parcheggio |
-| [ ] | **Ritorno indietro di N trimestri** (al ciclo validato C): il registro torna quello di fine validazione di C (`Cicli/C/NFR_Registro_C_validato.xlsx`, che dopo una riapertura e' l'ultima validazione). Nel parcheggio vanno il registro attuale, le cartelle dei periodi dopo C (cicli, straordinari, settimane), `Baseline_corrente`, gli allegati e la knowledge di A7. Poi si rigenerano baseline, allegati, knowledge di A7 e griglia. Lo stato dell'app riparte da "Ciclo C: VALIDATO" |
-| [ ] | Controlli del ritorno: C deve avere l'Excel validato nell'archivio e la stessa versione del template (altrimenti prima `aggiorna-registro` sulla copia); motivo (almeno 20 caratteri) e decisore obbligatori; avviso sulle settimane dopo C, le cui notizie escono dal registro ma restano nel parcheggio |
-| [ ] | **Annulla il ritorno**: rimette il registro e le cartelle dal parcheggio, se nel frattempo non si e' scritto niente (impronta del registro uguale a quella del ritorno) |
-| [ ] | **Ripartenza da zero** (per esempio dopo i cicli di prova): registro nuovo con `inizializza`; il vecchio registro e tutto l'archivio dei cicli vanno nel parcheggio |
-| [ ] | **Svuota il parcheggio**: solo i parcheggi piu' vecchi di N giorni (in configurazione), con conferma; l'elenco di cio' che si cancella resta nella traccia |
-| [ ] | Settimane dopo C dal parcheggio: proposta di riscriverle con `settimanale` dai loro `A3_<lunedi'>.json` parcheggiati (le notizie tornano nel registro) |
-| [ ] | Chi puo' farlo: decisione della funzione di rischio (DECISIONI), per esempio solo il manutentore o con un `ruolo` in `configurazione.json`; governance (controlli_e_model_risk: rischio "storia riscritta" e presidio) |
-| [ ] | Collaudo (catena: ritorno di un trimestre e annullamento, pulizia con anteprima, parcheggio intatto; senza Excel: selezione di cio' che si sposta); guida, PROMPT_MASTER, HANDOFF, presentazione |
+| Stato | Voce | Dove si verifica |
+|---|---|---|
+| [x] | **Pulizia dell'archivio** con anteprima e spazio: tentativi dei cicli validati, backup oltre gli ultimi N, versioni precedenti dei report, In_arrivo (Originali, Precedenti) dei periodi chiusi, log e verifiche vecchi; tutto nel parcheggio | `test_amministrazione.py`; catena (9) |
+| [x] | **Ritorno al ciclo validato C**: registro dall'Excel validato di C; nel parcheggio registro attuale, cicli e straordinari dopo C, settimane scritte o validate dopo, baseline, allegati, knowledge di A7, risposte di quei periodi; poi `baseline`; lo stato riparte da "Ciclo C: VALIDATO" | `test_amministrazione.py` (senza Excel); catena (9, baseline vera) |
+| [x] | Controlli del ritorno: C validato con il suo Excel validato, prima del corrente, stessa versione del template; motivo (almeno 20 caratteri) e decisore; conferma scritta | `test_amministrazione.py` |
+| [x] | **Annulla**: rimette il parcheggio, se nel frattempo non si e' scritto nel registro (impronta); cio' che occupa i posti in un parcheggio "annullamento"; un parcheggio annullato non si annulla due volte | `test_amministrazione.py`; catena (9) |
+| [x] | **Ripartenza da zero**: registro nuovo con `inizializza` e baseline; il vecchio registro e l'archivio dei cicli nel parcheggio; restano log, verifiche, parcheggi e traccia | `test_amministrazione.py` (senza Excel) |
+| [~] | Ripartenza con Excel vero | sul registro di prova in Banca |
+| [x] | **Svuota il parcheggio**: solo i parcheggi piu' vecchi di `giorni_parcheggio`, anteprima e poi `--esegui`; l'elenco nella traccia | `test_amministrazione.py` |
+| [x] | Settimane dopo C: elencate dopo il ritorno con il comando `settimanale --payload` dal loro `A3_<lunedi'>.json` parcheggiato | `test_amministrazione.py` |
+| [~] | Chi puo' farlo: `"ruolo": "manutentore"` (proposta D-85; decisione aperta A-18 in DECISIONI); governance: "Storia riscritta" in `controlli_e_model_risk.md` | da decidere (A-18) |
+| [x] | Guida 3-quater, 0.3 (ruolo e tempi), Altro, 5, 7; README, 00_LEGGIMI, PROMPT_MASTER (trappole 137-138), TODO, HANDOFF; `AGGIORNAMENTO_IN_BANCA.md` del 29/10 | `verifica_riferimenti.py` |
 
 ## 18.6 Verifiche in Banca (TODO B5-bis)
 
@@ -208,3 +205,8 @@ In una voce "Amministrazione" dell'app, protetta da una conferma; anche da riga 
 | [ ] | V-F: `AutoSaveOn` e `FullName` del registro aperto via COM |
 | [ ] | Lucchetto fra due PC con OneDrive: il collega vede "Il registro e' in uso" |
 | [ ] | Un trimestre di prova dall'app sul registro di prova: giro di correzione, validazione, report |
+| [ ] | App piu' esplicita (29/10): fascia e passo in corso, domande in primo piano, "Ho chiuso Excel: controlla ora", domanda su A5 dopo il precontrollo |
+| [ ] | M3: `installa.cmd` fino in fondo (pip o cartella `pacchetti`), finestra della configurazione, collegamenti e Invia a, attivita' della raccolta (V-E), Verifica del PC con Excel (V-F) |
+| [ ] | M4: `Report_comitato_<ciclo>.html` dopo `valida` sul registro di prova, schede collegate, "Cancello: N numeri uguali" |
+| [ ] | M5 sul registro di prova: pulizia e annullamento, ritorno e annullamento; ripartenza da zero |
+| [ ] | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa) e presentazione rigenerata |

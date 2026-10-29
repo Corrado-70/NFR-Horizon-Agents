@@ -274,6 +274,10 @@ possono essere in Agent Builder o in Copilot Studio (casella "Agenti": stessi no
 comandi scritti a mano restano validi: l'app lancia gli stessi. Passo per passo: guida, sezione "L'app NFR: uso passo
 per passo"; configurazione: guida, sezioni 0.2 (punto 3-bis), 0.2-bis e 0.3.
 
+## Amministrazione (tappa M5, solo il manutentore)
+
+`python amministrazione.py parcheggi | pulizia [--esegui] | ritorno --ciclo C ... | annulla --parcheggio N ... | ripartenza ... | svuota [--esegui]`, anche da Altro nell'app con `"ruolo": "manutentore"` in `configurazione.json`. Niente si cancella subito: cio' che si toglie va in `Archivio_Cicli/_Parcheggio/` con l'atto e la traccia in `Archivio_Cicli/Amministrazione/`, e si annulla. Guida, sezione 3-quater.
+
 ## Piu' analisti sullo stesso registro (D-83)
 
 Ogni comando che scrive prende il lucchetto `Archivio_Cicli/_Lucchetto/registro.json`

@@ -155,6 +155,14 @@ class Banco:
                                 "NFR_CARTELLA_LAVORO": chiavi.get("cartella_lavoro", "")})
         return r.returncode, r.stdout + r.stderr
 
+    def esegui_amm(self, *argomenti):
+        """amministrazione.py (tappa M5) sullo stesso banco, come manutentore (NFR_RUOLO, solo collaudo)."""
+        cmd = [sys.executable, str(CAMPO / "amministrazione.py"), "--workbook", str(self.wb), "--kernel", str(KERNEL),
+               "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0", "NFR_RUOLO": "manutentore"})
+        return r.returncode, r.stdout + r.stderr
+
     def scrivi_json(self, nome, dati):
         p = self.cartella / nome
         p.write_text(json.dumps(dati, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -2087,6 +2095,44 @@ def catena(e):
         e.verifica(codice == 0 and s["settimana"] == "2026-11-09" and str(s["badge"]["NFR-01"]).startswith("●"),
                    "7. la finestra scorre: i segnali di ottobre escono, badge NFR-01 torna stabile", out + str(s["badge"]))
         straordinario(e, b)
+        amministrazione_catena(e, b)
+
+
+def amministrazione_catena(e, b):
+    """9. Tappa M5 con Excel, in fondo alla catena: pulizia con anteprima e annullamento; ritorno al ciclo validato prima
+    del corrente (baseline vera rigenerata dal registro tornato) e annullamento (tutto come prima)."""
+    corrente = carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"]
+    validati = sorted(c.name for c in (b.uscita / "Cicli").iterdir() if (c / f"Validazione_{c.name}.json").exists())
+    meta = [c for c in validati if c < corrente]
+    codice, out = b.esegui_amm("pulizia")
+    e.verifica(codice == 0 and "anteprima" in out, "9. amministrazione: anteprima della pulizia, niente spostato", out[-500:])
+    prima = {f.relative_to(b.uscita).as_posix() for f in b.uscita.rglob("*") if f.is_file()}
+    codice, out = b.esegui_amm("pulizia", "--esegui")
+    codice2, out2 = b.esegui_amm("parcheggi")
+    nome = next((r.split(":")[0] for r in out2.splitlines() if "_pulizia" in r), None)
+    if nome:
+        codice3, out3 = b.esegui_amm("annulla", "--parcheggio", nome, "--motivo", "prova della catena")
+    dopo = {f.relative_to(b.uscita).as_posix() for f in b.uscita.rglob("*") if f.is_file()
+            if not f.relative_to(b.uscita).as_posix().startswith(("_Parcheggio", "Amministrazione", "Log"))}
+    e.verifica(codice == 0 and (nome is None or codice3 == 0) and {x for x in prima if not x.startswith(("Log", "Amministrazione"))} <= dopo,
+               "9. pulizia nel parcheggio e annullata: ogni file dell'archivio di nuovo al suo posto", f"{out[-400:]}\n{out2[-300:]}")
+    if not meta:
+        e.verifica(False, f"9. un ciclo validato prima del corrente {corrente} per il ritorno", str(validati))
+        return
+    obiettivo, firma = meta[-1], sha(b.wb)
+    codice, out = b.esegui_amm("ritorno", "--ciclo", obiettivo, "--motivo", "ritorno di prova della catena di collaudo",
+                               "--decisore", "Collaudo", "--conferma", obiettivo)
+    validato = b.uscita / "Cicli" / obiettivo / f"{b.wb.stem}_{obiettivo}_validato{b.wb.suffix}"
+    e.verifica(codice == 0 and sha(b.wb) == sha(validato)
+               and carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"] == obiettivo
+               and not (b.uscita / "Cicli" / corrente).exists(),
+               f"9. ritorno al {obiettivo}: registro = Excel validato del {obiettivo}, baseline rigenerata da Excel, il "
+               f"{corrente} nel parcheggio", out[-800:])
+    nome = next((r.split(":")[0] for r in b.esegui_amm("parcheggi")[1].splitlines() if "_ritorno" in r), None)
+    codice, out = b.esegui_amm("annulla", "--parcheggio", nome or "?", "--motivo", "fine della prova della catena")
+    e.verifica(codice == 0 and sha(b.wb) == firma and (b.uscita / "Cicli" / corrente).exists()
+               and carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"] == corrente,
+               f"9. annullamento del ritorno: registro, {corrente} e baseline come prima", out[-600:])
 
 
 def gate_copertura(e):

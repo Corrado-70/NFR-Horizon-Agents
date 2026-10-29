@@ -1378,6 +1378,21 @@ da Windows), riferimenti 31/31; catena con due verifiche nuove (2b: HTML da `val
 `verifica_html_excel`: HTML via COM = dal file, cancello con un dato alterato) da lanciare sul PC. Trappole 135-136. La
 presentazione ha i testi nuovi nel generatore: rigenerarla sul PC.
 
+**Tappa M5** (amministrazione, 29/10): `amministrazione.py` (parcheggi, pulizia con anteprima, ritorno a un ciclo
+validato, annulla, ripartenza da zero, svuota), voce Altro -> Amministrazione nell'app, solo con `"ruolo":
+"manutentore"`. Niente si cancella subito: parcheggio con l'atto e la traccia; il ritorno si annulla solo se nessuno ha
+scritto nel registro. Collaudo: `test_amministrazione.py` 19/19, `test_app.py` 55/55 (fuori da Windows); catena,
+gruppo 9 in fondo alla catena principale (pulizia, ritorno e annullamento con Excel), da lanciare sul PC. Trappole
+137-138. **Proposte in attesa di decisione dell'utente**: chi puo' usare l'amministrazione e i tempi (A-18, proposta
+D-85: solo il manutentore; 10 backup, 90 giorni di log, 30 di parcheggio).
+
+**Pacchetto per la Banca (29/10)**: `AGGIORNAMENTO_IN_BANCA.md` riscritto per il pacchetto del 29/10 (sopra quello del
+23/10, che resta in appendice): estrarre, rinominare i tre `.cmd` se lo zip arriva per posta, `installa.cmd`,
+`ruolo` sul PC del manutentore; le verifiche da fare in Banca, tutte alla fine (scelta dell'utente), sono nello stesso
+file e in 18.6.
+
+**Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC; la decisione A-18.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente

@@ -1639,6 +1639,23 @@ openpyxl (solo per il file delle schede). Moduli:
   chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
   `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
   dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
+- **Amministrazione** (D-83, tappa M5; chi: A-18, proposta D-85): `amministrazione.py`, solo con `"ruolo":
+  "manutentore"` (NFR_RUOLO solo nel collaudo), opzioni comuni del motore, lucchetto per ogni operazione che
+  scrive. **Niente si cancella subito**: `parcheggia` sposta in `Archivio_Cicli/_Parcheggio/<data_ora>_<op>/`
+  ogni elemento come (radice: archivio, registro o spiegazioni; percorso relativo), dopo aver scritto `atto.json`
+  (chi, quando, motivo, decisore, impronte) e una traccia in `Amministrazione/`; doppioni e file dentro cartelle
+  dell'elenco tolti prima. `pulizia` (anteprima, `--esegui`): tentativi e report precedenti dei cicli validati,
+  backup oltre `backup_da_tenere`, `In_arrivo/Originali|Precedenti` di periodi chiusi (ciclo validato o
+  settimana passata e scritta; senza periodo nel nome: per eta'), log e verifiche oltre `giorni_log`. `ritorno`
+  al ciclo C: validato, con `<registro>_C_validato.xlsx`, prima del corrente, stessa versione del template;
+  parcheggia registro, cicli dopo C, settimane con un file piu' recente di `Validazione_C.json`, baseline,
+  `Input_A*`, knowledge di A7, risposte in In_arrivo di quei periodi; copia l'Excel validato sul registro,
+  annota `impronta_registro_dopo`, rigenera con `comando_baseline`; elenca le settimane da riscrivere. `annulla`:
+  rifiuta se l'impronta del registro e' cambiata; cio' che occupa i posti va in un parcheggio "annullamento".
+  `ripartenza`: tutto l'archivio tranne parcheggi, traccia, lucchetto, Log e Verifiche_PC, piu' registro e
+  knowledge; poi `comando_inizializza` e `comando_baseline`. `svuota`: solo parcheggi piu' vecchi di
+  `giorni_parcheggio`, traccia prima della cancellazione. Conferma scritta: ciclo (ritorno) o nome del registro
+  (ripartenza). Nell'app: Altro -> Amministrazione (flussi.amministrazione: modulo, anteprima, conferma).
 - **Report al comitato in HTML** (D-83, tappa M4): `report_html.py`, dal prototipo dell'analisi 16 (che ne e' ora un
   involucro: un solo codice). La `Vista` ricalcola in Python le viste del registro dalle tabelle dati, dai nomi
   definiti e dall'anagrafica (regole delle formule di `genera_dashboard.py`; lo score composito e' quello scritto
@@ -3050,6 +3067,12 @@ l'ultimo usato in tutti e due i rami.)
     appena si correggeva l'uno e non l'altro: il prototipo e' diventato un involucro di `report_html.py` con
     `anteprima=True` (tutte le pagine e le tabelle dati); le sole differenze dell'anteprima rigenerata sono i testi
     che parlavano dello "scenario".
+137. **Prima l'atto, poi lo spostamento** (29/10). Se un'operazione dell'amministrazione si interrompe a meta' (OneDrive,
+    un file aperto), l'atto gia' scritto dice che cosa doveva andare nel parcheggio e da dove: l'annullamento rimette
+    a posto cio' che c'e'. Lo stesso per `svuota`: la traccia con l'elenco si scrive prima di cancellare.
+138. **Un ritorno si annulla solo se nessuno ha scritto dopo** (29/10). Rimettere il registro di prima sopra un registro
+    in cui un collega ha gia' scritto un ciclo perderebbe quel lavoro senza avviso: l'atto conserva l'impronta del
+    registro lasciato dal ritorno e `annulla` la confronta.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3073,6 +3096,7 @@ l'ultimo usato in tutti e due i rami.)
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
                   installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py  report_html.py
+                  amministrazione.py
                   NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)

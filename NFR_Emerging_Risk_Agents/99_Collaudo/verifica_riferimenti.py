@@ -158,6 +158,7 @@ def verifica_guida(e):
     import installa
     import notizie_manuali
     import verifica_pc
+    import amministrazione
     comandi, opzioni = set(), set()
     parser_ciclo = None
     orig = argparse.ArgumentParser.parse_args
@@ -168,7 +169,7 @@ def verifica_guida(e):
         raise SystemExit(0)
     argparse.ArgumentParser.parse_args = cattura
     try:
-        for modulo in (campo, raccogli_notizie, confronta, installa, verifica_pc, notizie_manuali):
+        for modulo in (campo, raccogli_notizie, confronta, installa, verifica_pc, notizie_manuali, amministrazione):
             try:
                 modulo.main(["confronta.py"] if modulo is confronta else [])
             except SystemExit:

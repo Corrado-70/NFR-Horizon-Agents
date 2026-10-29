@@ -1,10 +1,99 @@
-# Aggiornamento sul PC della Banca — pacchetto del 23/10/2026
+# Aggiornamento sul PC della Banca — pacchetto del 29/10/2026
+
+Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
+(`NFR-Horizon-Agents_2026-10-29_<commit>.zip`). I riferimenti fra parentesi sono le sezioni di
+`NFR_Emerging_Risk_Agents/00_GUIDA_PASSO_PASSO.md`. Questo pacchetto si mette **sopra quello del 23/10** gia'
+installato; se il PC non ha ancora il pacchetto del 23/10, prima i passi dell'appendice in fondo.
+
+## Che cosa porta questo pacchetto
+
+- **App piu' esplicita**: la fascia blu dice processo e fase, il passo in corso il comando in esecuzione con il tempo
+  trascorso; domande e moduli vengono in primo piano con un suono; "Ho chiuso Excel: controlla ora". Dopo il
+  precontrollo superato l'app chiede se passare anche da **A5** (`chiedi_a5`).
+- **Installazione con un doppio clic** (tappa M3): `07_Senza_Studio\installa.cmd` controlla Python e i moduli
+  (installa con pip quelli che mancano), apre la **finestra della configurazione**, crea i collegamenti (**NFR Horizon
+  Scan** sul Desktop, **Invia a -> NFR notizie manuali**), sul PC della raccolta pianifica la **raccolta del lunedi'**
+  e alla fine fa la **Verifica del PC** (anche dall'app: Altro -> Verifica del PC) (0.3).
+- **Report al comitato anche in HTML** (tappa M4): `valida` e `report` scrivono accanto al PDF
+  `Report_comitato_<ciclo>.html`, da aprire nel browser, con le schede di tutti i rischi; esce solo se i suoi numeri
+  tornano con quelli di Excel; l'elenco di tutti i report e' `Cicli\Indice_report.html` (4).
+- **Amministrazione** (tappa M5, solo il manutentore): pulizia dell'archivio, ritorno a un ciclo validato, ripartenza
+  da zero, annullamento; niente si cancella subito, tutto va nel parcheggio con l'atto (3-quater). Decisione aperta
+  A-18 (chi puo' usarla e i tempi), con la proposta gia' nel pacchetto.
+- **Niente da reincollare negli agenti, kernel e struttura del registro invariati** (versione `2026-10-09`): nessun
+  `aggiorna-registro`, nessuna copia nella library Kernel.
+
+## Passi
+
+**0. Prima di estrarre**: chiudere l'app, Excel e il registro. Copiare per sicurezza la cartella del pacchetto
+com'e' adesso (per tornare indietro).
+
+**1. Estrarre lo zip nella cartella del pacchetto**, sostituendo i file. Lo zip non contiene `configurazione.json`,
+che resta com'e'.
+
+**Zip arrivato per posta** (nome che finisce con `_posta.zip`): la posta blocca i file `.cmd`, quindi nello zip i
+tre lanciatori finiscono con `.txt`: `07_Senza_Studio\NFR.cmd.txt`, `07_Senza_Studio\installa.cmd.txt`,
+`07_Senza_Studio\NFR_notizie_manuali.cmd.txt`. Dopo l'estrazione **rinominarli togliendo `.txt`** (Esplora file:
+Visualizza -> Mostra -> Estensioni nomi file, poi tasto destro -> Rinomina); se c'e' gia' un `NFR.cmd`, sostituirlo.
+
+**2. Doppio clic su `07_Senza_Studio\installa.cmd`** (0.3, punto 3). Si apre la finestra della configurazione con i
+valori di adesso: controllare le cartelle e i link degli agenti e premere **Salva** (la configurazione di prima resta
+accanto, `configurazione_<data>.json.precedente`). Alla fine la Verifica del PC: le righe NO vanno sistemate (il
+rimedio e' scritto sotto); il file e' in `Archivio_Cicli\Verifiche_PC\`.
+- Se pip non riesce (proxy): il messaggio dice la strada (cartella `pacchetti` o l'IT); i moduli che servono ci sono
+  gia', dal pacchetto del 23/10, quindi si puo' proseguire.
+- Se l'attivita' pianificata o i collegamenti non si possono creare: a mano (sezione 1, "Raccolta notizie
+  automatica"; tasto destro su `NFR.cmd` -> Invia a -> Desktop).
+
+**3. Solo sul PC del manutentore**: in `configurazione.json` (Blocco note) aggiungere `"ruolo": "manutentore",` per
+avere Altro -> Amministrazione (3-quater). Sugli altri PC non si scrive.
+
+**4. L'app.** Doppio clic sul collegamento **NFR Horizon Scan** del Desktop (o su `NFR.cmd`).
+
+## Verifiche da fare (TODO B5-bis; esiti da annotare in `Analisi_Architettura/18_App_orchestrazione.md`, 18.6)
+
+Del pacchetto del 23/10 (se non ancora fatte):
+- un trimestre di prova dall'app sul **registro di prova** (`04_Riferimenti\Prove\Prova_senza_Copilot_Studio.md`):
+  A1 con la risposta incollata nella finestra, il giro di correzione, la validazione, il report;
+- il pulsante Copia di Agent Builder porta negli appunti una risposta lunga di A1 intera (V-B, V-C);
+- il link "Copia collegamento" apre la chat dell'agente (V-A);
+- con un collega: lanciando un comando mentre l'altro scrive, compare "Il registro e' in uso".
+
+Nuove:
+- **app**: durante il trimestre la fascia e il passo in corso dicono sempre che cosa succede; la domanda "Passare alla
+  validazione adesso?" viene in primo piano; "Ho chiuso Excel: controlla ora" prosegue dopo aver chiuso Excel; dopo il
+  precontrollo superato compare la domanda su A5;
+- **installazione (M3)**: `installa.cmd` arriva in fondo; la Verifica del PC ha `Excel via COM` OK e le righe
+  `FullName` e `AutoSaveOn` (V-F: annotare cosa dicono); sul Desktop c'e' il collegamento, in Invia a la voce "NFR
+  notizie manuali" (provarla su un file: finisce in `News_Inbox\<lunedi'>\Manuali`); sul PC della raccolta, in
+  Utilita' di pianificazione, l'attivita' "NFR raccolta notizie" (V-E);
+- **report HTML (M4)**: dopo la validazione del ciclo di prova c'e' `Report_comitato_<ciclo>.html` accanto al PDF; si
+  apre con un doppio clic, il clic su un ID apre la scheda del rischio, i numeri sono quelli del PDF; l'uscita di
+  `valida` dice "Cancello: N numeri uguali";
+- **amministrazione (M5), sul registro di prova** (PC del manutentore, configurazione della prova): Amministrazione ->
+  pulizia (anteprima e poi spostamento), parcheggi, annulla della pulizia; poi un ritorno al ciclo validato prima
+  di quello corrente e il suo annullamento (lo stato dell'app torna com'era).
+- **collaudo completo sul PC** (chi mantiene il pacchetto): `python NFR_Emerging_Risk_Agents\99_Collaudo\esegui_collaudo.py`
+  (catena con Excel compresa: report HTML via COM, cancello, ritorno e annullamento); poi la presentazione con
+  `python Presentazione\genera_presentazione.py`.
+
+## Se qualcosa non va
+
+- I messaggi e i rimedi sono nella sezione 7 della guida; ogni comando lanciato dall'app lascia un log in
+  `Archivio_Cicli\Log\`.
+- Per tornare indietro: rimettere la copia della cartella del pacchetto fatta al passo 0 e la configurazione
+  precedente (`configurazione_<data>.json.precedente` rinominato `configurazione.json`). Il registro non cambia
+  struttura con questo pacchetto.
+
+---
+
+## Appendice — pacchetto del 23/10/2026 (solo se il PC non lo ha ancora)
 
 Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 (`NFR-Horizon-Agents_2026-10-23_<commit>.zip`). I riferimenti fra parentesi sono le sezioni di
 `NFR_Emerging_Risk_Agents/00_GUIDA_PASSO_PASSO.md`, che ha il dettaglio di ogni passo.
 
-## Che cosa porta questo pacchetto
+### Che cosa porta questo pacchetto
 
 - **App NFR** (D-83): un doppio clic su `07_Senza_Studio\NFR.cmd` apre una finestra che dice a che punto e' il lavoro,
   propone il prossimo passo e guida ogni processo. Le risposte degli agenti si incollano nella finestra (sezione
@@ -18,7 +107,7 @@ Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 - **Struttura del registro invariata** (versione `2026-10-09`): nessun `aggiorna-registro`, se il registro e' gia'
   su questa versione.
 
-## Passi
+### Passi
 
 **0. Prima di estrarre** (0-bis, punto 0)
 - Se in Banca sono stati modificati `01_Kernel\tassonomia_nfr.md`, `rubrica_scoring.md`, `fonti.md` o
@@ -82,7 +171,7 @@ non si apre, `python app_nfr.py` dalla cartella degli script mostra l'errore.
 - il link "Copia collegamento" apre la chat dell'agente;
 - con un collega: lanciando un comando mentre l'altro scrive, compare "Il registro e' in uso".
 
-## Se qualcosa non va
+### Se qualcosa non va
 
 - I messaggi e i rimedi sono nella sezione 7 della guida; ogni comando lanciato dall'app lascia un log in
   `Archivio_Cicli\Log\`.

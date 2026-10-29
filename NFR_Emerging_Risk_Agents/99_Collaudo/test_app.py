@@ -401,6 +401,29 @@ def test_flussi(e):
                    "flusso settimanale: raccolta, A3 con l'allegato, fermo con la correzione per A3, poi scritta",
                    f"{amb.comandi}\n{amb.appunti}")
 
+        # amministrazione (tappa M5): solo il manutentore; pulizia con anteprima e conferma; ritorno con il modulo
+        amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}])
+        flussi.Flussi(amb, conf).amministrazione()
+        e.verifica(not amb.comandi and any("manutentore" in m for _, m in amb.messaggi),
+                   "amministrazione: senza ruolo manutentore nessun comando, e il perche'", amb.messaggi)
+        cm = dict(conf, ruolo="manutentore")
+        amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}], conferme=[True],
+                            esiti={"amministrazione": [(0, "Pulizia (anteprima): 3 elementi\nPer spostarli nel parcheggio: "
+                                                           "python amministrazione.py pulizia --esegui"), (0, "Spostato")]})
+        flussi.Flussi(amb, cm).amministrazione()
+        e.verifica(amb.comandi == [["amministrazione", "pulizia"], ["amministrazione", "pulizia", "--esegui"]],
+                   "amministrazione: pulizia, prima l'anteprima e poi, confermata, lo spostamento nel parcheggio", amb.comandi)
+        amb = AmbienteFinto(u, moduli=[{"operazione": "pulizia"}], conferme=[False],
+                            esiti={"amministrazione": [(0, "Pulizia (anteprima): niente da spostare.")]})
+        flussi.Flussi(amb, cm).amministrazione()
+        e.verifica(amb.comandi == [["amministrazione", "pulizia"]], "amministrazione: niente da spostare, nessuna domanda")
+        amb = AmbienteFinto(u, moduli=[{"operazione": "Ritorno"}, {"ciclo": "2026Q3", "motivo": "m" * 25, "decisore": "Comitato",
+                                                                    "conferma": "2026Q3"}])
+        flussi.Flussi(amb, cm).amministrazione()
+        e.verifica(amb.comandi == [["amministrazione", "ritorno", "--ciclo", "2026Q3", "--motivo", "m" * 25, "--decisore",
+                                    "Comitato", "--conferma", "2026Q3"]],
+                   "amministrazione: ritorno con ciclo, motivo, decisore e la conferma scritta", amb.comandi)
+
         # annullato: nessuna risposta
         amb = AmbienteFinto(u)
         try:

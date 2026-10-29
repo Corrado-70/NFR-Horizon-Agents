@@ -179,7 +179,7 @@ compilato (sezione 0.3) e i link degli agenti (sezione 0.2, punto 3-bis). Se la 
 | **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Testi a mano, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti |
 | **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71). Se non e' spuntata, l'app lo chiede comunque a precontrollo superato, prima di scrivere il ciclo (`chiedi_a5`, sezione 0.3) |
 | **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
-| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC** (le righe nell'uscita, il file in `Archivio_Cicli\Verifiche_PC`; sezione 0.3), togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
+| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC** (le righe nell'uscita, il file in `Archivio_Cicli\Verifiche_PC`; sezione 0.3), **Amministrazione (manutentore)** (sezione 3-quater), togli il lucchetto rimasto (`sblocca`), ricostruisci la griglia di validazione (`griglia`) |
 | **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V; il testo resta visibile e un nuovo Ctrl+V lo sostituisce), sotto la **riga dell'esito** (in verde "Ricevuto: A1, … caratteri, salvato in In_arrivo\\A1_<ciclo>.json", in arancio una risposta tagliata, di un altro agente o fuori formato), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso Excel: controlla ora, Annulla il passo. Il passo in corso dice sempre che cosa sta facendo l'app: "Esecuzione del comando trimestrale in corso da 1:25 (Excel in background, di solito qualche minuto)", "In attesa della risposta di A1", "In attesa che tu chiuda il registro in Excel", "In attesa della tua risposta alla domanda: ..." |
 | **Divisore** | fra il passo in corso e l'uscita dei comandi: si trascina per dare piu' spazio all'una o all'altra |
 | **Fascia dell'esito e uscita** | mentre un processo lavora, in blu il processo e la fase ("In corso: Trimestre - comando precontrollo in esecuzione"); poi l'esito dell'ultimo comando (verde OK, arancio FERMATO, rosso ERRORE TECNICO) e l'uscita dei comandi riga per riga. Ogni comando lascia un log in `Archivio_Cicli\Log\` |
@@ -616,6 +616,8 @@ link alle fonti: l'app li ignora.
    | `raccolta_su_questo_pc` | `true` solo sul PC che raccoglie le notizie il lunedi'; sugli altri `false` | app |
    | `agenti` | `Agent Builder` o `Copilot Studio`: la versione degli agenti proposta all'avvio (si cambia nella finestra) | app |
    | `ascolta_appunti` | `true`: basta premere Copia sotto la risposta; `false`: si incolla sempre nel riquadro | app |
+   | `ruolo` | `manutentore` solo sul PC di chi mantiene il pacchetto: abilita l'Amministrazione (sezione 3-quater); altrimenti non si scrive | app, amministrazione |
+   | `backup_da_tenere`, `giorni_log`, `giorni_parcheggio` | facoltative, per la pulizia e lo svuotamento (predefiniti 10, 90, 30; sezione 3-quater) | amministrazione |
    | `chiedi_a5` | `true` (predefinito): a precontrollo superato, se la casella A5 non e' spuntata, l'app chiede se passare anche da A5; `false`: nessuna domanda, A5 solo con la casella | app |
    | `link_agenti` | i link degli agenti (sezione 0.2, punto 3-bis): `{"A1": "https://...", "A3": "...", ...}`; con le due versioni, `{"Agent Builder": {"A1": ...}, "Copilot Studio": {"A1": ...}}`. Un link vuoto: l'agente si apre a mano | app |
    | `cartella_lavoro` | facoltativa: dove lo script tiene la copia di lavoro del registro (di solito non serve) | script |
@@ -1128,6 +1130,29 @@ agli atti, annotarle nelle Note dell'analista. Poi salvare, chiudere e lanciare
 `python esegui_ciclo_locale.py baseline`: riscrive baseline, allegato di A1 e
 knowledge di A7 con i testi nuovi.
 
+## 3-quater. Amministrazione dell'archivio e del registro (solo il manutentore, tappa M5)
+
+Per ripulire l'archivio, tornare a un ciclo validato o ricominciare da zero dopo i cicli di prova. **Niente si
+cancella subito**: cio' che un'operazione toglie va in un **parcheggio**, `Archivio_Cicli\_Parcheggio\<data_ora>_<operazione>\`,
+con un atto (`atto.json`: chi, quando, perche', chi ha deciso, ogni file) e una traccia in `Archivio_Cicli\Amministrazione\`.
+Ogni operazione **si annulla** rimettendo a posto il suo parcheggio. Solo su un PC con `"ruolo": "manutentore"` in
+`configurazione.json` (sezione 0.3; D-85, proposta: decisione aperta A-18). Dall'app: **Altro -> Amministrazione
+(manutentore)...**, che chiede l'operazione e poi i dati; oppure dal Prompt dei comandi, nella cartella degli script:
+
+| Operazione | Comando | Che cosa fa |
+|---|---|---|
+| Parcheggi | `python amministrazione.py parcheggi` | elenca i parcheggi: operazione, quando, chi, quanto spazio, stato (attivo, annullato) |
+| Pulizia | `python amministrazione.py pulizia` (anteprima), poi `python amministrazione.py pulizia --esegui` | sposta nel parcheggio i tentativi dei cicli validati, i backup oltre gli ultimi `backup_da_tenere` (10), le versioni precedenti dei report, `In_arrivo\Originali` e `Precedenti` dei periodi chiusi, i log e le verifiche del PC piu' vecchi di `giorni_log` (90). L'anteprima dice cosa, perche' e quanto spazio |
+| Ritorno a un ciclo validato | `python amministrazione.py ritorno --ciclo 2026Q3 --motivo "..." --decisore "..." --conferma 2026Q3` | il registro torna quello di fine validazione del ciclo (`Cicli\2026Q3\<registro>_2026Q3_validato.xlsx`, l'ultima validazione anche dopo una riapertura). Nel parcheggio: il registro di adesso, le cartelle dei cicli e straordinari dopo, le settimane scritte o validate dopo la validazione del ciclo, la baseline, gli allegati, la knowledge di A7 e le risposte degli agenti di quei periodi; poi `baseline` li rigenera. Lo stato dell'app riparte da "Ciclo 2026Q3: VALIDATO". Le settimane uscite dal registro sono elencate con il comando per riscriverle (`settimanale --payload` dal loro `A3_<lunedi'>.json` nel parcheggio). Il ciclo deve essere validato, con il suo Excel validato e della stessa versione del template; motivo di almeno 20 caratteri e decisore obbligatori |
+| Annulla | `python amministrazione.py annulla --parcheggio <nome> --motivo "..."` | rimette a posto un parcheggio. Per un ritorno o una ripartenza **solo se nel frattempo nessuno ha scritto nel registro** (impronta uguale a quella lasciata dall'operazione): altrimenti si ferma senza toccare niente. Cio' che occupa i posti (il registro tornato, la baseline rigenerata) va in un parcheggio nuovo, "annullamento" |
+| Ripartenza da zero | `python amministrazione.py ripartenza --motivo "..." --decisore "..." --ciclo-precedente 2026Q3 --conferma NFR_Registro.xlsx` | il vecchio registro e l'archivio dei cicli (cicli, settimane, backup, In_arrivo, baseline, allegati, knowledge di A7) nel parcheggio; poi un registro nuovo vuoto (`inizializza`, con la settimana di oggi o `--settimana`) e la baseline. Restano i log, le verifiche del PC, i parcheggi e la traccia. Le notizie di `News_Inbox` non si toccano |
+| Svuota | `python amministrazione.py svuota` (anteprima), poi `python amministrazione.py svuota --esegui` | cancella **per sempre** i parcheggi piu' vecchi di `giorni_parcheggio` (30); l'elenco di cio' che si cancella resta nella traccia |
+
+Ogni operazione che scrive prende il lucchetto del registro (sezione 0.3, "Piu' analisti"); il registro deve essere
+chiuso. La `--conferma` va scritta uguale al ciclo (ritorno) o al nome del file del registro (ripartenza): un nome
+diverso ferma prima di toccare qualcosa. Un ritorno cambia la storia del registro: va deciso dalla funzione di rischio
+e motivato (governance: `04_Riferimenti/controlli_e_model_risk.md`, "Storia riscritta").
+
 ## 4. Leggere i risultati
 
 **Il report al comitato** esce in due forme, dallo stesso registro validato (D-83, tappa M4), nella cartella del ciclo
@@ -1224,6 +1249,7 @@ A7 che legge i file di testo e una copia di prova che legge solo il registro Exc
 | Notizie raccolte | `News_Inbox\<lunedi'>\` |
 | Report al comitato | `Archivio_Cicli\Cicli\<ciclo>\Report_comitato_<ciclo>.pdf` e `.html` (le versioni precedenti con data e ora nel nome); l'elenco di tutti: `Archivio_Cicli\Cicli\Indice_report.html` |
 | Verifiche del PC | `Archivio_Cicli\Verifiche_PC\` |
+| Parcheggi e traccia dell'amministrazione | `Archivio_Cicli\_Parcheggio\` (con `atto.json` in ognuno), `Archivio_Cicli\Amministrazione\` |
 
 ## 6. Cambiare le regole (solo su decisione della funzione di rischio)
 
@@ -1254,7 +1280,7 @@ c'e' gia'.
 | Messaggio | Cosa vuol dire | Cosa fare |
 |---|---|---|
 | `'python' non e' riconosciuto come comando interno o esterno` | Python non e' installato, o non e' nel percorso di sistema | chiedere all'informatica; in alternativa provare `py` al posto di `python` |
-| Il registro e' danneggiato o si vuole tornare indietro | ogni scrittura lascia la copia precedente in `Archivio_Cicli\Backup\`; in piu' c'e' la cronologia versioni di SharePoint | ripristinare la copia, poi rilanciare il comando |
+| Il registro e' danneggiato o si vuole tornare indietro | ogni scrittura lascia la copia precedente in `Archivio_Cicli\Backup\`; in piu' c'e' la cronologia versioni di SharePoint | per tornare a un ciclo validato, il manutentore usa il **ritorno** dell'Amministrazione (sezione 3-quater), che parcheggia tutto e si annulla; per un danno dell'ultima scrittura, ripristinare la copia di `Backup`, poi rilanciare il comando |
 | Agent Builder disattivato o cambiato | gli agenti non scrivono nulla: il registro resta integro | ricreare gli agenti (sezione 0.2) con le istruzioni archiviate |
 | Il PC dell'analista non e' disponibile | lo script gira su qualunque PC con Python, pywin32, Excel e le cartelle sincronizzate | ripetere la sezione 0.3 su un altro PC |
 | `can't open file ... esegui_ciclo_locale.py` | il Prompt dei comandi non e' nella cartella degli script | rifare il `cd` verso la cartella degli script |
