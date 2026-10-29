@@ -99,8 +99,10 @@ SOTTO_AGENTI = {
 # Prompt: niente knowledge, ingresso e uscita fissi (output record, testo nel campo text). Gli ingressi sono in fondo.
 PROMPT = {
     "A5.txt": ("A5_Challenger.md", [
-        ("Solo l'allegato Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline.",
-         "Solo il testo in fondo: INPUT_A5, cioe' Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline."),
+        ("Solo l'allegato Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline, parte 3 le lunghezze "
+         "minime dei testi.",
+         "Solo il testo in fondo: INPUT_A5, cioe' Input_A5_<ciclo>.txt: parte 1 l'output di A1 (JSON), parte 2 la baseline, "
+         "parte 3 le lunghezze minime dei testi (C10, D-86)."),
     ], "INPUT_A5: [input_a5]"),
     "A6.txt": ("A6_Schede.md", [
         ("Un solo file allegato: Input_A6_<ciclo>.json, scritto dallo script dal registro validato.",

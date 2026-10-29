@@ -458,7 +458,7 @@ def agenti_panoramica():
          "niente: legge News_Inbox, siti e baseline", "JSON → A3_<lunedì>.json"],
         ["A4 News Assessor", "parere su UNA notizia rispetto al registro, senza numeri nuovi", "su richiesta",
          "la notizia (testo, link, file)", "parere in sei sezioni, in chat"],
-        ["A5 Challenger", "nove controlli C1-C9 sull'output di A1", "trimestre, facoltativo",
+        ["A5 Challenger", "dieci controlli C1-C10 sull'output di A1", "trimestre, facoltativo",
          "Input_A5_<ciclo>.txt (output di A1 e baseline)", "JSON → A5_<ciclo>.json"],
         ["A6 Schede dei rischi", "testi delle schede sui dati validati, per chi non conosce il tema", "dopo la validazione",
          "solo Input_A6_<ciclo>.json", "JSON → A6_<ciclo>.json"],
@@ -488,7 +488,7 @@ def agenti():
         "- Per ogni valore cita le **fonti** (data, tipo Interna/Esterna, rilevanza 1-3) e scrive il **razionale in parti**: RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO.",
         "- Per i rischi del radar propone **1-5 azioni** (owner = funzione, orizzonte 3/6/12 mesi) e **due KRI** (esposizione ed evoluzione), con il perché e l'EFFETTO atteso; **rilegge i valori** dei KRI del ciclo prima.",
         "- Registra i **fenomeni considerati e non censiti**, con il motivo; scrive il **commento per il comitato** (MESSAGGIO / DECISIONI).",
-        "- Prima di rispondere verifica il proprio output con i controlli C1-C9 e la guida di scrittura contenuti nell'allegato."],
+        "- Prima di rispondere verifica il proprio output con i controlli C1-C10 e la guida di scrittura contenuti nell'allegato."],
         ["Chat nuova, allegato **Input_A1_<ciclo>.txt**, messaggio «Esegui il ciclo».",
          "Variazioni: rinforzato (leggere tutte le cartelle), documenti precisi, tema da verificare, fenomeno da osservare, simulazione di un ciclo passato, correzione."],
         ["- **Prima: baseline** → Baseline_corrente.json e allegato (baseline + controlli + guida di scrittura).",
@@ -516,7 +516,7 @@ def agenti():
          "- Il trimestre non parte se quello prima non è validato."],
         ["Non giudica la plausibilità dei valori (C4): la giudicano A5, se usato, e il validatore."], VERDE)
 
-    slide_agente("A5 Challenger (facoltativo)", "Un secondo agente che controlla A1 con nove controlli, su un input ristretto.", [
+    slide_agente("A5 Challenger (facoltativo)", "Un secondo agente che controlla A1 con dieci controlli, su un input ristretto.", [
         "- **C1 Completezza**: ogni rischio del radar valutato, stessa categoria, nessun ID ripetuto.",
         "- **C2 Variazioni**: una voce per ogni valore cambiato, e solo per quelli.",
         "- **C3 Evidenza**: data dopo il ciclo prima e non dopo la data di riferimento; evidenza specifica; al massimo un punto.",
@@ -525,7 +525,7 @@ def agenti():
         "- **C6 Deriva**: aumenti dallo stesso fatto ripetuto o su più di metà dei rischi senza fonti nuove.",
         "- **C7 Rilettura KRI** · **C8 Azioni** (owner = funzione, pertinente, non ripetuta) · **C9 KRI** (coppia esposizione/evoluzione, soglie, fonte dati).",
         "- Esito Approvato o Da rivedere, con i rilievi Bloccante / Osservazione."],
-        ["Dopo A1, chat nuova, allegato SOLO **Input_A5_<ciclo>.txt** (output di A1 e baseline, dal precontrollo): «Esegui i nove controlli».",
+        ["Dopo A1, chat nuova, allegato SOLO **Input_A5_<ciclo>.txt** (output di A1 e baseline, dal precontrollo): «Esegui i controlli».",
          "Va rifatto ogni volta che A1 viene rifatto; mai per le settimane."],
         ["- Prima: (facoltativo) **precontrollo**, che segnala già la parte meccanizzabile.",
          "- Dopo: **trimestrale --challenger A5_<ciclo>.json**: i rilievi vanno nella colonna Segnalazioni della griglia; un Bloccante rende obbligatoria la Motivazione.",
@@ -616,7 +616,7 @@ def comandi():
         ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni; rigenera il report al comitato"],
         ["griglia · riapri", "quando serve", "ricostruisce il foglio Validazione · riapre un ciclo già validato"],
         ["schede-input · schede", "dopo la validazione", "dati per A6 · controlli su A6 e Schede_<ciclo>.xlsx"],
-        ["report [--con-lavoro]", "dopo la validazione", "PDF del report al comitato dall'Excel com'è ora"],
+        ["report [--con-lavoro]", "dopo la validazione", "PDF e HTML del report al comitato dall'Excel com'è ora"],
         ["dismetti · sblocca", "decisione della funzione di rischio · lucchetto rimasto", "toglie un rischio, la storia resta · toglie il lucchetto e lo registra"],
         ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"],
         ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"]],
@@ -828,6 +828,7 @@ def report_intro():
     s = nuova("Il report al comitato: che cos'è e come si usa")
     scheda(s, 0.5, 1.4, 5.6, 5.5, "Che cos'è", [
         "- Il **PDF** che il comando **report** produce dal registro validato: Report_comitato_<ciclo>.pdf.",
+        "- Lo stesso report in **HTML**, con le schede di tutti i rischi: esce solo se i suoi numeri tornano con Excel.",
         "- Si fa **dopo la validazione**: con righe da validare il comando si ferma.",
         "- Si **rigenera** quando il validatore cambia a mano presidio, anni di adeguamento, supervisore o stato di un'azione (la versione prima resta, con la data nel nome).",
         "- **--con-lavoro** aggiunge Registro e Parametri.",

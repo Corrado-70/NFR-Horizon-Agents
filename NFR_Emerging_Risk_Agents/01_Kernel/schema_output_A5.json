@@ -15,7 +15,7 @@
         "additionalProperties": false,
         "required": ["controllo", "id_rischio", "gravita", "descrizione"],
         "properties": {
-          "controllo": {"type": "string", "enum": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]},
+          "controllo": {"type": "string", "enum": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10"]},
           "id_rischio": {"type": ["string", "null"], "pattern": "^NFR-[0-9]{2}$"},
           "gravita": {"type": "string", "enum": ["Bloccante", "Osservazione"]},
           "descrizione": {"type": "string", "minLength": 10, "maxLength": 800}

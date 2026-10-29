@@ -65,7 +65,7 @@ in `News_Inbox`.
    rischi con score e fonti, storico di due cicli, KRI in vigore, azioni aperte,
    rischi in osservazione e regola del radar, D-79)
    e, accanto, l'allegato di A1 `Input_A1_<ciclo>.txt` (D-69): la baseline, i
-   nove controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo del
+   dieci controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo del
    prompt di A5) e la guida di scrittura (`01_Kernel/guida_scrittura_A1.md`).
 3. [Piattaforma] Esegue A1 passando l'allegato `Input_A1_<ciclo>.txt` come
    input; A1 verifica il proprio output con controlli e guida prima di

@@ -185,7 +185,9 @@ def test_controlli_a5(e):
     def pulito(descrizione, modifica, rid):
         p = copy.deepcopy(RUN1)
         modifica(p)
-        rilievi = [r for r in controlli_a5.controlla(p, BASE_Q3)["rilievi"] if r["id_rischio"] in (rid, None)]
+        # C10 (lunghezze dei testi) a parte: qui i testi modificati sono brevi apposta; C10 ha le sue prove
+        rilievi = [r for r in controlli_a5.controlla(p, BASE_Q3)["rilievi"] if r["id_rischio"] in (rid, None)
+                   and r["controllo"] != "C10"]
         e.verifica(not rilievi, f"A5 nessun rilievo: {descrizione}",
                    "\n".join(f"{r['controllo']} {r['gravita']} {r['descrizione']}" for r in rilievi))
 
@@ -710,8 +712,8 @@ def test_precontrollo(e):
 
     # Allegato di A1: baseline, controlli (lo stesso testo del prompt di A5), guida.
     controlli = input_a1.testo_controlli(KERNEL)
-    e.verifica(re.findall(r"^- (C\d) ", controlli, re.M) == [f"C{i}" for i in range(1, 10)] and ">" not in controlli[:1],
-               "allegato di A1: i nove controlli C1-C9 dal kernel, senza le note", controlli[:200])
+    e.verifica(re.findall(r"^- (C\d+) ", controlli, re.M) == [f"C{i}" for i in range(1, 11)] and ">" not in controlli[:1],
+               "allegato di A1: i dieci controlli C1-C10 dal kernel, senza le note", controlli[:200])
     a5 = (RADICE / "02_Agenti" / "A5_Challenger.md").read_text(encoding="utf-8")
     e.verifica(controlli in a5, "allegato di A1: i controlli sono lo stesso testo delle istruzioni di A5 (un solo file, D-69)")
     testo, mancanti = input_a1.componi(BASE_Q3, KERNEL, "2026-10-02")
@@ -960,6 +962,31 @@ def test_schede(e):
         spiegazione="Il controllo copre solo il 37% delle transazioni, secondo una stima dell'agente."), "37")
     difetto("una data inventata", lambda p: p["schede"][0].update(
         descrizione_estesa=p["schede"][0]["descrizione_estesa"] + " Primo caso il 14/03/2025."), "14")
+    # D-88: testi di A6 sotto le lunghezze minime: non fermano (controlla_a6 resta vuoto), il comando li elenca
+    corti = schede.testi_corti_a6(ingresso, buono)
+    n = len(buono["schede"][0]["descrizione_estesa"].strip())
+    e.verifica(f"NFR-01, descrizione_estesa {n} caratteri (minimo 1000)" in corti
+               and any("spiegazione di impatto" in x for x in corti) and any("a_sostegno_di" in x for x in corti)
+               and not any("spiegazione di velocity" in x for x in corti if x.startswith("NFR-12"))
+               and schede.controlla_a6(ingresso, buono, rubrica) == [],
+               "schede: testi di A6 troppo corti elencati (Velocity non valutata esclusa), senza fermare", "\n".join(corti))
+    lungo = copy.deepcopy(buono)
+    for sc in lungo["schede"]:
+        sc["descrizione_estesa"] = (sc["descrizione_estesa"] + " ") * 2
+        for d in sc["dimensioni"]:
+            d["spiegazione"] = (d["spiegazione"] + " ") * 5
+        for f in sc["fonti"]:
+            f["a_sostegno_di"] = (f["a_sostegno_di"] + " ") * 3
+    e.verifica(schede.testi_corti_a6(ingresso, lungo) == [] and not valida(lungo, schema),
+               "schede: testi di A6 alle lunghezze minime: nessun testo corto, schema rispettato", "\n".join(valida(lungo, schema)))
+    import esecutore
+    uscita = ("Schede del ciclo 2026Q2: 2 rischi, testi di A6 controllati.\nFile: x\nTesti di A6 troppo corti: 2 (lunghezze "
+              "minime nelle istruzioni di A6). Le schede sono scritte; ...:\n  - NFR-01, descrizione_estesa 900 caratteri "
+              "(minimo 1000)\n  - NFR-12, spiegazione di impatto 90 caratteri (minimo 400)")
+    e.verifica(esecutore.testi_corti_a6(uscita) == (2, ["NFR-01, descrizione_estesa 900 caratteri (minimo 1000)",
+                                                       "NFR-12, spiegazione di impatto 90 caratteri (minimo 400)"])
+               and esecutore.testi_corti_a6("Schede del ciclo 2026Q2: 2 rischi.") == (0, []),
+               "schede: l'app legge dall'uscita del comando quanti e quali testi di A6 sono corti")
     e.verifica(schede.numeri("10/06/2026") == schede.numeri("2026-06-10") and schede.numeri("4,2") == {4.2},
                "schede: una data scritta in italiano o ISO e un decimale con la virgola sono lo stesso numero")
     ordinato = campo.ordina_chiavi([{"data_evidenza": "2026-06-10", "evidenza": "x", "a": 4, "da": 3, "dimensione": "impatto"}])
@@ -1189,6 +1216,73 @@ def test_esposizione(e):
                "guida di scrittura di A1 nell'allegato: la frase dell'esposizione non nota (D-81)")
 
 
+def test_lunghezze(e):
+    """C10 (D-86): testi sotto le lunghezze minime della guida di scrittura. Per A5 Bloccante, nello script e in
+    validazione un'Osservazione per rischio; il precontrollo li conta a parte e chiede ad A1 di allungarli."""
+    import input_a1
+    import precontrollo
+    run3, base4 = carica(DATI / "run3_A1_2026Q4.json"), carica(DATI / "baseline_2026Q4.json")
+    for nome, p, b in [("run1 2026Q3", RUN1, BASE_Q3), ("run3 2026Q4", run3, base4)]:
+        c10 = [r for r in controlli_a5.controlla(p, b)["rilievi"] if r["controllo"] == "C10"]
+        e.verifica(not c10, f"C10: i dati di prova {nome} hanno testi lunghi abbastanza", "\n".join(r["descrizione"] for r in c10))
+
+    def c10(modifica, p=run3, b=base4):
+        p = copy.deepcopy(p)
+        modifica(p)
+        return [r for r in controlli_a5.controlla(p, b)["rilievi"] if r["controllo"] == "C10"]
+    r = c10(lambda p: rischio(p, "NFR-01").update(descrizione="Frodi con voce sintetica sui bonifici istantanei."))
+    e.verifica(len(r) == 1 and r[0]["id_rischio"] == "NFR-01" and r[0]["gravita"] == "Osservazione"
+               and "descrizione 49 caratteri (minimo 500)" in r[0]["descrizione"],
+               "C10: descrizione corta = un'Osservazione sul rischio, con lunghezza e minimo", r)
+    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"].replace(
+        "IMPATTO: grave.", "IMPATTO: grave. FINE.", 1).split("FINE.")[0] + "PROBABILITA:" +
+        rischio(p, "NFR-01")["razionale"].split("PROBABILITA:", 1)[1]))
+    e.verifica(len(r) == 1 and "razionale IMPATTO 6 caratteri (minimo 300)" in r[0]["descrizione"],
+               "C10: una parte del razionale corta (IMPATTO) e' segnalata con il suo nome", r)
+    r = c10(lambda p: [a.update(descrizione="Formare il personale.") for a in rischio(p, "NFR-01")["azioni_mitigazione"]]
+            + [k.update(razionale="Misura il fenomeno.") for k in rischio(p, "NFR-01")["kri_proposti"]])
+    e.verifica(len(r) == 1 and "azione 1, descrizione 21 caratteri" in r[0]["descrizione"]
+               and "KRI di Evoluzione, razionale 19 caratteri (minimo 300)" in r[0]["descrizione"],
+               "C10: azioni e KRI corti in un solo rilievo per rischio", r)
+    senza_velocity = next(x for x in run3["rischi"] if x.get("velocity") is None and "VELOCITY:" in x["razionale"])
+    e.verifica(not controlli_a5.testi_corti(dict(senza_velocity, razionale=senza_velocity["razionale"].split("VELOCITY:")[0]
+                                                  + "VELOCITY: nessuna fonte documenta i tempi.")),
+               "C10: con Velocity non valutata la parte VELOCITY puo' essere breve")
+    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"][:1200]), RUN1, BASE_Q3)
+    e.verifica(len(r) == 1 and "razionale (senza le parti) 1200 caratteri (minimo 1500)" in r[0]["descrizione"],
+               "C10: un razionale senza etichette si misura intero, contro la somma dei minimi delle parti", r)
+    a5 = {"rilievi": [{"controllo": "C10", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Testi corti"},
+                      {"controllo": "C3", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Evidenza vaga"}]}
+    esito = controlli_a5.combina({"esito": "Approvato", "rilievi": []}, a5)
+    e.verifica(esito["esito"] == "Approvato" and [x["gravita"] for x in esito["rilievi"]] == ["Osservazione", DM],
+               "C10: un Bloccante di A5 su C10 arriva in validazione come Osservazione (C3 resta Da motivare)", esito["rilievi"])
+    p = copy.deepcopy(run3)
+    for x in p["rischi"][:3]:
+        x["descrizione"] = x["descrizione"][:120]
+    esito = precontrollo.precontrolla(p, base4, S_A1)
+    riga = precontrollo.riga_esito("2026Q4", esito)
+    e.verifica(precontrollo.conta(esito) == (0, 0) and precontrollo.conta_testi(esito) == 3
+               and riga.endswith("0 punti da correggere, 0 da verificare, 3 rischi con testi troppo corti (C10).")
+               and "Testi troppo corti (C10" in precontrollo.messaggio_correzione("2026Q4", esito),
+               "C10 nel precontrollo: contati a parte, nella prima riga e nel messaggio per A1, non fermano", riga)
+    import esecutore
+    e.verifica(esecutore.esito_precontrollo(riga) == (0, 0, 3), "C10: l'app legge i testi corti dalla prima riga", riga)
+    run4 = carica(DATI / "run4_A1_2026Q4-S1.json")
+    e.verifica(not controlli_a5.testi_corti_analisi(run4["analisi_evento"]),
+               "C10: l'analisi dell'evento dei dati di prova (run4) e' lunga abbastanza (D-88)")
+    p = copy.deepcopy(run4)
+    p["analisi_evento"]["catena_causale"] = "Voce clonata, bonifico istantaneo, rimborso del cliente."
+    p["analisi_evento"]["rischi_toccati"][0]["effetto"] = "Probabilita da 4 a 5."
+    r = [x for x in controlli_a5.controlla_testi(p) if x["id_rischio"] is None]
+    e.verifica(len(r) == 1 and r[0]["gravita"] == "Osservazione" and "catena_causale 56 caratteri (minimo 600)" in r[0]["descrizione"]
+               and "effetto su NFR-01 21 caratteri (minimo 150)" in r[0]["descrizione"],
+               "C10: analisi dell'evento di A8 troppo sintetica = un'Osservazione sul ciclo, con i testi e i minimi", r)
+    allegato = input_a1.componi_a5(run3, base4, "2026-10-29")
+    e.verifica(input_a1.INIZIO_LUNGHEZZE_A5 in allegato and controlli_a5.tabella_lunghezze() in allegato
+               and input_a1.leggi_a5(allegato) == (run3, base4),
+               "C10: l'allegato di A5 ha la tabella delle lunghezze (parte 3) e si rilegge come prima")
+
+
 def main():
     e = Esito("Validatore, controlli A5, dati di esempio, consistenza")
     test_validatore(e)
@@ -1207,6 +1301,7 @@ def main():
     test_spiegazioni(e)
     test_diagnosi(e)
     test_esposizione(e)
+    test_lunghezze(e)
     return 0 if e.stampa() else 1
 
 

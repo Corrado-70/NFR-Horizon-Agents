@@ -9,6 +9,7 @@
   "raccolta_su_questo_pc": true,
   "agenti": "Agent Builder",
   "ascolta_appunti": true,
+  "chiedi_a5": true,
   "link_agenti": {
     "A1": "incollare il link dell'agente (Agent Builder: ... -> Copia collegamento)",
     "A3": "",

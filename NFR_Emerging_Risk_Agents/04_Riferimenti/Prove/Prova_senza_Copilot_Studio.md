@@ -176,7 +176,7 @@ avanti: in validazione diventano le segnalazioni della colonna Segnalazioni (D-7
 
 Agente **A5 Challenger**:
 1. allegare `A1_2026Q4.json` e `C:\NFR_Prova\Archivio\Baseline_corrente.json`;
-2. scrivere `Esegui i nove controlli`;
+2. scrivere `Esegui i controlli`;
 3. salvare la risposta come `A5_2026Q4.json` nella stessa cartella.
 
 ### 2.6 Scrittura nel registro di prova

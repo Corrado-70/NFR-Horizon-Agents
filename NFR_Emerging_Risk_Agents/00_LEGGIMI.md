@@ -33,7 +33,7 @@ tutta in Copilot Studio, senza Python sul PC (D-82,
 |---|---|---|---|
 | A1 Horizon Scanner | trimestrale | valuta il registro rispetto ai due cicli precedenti analizzando nel dettaglio ogni fonte, propone azioni nuove e due KRI per rischio (esposizione ed evoluzione), rilegge i KRI del ciclo prima; riceve in un allegato baseline, controlli di A5 e guida di scrittura e li applica prima di rispondere (D-69); output JSON | propone |
 | Precontrollo | **facoltativo, si puo' saltare**: trimestrale, dopo A1 e prima di A5 | **non e' un agente**: schema, controlli meccanizzati e parti del razionale sull'output di A1, con il messaggio di correzione per A1 (D-69); senza Excel | no |
-| A5 Challenger | trimestrale, dopo A1, **facoltativo** (D-71) | nove controlli (C1-C9) su input ristretto; i suoi rilievi vanno in validazione (colonna Segnalazioni), un Bloccante chiede la Motivazione | no |
+| A5 Challenger | trimestrale, dopo A1, **facoltativo** (D-71) | dieci controlli (C1-C10; C10 lunghezze dei testi, D-86) su input ristretto; i suoi rilievi vanno in validazione (colonna Segnalazioni), un Bloccante chiede la Motivazione | no |
 | A2 Scrittura | dopo A5 | **non e' un agente**: codice che valida, controlla, scrive e verifica | scrive cio' che A1 propone e A5 approva |
 | A3 Interim Update | settimanale | integra le notizie, impatto sulle nove categorie di rischio, flag proposti (anche sui rischi in osservazione), proposta di ciclo straordinario | no |
 | A4 News Assessor | su richiesta | parere su una notizia, ancorato alla valutazione deliberata | no |
@@ -78,7 +78,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 01_Kernel/tassonomia_nfr.md                            9 categorie di rischio in perimetro della tassonomia interna (D-74) + 8 driver emergenti
 01_Kernel/fonti.md                                     elenco commentato delle fonti (rss, siti, share), DA VALIDARE
 01_Kernel/rubrica_scoring.md                           4 dimensioni del composito (Impatto, Probabilita, Prossimita, Velocity facoltativa; pesi D-50 nelle note), anni di adeguamento, rilevanza delle fonti, regole di variazione, KRI (1-3, soglie facoltative), notizie, urgenza (Mosca, anni di adeguamento); presidio dei controlli della Banca (D-49)
-01_Kernel/controlli_A5.md                              testo unico dei nove controlli C1-C9: istruzioni di A5 e allegato di A1 (D-69)
+01_Kernel/controlli_A5.md                              testo unico dei dieci controlli C1-C10: istruzioni di A5 e allegato di A1 (D-69)
 01_Kernel/guida_scrittura_A1.md                        come A1 scrive descrizione, razionale in parti, azioni e KRI, con un esempio di forma (allegato di A1, D-69)
 01_Kernel/schema_output_A1.json                        contratto dell'output di A1
 01_Kernel/schema_output_A3.json                        contratto dell'output di A3
@@ -122,6 +122,15 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 07_Senza_Studio/input_a1.py                            allegato di A1 Input_A1_<ciclo>.txt (baseline, controlli, guida) e unico lettore di controlli_A5.md (D-69); legge la baseline dall'allegato (skill, D-70); allegati di A3 e A4 Input_A3_A4.txt (AU7)
 07_Senza_Studio/lucchetto.py                           lucchetto del registro per piu' analisti (D-83): Archivio_Cicli/_Lucchetto/registro.json, avviso per non cominciare un lavoro che si fermerebbe (presa senza attesa di default), scadenza, sblocca registrato
 07_Senza_Studio/NFR.cmd                                l'app NFR Horizon Scan con un doppio clic (D-83): lancia app_nfr.py senza console
+07_Senza_Studio/installa.cmd                           installazione su un PC con un doppio clic (tappa M3): lancia installa.py
+07_Senza_Studio/installa.py                            installazione (tappa M3): Python e tkinter, moduli con pip --user (o dalla cartella pacchetti), configurazione.json con una finestra, collegamenti, attivita' della raccolta del lunedi', cartelle sempre sul PC, Verifica del PC
+07_Senza_Studio/installazione.py                       le parti dell'installazione senza effetti sul sistema (moduli, comando pip, unione e controllo della configurazione, XML di schtasks, collegamenti): le prova il collaudo
+07_Senza_Studio/verifica_pc.py                         Verifica del PC (tappa M3): una riga per voce (Python, moduli, configurazione, cartelle, kernel, registro ed Excel con AutoSaveOn e FullName, lucchetto, appunti, link, collegamenti, attivita'), file in Archivio_Cicli/Verifiche_PC; anche dal menu Altro dell'app
+07_Senza_Studio/aiuto.py                               l'aiuto dell'app (Aiuto, F1, e i suggerimenti sui pulsanti) letto dalla guida 00_GUIDA_PASSO_PASSO.md: argomenti, tabella "I processi", parti della finestra; nessuna copia dei testi
+07_Senza_Studio/amministrazione.py                     funzioni amministrative (tappa M5, modalita' Admin, D-85): parcheggi, pulizia con anteprima, ritorno a un ciclo validato, annulla, ripartenza da zero, svuota; niente si cancella subito (parcheggio con l'atto, traccia in Amministrazione); anche da Altro nell'app
+07_Senza_Studio/report_html.py                         report al comitato in HTML (tappa M4), seconda uscita di report e valida: viste da Quadro a Metodologia, grafici SVG, schede di tutti i rischi, guida (con --con-lavoro le viste di lavoro); dati letti via COM dalla sessione del report o con openpyxl dal file; cancello: numeri confrontati con le viste di Excel, se uno non torna l'HTML non esce; Cicli/Indice_report.html
+07_Senza_Studio/notizie_manuali.py                     "Invia a -> NFR notizie manuali": copia i file scelti in News_Inbox/<lunedi'>/Manuali senza sovrascrivere
+07_Senza_Studio/NFR_notizie_manuali.cmd                destinazione del collegamento in Invia a: lancia notizie_manuali.py
 07_Senza_Studio/app_nfr.py                             la finestra dell'app (tkinter): stato, prossimo passo, un pulsante per processo, passo in corso con le istruzioni per l'agente, uscita del motore
 07_Senza_Studio/flussi.py                              i processi dell'app come sequenze di passi (settimana, trimestre con il giro di correzione, straordinario, validazione, schede e report, riapertura, testi a mano, dismissione, parere di A4), su un Ambiente che la finestra realizza e il collaudo simula
 07_Senza_Studio/stato.py                               stato del processo e prossimo passo, senza Excel, dall'archivio condiviso (baseline, cicli, settimane, In_arrivo, lucchetto)
@@ -132,7 +141,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 07_Senza_Studio/radar.py                               regola del registro unico (D-79): chi sta nel radar di Mosca e chi in osservazione (soglie, eccezioni, capienza, uscita in due cicli); la usano script, controlli, precontrollo e kit di Copilot Studio
 07_Senza_Studio/diagnosi.py                            misure del comando diagnosi (D-80): valori all'ingresso dei rischi nuovi, verso delle rettifiche del validatore, rischi lontani senza anni di adeguamento
 07_Senza_Studio/excel_com.py                           accesso al workbook tramite Excel desktop (COM)
-07_Senza_Studio/controlli_a5.py                        controlli meccanizzati C1-C9 (C4 escluso, per disegno)
+07_Senza_Studio/controlli_a5.py                        controlli meccanizzati C1-C10 (C4 escluso, per disegno)
 07_Senza_Studio/valida_output.py                       validatore JSON Schema generico, solo libreria standard
 07_Senza_Studio/configurazione_esempio.json            percorsi da copiare in configurazione.json; utente, attesa del lucchetto (D-83); per l'app validatore_predefinito, raccolta_su_questo_pc, agenti, ascolta_appunti, link_agenti (guida, 0.3)
 09_Copilot_Studio/Prova_con_Copilot_Studio.md          prova K0 di Copilot Studio (D-70): A1 e il precontrollo con il Code interpreter dell'esperienza standard (opzione 1) e con una skill nel sandbox della nuova esperienza (opzione 2); Teams e agent flow facoltativi; tabella dei risultati
@@ -181,6 +190,9 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 99_Collaudo/test_mappatura.py                          mappa in entrambe le direzioni
 99_Collaudo/test_controlli.py                          validatore, controlli A5, dati di esempio, consistenza, precontrollo e kit di Copilot Studio, controlli sull'output di A6 e file delle schede
 99_Collaudo/test_fonti.py                              elenco fonti, limiti di Agent Builder, raccolta con feed finti
+99_Collaudo/test_amministrazione.py                    le funzioni amministrative senza Excel (tappa M5) su un archivio finto: modalita' Admin, pulizia, ritorno e annullamento (anche rifiutato dopo una scrittura), ripartenza, svuota, conferma scritta
+99_Collaudo/test_report_html.py                        il report HTML senza Excel (tappa M4), sul registro della demo: cancello superato, pagine e schede, file autosufficiente, collegamenti interni, cancello che scatta con un numero alterato, indice, pubblicazione con la versione precedente
+99_Collaudo/test_installazione.py                      l'installazione senza Excel (tappa M3): moduli e pip, configurazione (unione, link per versione, problemi), XML dell'attivita', collegamenti, Invia a, Verifica del PC su una configurazione di prova, lanciatori .cmd
 99_Collaudo/test_app.py                                l'app e i piu' analisti, senza Excel (D-83): lucchetto (collega, scaduto, conflitto di OneDrive, sblocca), sostituzione dalla copia di lavoro, registro aperto; ingresso delle risposte, stato e prossimo passo su archivi finti, flussi con un Ambiente finto (giri di correzione, risposta tagliata), lanciatore NFR.cmd
 99_Collaudo/verifica_riferimenti.py                    riferimenti incrociati fra file
 99_Collaudo/run_catena.py                              tredici gruppi indipendenti (--parallelo, --passo): due cicli e due settimane con lo strumento vero ed Excel; primo uso e dismissione; piu' analisti (lucchetto, copia di lavoro, allegati di A3 e A4, prompt archiviati, D-83); registro di produzione dal vuoto al secondo ciclo; aggiornamento di un registro del template del 23/09 e del 2026-09-25c; A5 facoltativo e segnalazioni in validazione (D-71); comando report; report al comitato contro calcoli indipendenti; schede dei rischi con A6
@@ -224,9 +236,9 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 | Cosa si valida e con quali regole | `mappatura_campi.json`, sezione `validazione` (oggetti e campi); regole in `esegui_ciclo_locale.py` (`controlla_valore`, `applica_validazione`); colonne della griglia del foglio Validazione in `genera_dashboard.py` (`GRIGLIA`, nomi `VG_...`) | scrittura, comando `valida`, generatore, collaudo |
 | Formato dei payload | `schema_output_*.json` | validatore generico (lo interpreta, non lo ricopia) |
 | Colonne delle tabelle e delle liste | `mappatura_campi.json` | generatore, scrittura, collaudo, documento SharePoint |
-| Testo dei controlli C1-C9 | `01_Kernel/controlli_A5.md` (D-69) | prompt di A5 (`{{CONTROLLI}}`), allegato di A1 (`input_a1.py`) |
+| Testo dei controlli C1-C10 | `01_Kernel/controlli_A5.md` (D-69) | prompt di A5 (`{{CONTROLLI}}`), allegato di A1 (`input_a1.py`) |
 | Come A1 scrive i testi (descrizione, razionale, azioni, KRI) | `01_Kernel/guida_scrittura_A1.md` (D-69) | allegato di A1 (`input_a1.py`) |
-| Controlli C1-C9 meccanizzabili | `controlli_a5.py` | script di campo (`precontrollo`, `trimestrale`), skill di Copilot Studio, collaudo |
+| Controlli C1-C10 meccanizzabili | `controlli_a5.py` | script di campo (`precontrollo`, `trimestrale`), skill di Copilot Studio, collaudo |
 | Precontrollo dell'output di A1 (cosa si controlla, messaggio di correzione, impronta) | `07_Senza_Studio/precontrollo.py` (D-69, D-70) | comando `precontrollo`, skill `precontrollo-nfr` (script composto da `prepara_kit.py`), collaudo |
 | Istruzioni degli agenti | `02_Agenti/modelli/*.md` | `componi_prompt.py` |
 | Chi scrive nel registro in questo momento (piu' analisti) | `07_Senza_Studio/lucchetto.py`, file `Archivio_Cicli/_Lucchetto/registro.json` (D-83) | ogni comando che scrive (`SCRIVONO` in `esegui_ciclo_locale.py`), `sblocca` |

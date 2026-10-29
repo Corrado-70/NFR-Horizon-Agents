@@ -7,7 +7,7 @@ e' confrontato con la sua fonte:
 
 1. prompt composti aggiornati rispetto al kernel e sotto il limite di caratteri
 2. codici di tassonomia e driver identici in kernel, schemi, generatore, mappa
-3. controlli C1-C9 identici in schema A5, kernel (testo unico, D-69), prompt
+3. controlli C1-C10 identici in schema A5, kernel (testo unico, D-69), prompt
    A5, documentazione, governance e codice (C4 assente dal codice, per disegno)
 4. numeri di passo e di sezione dei _DOCUMENTATO = quelli dei modelli
 5. campi derivati documentati = quelli implementati
@@ -66,20 +66,34 @@ def verifica_tassonomia(e):
 
 
 def verifica_controlli(e):
-    attesi = [f"C{i}" for i in range(1, 10)]
+    attesi = [f"C{i}" for i in range(1, 11)]
     fonti = {
         "schema A5": carica(KERNEL / "schema_output_A5.json")["properties"]["rilievi"]["items"]["properties"]["controllo"]["enum"],
-        "kernel (controlli_A5.md, testo unico, D-69)": re.findall(r"^- (C\d) ", testo(KERNEL / "controlli_A5.md"), re.M),
-        "prompt A5 composto": re.findall(r"^- (C\d) ", testo(AGENTI / "A5_Challenger.md"), re.M),
-        "A3_A4_A5_DOCUMENTATO": re.findall(r"^### (C\d) ", testo(AGENTI / "COMMENTATI" / "A3_A4_A5_DOCUMENTATO.md"), re.M),
-        "governance": re.findall(r"^\| (C\d) ", testo(RADICE / "04_Riferimenti" / "controlli_e_model_risk.md"), re.M),
+        "kernel (controlli_A5.md, testo unico, D-69)": re.findall(r"^- (C\d+) ", testo(KERNEL / "controlli_A5.md"), re.M),
+        "prompt A5 composto": re.findall(r"^- (C\d+) ", testo(AGENTI / "A5_Challenger.md"), re.M),
+        "A3_A4_A5_DOCUMENTATO": re.findall(r"^### (C\d+) ", testo(AGENTI / "COMMENTATI" / "A3_A4_A5_DOCUMENTATO.md"), re.M),
+        "governance": re.findall(r"^\| (C\d+) ", testo(RADICE / "04_Riferimenti" / "controlli_e_model_risk.md"), re.M),
     }
     for nome, trovati in fonti.items():
-        e.verifica(trovati == attesi, f"3. controlli C1-C9 in {nome}", str(trovati))
+        e.verifica(trovati == attesi, f"3. controlli C1-C10 in {nome}", str(trovati))
     modello = testo(AGENTI / "modelli" / "A5.md")
-    e.verifica("{{CONTROLLI}}" in modello and not re.findall(r"^- C\d ", modello, re.M),
+    e.verifica("{{CONTROLLI}}" in modello and not re.findall(r"^- C\d+ ", modello, re.M),
                "3. il modello di A5 prende i controlli dal kernel ({{CONTROLLI}}), senza una copia")
-    codice = sorted(set(re.findall(r'_rilievo\("(C\d)"', testo(CAMPO / "controlli_a5.py"))))
+    # D-86: la tabella "Lunghezze dei testi" della guida di scrittura = controlli_a5.LUNGHEZZE (C10)
+    sys.path.insert(0, str(CAMPO))
+    import controlli_a5
+    guida = testo(KERNEL / "guida_scrittura_A1.md").split("## Lunghezze dei testi", 1)[-1].split("\n## ", 1)[0]
+    righe = [[c.strip() for c in r.strip().strip("|").split("|")] for r in guida.splitlines() if r.startswith("| ")][1:]
+    e.verifica(righe == [[t, str(m), str(f)] for _, t, m, f in controlli_a5.LUNGHEZZE],
+               "3. lunghezze dei testi: guida di scrittura = controlli_a5.LUNGHEZZE (C10, D-86)", str(righe))
+    # D-88: le lunghezze delle istruzioni di A6 = schede.LUNGHEZZE_A6
+    import schede
+    a6 = testo(AGENTI / "modelli" / "A6.md")
+    trovate = [(c, int(m), int(f)) for c, _, _ in schede.LUNGHEZZE_A6
+               for m, f in re.findall(rf"{c} \((\d+)-(\d+) caratteri", a6)]
+    e.verifica(trovate == schede.LUNGHEZZE_A6, "3. lunghezze dei testi di A6: istruzioni = schede.LUNGHEZZE_A6 (D-88)",
+               f"{trovate} contro {schede.LUNGHEZZE_A6}")
+    codice = sorted(set(re.findall(r'_rilievo\("(C\d+)"', testo(CAMPO / "controlli_a5.py"))), key=lambda c: int(c[1:]))
     e.verifica(codice == [c for c in attesi if c != "C4"], "3. controlli_a5.py implementa tutti i controlli tranne C4", str(codice))
 
 
@@ -155,6 +169,10 @@ def verifica_guida(e):
     import esegui_ciclo_locale as campo
     import raccogli_notizie
     import confronta
+    import installa
+    import notizie_manuali
+    import verifica_pc
+    import amministrazione
     comandi, opzioni = set(), set()
     parser_ciclo = None
     orig = argparse.ArgumentParser.parse_args
@@ -165,7 +183,7 @@ def verifica_guida(e):
         raise SystemExit(0)
     argparse.ArgumentParser.parse_args = cattura
     try:
-        for modulo in (campo, raccogli_notizie, confronta):
+        for modulo in (campo, raccogli_notizie, confronta, installa, verifica_pc, notizie_manuali, amministrazione):
             try:
                 modulo.main(["confronta.py"] if modulo is confronta else [])
             except SystemExit:
@@ -187,7 +205,7 @@ def verifica_guida(e):
         # Il nome del comando, anche dopo le opzioni comuni (--workbook "..." --cartella-uscita ...); anche aggiorna-registro.
         citati = set(re.findall(r'esegui_ciclo_locale\.py (?:--[\w-]+ (?:"[^"]*"|\S+) )*([\w-]+)', t))
         e.verifica(citati and citati <= comandi, f"8. comandi citati in {doc.name} esistono", str(sorted(citati - comandi)))
-        opz = set(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", t)) - {"--version", "--upgrade", "--force-reinstall"}   # opzioni di python/pip, non degli script
+        opz = set(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", t)) - {"--version", "--upgrade", "--force-reinstall", "--user"}   # opzioni di python/pip, non degli script
         e.verifica(opz <= opzioni, f"8. opzioni citate in {doc.name} esistono", str(sorted(opz - opzioni)))
 
 

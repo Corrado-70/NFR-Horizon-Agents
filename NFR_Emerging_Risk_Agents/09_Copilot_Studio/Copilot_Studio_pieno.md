@@ -124,7 +124,7 @@ dell'output. I segni di citazione dentro i testi (`[1]`) non si tolgono: li segn
 | A1 Horizon Scanner | sotto-agente | `agenti/A1_CS.md` (7.931 caratteri) | `{Global.ingresso}` = Input_A1 | `{Global.uscita}` = JSON | Analisi_Interne, Analisi_Esterne, News_Inbox, i 4 siti |
 | A8 Evento critico | sotto-agente | `agenti/A8_CS.md` (7.846) | `{Global.ingresso}` = Input_A1 dello straordinario; documenti dell'evento in `Analisi_Esterne/Eventi/<periodo>` | `{Global.uscita}` | come A1 |
 | A3 Interim Update | sotto-agente | `agenti/A3_CS.md` (7.597) | `{Global.ingresso}` = Input_A3_A4.txt; `{Global.periodo}` = lunedi' | `{Global.uscita}` | Analisi_Interne, Analisi_Esterne, News_Inbox, i 4 siti |
-| A5 Challenger | prompt | `prompt/A5.txt` | `input_a5` (`Input_A5_<periodo>.txt`: output di A1 e baseline, D-84) | JSON (record, campo `text`) | nessuna (D-09) |
+| A5 Challenger | prompt | `prompt/A5.txt` | `input_a5` (`Input_A5_<periodo>.txt`: output di A1, baseline e lunghezze dei testi, D-84, D-86) | JSON (record, campo `text`) | nessuna (D-09) |
 | A6 Schede | prompt | `prompt/A6.txt` | `input_a6` (`Input_A6_<ciclo>.json`, D-84) | JSON | nessuna |
 | Correggi | prompt | `prompt/Correggi.txt` | `correzione`, `json_a1`, `allegato` | JSON corretto | nessuna |
 | Motore | prompt con code interpreter | `prompt/Motore.txt` | `comando` (testo), `busta` (file) | una riga JSON | nessuna |

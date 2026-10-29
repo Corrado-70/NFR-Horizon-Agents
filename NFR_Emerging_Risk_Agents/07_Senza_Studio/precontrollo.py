@@ -42,10 +42,17 @@ def precontrolla(payload, baseline, schema):
 
 
 def conta(esito):
-    """(punti da correggere, punti da verificare): i primi fermerebbero il ciclo."""
+    """(punti da correggere, punti da verificare): i primi fermerebbero il ciclo. I testi troppo corti (C10) si contano
+    a parte (conta_testi): non fermano la scrittura, ma nel precontrollo si chiede ad A1 di allungarli (D-86)."""
     da_correggere = len(esito["schema"]) + sum(1 for x in esito["rilievi"] if x["gravita"] == "Bloccante")
-    da_verificare = sum(1 for x in esito["rilievi"] if x["gravita"] != "Bloccante") + len(esito["formato"])
+    da_verificare = sum(1 for x in esito["rilievi"] if x["gravita"] != "Bloccante" and x["controllo"] != "C10") \
+        + len(esito["formato"])
     return da_correggere, da_verificare
+
+
+def conta_testi(esito):
+    """Rischi con testi sotto le lunghezze minime (C10, D-86)."""
+    return sum(1 for x in esito["rilievi"] if x["controllo"] == "C10")
 
 
 def ciclo_di(payload, baseline):
@@ -62,10 +69,11 @@ def agente(ciclo):
 def riga_esito(ciclo, esito):
     """Prima riga dell'esito, uguale nel comando sul PC e nella skill di Copilot Studio."""
     da_correggere, da_verificare = conta(esito)
-    if not da_correggere and not da_verificare:
+    testi = conta_testi(esito)
+    if not da_correggere and not da_verificare and not testi:
         return f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): nessun rilievo."
     return (f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): {da_correggere} punti da correggere, {da_verificare} "
-            "da verificare.")
+            "da verificare" + (f", {testi} rischi con testi troppo corti (C10)" if testi else "") + ".")
 
 
 def impronta(payload):
@@ -89,6 +97,8 @@ def messaggio_correzione(ciclo, esito):
     blocco("Schema (lo script non puo' leggere il JSON finche' non e' corretto):", esito["schema"])
     blocco("Da correggere (fermerebbero il ciclo):", [voce(x) for x in esito["rilievi"] if x["gravita"] == "Bloccante"])
     blocco("Da verificare (correggi se fondati; se confermi, spiega il perche' nel razionale):",
-           [voce(x) for x in esito["rilievi"] if x["gravita"] != "Bloccante"])
+           [voce(x) for x in esito["rilievi"] if x["gravita"] != "Bloccante" and x["controllo"] != "C10"])
+    blocco("Testi troppo corti (C10: allungali con contenuto, non con ripetizioni; le lunghezze sono nella parte 3 "
+           "dell'allegato, \"Lunghezze dei testi\"):", [voce(x) for x in esito["rilievi"] if x["controllo"] == "C10"])
     blocco("Forma dei testi (serve alle schede dei rischi):", [f"{x['id_rischio']} · {x['descrizione']}" for x in esito["formato"]])
     return "\n".join(righe) + "\n"

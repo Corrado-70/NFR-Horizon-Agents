@@ -36,7 +36,7 @@ aspetta un recupero selettivo.
 
 Dal 02/10 (D-69) l'allegato e' `Input_A1_<ciclo>.txt`, che lo script scrive
 accanto alla baseline (`07_Senza_Studio/input_a1.py`): la baseline (JSON), i
-nove controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo delle
+dieci controlli di A5 (`01_Kernel/controlli_A5.md`, lo stesso testo delle
 istruzioni di A5) e la guida di scrittura (`01_Kernel/guida_scrittura_A1.md`:
 descrizione, razionale in parti con descrittore, fatto, documento e "perche'
 non il valore vicino", azioni, KRI, un esempio completo di forma). Perche' in un

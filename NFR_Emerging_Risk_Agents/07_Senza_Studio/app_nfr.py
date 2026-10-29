@@ -24,6 +24,8 @@ import webbrowser
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
+import aiuto
+import amministrazione
 import appunti
 import esecutore
 import flussi
@@ -32,6 +34,50 @@ from esegui_ciclo_locale import aperto_qui
 
 COLORI = {"ok": "#2E7D32", "avviso": "#B26A00", "errore": "#C62828", "info": "#1F3864"}
 AGGIORNA_MS = 30000
+# Che cosa aspettarsi da un comando del motore, scritto nel passo in corso mentre lavora (richiesta dell'utente del 29/10).
+DURATA = {"precontrollo": "pochi secondi, senza Excel", "griglia": "Excel in background, meno di un minuto",
+          "sblocca": "pochi secondi, senza Excel", "raccogli_notizie": "qualche minuto, legge le fonti in rete",
+          "verifica_pc": "meno di un minuto, apre il registro in sola lettura",
+          "amministrazione": "da pochi secondi (parcheggi, pulizia) a qualche minuto con Excel (ritorno, ripartenza)"}
+DURATA_EXCEL = "Excel in background, di solito qualche minuto"
+NESSUN_PROCESSO = ("Nessun processo in corso. Passa con il mouse su un pulsante per sapere che cosa fa; Aiuto (F1) per "
+                   "la guida dell'app e dei processi.")
+STILI_AIUTO = {"titolo": ("Segoe UI", 14, "bold"), "sottotitolo": ("Segoe UI", 11, "bold"), "voce": ("Segoe UI", 10),
+               "elenco": ("Segoe UI", 10), "testo": ("Segoe UI", 10), "codice": ("Consolas", 9)}
+
+
+class Suggerimento:
+    """Il riquadro che compare passando con il mouse su un pulsante: il testo viene dalla guida (aiuto.py)."""
+
+    def __init__(self, widget, testo):
+        self.widget, self.testo, self.finestra, self.attesa = widget, testo, None, None
+        widget.bind("<Enter>", lambda ev: self._prepara(), add="+")
+        widget.bind("<Leave>", lambda ev: self._chiudi(), add="+")
+        widget.bind("<ButtonPress>", lambda ev: self._chiudi(), add="+")
+
+    def _prepara(self):
+        self._chiudi()
+        self.attesa = self.widget.after(600, self._mostra)
+
+    def _mostra(self):
+        testo = self.testo() if callable(self.testo) else self.testo
+        if not testo:
+            return
+        x = self.widget.winfo_rootx() + 10
+        y = self.widget.winfo_rooty() + self.widget.winfo_height() + 4
+        self.finestra = tk.Toplevel(self.widget)
+        self.finestra.wm_overrideredirect(True)
+        self.finestra.wm_geometry(f"+{x}+{y}")
+        tk.Label(self.finestra, text=testo, justify="left", wraplength=560, background="#FFFDE7", relief="solid",
+                 borderwidth=1, font=("Segoe UI", 9), padx=8, pady=6).pack()
+
+    def _chiudi(self):
+        if self.attesa:
+            self.widget.after_cancel(self.attesa)
+            self.attesa = None
+        if self.finestra:
+            self.finestra.destroy()
+            self.finestra = None
 
 
 class AmbienteTk:
@@ -59,10 +105,14 @@ class AmbienteTk:
         return scatola.get("v")
 
     def esegui(self, argomenti, script=None):
-        self.app.scrivi_log(f"\n> {Path(script).stem if script else 'esegui_ciclo_locale'} {' '.join(argomenti)}", "comando")
-        return esecutore.esegui(argomenti, self.app.conf["cartella_uscita"], self.app.conf.get("utente") or "",
-                                su_riga=lambda r: self.app.coda.put(lambda: self.app.scrivi_log(r)),
-                                script=script or esecutore.MOTORE)
+        programma = Path(script).stem if script else "esegui_ciclo_locale"
+        comando = next((str(a) for a in argomenti if not str(a).startswith("-")), programma) if not script else programma
+        self.app.coda.put(lambda: self.app.comando_iniziato(comando, f"{programma} {' '.join(map(str, argomenti))}"))
+        es = esecutore.esegui(argomenti, self.app.conf["cartella_uscita"], self.app.conf.get("utente") or "",
+                              su_riga=lambda r: self.app.coda.put(lambda: self.app.scrivi_log(r)),
+                              script=script or esecutore.MOTORE)
+        self.app.coda.put(lambda: self.app.comando_finito(comando, es["fascia"]))
+        return es
 
     def apri(self, cosa):
         testo = str(cosa)
@@ -81,7 +131,7 @@ class AmbienteTk:
         self.app.coda.put(lambda: self.app.mostra(testo, tipo))
 
     def conferma(self, domanda):
-        return self._main(lambda: messagebox.askyesno("NFR Horizon Scan", domanda, parent=self.app.root))
+        return self._main(self.app.domanda, domanda)
 
     def chiedi(self, titolo, campi):
         return self._main(self.app.modulo, titolo, campi)
@@ -120,6 +170,9 @@ class App:
         self.flussi = flussi.Flussi(self.amb, self.conf)
         self.ascolto = appunti.Ascolto() if appunti.disponibili() and self.conf.get("ascolta_appunti", True) else None
         self.in_corso = None
+        self.nome_processo = "Processo"              # il pulsante premuto, scritto nella fascia e nel passo in corso
+        self.comando = None                          # (comando, inizio) mentre il motore lavora
+        self.orologio = None                         # aggiornamento del tempo trascorso (root.after)
         self.attesa = None                           # (agente, Event) mentre si aspetta una risposta
         self.testo_risposta = None
         root.title("NFR Horizon Scan")
@@ -143,7 +196,8 @@ class App:
         alto.pack(fill="x")
         self.righe_stato = ttk.Label(alto, font=("Segoe UI", 11), justify="left")
         self.righe_stato.pack(anchor="w")
-        self.prossimo = ttk.Button(alto, style="Grande.TButton", command=lambda: self.avvia(self.flussi.prossimo))
+        self.prossimo = ttk.Button(alto, style="Grande.TButton",
+                                   command=lambda: self.avvia(self.flussi.prossimo, "Prossimo passo"))
         self.prossimo.pack(fill="x", pady=(8, 4))
 
         processi = ttk.Frame(self.root, padding=(10, 0))
@@ -155,37 +209,53 @@ class App:
                 ("Testi a mano", self.flussi.testi_a_mano), ("Parere di A4", self.flussi.parere_a4),
                 ("Chiedi ad A7", self.flussi.assistente_a7), ("Diagnosi", self.flussi.diagnosi), ("Dismetti", self.flussi.dismetti)]
         self.pulsanti = [self.prossimo]
+        guida_pulsanti = aiuto.pulsanti()             # dalla tabella "I processi" della guida
+        parti = aiuto.parti_finestra()
+        Suggerimento(self.prossimo, parti.get("▶ Prossimo passo", ""))
         for i, (testo, azione) in enumerate(voci):
-            b = ttk.Button(processi, text=testo, command=lambda a=azione: self.avvia(a))
+            b = ttk.Button(processi, text=testo, command=lambda a=azione, n=testo: self.avvia(a, n))
             b.grid(row=i // 6, column=i % 6, sticky="ew", padx=2, pady=2)
+            Suggerimento(b, aiuto.suggerimento(testo, voci=guida_pulsanti))
             self.pulsanti.append(b)
         for c in range(6):
             processi.columnconfigure(c, weight=1)
         opzioni = ttk.Frame(processi)
         opzioni.grid(row=2, column=0, columnspan=6, sticky="w", pady=(4, 0))
-        ttk.Checkbutton(opzioni, text="Con A5 Challenger (facoltativo)", variable=self.con_a5).pack(side="left")
+        casella_a5 = ttk.Checkbutton(opzioni, text="Con A5 Challenger (facoltativo)", variable=self.con_a5)
+        casella_a5.pack(side="left")
+        Suggerimento(casella_a5, parti.get("Con A5 Challenger", ""))
         ttk.Label(opzioni, text="   Agenti:").pack(side="left")
         self.origine = tk.StringVar(value=self.flussi.origine)
         scelta = ttk.Combobox(opzioni, textvariable=self.origine, values=list(flussi.ingresso.ORIGINI), state="readonly", width=16)
         scelta.pack(side="left")
+        Suggerimento(scelta, parti.get("Agenti", ""))
         scelta.bind("<<ComboboxSelected>>", lambda ev: setattr(self.flussi, "origine", self.origine.get()))
         altro = ttk.Menubutton(opzioni, text="Altro")
         menu = tk.Menu(altro, tearoff=False)
         menu.add_command(label="Apri il registro (sola consultazione)", command=lambda: self.amb.apri(self.conf["workbook"]))
         menu.add_command(label="Apri l'archivio", command=lambda: self.amb.apri(self.conf["cartella_uscita"]))
         menu.add_command(label="Aggiorna lo stato", command=self.aggiorna_stato)
+        menu.add_command(label="Verifica del PC", command=lambda: self.avvia(self.flussi.verifica_pc, "Verifica del PC"))
         menu.add_separator()
-        menu.add_command(label="Togli il lucchetto rimasto (sblocca)", command=lambda: self.avvia(self.flussi.sblocca))
+        menu.add_command(label="Togli il lucchetto rimasto (sblocca)", command=lambda: self.avvia(self.flussi.sblocca, "Sblocca"))
         menu.add_command(label="Ricostruisci la griglia di validazione",
-                         command=lambda: self.avvia(lambda: self.flussi.motore("griglia")))
+                         command=lambda: self.avvia(lambda: self.flussi.motore("griglia"), "Griglia di validazione"))
         altro["menu"] = menu
         altro.pack(side="left", padx=12)
+        Suggerimento(altro, parti.get("Altro", ""))
+        b_admin = ttk.Button(opzioni, text="Admin...", command=self.apri_admin)     # D-85
+        b_admin.pack(side="left", padx=(0, 12))
+        Suggerimento(b_admin, parti.get("Admin...", ""))
+        b_aiuto = ttk.Button(opzioni, text="Aiuto (F1)", command=self.apri_aiuto)
+        b_aiuto.pack(side="left")
+        Suggerimento(b_aiuto, "La guida dell'app e dei processi principali, presa da 00_GUIDA_PASSO_PASSO.md.")
+        self.root.bind("<F1>", lambda ev: self.apri_aiuto())
 
         # Passo in corso e uscita del motore divisi da un divisore trascinabile (richiesta dell'utente del 23/10).
         divisore = ttk.PanedWindow(self.root, orient="vertical")
         divisore.pack(fill="both", expand=True, padx=10, pady=(8, 10))
         self.passo = ttk.LabelFrame(divisore, text="Passo in corso", padding=8)
-        self.istruzioni = ttk.Label(self.passo, text="Nessun processo in corso.", justify="left", font=("Segoe UI", 10))
+        self.istruzioni = ttk.Label(self.passo, text=NESSUN_PROCESSO, justify="left", font=("Segoe UI", 10))
         self.istruzioni.pack(anchor="w", fill="x")
         self.passo.bind("<Configure>", lambda ev: self.istruzioni.config(wraplength=max(300, ev.width - 30)))
         bottoni = ttk.Frame(self.passo)
@@ -200,7 +270,7 @@ class App:
         self.b_usa = ttk.Button(bottoni, text="Usa il testo incollato", command=self.usa_incollato)
         self.b_appunti = ttk.Button(bottoni, text="Leggi gli appunti adesso", command=self.leggi_appunti_adesso)
         self.b_file = ttk.Button(bottoni, text="Scegli file...", command=self.scegli_file)
-        self.b_chiuso = ttk.Button(bottoni, text="Ho chiuso il registro", command=self.chiuso_a_mano)
+        self.b_chiuso = ttk.Button(bottoni, text="Ho chiuso Excel: controlla ora", command=self.chiuso_a_mano)
         self.b_annulla = ttk.Button(bottoni, text="Annulla il passo", command=self.annulla)
         for b in (self.b_usa, self.b_appunti, self.b_file, self.b_chiuso, self.b_annulla):
             b.pack(side="left", padx=(0, 6))
@@ -244,13 +314,16 @@ class App:
         self.root.after(AGGIORNA_MS, self.aggiorna_periodico)
 
     # ------------------------------------------------------------ processi
-    def avvia(self, azione):
+    def avvia(self, azione, nome="Processo"):
         if self.in_corso:
-            messagebox.showinfo("NFR Horizon Scan", "C'e' gia' un processo in corso: finiscilo o annullalo.", parent=self.root)
+            messagebox.showinfo("NFR Horizon Scan", f"C'e' gia' un processo in corso ({self.nome_processo}): finiscilo o "
+                                "annullalo.", parent=self.root)
             return
         for b in self.pulsanti:
             b.state(["disabled"])
-        self.fascia.config(text="  In corso...", bg=COLORI["info"])
+        self.nome_processo, self.comando = nome, None
+        self.istruzioni.config(text=f"Processo \"{nome}\" avviato.")
+        self.fase("avviato")
 
         def lavoro():
             try:
@@ -268,9 +341,13 @@ class App:
     def fine_processo(self):
         self.in_corso = None
         self.attesa = None
+        self.comando = None
         for b in self.pulsanti:
             b.state(["!disabled"])
-        self.istruzioni.config(text="Nessun processo in corso.")
+        self.istruzioni.config(text=f"Nessun processo in corso. L'ultimo, \"{self.nome_processo}\", e' finito alle "
+                                    f"{time.strftime('%H:%M')}: l'esito e' nella fascia e nell'uscita qui sotto.")
+        if self.fascia.cget("text").startswith("  In corso:"):     # nessun esito colorato dopo l'ultima fase
+            self.fascia.config(text=f"  {self.nome_processo}: finito alle {time.strftime('%H:%M')}", bg=COLORI["info"])
         self.mostra_bottoni()
         self.aggiorna_stato()
 
@@ -281,6 +358,162 @@ class App:
         except queue.Empty:
             pass
         self.root.after(100, self.svuota_coda)
+
+    # ------------------------------------------------------------ che cosa sta facendo l'app
+    def fase(self, testo):
+        """La fascia dice sempre quale processo e' in corso e in che fase (richiesta dell'utente del 29/10)."""
+        self.fascia.config(text=f"  In corso: {self.nome_processo} - {testo}"[:170], bg=COLORI["info"])
+
+    def comando_iniziato(self, comando, riga):
+        self.scrivi_log(f"\n> {riga}", "comando")
+        self.comando = (comando, time.time())
+        self.fase(f"comando {comando} in esecuzione")
+        if self.orologio:
+            self.root.after_cancel(self.orologio)
+        self.tempo_comando()
+
+    def tempo_comando(self):
+        self.orologio = None
+        if not self.comando:
+            return
+        comando, inizio = self.comando
+        secondi = int(time.time() - inizio)
+        self.istruzioni.config(text=f"Esecuzione del comando {comando} in corso da {secondi // 60}:{secondi % 60:02d} "
+                                    f"({DURATA.get(comando, DURATA_EXCEL)}).\nNon serve fare niente: l'uscita del comando "
+                                    "compare riga per riga qui sotto; alla fine il processo prosegue da solo.")
+        self.orologio = self.root.after(1000, self.tempo_comando)
+
+    def comando_finito(self, comando, fascia):
+        self.comando = None
+        self.istruzioni.config(text=f"Comando {comando} finito: {fascia}. Il processo \"{self.nome_processo}\" continua.")
+
+    def in_primo_piano(self):
+        """Porta la finestra davanti al browser e a Excel: una domanda dietro un'altra finestra sembrava un'app bloccata."""
+        try:
+            self.root.deiconify()
+            self.root.lift()
+            self.root.attributes("-topmost", True)
+            self.root.after(500, lambda: self.root.attributes("-topmost", False))
+            self.root.focus_force()
+            self.root.bell()
+        except tk.TclError:
+            pass
+
+    def domanda(self, testo):
+        self.istruzioni.config(text=f"In attesa della tua risposta alla domanda (finestra \"NFR Horizon Scan\", Si'/No):\n{testo}")
+        self.fase("in attesa di una tua risposta (Si'/No)")
+        self.in_primo_piano()
+        risposta = messagebox.askyesno("NFR Horizon Scan", testo, parent=self.root)
+        self.istruzioni.config(text=f"Risposta: {'Si' if risposta else 'No'}. Il processo continua.")
+        self.fase("prosegue")
+        return risposta
+
+    # ------------------------------------------------------------ modalita' Admin (D-85)
+    def apri_admin(self):
+        """Il pulsante Admin: dopo una conferma (che lascia la traccia) apre la finestra delle funzioni amministrative,
+        una per operazione con la spiegazione della guida (tabella "Pulsante Admin") e il suo pulsante. Finche' la
+        finestra e' aperta l'app e' in modalita' Admin; chiuderla la spegne (anche questo resta nella traccia)."""
+        if getattr(self, "finestra_admin", None) and self.finestra_admin.winfo_exists():
+            self.finestra_admin.lift()
+            return
+        if not messagebox.askyesno(
+                "NFR Horizon Scan - modalita' Admin",
+                "La finestra Admin contiene le funzioni amministrative: nuovo registro, pulizia dell'archivio, ritorno a "
+                "un ciclo validato, annullamento, ripartenza da zero, parcheggi, svuotamento.\n\nNiente si cancella "
+                "subito (tutto va nel parcheggio con l'atto), ma ritorno e ripartenza cambiano la storia del registro: si "
+                "fanno solo su decisione della funzione di rischio.\n\nAprire la finestra Admin? Resta traccia di chi "
+                "l'ha aperta e quando.", parent=self.root):
+            return
+        self._admin(True)
+        f = self.finestra_admin = tk.Toplevel(self.root)
+        f.title("NFR Horizon Scan - Admin")
+        f.protocol("WM_DELETE_WINDOW", self.chiudi_admin)
+        corpo = ttk.Frame(f, padding=12)
+        corpo.pack(fill="both", expand=True)
+        ttk.Label(corpo, text="Funzioni amministrative (modalita' Admin)", font=("Segoe UI", 13, "bold")).grid(
+            row=0, column=0, columnspan=2, sticky="w")
+        ttk.Label(corpo, text="Niente si cancella subito, tranne con Svuota: cio' che un'operazione toglie va nel parcheggio "
+                              "con l'atto e si puo' annullare. L'esito di ogni operazione e' nell'uscita della finestra "
+                              "principale.", wraplength=760, justify="left").grid(row=1, column=0, columnspan=2, sticky="w",
+                                                                                   pady=(4, 10))
+        spiegazioni = aiuto.operazioni_admin()
+        for n, op in enumerate(flussi.OPERAZIONI_ADMIN, start=2):
+            serve, chiede = spiegazioni.get(op, ("", ""))
+            ttk.Button(corpo, text=op, width=18,
+                       command=lambda o=op: self.avvia(lambda: self.flussi.amministrazione(o), f"Admin: {o}")).grid(
+                row=n, column=0, sticky="nw", pady=4, padx=(0, 12))
+            ttk.Label(corpo, text=f"{serve}\nChiede: {chiede}" if chiede else serve, wraplength=600, justify="left").grid(
+                row=n, column=1, sticky="w", pady=4)
+        sotto = ttk.Frame(corpo)
+        sotto.grid(row=len(flussi.OPERAZIONI_ADMIN) + 2, column=0, columnspan=2, sticky="ew", pady=(12, 0))
+        ttk.Button(sotto, text="Aiuto: Pulsante Admin", command=lambda: self.apri_aiuto("Pulsante Admin")).pack(side="left")
+        ttk.Button(sotto, text="Chiudi (spegne la modalita' Admin)", command=self.chiudi_admin).pack(side="right")
+
+    def chiudi_admin(self):
+        if getattr(self, "finestra_admin", None) and self.finestra_admin.winfo_exists():
+            self.finestra_admin.destroy()
+        self.finestra_admin = None
+        self._admin(False)
+
+    def _admin(self, attiva):
+        self.flussi.admin = attiva
+        self.root.title("NFR Horizon Scan" + ("  —  ADMIN" if attiva else ""))
+        try:
+            amministrazione.segna_admin(self.conf, self.conf, attiva)
+        except Exception as ex:                      # noqa: BLE001 - la traccia non deve impedire di lavorare
+            self.scrivi_log(f"(traccia della modalita' Admin non scritta: {ex})", "avviso")
+        self.mostra("Modalita' Admin: finestra Admin aperta." if attiva else "Modalita' Admin spenta.",
+                    "avviso" if attiva else "info")
+
+    # ------------------------------------------------------------ aiuto (dalla guida)
+    def apri_aiuto(self, argomento=0):
+        """Una finestra con gli argomenti della guida (aiuto.ARGOMENTI) a sinistra e il testo a destra. Il testo e'
+        quello di 00_GUIDA_PASSO_PASSO.md, letto ogni volta: nessuna copia da tenere allineata."""
+        voci = aiuto.argomenti()
+        if isinstance(argomento, str):               # per titolo (per esempio "Pulsante Admin")
+            argomento = next((k for k, (titolo, _) in enumerate(voci) if titolo == argomento), 0)
+        if getattr(self, "finestra_aiuto", None) and self.finestra_aiuto.winfo_exists():
+            self.finestra_aiuto.destroy()
+        f = self.finestra_aiuto = tk.Toplevel(self.root)
+        f.title("NFR Horizon Scan - Aiuto")
+        f.geometry(f"{int(self.root.winfo_screenwidth() * 0.55)}x{int(self.root.winfo_screenheight() * 0.75)}")
+        if not voci:
+            ttk.Label(f, text=f"Guida non trovata: {aiuto.GUIDA}", padding=12).pack()
+            return
+        corpo = ttk.PanedWindow(f, orient="horizontal")
+        corpo.pack(fill="both", expand=True, padx=8, pady=8)
+        elenco = tk.Listbox(corpo, font=("Segoe UI", 10), activestyle="none", exportselection=False, width=34)
+        for titolo, _ in voci:
+            elenco.insert("end", titolo)
+        testo = scrolledtext.ScrolledText(corpo, wrap="word", font=STILI_AIUTO["testo"], padx=12, pady=8)
+        for stile, carattere in STILI_AIUTO.items():
+            rientro = 24 if stile in ("voce", "elenco") else 0
+            testo.tag_configure(stile, font=carattere, spacing1=6 if stile in ("titolo", "sottotitolo") else 1,
+                                lmargin2=rientro)
+            testo.tag_configure(stile + "_g", font=(carattere[0], carattere[1], "bold"), lmargin2=rientro)
+        corpo.add(elenco, weight=1)
+        corpo.add(testo, weight=4)
+
+        def mostra(_=None):
+            scelti = elenco.curselection()
+            if not scelti:
+                return
+            testo.config(state="normal")
+            testo.delete("1.0", "end")
+            for stile, pezzi in aiuto.righe(voci[scelti[0]][1]):
+                for pezzo, grassetto in pezzi:
+                    testo.insert("end", pezzo, stile + ("_g" if grassetto else ""))
+                testo.insert("end", "\n")
+            testo.config(state="disabled")
+            testo.yview_moveto(0)
+        elenco.bind("<<ListboxSelect>>", mostra)
+        elenco.selection_set(argomento)
+        mostra()
+        sotto = ttk.Frame(f, padding=(8, 0, 8, 8))
+        sotto.pack(fill="x")
+        ttk.Label(sotto, text=f"Dalla guida: {aiuto.GUIDA.name}", foreground="#555555").pack(side="left")
+        ttk.Button(sotto, text="Chiudi", command=f.destroy).pack(side="right")
+        ttk.Button(sotto, text="Apri la guida completa", command=lambda: self.amb.apri(aiuto.GUIDA)).pack(side="right", padx=6)
 
     # ------------------------------------------------------------ messaggi
     def scrivi_log(self, testo, tag=None):
@@ -301,16 +534,27 @@ class App:
         self.scrivi_log("(negli appunti: " + testo.splitlines()[0][:100] + ("..." if len(testo) > 100 else "") + ")", "info")
 
     def modulo(self, titolo, campi):
+        self.istruzioni.config(text=f"In attesa che tu compili il modulo \"{titolo}\" (Conferma o Annulla).")
+        self.fase("in attesa del modulo")
+        self.in_primo_piano()
         finestra = tk.Toplevel(self.root)
         finestra.title(titolo)
         finestra.transient(self.root)
         finestra.grab_set()
+        finestra.lift()
+        finestra.focus_force()
         valori, esito = {}, {}
         ttk.Label(finestra, text=titolo, font=("Segoe UI", 11, "bold")).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=8)
-        for i, (chiave, etichetta, predefinito) in enumerate(campi, start=1):
+        for i, campo in enumerate(campi, start=1):
+            chiave, etichetta, predefinito = campo[:3]
+            scelte = campo[3] if len(campo) > 3 else None
             ttk.Label(finestra, text=etichetta, wraplength=380).grid(row=i, column=0, sticky="w", padx=10, pady=3)
             v = tk.StringVar(value=predefinito)
-            ttk.Entry(finestra, textvariable=v, width=60).grid(row=i, column=1, padx=10, pady=3)
+            if scelte:                               # elenco a discesa; con solo_scelte non si scrive altro
+                ttk.Combobox(finestra, textvariable=v, values=list(scelte), width=58,
+                             state="readonly" if len(campo) > 4 and campo[4] else "normal").grid(row=i, column=1, padx=10, pady=3)
+            else:
+                ttk.Entry(finestra, textvariable=v, width=60).grid(row=i, column=1, padx=10, pady=3)
             valori[chiave] = v
 
         def ok():
@@ -329,6 +573,7 @@ class App:
         if self.ascolto:
             self.ascolto.ricomincia()
         self.istruzioni.config(text=f"In attesa della risposta di {agente}.\n{istruzioni}")
+        self.fase(f"in attesa della risposta di {agente}")
         self.mostra_bottoni(risposta=True)
 
     def consegna(self, testo):
@@ -402,14 +647,25 @@ class App:
 
     # ------------------------------------------------------------ registro aperto in Excel
     def aspetta_chiusura(self, file, evento):
-        self.chiusura, self.chiusura_annullata = evento, False
-        self.istruzioni.config(text=f"Il registro e' aperto in Excel ({Path(file).name}): lavora nelle celle gialle, salva e "
-                                    "chiudi Excel. L'app prosegue da sola quando il file e' chiuso.")
+        self.chiusura, self.chiusura_annullata, self.file_chiusura = evento, False, Path(file)
+        self.istruzioni.config(text=f"In attesa che tu chiuda il registro in Excel ({Path(file).name}). Lavora nelle celle "
+                                    "gialle, salva e chiudi Excel: l'app se ne accorge da sola entro pochi secondi e poi "
+                                    "lancia il comando.\nSe l'hai gia' chiuso e l'app e' ancora qui, premi \"Ho chiuso Excel: "
+                                    "controlla ora\".")
+        self.fase(f"in attesa che tu chiuda Excel ({Path(file).name})")
+        self.esito_risposta("")
         self.mostra_bottoni(chiusura=True)
 
     def chiuso_a_mano(self):
-        if getattr(self, "chiusura", None):
-            self.chiusura.set()
+        """Il pulsante controlla davvero: con il registro ancora aperto da Excel su questo PC il comando si fermerebbe."""
+        if not getattr(self, "chiusura", None):
+            return
+        if aperto_qui(self.file_chiusura):
+            self.esito_risposta(f"{self.file_chiusura.name} risulta ancora aperto in Excel su questo PC: salvalo, chiudi "
+                                "Excel (guarda anche nella barra delle applicazioni) e premi di nuovo.", "avviso")
+            return
+        self.esito_risposta("Registro chiuso: si prosegue.", "ok")
+        self.chiusura.set()
 
     def fine_attesa(self):
         self.chiusura = None

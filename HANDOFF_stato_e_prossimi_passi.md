@@ -24,7 +24,7 @@
 > parallelo: sezione 2-trevicies**; **08/10 sera: registro unico, radar e osservazione, D-79, struttura
 > 2026-10-09: sezione 2-quattuorvicies**; **09/10: prova K0, tre strade, prove della CS-1: sezione
 > 2-quinquevicies**; **11/10: CS-2 approfondita, variante V2: sezione 2-sexvicies**; **13/10: ramo unito, frase
-> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; sul ramo `copilot-studio-pieno`: **23/10: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**; **23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1 con Office Scripts: sezione 2-tretricesies**; dopo, il merge di `main` del 23/10 sera).
+> uniforme sulla ricerca file, AU7: sezione 2-septvicies**; **14/10: report HTML al posto delle viste di Excel, variante V4, anteprima: sezione 2-octovicies**; 16/10: presentazione del lavoro: sezione 2-novovicies; 19/10: contraddittorio "decimo uomo", analisi 17: sezione 2-tricesies; **22/10: revisione di Bologna in sospeso, A1 in Copilot Studio con variabili globali (K6-ter) riuscito: sezione 2-untricesies**; **23/10: due rami, strada A su `main` con l'app di orchestrazione, tappa M1 (lucchetto, copia di lavoro, AU7), D-83: sezione 2-tertricesies**; **29/10: prima prova dell'app in Banca, app piu' esplicita, A5 proposto dopo il precontrollo, tappe M3, M4, M5: sezione 2-quatertricesies**; sul ramo `copilot-studio-pieno`: **23/10: progetto della versione tutta in Copilot Studio, D-82: sezione 2-duotricesies**; **23/10 pomeriggio: prove T0, K9 negativo, K8 riuscito, strada V1 con Office Scripts: sezione 2-tretricesies**; dopo, i merge di `main` del 23/10 sera e del 29/10).
 > Pacchetto **rigenerato da zero** il 23/09 con
 > `PROMPT_MASTER_rigenerazione.md` in `NFR_Emerging_Risk_Agents/`, collaudato
 > a secco (la suite completa, catena compresa, su Excel desktop reale). Nel
@@ -1435,6 +1435,79 @@ configurazione); istruzioni di aggiornamento in `AGGIORNAMENTO_IN_BANCA.md` alla
 
 **Prossimo**: prova a mano in Banca (B5-bis); demo attraverso i flussi; tappa M3 (installazione e Verifica del PC) e M4
 (report HTML).
+
+## 2-quatertricesies. 29/10: prima prova dell'app in Banca; tappe M3, M4, M5
+
+**Prova in Banca** (l'utente, 29/10): trimestre dall'app fino alla scrittura (A1, precontrollo, correzione, precontrollo
+superato, `trimestrale` OK) e validazione. Problemi trovati: i pulsanti grigi sembravano un'app bloccata mentre l'app
+aspettava una domanda finita dietro al browser o la chiusura di Excel; A5 si poteva scegliere solo prima di premere
+Trimestre. Corretti (commit 863b20b): fascia con processo e fase, passo in corso con il comando e il tempo trascorso,
+domande e moduli in primo piano, "Ho chiuso Excel: controlla ora"; poi la domanda su A5 a precontrollo superato
+(`chiedi_a5`). L'utente considera M1 e M2 a posto; le verifiche in Banca (18.6) si fanno alla fine, dopo M5.
+
+**Tappa M3** (installazione, 29/10): `installa.cmd` e `installa.py` (moduli con pip --user o dalla cartella
+`pacchetti`, configurazione con una finestra, collegamenti Desktop e Invia a, attivita' della raccolta, `attrib +P`,
+Verifica del PC), `installazione.py` (parti senza effetti, collaudate), `verifica_pc.py` (anche da Altro nell'app),
+`notizie_manuali.py` e `NFR_notizie_manuali.cmd`. Collaudo: `test_installazione.py` 29/29, `test_app.py` 49/49 (47
+fuori da Windows), riferimenti 31/31; prova della finestra della configurazione con Xvfb (trappola 134). Trappole
+132-134. Da provare in Banca: pip dietro il proxy, schtasks e collegamenti (V-E), Verifica del PC con Excel (V-F).
+Proposte usate in attesa di decisione dell'utente: nessuna per M3.
+
+**Tappa M4** (report HTML, 29/10): `report_html.py` nel pacchetto, seconda uscita di `report` e `valida` (stessa sessione
+COM, dopo il PDF): `Cicli/<ciclo>/Report_comitato_<ciclo>.html` con il report al comitato, le schede di tutti i rischi e
+la guida (con `--con-lavoro` le viste di lavoro), riassunto `.json` accanto, `Cicli/Indice_report.html`. Cancello sui
+numeri delle viste di Excel: se uno non torna esce solo il PDF, con l'avviso. Il prototipo dell'analisi 16 ne e' un
+involucro (anteprima rigenerata sulla demo del 23/10). Collaudo: `test_report_html.py` 13/13, `test_app.py` 51/51 (fuori
+da Windows), riferimenti 31/31; catena con due verifiche nuove (2b: HTML da `valida` e da `report --con-lavoro`;
+`verifica_html_excel`: HTML via COM = dal file, cancello con un dato alterato) da lanciare sul PC. Trappole 135-136. La
+presentazione ha i testi nuovi nel generatore: rigenerarla sul PC.
+
+**Tappa M5** (amministrazione, 29/10): `amministrazione.py` (parcheggi, pulizia con anteprima, ritorno a un ciclo
+validato, annulla, ripartenza da zero, svuota), nell'app il pulsante Admin, solo in modalita' Admin
+(D-85, decisa dall'utente il 29/10: pulsante Admin... che apre la finestra delle operazioni, una per pulsante, dopo una conferma e
+tracciata; `--admin` da riga di comando). Niente si cancella subito: parcheggio con l'atto e la traccia; il ritorno si annulla solo se nessuno ha
+scritto nel registro. Collaudo: `test_amministrazione.py` 19/19, `test_app.py` 55/55 (fuori da Windows); catena,
+gruppo 9 in fondo alla catena principale (pulizia, ritorno e annullamento con Excel), da lanciare sul PC. Trappole
+137-138. Tempi (D-85): 10 backup, 90 giorni di log, 30 di parcheggio, modificabili in configurazione.
+
+**Pacchetto per la Banca (29/10)**: `AGGIORNAMENTO_IN_BANCA.md` riscritto per il pacchetto del 29/10 (sopra quello del
+23/10, che resta in appendice): estrarre, rinominare i tre `.cmd` se lo zip arriva per posta, `installa.cmd`,
+il pulsante Admin per l'amministrazione; le verifiche da fare in Banca, tutte alla fine (scelta dell'utente), sono nello stesso
+file e in 18.6.
+
+**Aiuto nell'app** (29/10, richiesta dell'utente): `aiuto.py` legge la guida; pulsante "Aiuto (F1)" con gli argomenti
+principali e suggerimenti sui pulsanti dalla tabella "I processi". `test_app.py` 61/61 (fuori da Windows). Trappola 139.
+
+**Aiuto per pulsante e finestra Admin** (29/10, richieste dell'utente): il capitolo dell'app della guida ha una sezione
+per pulsante ("Pulsante Settimana", ..., "Pulsante Admin", "Menu Altro", "I pulsanti del passo in corso"); l'aiuto mostra
+quelle sezioni (lette dalla guida, nessun elenco da tenere), senza comandi Python; le sezioni dei processi della guida
+(1, 2, 2-bis, 3, 3-bis, 3-ter, 3-quater) rimandano al pulsante. Admin e' un pulsante che apre una finestra con le
+operazioni (Nuovo registro, Pulizia, Ritorno, Annulla, Ripartenza, Parcheggi, Svuota), spiegate dalla tabella della
+guida, e moduli con le scelte (cicli validati, parcheggi attivi, trimestri). `test_app.py` 67/67 fuori da Windows.
+
+**Lunghezze dei testi e C10** (29/10, D-86, richiesta dell'utente: "l'agente e' troppo sintetico"): tabella "Lunghezze
+dei testi" nella guida di scrittura (minimo e consigliato, fascia alta delle proposte) e `controlli_a5.LUNGHEZZE`, uguali
+(lo controlla `verifica_riferimenti.py`); controllo nuovo C10 (Bloccante per A5, Osservazione nello script e in
+validazione, contato a parte dal precontrollo, che con l'app propone di farli allungare ad A1 nella stessa chat). Il
+prompt di A5 (7.667 caratteri) prende ora dalla rubrica solo le sezioni 1-2; la tabella e' nella parte 3 di
+`Input_A5`. Dati di prova (`99_Collaudo/dati/run1-run4`) e input della demo riscritti con testi lunghi (stesse
+valutazioni, stessi rilievi degli altri controlli); kit di Copilot Studio rigenerato; template Excel rigenerato (una
+cella del foglio Metodologia). Collaudo senza Excel: controlli 296/296, riferimenti 32/32, app 69/69 (fuori da
+Windows). Da fare sul PC: catena completa, `esegui_demo.py` (demo e `REPORT_demo.md` sui dati nuovi), presentazione;
+sul ramo `copilot-studio-pieno`: `git merge main` e `genera_CS.py`. Trappola 140.
+
+**A7 in prima persona** (29/10, D-87, richiesta dell'utente: "A7 mette sempre le mani avanti"): A7 parla come
+autore delle valutazioni, non nomina gli altri agenti, dopo una rettifica "avevo proposto..., il validatore ha
+deciso..."; tolte le etichette REGISTRATO / CALCOLATO / LETTURA MIA e i Limiti fissi; resta "(lettura di oggi, non nel
+registro)" per cio' che il file non dice. Prompt 7.769 caratteri, risposte "approfondite e motivate", il perche' per esteso; knowledge invariata. Copione `Prova_A7.md` aggiornato.
+
+**Testi piu' lunghi per A6, A8 e A4** (29/10, D-88): A6 con lunghezze minime (`schede.LUNGHEZZE_A6`: 1000-2000,
+400-800, 100-300; schema di A6 con i massimi alzati), controllo che non ferma (il comando `schede` elenca i testi
+corti, l'app propone di farli allungare ad A6 nella stessa chat); analisi dell'evento di A8 nella tabella delle
+lunghezze e in C10 (dati `run4` allungati); A4 con un parere piu' disteso (prompt 6.089 caratteri; A6 6.040). Collaudo
+senza Excel: controlli 301/301, riferimenti 33/33, app 71/71. Trappola 141.
+
+**Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

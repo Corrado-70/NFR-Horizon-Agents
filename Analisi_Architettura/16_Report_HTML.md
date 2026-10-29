@@ -1,6 +1,6 @@
 # 16. Report e grafici in HTML al posto dei fogli di Excel (variante V4)
 
-> **Esito, 23/10/2026 (D-83, chiude A-16)**: la V4 non si adotta, il registro resta l'Excel di oggi. Del lavoro resta il report: l'HTML diventa una seconda uscita del comando `report` per il comitato, accanto al PDF, solo su ciclo validato e con i numeri controllati contro Excel (tappa M4 del piano dell'app, TODO sezione 4). Il prototipo `16_genera_anteprima_html.py` ne e' la base.
+> **Esito, 23/10/2026 (D-83, chiude A-16)**: la V4 non si adotta, il registro resta l'Excel di oggi. Del lavoro resta il report: l'HTML diventa una seconda uscita del comando `report` per il comitato, accanto al PDF, solo su ciclo validato e con i numeri controllati contro Excel (tappa M4 del piano dell'app, TODO sezione 4). Il prototipo `16_genera_anteprima_html.py` ne e' la base. **29/10/2026, tappa M4 fatta**: il codice e' nel pacchetto, `07_Senza_Studio/report_html.py` (letto via COM dalla sessione di `report` e `valida`, cancello sulle viste di Excel); lo script di questa analisi ne e' diventato un involucro che rifa' l'anteprima della demo con tutte le pagine.
 
 Data: 14/10/2026. Richieste dell'utente:
 

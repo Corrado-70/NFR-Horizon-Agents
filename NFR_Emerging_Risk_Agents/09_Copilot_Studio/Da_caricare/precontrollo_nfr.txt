@@ -20,7 +20,7 @@ import sys
 import types
 from pathlib import Path
 
-VERSIONE = "3ce622e0d019"
+VERSIONE = "0ab42f3f015e"
 
 SCHEMA_A1 = r'''{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -545,9 +545,12 @@ def y_azioni(azioni):
 ''',
     "controlli_a5": r'''"""Controlli meccanizzabili di A5 Challenger — controparte deterministica.
 
-Stessi nove controlli (C1-C9) del prompt 02_Agenti/A5_Challenger.md, nella
+Stessi dieci controlli (C1-C10) del prompt 02_Agenti/A5_Challenger.md, nella
 parte esprimibile come regola. Copertura DICHIARATA, non sottintesa:
   - C1, C2, C3, C7, C9: per intero (C3 = date, frasi generiche, max 1 punto).
+  - C10 (D-86, 29/10/2026): lunghezze minime dei testi (LUNGHEZZE, la tabella della guida di scrittura), per intero;
+    un rilievo per rischio con i testi troppo corti. Alla scrittura e in validazione e' un'Osservazione; nel
+    precontrollo il testo va allungato da A1 (precontrollo.conta_testi; dall'app si puo' saltare).
   - C5: date delle fonti per intero (Da motivare, D-71); fonte di rilevanza 3 per le
     valutazioni alte e fonti perse come Osservazioni (D-58); dal 19/10/2026 (D-81)
     l'esposizione della Banca non nota alle fonti: la frase "ESPOSIZIONE NON NOTA: con
@@ -600,6 +603,115 @@ TIPI_KRI = ["Esposizione", "Evoluzione"]          # D-64: esattamente un KRI per
 CATEGORIE = ["9.1", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.11", "9.13"]
 FUORI_PERIMETRO = "FP"
 BLOCCANTE, DA_MOTIVARE, OSSERVAZIONE = "Bloccante", "Da motivare", "Osservazione"     # D-71
+
+# D-86: lunghezze dei testi di A1 (caratteri, spazi compresi): (chiave, testo, minimo, consigliato fino a). La stessa
+# tabella e' nella guida di scrittura (01_Kernel/guida_scrittura_A1.md, "Lunghezze dei testi"); il collaudo la confronta.
+# I massimi dello schema di A1 restano il limite; C10 guarda solo i minimi.
+LUNGHEZZE = [
+    ("descrizione", "descrizione del rischio", 500, 900),
+    ("rischio", "razionale, parte RISCHIO:", 300, 450),
+    ("dimensione", "razionale, ogni parte IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (VELOCITY null esclusa)", 300, 400),
+    ("adeguamento", "razionale, parte ADEGUAMENTO: (se anni_adeguamento non e' null)", 150, 300),
+    ("evidenza", "evidenza di una variazione", 250, 500),
+    ("segnale", "segnale di avvicinamento (se lo scrivi)", 150, 300),
+    ("azione", "azione: descrizione", 200, 400),
+    ("azione_razionale", "azione: razionale (con EFFETTO:)", 300, 600),
+    ("kri_razionale", "KRI: razionale (con EFFETTO:)", 300, 600),
+    ("evento", "ciclo straordinario, analisi_evento: evento", 300, 700),                          # D-88: A8
+    ("catena_causale", "ciclo straordinario, analisi_evento: catena_causale", 600, 1300),
+    ("effetto", "ciclo straordinario, analisi_evento: effetto su ogni rischio toccato", 150, 350),
+    ("uso", "ciclo straordinario, analisi_evento: uso di ogni documento", 100, 250),
+    ("limiti", "ciclo straordinario, analisi_evento: limiti", 150, 500),
+]
+MINIMO = {chiave: minimo for chiave, _, minimo, _ in LUNGHEZZE}
+ETICHETTE_PARTI = {"rischio": "RISCHIO", "impatto": "IMPATTO", "probabilita": "PROBABILITA", "prossimita": "PROSSIMITA",
+                   "velocity": "VELOCITY", "adeguamento": "ADEGUAMENTO"}
+
+
+def tabella_lunghezze():
+    """La tabella delle lunghezze come testo (parte 3 dell'allegato di A5; la guida di scrittura ha la stessa)."""
+    return "\n".join(["| Testo | Minimo | Consigliato fino a |", "|---|---|---|"]
+                      + [f"| {testo} | {minimo} | {fino} |" for _, testo, minimo, fino in LUNGHEZZE])
+
+
+def _parti(razionale):
+    """Le parti del razionale per etichetta (come schede.parti_razionale, qui senza importare le schede)."""
+    import schede
+    return schede.parti_razionale(razionale)
+
+
+def testi_corti(x):
+    """I testi di un rischio sotto il minimo di LUNGHEZZE: [(che cosa, lunghezza, minimo)]."""
+    corti = []
+
+    def misura(cosa, testo, chiave):
+        n = len(str(testo or "").strip())
+        if n < MINIMO[chiave]:
+            corti.append((cosa, n, MINIMO[chiave]))
+    misura("descrizione", x.get("descrizione"), "descrizione")
+    parti = _parti(x.get("razionale"))
+    valutate = [d for d in DIMENSIONI if not (d == "velocity" and x.get("velocity") is None)]
+    if not parti:
+        # razionale senza le etichette (scritto prima della D-68; lo segnala gia' la forma dei testi): si misura intero,
+        # contro la somma dei minimi delle sue parti
+        n = len(str(x.get("razionale") or "").strip())
+        minimo = MINIMO["rischio"] + MINIMO["dimensione"] * len(valutate) + \
+            (MINIMO["adeguamento"] if x.get("anni_adeguamento") is not None else 0)
+        if n < minimo:
+            corti.append(("razionale (senza le parti)", n, minimo))
+    else:
+        misura("razionale RISCHIO", parti.get("rischio"), "rischio")
+        for dim in valutate:                         # "VELOCITY: nessuna fonte documenta i tempi." basta, se null
+            misura(f"razionale {ETICHETTE_PARTI[dim]}", parti.get(dim), "dimensione")
+        if x.get("anni_adeguamento") is not None:
+            misura("razionale ADEGUAMENTO", parti.get("adeguamento"), "adeguamento")
+    for n, v in enumerate(x.get("variazioni") or [], start=1):
+        misura(f"evidenza della variazione {n} ({v.get('dimensione')})", v.get("evidenza"), "evidenza")
+    if str(x.get("segnale_avvicinamento") or "").strip():
+        misura("segnale di avvicinamento", x.get("segnale_avvicinamento"), "segnale")
+    for n, a in enumerate(x.get("azioni_mitigazione") or [], start=1):
+        misura(f"azione {n}, descrizione", a.get("descrizione"), "azione")
+        misura(f"azione {n}, razionale", a.get("razionale"), "azione_razionale")
+    for k in x.get("kri_proposti") or []:
+        misura(f"KRI di {k.get('tipo') or 'tipo mancante'}, razionale", k.get("razionale"), "kri_razionale")
+    return corti
+
+
+def testi_corti_analisi(analisi):
+    """D-88: i testi dell'analisi dell'evento di A8 sotto il minimo di LUNGHEZZE: [(che cosa, lunghezza, minimo)]."""
+    corti = []
+
+    def misura(cosa, testo, chiave):
+        n = len(str(testo or "").strip())
+        if n < MINIMO[chiave]:
+            corti.append((cosa, n, MINIMO[chiave]))
+    misura("evento", analisi.get("evento"), "evento")
+    misura("catena_causale", analisi.get("catena_causale"), "catena_causale")
+    for t in analisi.get("rischi_toccati") or []:
+        misura(f"effetto su {t.get('id_rischio')}", t.get("effetto"), "effetto")
+    for n, d in enumerate(analisi.get("documenti") or [], start=1):
+        misura(f"uso del documento {n}", d.get("uso"), "uso")
+    misura("limiti", analisi.get("limiti"), "limiti")
+    return corti
+
+
+def controlla_testi(payload):
+    """C10 (D-86): un rilievo per rischio con i testi sotto il minimo, e uno per l'analisi dell'evento di uno
+    straordinario (D-88). Osservazione: alla scrittura non ferma niente."""
+    r = []
+    analisi = payload.get("analisi_evento")
+    corti = testi_corti_analisi(analisi) if isinstance(analisi, dict) else []
+    if corti:
+        elenco = "; ".join(f"{cosa} {n} caratteri (minimo {minimo})" for cosa, n, minimo in corti)
+        r.append(_rilievo("C10", None, OSSERVAZIONE, f"Analisi dell'evento troppo sintetica: {elenco}. Allungarla con "
+                                                     "contenuto (Lunghezze dei testi)."))
+    for x in payload.get("rischi") or []:
+        corti = testi_corti(x)
+        if corti:
+            elenco = "; ".join(f"{cosa} {n} caratteri (minimo {minimo})" for cosa, n, minimo in corti)
+            r.append(_rilievo("C10", x.get("id_rischio"), OSSERVAZIONE,
+                              f"Testi troppo sintetici: {elenco}. Allungarli con contenuto (Lunghezze dei testi)."))
+    return r
 
 # D-81 (analisi 17, 17.10): A1 non conosce l'esposizione interna della Banca (D-49) e la Probabilita 4-5 vale solo con la
 # Banca esposta (D-65). Invece di scegliere in silenzio il valore piu' basso, A1 lo scrive nel razionale con il valore che
@@ -953,6 +1065,9 @@ def controlla(payload, baseline):
             r.append(_rilievo("C1", None, B, f"{quanti} rischi in osservazione dopo il ciclo, oltre il massimo di {massimo}: "
                                              "lasciare fuori i meno rilevanti (fra i fenomeni non censiti, troppo_lontano)."))
 
+    # ---------------- C10 Testi (D-86): lunghezze minime, Osservazione
+    r.extend(controlla_testi(payload))
+
     bloccanti = sum(1 for x in r if x["gravita"] == B)
     da_motivare = sum(1 for x in r if x["gravita"] == M)
     return {
@@ -961,18 +1076,22 @@ def controlla(payload, baseline):
         "rilievi": r,
         "sintesi": (f"Controlli meccanizzati: {bloccanti} rilievi bloccanti, {da_motivare} da motivare in validazione, "
                     f"{len(r) - bloccanti - da_motivare} osservazioni. Bloccanti solo per l'integrita' (C1, C2, C7, "
-                    "identificativi dei KRI); C3, date di C5, coppia e soglie dei KRI da motivare; C5 (rilevanza), C6 e "
-                    "C8 come Osservazioni; C4 non coperto: resta al giudizio di A5, se usato."),
+                    "identificativi dei KRI); C3, date di C5, coppia e soglie dei KRI da motivare; C5 (rilevanza), C6, "
+                    "C8 e C10 (testi troppo corti) come Osservazioni; C4 non coperto: resta al giudizio di A5, se usato."),
     }
 
 
 def combina(meccanico, agente=None):
     """Esito del ciclo (D-71): ferma solo un Bloccante dei controlli meccanizzati, cioe' un difetto di integrita'.
     A5 e' facoltativo; i suoi rilievi Bloccanti diventano "Da motivare": vanno nella colonna Segnalazioni del foglio
-    Validazione e chiedono una Motivazione al validatore. I rilievi restano tutti, con l'origine."""
+    Validazione e chiedono una Motivazione al validatore. C10 (testi troppo corti, D-86) resta un'Osservazione anche
+    quando A5 lo dice Bloccante. I rilievi restano tutti, con l'origine."""
+    def gravita_a5(x):
+        if x.get("controllo") == "C10":
+            return OSSERVAZIONE
+        return DA_MOTIVARE if x["gravita"] == BLOCCANTE else x["gravita"]
     rilievi = [dict(x, origine="script") for x in meccanico["rilievi"]] + \
-              [dict(x, origine="A5", gravita=DA_MOTIVARE if x["gravita"] == BLOCCANTE else x["gravita"])
-               for x in (agente["rilievi"] if agente else [])]
+              [dict(x, origine="A5", gravita=gravita_a5(x)) for x in (agente["rilievi"] if agente else [])]
     fermo = meccanico["esito"] != "Approvato"
     return {"esito": "Da rivedere" if fermo else "Approvato", "rilievi": rilievi,
             "da_motivare": [x for x in rilievi if x["gravita"] == DA_MOTIVARE]}
@@ -1205,6 +1324,36 @@ def controlla_a6(ingresso, uscita, testo_rubrica=""):
                 problemi.append(f"{rid}, {dove}: numeri che non stanno nei dati del rischio ({valori}). A6 non puo' "
                                 "introdurre dati: correggere il testo o rilanciare A6.")
     return problemi
+
+
+# D-88: lunghezze dei testi di A6 (caratteri, spazi compresi): (campo, minimo, consigliato fino a). Le stesse sono nelle
+# istruzioni di A6 (02_Agenti/modelli/A6.md, regole 4-6); il collaudo le confronta. Piu' lunghe di quelle di A1: la
+# scheda spiega a chi non conosce il tema. Un testo piu' corto non ferma le schede: il comando lo dice e l'app propone
+# di farlo allungare ad A6 nella stessa chat.
+LUNGHEZZE_A6 = [("descrizione_estesa", 1000, 2000), ("spiegazione", 400, 800), ("a_sostegno_di", 100, 300)]
+
+
+def testi_corti_a6(ingresso, uscita):
+    """I testi dell'output di A6 sotto il minimo di LUNGHEZZE_A6: ["NFR-01, descrizione_estesa 640 caratteri (minimo
+    1000)", ...]. La spiegazione di una Velocity non valutata puo' essere breve."""
+    minimo = {campo: m for campo, m, _ in LUNGHEZZE_A6}
+    valori = {r["id_rischio"]: r.get("valori") or {} for r in ingresso.get("rischi", [])}
+    corti = []
+
+    def misura(rid, dove, testo, campo):
+        n = len(str(testo or "").strip())
+        if n < minimo[campo]:
+            corti.append(f"{rid}, {dove} {n} caratteri (minimo {minimo[campo]})")
+    for s in uscita.get("schede", []):
+        rid = s.get("id_rischio")
+        misura(rid, "descrizione_estesa", s.get("descrizione_estesa"), "descrizione_estesa")
+        for d in s.get("dimensioni", []):
+            if not (d.get("dimensione") == "velocity" and valori.get(rid, {}).get("velocity") is None):
+                misura(rid, f"spiegazione di {d.get('dimensione')}", d.get("spiegazione"), "spiegazione")
+        for f in s.get("fonti", []):
+            misura(rid, f"a_sostegno_di della fonte '{str(f.get('riferimento'))[:30]}'", f.get("a_sostegno_di"),
+                   "a_sostegno_di")
+    return corti
 
 
 # ================================================================ 3. file delle schede
@@ -1636,6 +1785,8 @@ import json
 import re
 from pathlib import Path
 
+import controlli_a5
+
 FILE_CONTROLLI = "controlli_A5.md"
 FILE_GUIDA = "guida_scrittura_A1.md"
 PREFISSO = "Input_A1"
@@ -1738,6 +1889,7 @@ def scrivi_allegato_a3_a4(cartella, baseline, oggi):
 PREFISSO_A5 = "Input_A5"
 INIZIO_OUTPUT = "=== 1. OUTPUT DI A1 ==="
 INIZIO_BASELINE_A5 = "=== 2. BASELINE ==="
+INIZIO_LUNGHEZZE_A5 = "=== 3. LUNGHEZZE DEI TESTI (C10, D-86) ==="
 
 
 def componi_a5(payload, baseline, oggi):
@@ -1746,7 +1898,9 @@ def componi_a5(payload, baseline, oggi):
     return (f"INPUT DI A5 PER IL CICLO {ciclo}: l'output di {autore} da esaminare e la baseline su cui e' stato scritto, "
             f"scritto da esegui_ciclo_locale.py il {oggi}, da non modificare a mano.\n\n"
             f"{INIZIO_OUTPUT}\n{json.dumps(payload, ensure_ascii=False, indent=2)}\n\n"
-            f"{INIZIO_BASELINE_A5}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n")
+            f"{INIZIO_BASELINE_A5}\n{json.dumps(baseline, ensure_ascii=False, indent=2)}\n\n"
+            f"{INIZIO_LUNGHEZZE_A5}\nLunghezze minime dei testi dell'output (caratteri, spazi compresi): un testo piu' corto "
+            f"e' un rilievo C10.\n{controlli_a5.tabella_lunghezze()}\n")
 
 
 def leggi_a5(testo):
@@ -1848,10 +2002,17 @@ def precontrolla(payload, baseline, schema):
 
 
 def conta(esito):
-    """(punti da correggere, punti da verificare): i primi fermerebbero il ciclo."""
+    """(punti da correggere, punti da verificare): i primi fermerebbero il ciclo. I testi troppo corti (C10) si contano
+    a parte (conta_testi): non fermano la scrittura, ma nel precontrollo si chiede ad A1 di allungarli (D-86)."""
     da_correggere = len(esito["schema"]) + sum(1 for x in esito["rilievi"] if x["gravita"] == "Bloccante")
-    da_verificare = sum(1 for x in esito["rilievi"] if x["gravita"] != "Bloccante") + len(esito["formato"])
+    da_verificare = sum(1 for x in esito["rilievi"] if x["gravita"] != "Bloccante" and x["controllo"] != "C10") \
+        + len(esito["formato"])
     return da_correggere, da_verificare
+
+
+def conta_testi(esito):
+    """Rischi con testi sotto le lunghezze minime (C10, D-86)."""
+    return sum(1 for x in esito["rilievi"] if x["controllo"] == "C10")
 
 
 def ciclo_di(payload, baseline):
@@ -1868,10 +2029,11 @@ def agente(ciclo):
 def riga_esito(ciclo, esito):
     """Prima riga dell'esito, uguale nel comando sul PC e nella skill di Copilot Studio."""
     da_correggere, da_verificare = conta(esito)
-    if not da_correggere and not da_verificare:
+    testi = conta_testi(esito)
+    if not da_correggere and not da_verificare and not testi:
         return f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): nessun rilievo."
     return (f"Precontrollo dell'output di {agente(ciclo)} ({ciclo}): {da_correggere} punti da correggere, {da_verificare} "
-            "da verificare.")
+            "da verificare" + (f", {testi} rischi con testi troppo corti (C10)" if testi else "") + ".")
 
 
 def impronta(payload):
@@ -1895,7 +2057,9 @@ def messaggio_correzione(ciclo, esito):
     blocco("Schema (lo script non puo' leggere il JSON finche' non e' corretto):", esito["schema"])
     blocco("Da correggere (fermerebbero il ciclo):", [voce(x) for x in esito["rilievi"] if x["gravita"] == "Bloccante"])
     blocco("Da verificare (correggi se fondati; se confermi, spiega il perche' nel razionale):",
-           [voce(x) for x in esito["rilievi"] if x["gravita"] != "Bloccante"])
+           [voce(x) for x in esito["rilievi"] if x["gravita"] != "Bloccante" and x["controllo"] != "C10"])
+    blocco("Testi troppo corti (C10: allungali con contenuto, non con ripetizioni; le lunghezze sono nella parte 3 "
+           "dell'allegato, \"Lunghezze dei testi\"):", [voce(x) for x in esito["rilievi"] if x["controllo"] == "C10"])
     blocco("Forma dei testi (serve alle schede dei rischi):", [f"{x['id_rischio']} · {x['descrizione']}" for x in esito["formato"]])
     return "\n".join(righe) + "\n"
 ''',

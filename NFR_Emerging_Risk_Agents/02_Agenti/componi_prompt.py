@@ -18,7 +18,7 @@ Segnaposto nei modelli (02_Agenti/modelli/*.md):
     {{RUBRICA:1,3}}     le sezioni numerate indicate di 01_Kernel/rubrica_scoring.md
     {{FONTI}}           elenco compatto (codice, nome, canale) di 01_Kernel/fonti.md,
                         senza le fonti escluse; lo legge 07_Senza_Studio/fonti.py
-    {{CONTROLLI}}       i nove controlli di 01_Kernel/controlli_A5.md (D-69); lo
+    {{CONTROLLI}}       i controlli (C1-C10) di 01_Kernel/controlli_A5.md (D-69); lo
                         legge 07_Senza_Studio/input_a1.py, che mette lo stesso
                         testo nell'allegato di A1
 Nei file del kernel le righe che iniziano con ">" sono note per chi legge e

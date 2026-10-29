@@ -155,6 +155,14 @@ class Banco:
                                 "NFR_CARTELLA_LAVORO": chiavi.get("cartella_lavoro", "")})
         return r.returncode, r.stdout + r.stderr
 
+    def esegui_amm(self, *argomenti):
+        """amministrazione.py (tappa M5) sullo stesso banco, in modalita' Admin."""
+        cmd = [sys.executable, str(CAMPO / "amministrazione.py"), "--admin", "--workbook", str(self.wb), "--kernel", str(KERNEL),
+               "--cartella-uscita", str(self.uscita), *map(str, argomenti)]
+        r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                           env={**os.environ, "PYTHONIOENCODING": "utf-8", "NFR_ATTESA_LUCCHETTO": "0"})
+        return r.returncode, r.stdout + r.stderr
+
     def scrivi_json(self, nome, dati):
         p = self.cartella / nome
         p.write_text(json.dumps(dati, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -434,6 +442,32 @@ def a6_simulato(ingresso):
                       for f in r["fonti"]],
         })
     return {"ciclo": ingresso["ciclo"], "schede": schede}
+
+
+def verifica_html_excel(e, b, etichetta):
+    """Tappa M4 con Excel: il report HTML letto via COM (RegistroExcel, valori appena ricalcolati) e' identico a quello
+    letto dal file salvato (RegistroFile); il cancello scatta con un numero alterato nei dati."""
+    import report_html as rh
+    with SessioneExcel(b.wb, sola_lettura=True) as s:
+        s.ricalcola()
+        reg = rh.RegistroExcel(s)
+        testo_com, riga, uguali = rh.genera(reg)
+        ciclo = riga["ciclo"]
+        r = next(x for x in reg.tab["tblRegister"] if x["Ciclo"] == ciclo)
+        r["Prossimita"] = r["Prossimita"] - 1 if r["Prossimita"] > 1 else r["Prossimita"] + 1
+        try:
+            rh.genera(reg)
+            scattato = []
+        except rh.Cancello as ex:
+            scattato = ex.diversi
+    testo_file, _, _ = rh.genera(rh.RegistroFile(b.wb))
+    primo = next((i for i, (x, y) in enumerate(zip(testo_com, testo_file)) if x != y), None)
+    e.verifica(testo_com == testo_file and uguali >= 50,
+               f"{etichetta}. report HTML letto via COM = letto dal file salvato ({uguali} numeri del cancello uguali)",
+               "" if primo is None else f"primo carattere diverso {primo}: COM {testo_com[primo-80:primo+80]!r}\n"
+                                        f"file {testo_file[primo-80:primo+80]!r}")
+    e.verifica(scattato and r["ID_Rischio"] in " ".join(scattato),
+               f"{etichetta}. cancello con Excel: con la Prossimita di {r['ID_Rischio']} alterata l'HTML non esce", scattato[:5])
 
 
 def schede_a6(e, b, s):
@@ -1770,6 +1804,10 @@ def catena(e):
         pdf_valida = b.uscita / "Cicli" / "2026Q3" / "Report_comitato_2026Q3.pdf"
         e.verifica(pdf_valida.exists() and pdf_valida.stat().st_size > 10000 and "Report al comitato del ciclo 2026Q3" in out,
                    "2b. valida rigenera da sola il report al comitato del ciclo validato (D-83)", out[-600:])
+        html_valida = pdf_valida.with_suffix(".html")
+        e.verifica(html_valida.exists() and "Cancello:" in out and (b.uscita / "Cicli" / "Indice_report.html").exists()
+                   and pdf_valida.with_suffix(".json").exists(),
+                   "2b. valida pubblica anche il report HTML (tappa M4): cancello superato, riassunto e indice dei cicli", out[-900:])
         nfr10 = file_rischio(b.uscita / "Spiegazioni", "NFR-10") or ""
         nfr08 = file_rischio(b.uscita / "Spiegazioni", "NFR-08") or ""
         e.verifica("VALIDATI" in (b.uscita / "Spiegazioni" / "Ciclo.txt").read_text(encoding="utf-8")
@@ -1851,6 +1889,11 @@ def catena(e):
         e.verifica(codice == 0 and pdf.exists() and len(vecchi) == 2 and "Registro, Parametri" in out,
                    "2b. report --con-lavoro: aggiunge Registro e Parametri; le versioni precedenti del PDF (di valida e del "
                    "primo report) sono conservate", out)
+        html = pdf.with_suffix(".html")
+        e.verifica(html.exists() and 'href="#registro"' in html.read_text(encoding="utf-8")
+                   and len(list(pdf.parent.glob("Report_comitato_2026Q3_*.html"))) == 2,
+                   "2b. report --con-lavoro: anche l'HTML con le viste di lavoro; le versioni precedenti dell'HTML conservate", out)
+        verifica_html_excel(e, b, "2b")
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", dec["validatore"])
         e.verifica(codice == 1 and "niente da validare" in out, "2b. rilanciare valida sullo stesso ciclo: niente da fare", out)
         schede_a6(e, b, s)
@@ -2052,6 +2095,44 @@ def catena(e):
         e.verifica(codice == 0 and s["settimana"] == "2026-11-09" and str(s["badge"]["NFR-01"]).startswith("●"),
                    "7. la finestra scorre: i segnali di ottobre escono, badge NFR-01 torna stabile", out + str(s["badge"]))
         straordinario(e, b)
+        amministrazione_catena(e, b)
+
+
+def amministrazione_catena(e, b):
+    """9. Tappa M5 con Excel, in fondo alla catena: pulizia con anteprima e annullamento; ritorno al ciclo validato prima
+    del corrente (baseline vera rigenerata dal registro tornato) e annullamento (tutto come prima)."""
+    corrente = carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"]
+    validati = sorted(c.name for c in (b.uscita / "Cicli").iterdir() if (c / f"Validazione_{c.name}.json").exists())
+    meta = [c for c in validati if c < corrente]
+    codice, out = b.esegui_amm("pulizia")
+    e.verifica(codice == 0 and "anteprima" in out, "9. amministrazione: anteprima della pulizia, niente spostato", out[-500:])
+    prima = {f.relative_to(b.uscita).as_posix() for f in b.uscita.rglob("*") if f.is_file()}
+    codice, out = b.esegui_amm("pulizia", "--esegui")
+    codice2, out2 = b.esegui_amm("parcheggi")
+    nome = next((r.split(":")[0] for r in out2.splitlines() if "_pulizia" in r), None)
+    if nome:
+        codice3, out3 = b.esegui_amm("annulla", "--parcheggio", nome, "--motivo", "prova della catena")
+    dopo = {f.relative_to(b.uscita).as_posix() for f in b.uscita.rglob("*") if f.is_file()
+            if not f.relative_to(b.uscita).as_posix().startswith(("_Parcheggio", "Amministrazione", "Log"))}
+    e.verifica(codice == 0 and (nome is None or codice3 == 0) and {x for x in prima if not x.startswith(("Log", "Amministrazione"))} <= dopo,
+               "9. pulizia nel parcheggio e annullata: ogni file dell'archivio di nuovo al suo posto", f"{out[-400:]}\n{out2[-300:]}")
+    if not meta:
+        e.verifica(False, f"9. un ciclo validato prima del corrente {corrente} per il ritorno", str(validati))
+        return
+    obiettivo, firma = meta[-1], sha(b.wb)
+    codice, out = b.esegui_amm("ritorno", "--ciclo", obiettivo, "--motivo", "ritorno di prova della catena di collaudo",
+                               "--decisore", "Collaudo", "--conferma", obiettivo)
+    validato = b.uscita / "Cicli" / obiettivo / f"{b.wb.stem}_{obiettivo}_validato{b.wb.suffix}"
+    e.verifica(codice == 0 and sha(b.wb) == sha(validato)
+               and carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"] == obiettivo
+               and not (b.uscita / "Cicli" / corrente).exists(),
+               f"9. ritorno al {obiettivo}: registro = Excel validato del {obiettivo}, baseline rigenerata da Excel, il "
+               f"{corrente} nel parcheggio", out[-800:])
+    nome = next((r.split(":")[0] for r in b.esegui_amm("parcheggi")[1].splitlines() if "_ritorno" in r), None)
+    codice, out = b.esegui_amm("annulla", "--parcheggio", nome or "?", "--motivo", "fine della prova della catena")
+    e.verifica(codice == 0 and sha(b.wb) == firma and (b.uscita / "Cicli" / corrente).exists()
+               and carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"] == corrente,
+               f"9. annullamento del ritorno: registro, {corrente} e baseline come prima", out[-600:])
 
 
 def gate_copertura(e):
