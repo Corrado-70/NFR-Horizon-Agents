@@ -231,6 +231,11 @@ def test_stato(e):
                    and not any(a["chiave"] == "trimestrale" for a in s["attivita"]) and "RIAPERTO" in s["righe"][0],
                    "stato: riapertura aperta -> validarla prima; il trimestre aspetta", s["attivita"])
         (q3 / "Riapertura_2026Q3.json").unlink()
+        e.verifica("report pronto, solo PDF" in stato.leggi(conf, oggi)["righe"][0],
+                   "stato: report senza HTML (cancello) -> pronto, solo PDF", stato.leggi(conf, oggi)["righe"])
+        scrivi(q3 / "Report_comitato_2026Q3.html", "<html>")
+        e.verifica("report pronto, PDF e HTML" in stato.leggi(conf, oggi)["righe"][0],
+                   "stato: report HTML accanto al PDF (tappa M4) -> pronto, PDF e HTML", stato.leggi(conf, oggi)["righe"])
         os.utime(q3 / "Report_comitato_2026Q3.pdf", (time.time() - 3600, time.time() - 3600))
         e.verifica(not stato.leggi(conf, oggi)["report"], "stato: report piu' vecchio della validazione -> da rifare")
         scrivi(u / "Baseline_corrente.json", json.dumps({"ciclo_precedente": "2026Q3", "ciclo_da_valutare": "2026Q3-S1",

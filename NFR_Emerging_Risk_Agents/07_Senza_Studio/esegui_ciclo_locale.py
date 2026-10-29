@@ -98,7 +98,11 @@ Comandi:
       (presidio, anni di adeguamento, attenzione del supervisore, stato delle
       azioni). Il ciclo deve essere validato. Scrive
       Cicli/<ciclo>/Report_comitato_<ciclo>.pdf (la versione precedente resta
-      con la data e l'ora nel nome). Non modifica l'Excel.
+      con la data e l'ora nel nome) e, dalla tappa M4, lo stesso report in HTML,
+      Report_comitato_<ciclo>.html (con --con-lavoro anche le viste di lavoro),
+      solo se i suoi numeri tornano con quelli di Excel (cancello: altrimenti
+      esce solo il PDF, con l'avviso); l'indice e' Cicli/Indice_report.html.
+      Lo fa anche valida. Non modifica l'Excel.
   diagnosi
       solo lettura (analisi 17, 17.10): valori all'ingresso dei rischi nuovi,
       verso delle rettifiche del validatore sulle dimensioni, rischi lontani
@@ -2334,11 +2338,12 @@ def comando_valida(arg, conf):
         # D-83: validato il ciclo corrente, il report al comitato si esporta dalla stessa sessione (gia' ricalcolata),
         # senza riaprire Excel, in una cartella temporanea: entra nell'archivio solo dopo la sostituzione del registro,
         # cosi' un fermo "registro cambiato" non lascia un report di dati non salvati. Un errore e' solo un avviso.
-        msg_report, pdf_tmp = None, None
+        msg_report, pdf_tmp, html = None, None, None
         if periodo == ciclo_corrente and "Q" in periodo and not getattr(arg, "senza_report", False):
             pdf_tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.pdf"
             try:
                 esporta_pdf(s, scr, ciclo_corrente, FOGLI_REPORT, pdf_tmp)
+                html = esporta_html(s, conf, ciclo_corrente)      # tappa M4: con il PDF, mai un fermo
             except Exception as ex:                  # noqa: BLE001 - un avviso, mai un fermo
                 pdf_tmp = None
                 msg_report = (f"Avviso: report al comitato non rigenerato ({type(ex).__name__}: {ex}); i dati sono "
@@ -2353,6 +2358,7 @@ def comando_valida(arg, conf):
                  {"periodo": periodo, "esiti": esiti, "esiti_righe": esiti_righe, "righe": registro})
     if pdf_tmp is not None:                          # dopo Validazione_: l'app lo vede piu' recente della validazione
         msg_report = pubblica_report(pdf_tmp, conf, ciclo_corrente, FOGLI_REPORT)
+        msg_report += "\n" + pubblica_html(html, conf, ciclo_corrente)
     excel = _excel_di_output(conf["workbook"], cartella, f"{periodo}_validato")
     print(f"Validazione del periodo {periodo} applicata: {sum(esiti_righe.values())} righe — accettate "
           f"{esiti_righe['Accettato']}, rettificate {esiti_righe['Rettificato']} ({esiti['Rettificato']} valori cambiati), "
@@ -2747,14 +2753,17 @@ def comando_report(arg, conf):
     file = Path(arg.file) if getattr(arg, "file", None) else conf["workbook"]
     if not file.exists():
         raise Fermo(f"Excel non trovato: {file}")
-    fogli = FOGLI_REPORT + (FOGLI_LAVORO if getattr(arg, "con_lavoro", False) else [])
+    con_lavoro = getattr(arg, "con_lavoro", False)
+    fogli = FOGLI_REPORT + (FOGLI_LAVORO if con_lavoro else [])
     with SessioneExcel(file, sola_lettura=True) as s:
         controlla_versione(s)
         s.ricalcola()
         ciclo = da_excel(s.intervallo_nome("cicloCorrente").Value)
         pdf_tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.pdf"
         esporta_pdf(s, Scrittore(s, mappa), ciclo, fogli, pdf_tmp)
+        html = esporta_html(s, conf, ciclo, con_lavoro)               # tappa M4: dopo il PDF, dalla stessa sessione
     print(pubblica_report(pdf_tmp, conf, ciclo, fogli).replace("rigenerato:", f"rigenerato da {file}:", 1))
+    print(pubblica_html(html, conf, ciclo))
 
 
 def esporta_pdf(s, scr, ciclo, fogli, percorso):
@@ -2771,6 +2780,49 @@ def esporta_pdf(s, scr, ciclo, fogli, percorso):
     Path(percorso).parent.mkdir(parents=True, exist_ok=True)
     s.wb.Worksheets(fogli).Select()
     s.wb.ActiveSheet.ExportAsFixedFormat(0, str(percorso))
+
+
+def esporta_html(s, conf, ciclo, con_lavoro=False):
+    """Tappa M4: il report al comitato in HTML dalla sessione aperta e ricalcolata, dopo il PDF (quindi su ciclo
+    validato e senza errori di formula), in un file temporaneo. Il cancello di report_html confronta i numeri con le
+    viste di Excel: se uno non torna l'HTML non esce. Mai un fermo: il PDF resta. Restituisce un dict per
+    pubblica_html (file temporaneo e riga dell'indice, oppure il motivo per cui l'HTML non esce)."""
+    import report_html
+    try:
+        testo, riga, uguali = report_html.genera(report_html.RegistroExcel(s), ciclo, con_lavoro)
+    except report_html.Cancello as ex:
+        return {"motivo": f"Avviso: report HTML del ciclo {ciclo} NON uscito, il cancello ha trovato {len(ex.diversi)} "
+                          f"numeri diversi da quelli calcolati da Excel ({ex.uguali} uguali); il PDF e' uscito. Mandare "
+                          "questo messaggio a chi mantiene il pacchetto:\n  - " + "\n  - ".join(ex.diversi[:20])}
+    except Exception as ex:                          # noqa: BLE001 - un avviso, mai un fermo: il PDF c'e'
+        return {"motivo": f"Avviso: report HTML del ciclo {ciclo} non uscito ({type(ex).__name__}: {ex}); il PDF e' uscito. "
+                          "Rilanciare: python esegui_ciclo_locale.py report"}
+    tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.html"
+    tmp.parent.mkdir(parents=True, exist_ok=True)
+    tmp.write_text(testo, encoding="utf-8")
+    return {"file": tmp, "riga": riga, "uguali": uguali}
+
+
+def pubblica_html(html, conf, ciclo):
+    """L'HTML esportato entra nell'archivio del ciclo come Report_comitato_<ciclo>.html, con accanto la sua riga
+    dell'indice (.json); la versione precedente resta con data e ora nel nome; Cicli/Indice_report.html si ricompone.
+    Restituisce il messaggio da stampare."""
+    import report_html
+    if not html or "file" not in html:
+        return (html or {}).get("motivo", "")
+    cartella = _cartella(conf, "Cicli", ciclo)
+    dest = cartella / f"Report_comitato_{ciclo}.html"
+    precedente = None
+    if dest.exists():
+        precedente = dest.with_name(f"Report_comitato_{ciclo}_{dt.datetime.fromtimestamp(dest.stat().st_mtime):%Y%m%d_%H%M%S}.html")
+        os.replace(dest, precedente)
+    shutil.move(str(html["file"]), str(dest))
+    os.utime(dest, None)
+    _scrivi_json(dest.with_suffix(".json"), html["riga"])
+    indice = report_html.scrivi_indice(_cartella(conf, "Cicli"))
+    return (f"Report HTML del ciclo {ciclo}: {dest}\nCancello: {html['uguali']} numeri uguali a quelli calcolati da Excel."
+            + (f"\nVersione precedente conservata: {precedente}" if precedente else "")
+            + (f"\nIndice dei report: {indice}" if indice else ""))
 
 
 def pubblica_report(pdf_tmp, conf, ciclo, fogli):
@@ -3172,7 +3224,7 @@ def main(argv=None):
     sc.add_argument("--payload", help="output di A6 (A6_<ciclo>.json); senza, testi di A1 dal registro")
     r = sub.add_parser("report", help="rigenera il PDF del report al comitato dall'Excel, dopo modifiche manuali")
     r.add_argument("--file", help="Excel da cui fare il report (default: il registro vivo)")
-    r.add_argument("--con-lavoro", dest="con_lavoro", action="store_true", help="aggiunge i fogli Registro e Parametri")
+    r.add_argument("--con-lavoro", dest="con_lavoro", action="store_true", help="aggiunge i fogli Registro e Parametri al PDF e le viste di lavoro all'HTML")
     a = sub.add_parser("aggiorna-registro", help="porta il registro vivo sul template nuovo, senza perdere dati")
     a.add_argument("--template", help="template da usare (default: 03_Excel/NFR_Dashboard_Template.xlsx)")
     sb = sub.add_parser("sblocca", help="toglie il lucchetto del registro rimasto per errore (D-83)")

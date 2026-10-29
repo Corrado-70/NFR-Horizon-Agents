@@ -220,7 +220,10 @@ library `Kernel`: le regole non sono copiate qui.
    `--payload`: schede con i testi del registro. Il registro non si tocca.
 8. **Report al comitato** (D-32, D-39, D-62): `python esegui_ciclo_locale.py
    report` scrive `Cicli/<ciclo>/Report_comitato_<ciclo>.pdf` (con
-   `--con-lavoro` anche Registro e Parametri); rilanciarlo dopo ogni modifica
+   `--con-lavoro` anche Registro e Parametri) e, dalla tappa M4, lo stesso report
+   in HTML con le schede di tutti i rischi (`report_html.py`), solo se i suoi
+   numeri tornano con quelli di Excel (cancello); l'indice e'
+   `Cicli/Indice_report.html`. Lo fa anche `valida`. Rilanciarlo dopo ogni modifica
    manuale dei validatori. Allegare il file delle schede.
 
 ## Ciclo straordinario (su decisione della funzione di rischio, D-75)

@@ -436,6 +436,32 @@ def a6_simulato(ingresso):
     return {"ciclo": ingresso["ciclo"], "schede": schede}
 
 
+def verifica_html_excel(e, b, etichetta):
+    """Tappa M4 con Excel: il report HTML letto via COM (RegistroExcel, valori appena ricalcolati) e' identico a quello
+    letto dal file salvato (RegistroFile); il cancello scatta con un numero alterato nei dati."""
+    import report_html as rh
+    with SessioneExcel(b.wb, sola_lettura=True) as s:
+        s.ricalcola()
+        reg = rh.RegistroExcel(s)
+        testo_com, riga, uguali = rh.genera(reg)
+        ciclo = riga["ciclo"]
+        r = next(x for x in reg.tab["tblRegister"] if x["Ciclo"] == ciclo)
+        r["Prossimita"] = r["Prossimita"] - 1 if r["Prossimita"] > 1 else r["Prossimita"] + 1
+        try:
+            rh.genera(reg)
+            scattato = []
+        except rh.Cancello as ex:
+            scattato = ex.diversi
+    testo_file, _, _ = rh.genera(rh.RegistroFile(b.wb))
+    primo = next((i for i, (x, y) in enumerate(zip(testo_com, testo_file)) if x != y), None)
+    e.verifica(testo_com == testo_file and uguali >= 50,
+               f"{etichetta}. report HTML letto via COM = letto dal file salvato ({uguali} numeri del cancello uguali)",
+               "" if primo is None else f"primo carattere diverso {primo}: COM {testo_com[primo-80:primo+80]!r}\n"
+                                        f"file {testo_file[primo-80:primo+80]!r}")
+    e.verifica(scattato and r["ID_Rischio"] in " ".join(scattato),
+               f"{etichetta}. cancello con Excel: con la Prossimita di {r['ID_Rischio']} alterata l'HTML non esce", scattato[:5])
+
+
 def schede_a6(e, b, s):
     """2c. Schede dei rischi sul 2026Q3 validato: input di A6, controlli sul suo output, file."""
     from openpyxl import load_workbook
@@ -1770,6 +1796,10 @@ def catena(e):
         pdf_valida = b.uscita / "Cicli" / "2026Q3" / "Report_comitato_2026Q3.pdf"
         e.verifica(pdf_valida.exists() and pdf_valida.stat().st_size > 10000 and "Report al comitato del ciclo 2026Q3" in out,
                    "2b. valida rigenera da sola il report al comitato del ciclo validato (D-83)", out[-600:])
+        html_valida = pdf_valida.with_suffix(".html")
+        e.verifica(html_valida.exists() and "Cancello:" in out and (b.uscita / "Cicli" / "Indice_report.html").exists()
+                   and pdf_valida.with_suffix(".json").exists(),
+                   "2b. valida pubblica anche il report HTML (tappa M4): cancello superato, riassunto e indice dei cicli", out[-900:])
         nfr10 = file_rischio(b.uscita / "Spiegazioni", "NFR-10") or ""
         nfr08 = file_rischio(b.uscita / "Spiegazioni", "NFR-08") or ""
         e.verifica("VALIDATI" in (b.uscita / "Spiegazioni" / "Ciclo.txt").read_text(encoding="utf-8")
@@ -1851,6 +1881,11 @@ def catena(e):
         e.verifica(codice == 0 and pdf.exists() and len(vecchi) == 2 and "Registro, Parametri" in out,
                    "2b. report --con-lavoro: aggiunge Registro e Parametri; le versioni precedenti del PDF (di valida e del "
                    "primo report) sono conservate", out)
+        html = pdf.with_suffix(".html")
+        e.verifica(html.exists() and 'href="#registro"' in html.read_text(encoding="utf-8")
+                   and len(list(pdf.parent.glob("Report_comitato_2026Q3_*.html"))) == 2,
+                   "2b. report --con-lavoro: anche l'HTML con le viste di lavoro; le versioni precedenti dell'HTML conservate", out)
+        verifica_html_excel(e, b, "2b")
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", dec["validatore"])
         e.verifica(codice == 1 and "niente da validare" in out, "2b. rilanciare valida sullo stesso ciclo: niente da fare", out)
         schede_a6(e, b, s)

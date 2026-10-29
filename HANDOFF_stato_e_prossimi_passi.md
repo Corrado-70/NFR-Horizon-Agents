@@ -1369,6 +1369,15 @@ fuori da Windows), riferimenti 31/31; prova della finestra della configurazione 
 132-134. Da provare in Banca: pip dietro il proxy, schtasks e collegamenti (V-E), Verifica del PC con Excel (V-F).
 Proposte usate in attesa di decisione dell'utente: nessuna per M3.
 
+**Tappa M4** (report HTML, 29/10): `report_html.py` nel pacchetto, seconda uscita di `report` e `valida` (stessa sessione
+COM, dopo il PDF): `Cicli/<ciclo>/Report_comitato_<ciclo>.html` con il report al comitato, le schede di tutti i rischi e
+la guida (con `--con-lavoro` le viste di lavoro), riassunto `.json` accanto, `Cicli/Indice_report.html`. Cancello sui
+numeri delle viste di Excel: se uno non torna esce solo il PDF, con l'avviso. Il prototipo dell'analisi 16 ne e' un
+involucro (anteprima rigenerata sulla demo del 23/10). Collaudo: `test_report_html.py` 13/13, `test_app.py` 51/51 (fuori
+da Windows), riferimenti 31/31; catena con due verifiche nuove (2b: HTML da `valida` e da `report --con-lavoro`;
+`verifica_html_excel`: HTML via COM = dal file, cancello con un dato alterato) da lanciare sul PC. Trappole 135-136. La
+presentazione ha i testi nuovi nel generatore: rigenerarla sul PC.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente

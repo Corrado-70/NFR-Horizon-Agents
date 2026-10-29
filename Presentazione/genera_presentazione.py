@@ -616,7 +616,7 @@ def comandi():
         ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni; rigenera il report al comitato"],
         ["griglia · riapri", "quando serve", "ricostruisce il foglio Validazione · riapre un ciclo già validato"],
         ["schede-input · schede", "dopo la validazione", "dati per A6 · controlli su A6 e Schede_<ciclo>.xlsx"],
-        ["report [--con-lavoro]", "dopo la validazione", "PDF del report al comitato dall'Excel com'è ora"],
+        ["report [--con-lavoro]", "dopo la validazione", "PDF e HTML del report al comitato dall'Excel com'è ora"],
         ["dismetti · sblocca", "decisione della funzione di rischio · lucchetto rimasto", "toglie un rischio, la storia resta · toglie il lucchetto e lo registra"],
         ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"],
         ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"]],
@@ -828,6 +828,7 @@ def report_intro():
     s = nuova("Il report al comitato: che cos'è e come si usa")
     scheda(s, 0.5, 1.4, 5.6, 5.5, "Che cos'è", [
         "- Il **PDF** che il comando **report** produce dal registro validato: Report_comitato_<ciclo>.pdf.",
+        "- Lo stesso report in **HTML**, con le schede di tutti i rischi: esce solo se i suoi numeri tornano con Excel.",
         "- Si fa **dopo la validazione**: con righe da validare il comando si ferma.",
         "- Si **rigenera** quando il validatore cambia a mano presidio, anni di adeguamento, supervisore o stato di un'azione (la versione prima resta, con la data nel nome).",
         "- **--con-lavoro** aggiunge Registro e Parametri.",

@@ -1639,6 +1639,21 @@ openpyxl (solo per il file delle schede). Moduli:
   chiude rinominandola con data e ora e chi ha validato (`chiudi_riapertura`). AU7: `_scrivi_baseline` scrive anche
   `Input_A3_A4.txt` (`input_a1.scrivi_allegato_a3_a4`: intestazione con ciclo e data, poi la baseline
   dopo `=== 1. BASELINE ===`, leggibile con `leggi_baseline`).
+- **Report al comitato in HTML** (D-83, tappa M4): `report_html.py`, dal prototipo dell'analisi 16 (che ne e' ora un
+  involucro: un solo codice). La `Vista` ricalcola in Python le viste del registro dalle tabelle dati, dai nomi
+  definiti e dall'anagrafica (regole delle formule di `genera_dashboard.py`; lo score composito e' quello scritto
+  nel RiskRegister); le schede riusano `schede.input_schede` con un lettore finto. Due lettori con la stessa
+  interfaccia (`tab`, `colonne`, `nome`, `testi_foglio`, `righe_foglio`, `cella`, `colonna_a`): `RegistroExcel`
+  sulla sessione COM di `report` e `valida` dopo il ricalcolo (errori di formula COM = vuoto), `RegistroFile` con
+  openpyxl (`data_only`) per collaudo, demo e anteprima. **Cancello** (`verifica`): rmZ, rmX, rmY, rmMargine,
+  rmUrgenza, rmLivello, rmMotivoLivello, posNetti per rischio, l'ordine della Classifica (righe da 5, colonna B) e
+  il Delta (righe da 31, colonne A e G) contro i valori calcolati da Excel: un solo numero diverso = `Cancello`,
+  l'HTML non esce e il PDF si' (avviso con i numeri diversi). File unico (CSS, JavaScript e SVG dentro, niente
+  da fuori), pagine: report al comitato, schede di tutti i rischi, guida; `--con-lavoro` anche le viste di lavoro;
+  testata con la validazione (ultima riga dello storico del ciclo). `esporta_html` (dopo `esporta_pdf`, stessa
+  sessione, file temporaneo) e `pubblica_html` (con il PDF, dopo `Validazione_<ciclo>.json`; precedente con data e
+  ora; accanto `Report_comitato_<ciclo>.json`, la riga dell'indice; `Cicli/Indice_report.html` ricomposto dalle
+  righe che hanno il loro HTML). Lo stato dell'app dice "pronto, PDF e HTML" o "solo PDF".
 - **Installazione** (D-83, tappa M3): `installa.cmd` (ASCII, a capo di Windows per le etichette `goto`, `py -3` poi
   `python`) lancia `installa.py`, sette passi con l'esito: Python 3.10+ e tkinter; moduli provati in un processo nuovo
   (`import win32com.client, pythoncom`: un pywin32 a meta' non passa) e installati con `pip install --user`, dalla
@@ -3028,6 +3043,13 @@ l'ultimo usato in tutti e due i rami.)
 134. **I link piatti della configurazione sono della versione in uso** (29/10). La finestra di `installa.py` li leggeva
     per entrambe le versioni e al salvataggio li copiava anche in Copilot Studio (trovato con la prova della finestra):
     l'altra versione parte vuota e si scrive solo se compilata.
+135. **Il cancello del report HTML si prova alterando un dato da cui la Vista calcola** (29/10). Lo score composito la
+    Vista lo legge dal RiskRegister (lo scrive lo script), quindi un Impatto alterato non cambia nessun numero del
+    cancello: il test non scattava. Si altera la Prossimita (cambia Z) o una cella delle viste di Excel (il Delta).
+136. **Un solo codice per il report HTML** (29/10). Il prototipo dell'analisi 16 e il report del pacchetto divergevano
+    appena si correggeva l'uno e non l'altro: il prototipo e' diventato un involucro di `report_html.py` con
+    `anteprima=True` (tutte le pagine e le tabelle dati); le sole differenze dell'anteprima rigenerata sono i testi
+    che parlavano dello "scenario".
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3050,7 +3072,7 @@ l'ultimo usato in tutti e due i rami.)
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
-                  installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py
+                  installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py  report_html.py
                   NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     precontrollo-nfr/scripts/precontrollo_nfr.py (generato)

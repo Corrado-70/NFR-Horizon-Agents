@@ -224,7 +224,7 @@ Casi particolari:
 | **Straordinario** | modulo con rischi, motivo, decisore, data; `baseline --straordinario`; A8 con `Input_A8_<periodo>.txt`; precontrollo; `trimestrale`; propone la validazione | compili il modulo (decide la funzione di rischio); allega ad A8 anche i documenti dell'evento |
 | **Validazione** | chiede chi valida (proposto `validatore_predefinito`); apre il registro in Excel, visibile; aspetta che tu lo chiuda; `valida` (che rigenera il report). Se la validazione non passa, riapre il registro per correggere; poi propone le schede | lavori nelle celle gialle del foglio Validazione (sezione 3), salvi e chiudi Excel |
 | **Schede** | `schede-input`; chiede se usare A6; A6 con `Input_A6_<ciclo>.json` e `schede` (con il giro di correzione), oppure `schede` con i testi di A1; il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
-| **Report** | `report`; apre la cartella del ciclo | — (dopo modifiche a mano delle celle gialle, sezione 6) |
+| **Report** | `report` (PDF e, se il cancello lo lascia passare, HTML; sezione 4); apre la cartella del ciclo | — (dopo modifiche a mano delle celle gialle, sezione 6) |
 | **Riapri un ciclo** | chiede i rischi (vuoto = tutti); `riapri`; poi la Validazione | come nella validazione (sezione 3-ter) |
 | **Testi a mano** | apre il registro; aspetta che tu lo chiuda; `baseline` e `report` | correggi solo le colonne di testo (sezione 3-ter) |
 | **Parere di A4** | A4 con `Input_A3_A4.txt`; archivia il parere in `Pareri`; se A4 propone uno straordinario, lo dice | incolli la notizia dopo il messaggio base; copi e incolli il parere |
@@ -1130,6 +1130,23 @@ knowledge di A7 con i testi nuovi.
 
 ## 4. Leggere i risultati
 
+**Il report al comitato** esce in due forme, dallo stesso registro validato (D-83, tappa M4), nella cartella del ciclo
+`Archivio_Cicli\Cicli\<ciclo>\`:
+- `Report_comitato_<ciclo>.pdf`: i fogli da Quadro a Metodologia del registro;
+- `Report_comitato_<ciclo>.html`: lo stesso report da aprire nel browser (doppio clic), un file unico che non scarica
+  niente da internet. Ha il menu delle pagine (Quadro, Classifica, Radar di Mosca, Matrice, Delta, Rischi in
+  osservazione, Metodologia), **le schede di tutti i rischi** (un clic sull'ID di un rischio, ovunque, apre la sua
+  scheda) e una guida; passando sui grafici compaiono i numeri; il comando Stampa del browser mette ogni pagina su un
+  foglio. In testa ciclo, data dei dati, data della validazione e validatore. Con `report --con-lavoro` anche le
+  viste di lavoro (Registro, Storico, Indicatori, Notizie, Piano azioni, Osservazione, Validazione, Parametri,
+  Dizionario).
+
+Prima di scrivere l'HTML lo script confronta i suoi numeri (X, Y, Z, margine, urgenza, livello di allerta, segnali
+netti, ordine della classifica, Delta) con quelli calcolati da Excel nel registro (**cancello**): se anche uno non
+torna l'HTML non esce, il PDF si', e l'uscita del comando dice quali numeri non tornano (da mandare a chi mantiene il
+pacchetto). L'elenco dei report di tutti i cicli e' `Archivio_Cicli\Cicli\Indice_report.html`. Le pagine qui sotto
+sono i fogli del registro; nell'HTML hanno lo stesso nome e lo stesso contenuto.
+
 | Dove | Cosa guardare |
 |---|---|
 | **Quadro** | la prima pagina per il comitato: cinque numeri (rischi valutati, **livello di allerta** — quanti in attivazione e in attenzione —, variati e nuovi fra i rischi del radar, con sotto entrati, usciti e in osservazione, KRI in rosso, validazione), i primi cinque rischi, la matrice di gravita', il radar di Mosca; a pagina 2 il **commento di A1** (messaggio e decisioni), i controlli (con la sintesi di A5, se usato), quante **segnalazioni da motivare** sono andate in validazione e **i rischi segnalati con il perche'**, calcolato dal foglio. |
@@ -1205,6 +1222,8 @@ A7 che legge i file di testo e una copia di prova che legge solo il registro Exc
 | Log dei comandi lanciati dall'app; chi sta scrivendo | `Archivio_Cicli\Log\`; `Archivio_Cicli\_Lucchetto\` (con `sblocchi.log`) |
 | Prompt in uso nel ciclo; traccia di una riapertura | `Archivio_Cicli\Cicli\<ciclo>\Prompt_in_uso\`; `Riapertura_<ciclo>_<ora>.json` |
 | Notizie raccolte | `News_Inbox\<lunedi'>\` |
+| Report al comitato | `Archivio_Cicli\Cicli\<ciclo>\Report_comitato_<ciclo>.pdf` e `.html` (le versioni precedenti con data e ora nel nome); l'elenco di tutti: `Archivio_Cicli\Cicli\Indice_report.html` |
+| Verifiche del PC | `Archivio_Cicli\Verifiche_PC\` |
 
 ## 6. Cambiare le regole (solo su decisione della funzione di rischio)
 
@@ -1712,13 +1731,19 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 `python esegui_ciclo_locale.py report [--file <registro.xlsx>] [--con-lavoro]`
 
 - Cosa fa: rigenera il PDF del report al comitato (Quadro..Metodologia) in
-  `Cicli\<ciclo>\Report_comitato_<ciclo>.pdf`; la versione precedente resta con data
-  e ora nel nome. Non modifica l'Excel.
+  `Cicli\<ciclo>\Report_comitato_<ciclo>.pdf` e lo stesso report in HTML,
+  `Report_comitato_<ciclo>.html` (con le schede di tutti i rischi), solo se i suoi numeri
+  tornano con quelli di Excel (cancello; altrimenti l'avviso con i numeri diversi, e il
+  PDF esce lo stesso); ricompone `Cicli\Indice_report.html`. Le versioni precedenti
+  restano con data e ora nel nome. Non modifica l'Excel.
 - Opzioni: `--file` un altro Excel (per esempio l'Excel validato di un ciclo);
-  `--con-lavoro` aggiunge Registro e Parametri, in orizzontale.
+  `--con-lavoro` aggiunge Registro e Parametri al PDF, in orizzontale, e le viste di
+  lavoro all'HTML.
 - Quando: dopo ogni correzione a mano delle celle gialle (sezione 2, punto 13; sezione
   6); dopo la validazione lo fa gia' `valida`.
-- Errori tipici: "righe da validare" (il ciclo deve essere validato).
+- Errori tipici: "righe da validare" (il ciclo deve essere validato); "Avviso: report
+  HTML ... NON uscito, il cancello ha trovato N numeri diversi": esce solo il PDF; mandare
+  il messaggio a chi mantiene il pacchetto.
 
 ### esegui_ciclo_locale.py sblocca
 

@@ -159,17 +159,19 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Guida, sezione 0.3 riscritta attorno a `installa.cmd` (a mano come alternativa), raccolta, Altro, sezione 7; 00_LEGGIMI, README, PROMPT_MASTER (trappole 132-134), TODO | `verifica_riferimenti.py` (comandi e opzioni citati) |
 | [x] | Domanda su A5 a precontrollo superato (richiesta del 29/10; `chiedi_a5`) | `test_app.py` |
 
-## 18.4 Tappa M4: report HTML al comitato (da fare, 3-4 giorni)
+## 18.4 Tappa M4: report HTML al comitato (fatta il 29/10/2026; catena con Excel sul PC)
 
-| Stato | Voce |
-|---|---|
-| [ ] | `report_html.py` dal prototipo `16_genera_anteprima_html.py`: viste da Quadro a Metodologia, grafici SVG, schede di tutti i rischi collegate |
-| [ ] | Dati letti dalla stessa sessione COM di `report` (righe dello `Scrittore`, celle con nome), non da openpyxl |
-| [ ] | Cancello: numeri dell'HTML confrontati con le celle delle viste di Excel; se uno non torna l'HTML non esce, il PDF si' |
-| [ ] | File unico autosufficiente; ciclo, data della validazione e validatore in testa; versione precedente conservata; `Cicli/Indice_report.html` |
-| [ ] | `--con-lavoro`: Registro, Storico, Indicatori, Notizie, Piano azioni, Parametri |
-| [ ] | `valida` pubblica PDF e HTML insieme; lo stato dell'app guarda anche l'HTML |
-| [ ] | Catena: numeri uguali a Excel e cancello che scatta con un numero alterato; guida, presentazione, PROMPT_MASTER |
+| Stato | Voce | Dove si verifica |
+|---|---|---|
+| [x] | `report_html.py` dal prototipo `16_genera_anteprima_html.py` (che ne e' diventato un involucro: un solo codice): viste da Quadro a Metodologia, grafici SVG, schede di tutti i rischi collegate, guida | `test_report_html.py` sulla demo; anteprima rigenerata, differenze solo nei testi dello "scenario" |
+| [x] | Dati letti dalla stessa sessione COM di `report` e `valida` (`RegistroExcel`: tabelle, nomi definiti, celle), non da openpyxl; `RegistroFile` (openpyxl) per collaudo, demo e anteprima | codice; catena: HTML via COM = HTML dal file |
+| [~] | Lettura via COM provata con Excel | catena (`verifica_html_excel`), sul PC |
+| [x] | Cancello: X, Y, Z, margine, urgenza, livello e motivo, segnali netti, ordine della classifica, Delta contro le viste di Excel; se uno non torna l'HTML non esce, il PDF si', con l'avviso | `test_report_html.py` (dato alterato e cella alterata: trappola 135) |
+| [~] | Cancello con Excel vero (dato alterato nella sessione) | catena, sul PC |
+| [x] | File unico autosufficiente; ciclo, dati al, data della validazione e validatore in testa; versione precedente conservata; riassunto accanto; `Cicli/Indice_report.html` | `test_report_html.py` |
+| [x] | `--con-lavoro`: Registro, Storico, Indicatori, Notizie, Piano azioni, Osservazione, Validazione, Parametri, Dizionario | `test_report_html.py`; catena (`report --con-lavoro`) |
+| [x] | `valida` pubblica PDF e HTML insieme; lo stato dell'app guarda anche l'HTML ("pronto, PDF e HTML" / "solo PDF") | `test_app.py`; catena (2b) |
+| [x] | Guida (sezioni 4, 5, 9, app), README, 00_LEGGIMI, PROMPT_MASTER (trappole 135-136), TODO, analisi 16; testi della presentazione nel generatore | `verifica_riferimenti.py`; la presentazione (.pptx) si rigenera sul PC con Excel |
 
 ## 18.5 Tappa M5: funzioni amministrative (da fare; richiesta dell'utente del 23/10/2026)
 

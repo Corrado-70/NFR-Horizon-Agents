@@ -88,6 +88,9 @@ def leggi(conf, oggi=None):
     s["schede"] = bool(corrente and (cicli / str(corrente) / f"Schede_{corrente}.xlsx").exists())
     report = cicli / str(corrente) / f"Report_comitato_{corrente}.pdf" if corrente else None
     s["report"] = bool(report and report.exists() and s["validato"] and report.stat().st_mtime >= validazione.stat().st_mtime)
+    # tappa M4: l'HTML esce con il PDF se il cancello lo lascia passare; senza, il report c'e' lo stesso (il PDF)
+    html = report.with_suffix(".html") if report else None
+    s["report_html"] = bool(s["report"] and html.exists() and html.stat().st_mtime >= validazione.stat().st_mtime)
 
     # straordinario deciso e non ancora scritto: la baseline lo porta come periodo da valutare
     s["straordinario"] = base.get("straordinario") if da_valutare and "-S" in str(da_valutare) else None
@@ -153,7 +156,8 @@ def righe(s):
     if s["ciclo_corrente"]:
         fase = ("RIAPERTO, da validare" if s["riapertura"] else "VALIDATO" if s["validato"] else "scritto, DA VALIDARE")
         extra = ([] if not s["validato"] or s["riapertura"] else
-                 ["report " + ("pronto" if s["report"] else "da fare"), "schede " + ("pronte" if s["schede"] else "da fare")])
+                 ["report " + (("pronto, PDF e HTML" if s.get("report_html") else "pronto, solo PDF (HTML: vedere il log)")
+                               if s["report"] else "da fare"), "schede " + ("pronte" if s["schede"] else "da fare")])
         out.append(f"Ciclo {s['ciclo_corrente']}: " + ", ".join([fase] + extra))
     if s["da_valutare"]:
         out.append(f"Prossimo periodo: {s['da_valutare']}" + (" (straordinario deciso)" if s["straordinario"] else ""))
