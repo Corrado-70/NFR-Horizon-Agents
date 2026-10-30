@@ -39,10 +39,10 @@ Sezioni:
 |---|---|
 | Obiettivo | primo ciclo vero **2026Q4**, primo run di A1 a inizio gennaio 2027 (D-22) |
 | Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
-| Ultimo commit | 30/10: D-90, D-91 e il riordino di questa TODO, non ancora su GitHub |
+| Ultimo commit | 30/10: D-90, D-91 e il riordino di questa TODO, su GitHub |
 | Ultimo pacchetto preparato | 30/10, commit `aa7aea9`, zip per la posta; non contiene D-90 e D-91 |
 | In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
-| Ramo `copilot-studio-pieno` | allineato a `aa7aea9` (merge `11520a3`); strada del motore da capire (D-91); ha il suo registro |
+| Ramo `copilot-studio-pieno` | allineato a `main` il 30/10, con `genera_CS.py`; strada del motore da capire (D-91); ha il suo registro |
 
 **In sospeso** (da chiudere prima di ogni altra cosa):
 
@@ -51,7 +51,6 @@ Sezioni:
 | 1 | `AGGIORNAMENTO_IN_BANCA.md`, per il prossimo pacchetto: D-90 (il pulsante Testi a mano passa in Admin) e D-91 (`mappatura_campi.json` cambia nel kernel, `workflow.md` fra gli obsoleti) | da fare |
 | 2 | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa): non rilanciato dopo M4, M5, D-86 e D-90 | da fare |
 | 3 | `esegui_demo.py` con `REPORT_demo.md` sui testi lunghi (D-86), poi la presentazione | da fare |
-| 4 | Ramo `copilot-studio-pieno`: `git merge main` e `genera_CS.py`, per ricevere D-90 e D-91. Nel merge di questa TODO si tiene la versione di `main`: le due righe proprie del ramo sono nel suo registro | da fare |
 
 **Prossimo passo**: i punti 1-3 qui sopra, poi il pacchetto in Banca e le sue verifiche (B1-B4, B5-bis).
 
