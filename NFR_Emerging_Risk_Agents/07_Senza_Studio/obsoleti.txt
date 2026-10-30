@@ -12,6 +12,9 @@ NFR_Emerging_Risk_Agents/08_Deploy
 # tassonomia della Banca, dal 09/10 in 04_Riferimenti (D-74)
 NFR_Emerging_Risk_Agents/01_Kernel/Tassonomia dei Rischi.csv
 
+# variante Power Automate, archiviata in Analisi_Architettura/Archivio (D-91)
+NFR_Emerging_Risk_Agents/04_Riferimenti/workflow.md
+
 # demo: allegato di A8 rinominato Input_A8 (D-84), raccolte di prova del 05/10
 Demo_W1_W2/1_Input_agenti/Input_A1_2026Q4-S1.txt
 Demo_W1_W2/News_Inbox/2026-10-05

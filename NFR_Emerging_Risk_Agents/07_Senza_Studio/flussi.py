@@ -41,7 +41,7 @@ NOMI = {"A1": "A1 Horizon Scanner", "A3": "A3 Interim Update", "A4": "A4 News As
 
 
 # Le operazioni della finestra Admin (D-85), nell'ordine della tabella "Pulsante Admin" della guida.
-OPERAZIONI_ADMIN = ["Nuovo registro", "Pulizia", "Ritorno", "Annulla", "Ripartenza", "Parcheggi", "Svuota"]
+OPERAZIONI_ADMIN = ["Nuovo registro", "Testi a mano", "Pulizia", "Ritorno", "Annulla", "Ripartenza", "Parcheggi", "Svuota"]
 
 
 def trimestri_recenti(oggi, quanti=12):
@@ -358,11 +358,26 @@ class Flussi:
         es = self.motore("riapri", *(["--rischi", dati["rischi"]] if dati.get("rischi") else []))
         return self.validazione() if es["fascia"] == "OK" else es
 
-    def testi_a_mano(self):
-        self.amb.mostra("Si apre il registro: correggi solo le colonne di testo (guida, sezione 3-ter), poi salva e chiudi.", "info")
+    def testi_a_mano(self, m):
+        """Admin -> Testi a mano (D-90): prima i controlli (una riapertura aperta o un ciclo da validare portano alla
+        Validazione, non a un report che si ferma), poi la copia del registro nel parcheggio, Excel, e la fine."""
+        import amministrazione as amm
+        try:
+            amm.controlli_testi(stato.leggi(self.conf))
+        except amm.Fermo as ex:
+            self.amb.mostra(str(ex), "avviso")
+            return self.validazione() if self.amb.conferma("Passare alla Validazione adesso?") else None
+        d = self.amb.chiedi("Testi a mano: correggere solo le colonne di testo di un ciclo validato", [
+            ("motivo", "Che cosa correggi e perche' (almeno 10 caratteri; resta nell'atto)", "")])
+        if not d:
+            return None
+        es = m("testi", "--motivo", d["motivo"])
+        if es["fascia"] != "OK":
+            return es
+        self.amb.mostra("Si apre il registro: correggi SOLO le colonne di testo (descrizioni, razionali, KRI, azioni), mai "
+                        "ID, numeri, date o righe; poi salva e chiudi Excel.", "info")
         self.registro_in_excel()
-        es = self.motore("baseline")
-        return self.motore("report") if es["fascia"] == "OK" else es
+        return m("testi-fine")
 
     def dismetti(self):
         dati = self.amb.chiedi("Dismettere un rischio (decide la funzione di rischio)", [
@@ -412,6 +427,8 @@ class Flussi:
         trimestri = trimestri_recenti(dt.date.today())
         if op == "parcheggi":
             return m("parcheggi")
+        if op == "testi a mano":
+            return self.testi_a_mano(m)
         if op in ("pulizia", "svuota"):
             es = m(op)
             pronto = es["fascia"] == "OK" and f"{op} --esegui" in es["uscita"]

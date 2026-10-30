@@ -1,72 +1,107 @@
-# TODO — lavoro da fare
+# TODO — registro vivo del lavoro
 
-Il piano unico del lavoro ancora aperto. Ogni voce dice perche' serve, cosa fare e come capire che e' fatta. Quando
-una voce e' realizzata esce dalla sua sezione e diventa una riga di **"Fatto"** (sezione 9), con la decisione e il
-documento dove vive; il dettaglio di come e' stata fatta sta in `04_Riferimenti/DECISIONI.md` e nell'HANDOFF.
+**Da qui si parte.** Questo file dice a che punto e' il lavoro su `main` e che cosa viene dopo: per riprendere basta la
+sezione 0. Ogni voce aperta dice perche' serve, cosa fare e come capire che e' fatta.
 
-Riordinato l'08/10/2026 sera: prima le voci aperte, in ordine; il fatto in fondo, una riga per voce. I codici delle
-voci (P, AU, Q, G, M) non cambiano, perche' DECISIONI, HANDOFF e analisi li citano.
+**Aggiornato al 30/10/2026.**
+
+Come si tiene vivo, a ogni intervento:
+1. all'inizio si legge la sezione 0; alla fine si aggiornano la data, il quadro, gli impegni in sospeso e il prossimo
+   passo;
+2. una voce finita esce dalla sua sezione e diventa una riga di **"Fatto"** (sezione 9); una voce che non serve piu'
+   diventa una riga di **"Superate"** (9-bis), con il motivo; una voce nuova entra nella sua sezione e, se cambia le
+   priorita', nell'ordine di lavoro (sezione 1);
+3. un passo provato in Banca cambia stato nella sezione 2 lo stesso giorno, con la data e cio' che si e' visto;
+4. qui non si copia cio' che ha gia' un posto: decisioni in `04_Riferimenti/DECISIONI.md`, racconto nell'HANDOFF, spunte
+   dell'app in `Analisi_Architettura/18_App_orchestrazione.md`, passi in Banca in `AGGIORNAMENTO_IN_BANCA.md`; niente
+   numeri che invecchiano, come i caratteri dei prompt o i conteggi dei test;
+5. i codici delle voci (P, AU, B, Q, G, M) non cambiano, perche' DECISIONI, HANDOFF e analisi li citano.
+
+La versione tutta in Copilot Studio ha il suo registro, sul ramo `copilot-studio-pieno`:
+`09_Copilot_Studio/TODO_Copilot_Studio.md`. Qui restano le voci di `main` e quelle comuni ai due rami.
 
 Sezioni:
+0. da dove si riparte;
 1. ordine di lavoro;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
 3. processi (P1, P2, P4, P5, P6, P7, P9, P12, P13, P14, P15);
-4. automazione del processo: l'app di orchestrazione (tappe M1-M4; AU1, AU2, AU3, AU5);
+4. automazione del processo: l'app di orchestrazione, fatta; resta la demo (AU5);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
 8. questioni aperte emerse dal lavoro (compresa la revisione della procedura);
-9. fatto;
+9. fatto, e 9-bis superate;
 10. in riserva.
+
+## 0. Da dove si riparte
+
+| Quadro | |
+|---|---|
+| Obiettivo | primo ciclo vero **2026Q4**, primo run di A1 a inizio gennaio 2027 (D-22) |
+| Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
+| Ultimo commit | 30/10: D-90, D-91 e il riordino di questa TODO, non ancora su GitHub |
+| Ultimo pacchetto preparato | 30/10, commit `aa7aea9`, zip per la posta; non contiene D-90 e D-91 |
+| In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
+| Ramo `copilot-studio-pieno` | allineato a `aa7aea9` (merge `11520a3`); strada del motore da capire (D-91); ha il suo registro |
+
+**In sospeso** (da chiudere prima di ogni altra cosa):
+
+| # | Cosa | Stato |
+|---|---|---|
+| 1 | `AGGIORNAMENTO_IN_BANCA.md`, per il prossimo pacchetto: D-90 (il pulsante Testi a mano passa in Admin) e D-91 (`mappatura_campi.json` cambia nel kernel, `workflow.md` fra gli obsoleti) | da fare |
+| 2 | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa): non rilanciato dopo M4, M5, D-86 e D-90 | da fare |
+| 3 | `esegui_demo.py` con `REPORT_demo.md` sui testi lunghi (D-86), poi la presentazione | da fare |
+| 4 | Ramo `copilot-studio-pieno`: `git merge main` e `genera_CS.py`, per ricevere D-90 e D-91. Nel merge di questa TODO si tiene la versione di `main`: le due righe proprie del ramo sono nel suo registro | da fare |
+
+**Prossimo passo**: i punti 1-3 qui sopra, poi il pacchetto in Banca e le sue verifiche (B1-B4, B5-bis).
+
+**Decisioni che aspettano** (il testo e' in DECISIONI):
+
+| Decisione | Quando |
+|---|---|
+| **A-19** scale a 6 livelli e registro nuovo: indirizzo dell'utente del 30/10, si avvia su sua richiesta | **prima del primo ciclo vero**: 4-6 giorni piu' un ciclo di prova (P15) |
+| A-24 driver | con A-19 |
+| A-17 contraddittorio | dopo la prova K15 (B8) |
+| A-20, A-21, A-22, A-23 spunti della proposta esterna | su richiesta dell'utente (P15) |
+| A-12 taratura | dopo il ciclo 2026Q4 reale |
 
 ## 1. Ordine di lavoro
 
-Il primo ciclo vero e' il **2026Q4**, con il primo run di A1 a inizio gennaio 2027 (D-22). L'ordine mette prima cio'
-che migliora quel ciclo.
+L'ordine mette prima cio' che migliora il primo ciclo vero. L'app e' fatta: da qui in poi il lavoro e' provarla e
+migliorare la qualita' dei contenuti.
 
-| Passo | Voci | Perche' qui | Giorni |
-|---|---|---|---|
-| 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati (B1-B4); poi le **prove della CS-1** (B5) | tutto il resto si appoggia su un'installazione allineata al pacchetto; le prove decidono la A-15 | 1-2 per B1-B4; 1-2 per le prove, piu' le attese (in Banca) |
-| 1 | **P4** rapporti di scenario, **P9** temi da verificare e **P14** il "so what" nei testi di A1 (AU7 fatta il 23/10, D-83; lunghezze dei testi fatte il 29/10, D-86) | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, le richieste dell'analista restano tracciate, le schede dicono che cosa significa ogni rischio per la Banca | circa 1,5 |
-| 3 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale (quale rischio e quale dimensione sono sotto pressione) | 2-3 |
-| 4 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 |
-| 5 | **App NFR, tappe M2-M4** (sezione 4: AU2, AU3, AU5 e report HTML; la tappa M1 e' fatta) | la strada A su `main` e' decisa (D-83): finestra che guida ogni processo, risposte dagli appunti, piu' analisti, report HTML al comitato | 13-15 |
-| 7 | **P2**, **P7**, **P6** | presentazione: scia sul radar, riepilogo mensile, scheda per tema | 2-3 |
-| in parallelo | **Q1** nota di metodo (il prototipo dopo il passo 4) | e' soprattutto lavoro della Banca (stime degli esperti) | nota 1-2, prototipo 3-5 |
-| in parallelo | **G1, G3, G2**; **G6** quando servira' leggere A1 accanto ai controlli prima della scrittura | toccano solo il generatore o sono strumenti di lettura | circa 2 |
-| sempre | **G5** difetti estetici, **sezione 8** questioni aperte | quando capitano | |
-
-**Perche' i processi prima dell'automazione** (cambia la regola del 28/09, "P dopo AU3"). Quella regola valeva per P3,
-che aggiungeva un comando alla coda delle richieste e una voce al menu: P3 e' fatta (D-75, D-77). Le voci P rimaste
-cambiano schemi, prompt e viste, che valgono in tutte le strade dell'automazione: farle prima non costringe a rifare
-niente. Fra le P, P4 e P9 sono piccole e servono subito al trimestrale; P1 e' la piu' utile per il settimanale; P2, P6
-e P7 sono di presentazione e possono aspettare.
+| Passo | Voci | Perche' qui | Giorni | Stato |
+|---|---|---|---|---|
+| 0 | **In sospeso** (sezione 0) | pacchetto, demo e documenti devono essere allineati prima di andare in Banca | circa 0,5 | in corso |
+| 1 | **B1-B4, B5-bis**: pacchetto in Banca e verifiche dell'app | tutto il resto si appoggia su un'installazione allineata | 1-2 | in corso (prima prova il 29/10) |
+| 2 | **P15, punto 1**: scale a 6 livelli e registro nuovo (A-19), con i driver (A-24) | A-19 va fatta prima del ciclo vero: cambia rubrica, schemi e registro, che riparte da zero. Viene prima delle voci piccole, che toccano gli stessi testi | 4-6 | su richiesta dell'utente |
+| 3 | **P4** rapporti di scenario, **P9** temi da verificare, **P14** il "so what" nei testi di A1 | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, le richieste dell'analista restano tracciate, le schede dicono che cosa significa ogni rischio per la Banca | circa 1,5 | da fare |
+| 4 | **B7** ciclo di prova, **B9** qualita' di A1 e A8, **B6** prova di A7; **B8** (K15) se c'e' tempo | il collaudo di qualita' prima del ciclo vero, sulla versione con le voci dei passi 2 e 3 | in Banca, con le attese | da fare |
+| 5 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale, ma non cambia il primo trimestrale: si comincia solo se finisce prima di gennaio | 2-3 | da fare |
+| 6 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 | da fare |
+| 7 | **P2**, **P7**, **P6** | presentazione: scia sul radar, riepilogo mensile, scheda per tema | 2-3 | da fare |
+| dopo il ciclo vero | **P13** (diagnosi con la funzione di rischio), **P12** se K15 dice che serve, gli altri punti di **P15**, **revisione della procedura** (sezione 8) | servono i dati e l'esperienza di un ciclo vero | | |
+| in parallelo | **AU5** demo attraverso i flussi (sezione 4) | copre i flussi oggi provati solo con l'Ambiente finto | circa 1 | da fare |
+| in parallelo | **Q1** nota di metodo (il prototipo dopo il passo 6) | e' soprattutto lavoro della Banca (stime degli esperti) | nota 1-2, prototipo 3-5 | da fare |
+| in parallelo | **G1, G3, G2**; **G6** quando servira' leggere A1 accanto ai controlli prima della scrittura | toccano solo il generatore o sono strumenti di lettura | circa 2 | da fare |
+| sempre | **G5** difetti estetici, **sezione 8** questioni aperte | quando capitano | | |
 
 ## 2. Passi sul PC della Banca
 
-Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzioni nella guida, sezione 0-bis.
+Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. I passi del pacchetto corrente sono in
+`AGGIORNAMENTO_IN_BANCA.md`, quelli generali nella guida, sezione 0-bis. Le prove di Copilot Studio sono nel registro del
+ramo (9-bis).
 
 | # | Passo | Per quali decisioni | Stato |
 |---|---|---|---|
-| B1 | Pacchetto completo dell'08/10 sera; cancellare le vecchie `04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy` | D-78 | da fare |
-| B2 | Copiare tutto `01_Kernel` e `04_Riferimenti\DECISIONI.md` nella library Kernel; togliere dalla library `Tassonomia dei Rischi.csv` (dal 09/10 in `04_Riferimenti`, non lo legge nessun componente) | D-74, D-77, D-79 | da fare |
-| B3 | Reincollare in Agent Builder A1, A3, A4, A5, A6, A7; creare A8 (guida, 0.2) | D-68...D-79 | da fare |
-| B4 | `aggiorna-registro`, prima su una copia e poi sul registro in uso (struttura 2026-10-09: le voci della lista di osservazione diventano rischi in osservazione; i codici di Basilea vanno riclassificati da A1 al primo ciclo) | D-74, D-79 | da fare |
-| B5 | **Prove di fattibilita' della CS-1**, dopo B1-B4, nell'ordine sotto. Protocollo unico: `09_Copilot_Studio/Prove_CS1.md`, con i tempi, i testi da mandare, i comandi e la tabella dei risultati | A-15 fra le tre strade (`Analisi_Architettura/14_Tre_strade.md`, 14.9) | pronte dal 09/10 |
-| B5.1 | **D1 e D2**: domande all'IT (PC esecutore, avvio automatico, connessione di servizio dei flussi, Office Scripts) e alla compliance (trascrizioni di Copilot Studio, etichette di riservatezza). Si possono mandare subito, anche prima di B1 | un no ferma la CS-1 | da fare |
-| B5.2 | Preparazione: registro di prova rifatto con la parte 2 di `04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md`, configurazione **senza la riga `kernel`**; due run di A1 in Agent Builder (`A1_AB_run1.json`, `A1_AB_run2.json`); cartelle `Archivio_Cicli\Prova_K0\In_arrivo`, `Esiti`, `Spiegazioni` | base di confronto di K4 | da fare |
-| B5.3 | **K6** Operatore a passi fissi, compreso K6.5 in Teams (`09_Copilot_Studio/Prova_K6_Operatore.md`) | il cuore della CS-1 | da fare |
-| B5.4 | **K4** qualita' di A1 in Copilot Studio: `confronta.py` AB/AB, CS/CS, AB/CS; precontrollo al primo giro; modello | D-21 | da fare |
-| B5.5 | **K11** piu' utenti, con un collega: identita' nel flusso, connessione dei flussi, lancio simultaneo, trascrizioni | multiutenza (14.5-bis) | da fare |
-| B5.6 | **K12** A7 come sotto-agente: risposte dai file di `Spiegazioni`, tempo di aggiornamento dopo una riscrittura | consultazione da altri utenti | da fare |
-| B5.7 | **K7a** sincronizzazione SharePoint <-> PC (`99_Collaudo/osserva_cartella.py`), con e senza "Mantieni sempre su questo dispositivo"; conflitto con il registro aperto sul web | tempi e sicurezza della scrittura | da fare |
-| B5.8 | **K7b** Excel senza nessuno davanti: schermo bloccato, avvio automatico, senza accesso, Excel gia' aperto | PC esecutore | da fare |
-| B5.9 | Facoltativo, per la CS-2: prova K0 ripetuta con file allineati (`09_Copilot_Studio/Prova_con_Copilot_Studio.md`: T1.2 con l'impronta, T1.3). Prima tornata del 09/10: opzione 1 funziona (T1.1, T1.2, T1.4 rifiutata), T1.3 una volta in errore, opzione 2 non disponibile in Banca, salvataggio in SharePoint riuscito con impronta uguale | D-70; CS-2 | parziale |
-| B5.10 | Facoltativo, per A-16: **K14** report HTML (`Analisi_Architettura/16_Report_HTML.md`, 16.9): apertura da SharePoint in Edge, "Convert file" su HTML, zip dal code interpreter, report nella knowledge di A7. Si usano i file di `Analisi_Architettura/16_Anteprima_HTML/` | A-16 | da fare |
-| B5-bis | Tappe M1 e M2 dell'app (23/10): copiare `07_Senza_Studio` (file nuovi `lucchetto.py`, `NFR.cmd`, `app_nfr.py`, `flussi.py`, `stato.py`, `ingresso.py`, `appunti.py`, `esecutore.py`); in `configurazione.json` le voci della guida, sezione 0.3 (`utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`, `ascolta_appunti`, `link_agenti`); cancellare il prompt schedulato di A3; un trimestre di prova dall'app (doppio clic su `NFR.cmd`): copia dagli appunti di una risposta lunga di A1, giro di correzione, validazione; reincollare A3, A4, A5, A6 e A8 (D-84, nomi degli allegati); togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; prova del lucchetto con un collega (V-F e lucchetto fra due PC, `Analisi_Architettura/Archivio/10`, 10.5). Le prove CS-1 di B5 restano utili solo al ramo `copilot-studio-pieno` | D-83 | da fare |
-| B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
-| B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
-| B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore | A-17 | da fare |
+| B1 | Pacchetto corrente con `installa.cmd`, sopra quello del 23/10; sposta da solo in `_obsoleti_<data>` le cartelle dei pacchetti vecchi (`04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy`) | D-78, D-89 | da fare |
+| B2 | Kernel nella library: lo copia `installa.cmd` dopo una conferma (i file sostituiti in `Kernel\_precedenti\<data>`) e toglie `Baseline_corrente.txt` e `Tassonomia dei Rischi.csv` | D-74, D-89 | da fare |
+| B3 | Reincollare gli agenti che `installa.cmd` elenca: sopra il pacchetto del 23/10 bastano A4, A5, A6 e A7 | D-86...D-88 | da fare |
+| B4 | `aggiorna-registro`: non serve con questo pacchetto, la struttura resta `2026-10-09`. Solo per un registro in una struttura precedente, prima su una copia | D-74, D-79 | non serve con il pacchetto corrente |
+| B5-bis | **Verifiche dell'app, tappe M1-M5**: elenco in `AGGIORNAMENTO_IN_BANCA.md` ("Verifiche da fare"), esiti in `Analisi_Architettura/18_App_orchestrazione.md`, 18.6. **29/10**: prima prova, un trimestre dall'app fino a `trimestrale` e validazione (A1, precontrollo, una correzione, precontrollo superato); i problemi trovati sono corretti. Restano, sul pacchetto corrente: risposta lunga di A1 dagli appunti, link degli agenti, lucchetto con un collega, installazione completa (pip, collegamenti, attivita' della raccolta, Verifica del PC con Excel), report HTML, Admin | D-83, D-85...D-90 | in corso |
+| B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`), anche per la prima persona | D-72, D-87 | da fare |
+| B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5. **29/10**: un giro di correzione, senza le lunghezze di C10; da rifare sulla versione dei passi 2 e 3 dell'ordine | S1 (D-49...D-56), D-69, D-71 | in corso |
+| B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore. Dal 30/10 con il mandato esteso (A-17, analisi 19) | A-17 | da fare |
 | B9 | **Prova di qualita' di A1 e A8 su documenti pubblici** (proposta del 24/10): una libreria di documenti pubblici (EBA, BCE, ENISA, rassegne stampa; niente di interno alla Banca) sul PC di sviluppo e la stessa in Banca. (a) Sul PC di sviluppo Claude fa A1 o A8 con le istruzioni, l'allegato `Input_A1`/`Input_A8` e i documenti, poi precontrollo e `trimestrale` sul registro di prova: dice se istruzioni e documenti bastano, non che cosa fara' l'agente (Claude legge i documenti per intero, Agent Builder ne pesca dei pezzi). (b) Prova piu' utile: l'agente vero in Banca sugli stessi documenti, il JSON (senza dati della Banca) riportato e controllato da Claude affermazione per affermazione (fatti e date nel documento citato, descrittori della rubrica, fenomeni mancati o scartati a torto) | qualita' di A1 (D-21), P14 | da fare |
 
 ## 3. Processi: cosa manca rispetto al disegno atteso
@@ -108,7 +143,7 @@ Decisioni dell'utente che fanno da cornice:
   `Rapporti_Scenario/<anno>`); A1 li legge per primi e li cita nel razionale; le schede di A6 dicono quale rapporto
   sostiene quale dimensione. Esempi: ORX Emerging Risks e Horizon, EBA Risk Assessment Report, priorita' di vigilanza
   BCE, ENISA Threat Landscape, WEF Global Risks, Allianz Risk Barometer, rapporti delle societa' di consulenza.
-- **Tocca**: `fonti.md` (e `fonti.py`), guida di scrittura di A1 (il prompt e' a 7.989 caratteri: l'istruzione va
+- **Tocca**: `fonti.md` (e `fonti.py`), guida di scrittura di A1 (il prompt e' al limite degli 8.000 caratteri: l'istruzione va
   nell'allegato), struttura SharePoint, licenze d'uso (governance).
 - **Fatto quando**: il ciclo di prova cita almeno un rapporto per ogni rischio variato.
 - **Impegno**: basso, circa mezza giornata.
@@ -183,15 +218,21 @@ Decisioni dell'utente che fanno da cornice:
 - **Fatto quando**: un ciclo di prova (B9) ha il suo `QUINDI:` in ogni scheda, il precontrollo segnala il razionale che
   non ce l'ha e il collaudo e' verde.
 - **Impegno**: circa mezza giornata.
+
 ### P15. Spunti dalla proposta esterna di osservatorio (analisi 19, 30/10/2026)
 
 - **Perche'**: una proposta esterna per la stessa attivita' (`Analisi_Architettura/19_Confronto_proposta_esterna.md`)
   porta scale a 6 livelli, alberi decisionali, rischio residuo, agente avversariale, fonti per scopo.
-- **Cosa fare**, uno per volta su richiesta dell'utente (19.11): scale a 6 livelli e registro nuovo (A-19); prova K15
-  con il mandato esteso (A-17); pavimento di evidenza con la prova C (A-20); driver per prevalenza, SOV e NOR, "agisce
-  su", casi reali nella scheda (A-24); fonti di orizzonte e natura della fonte (A-22); residuo (A-21); STOP morbidi
-  (A-23).
-- **Impegno**: circa 4-6 giorni per le scale, poi da mezza giornata a 4 giorni per voce (19.11).
+- **Cosa fare**, uno per volta su richiesta dell'utente (19.11):
+  1. **scale a 6 livelli e registro nuovo (A-19), prima del primo ciclo vero**: indirizzo dell'utente del 30/10, si
+     riparte da zero senza convertire lo storico; con i driver per prevalenza, SOV e NOR (A-24);
+  2. prova K15 con il mandato esteso (A-17, passo B8);
+  3. dopo il primo ciclo: pavimento di evidenza con la prova C (A-20); "agisce su" e casi reali nella scheda (A-24);
+     fonti di orizzonte e natura della fonte (A-22); residuo (A-21); STOP morbidi (A-23).
+- **Tocca**, per le scale (19.5): kernel, prompt, `radar.py` e soglie, template (versione nuova), collaudo, demo.
+  **Modifica comune, non ancora iniziata**: nasce su `main` e passa al ramo `copilot-studio-pieno` con il merge e
+  `genera_CS.py`.
+- **Impegno**: circa 4-6 giorni per le scale, piu' un ciclo di prova; poi da mezza giornata a 4 giorni per voce (19.11).
 
 ### P1. Segnali qualitativi per dimensione e pressione sul radar (settimanale e spot)
 
@@ -206,7 +247,7 @@ Decisioni dell'utente che fanno da cornice:
   valutarla al trimestre; uno su Prossimita o Probabilita di un rischio in osservazione dice che puo' entrare nel
   radar.
 - **Tocca**: schema A3 (dimensione nei flag, piu' rischi per notizia), `mappatura_campi.json`, fogli Notizie,
-  Registro e Radar_Mosca, prompt A3 (7.599 caratteri) e A4, controlli e collaudo. Nessun principio da cambiare.
+  Registro e Radar_Mosca, prompt A3 e A4, controlli e collaudo. Nessun principio da cambiare.
 - **Fatto quando**: in demo tre settimane di notizie peggiorative sulla Probabilita di un rischio mettono la freccia
   sul suo cerchio e nel Registro, il cerchio resta fermo e il trimestre dopo A1 riceve il flag con la dimensione.
 - **Impegno**: medio, circa 2-3 giorni con collaudo e documentazione.
@@ -223,7 +264,7 @@ Decisioni dell'utente che fanno da cornice:
   "Rischi collegati" con i loro score; nel Radar_Mosca, facoltativo, una linea sottile fra i cerchi collegati. Nessuna
   media e nessuno score dell'evento.
 - **Tocca**: `tassonomia_nfr.md`, schema A1, mappa, controlli (collegati esistenti, niente autocollegamento),
-  Registro, schede (A6 e `schede.py`), collaudo. Prompt A1 a 7.989 caratteri: le istruzioni vanno nella guida di
+  Registro, schede (A6 e `schede.py`), collaudo. Prompt A1 al limite degli 8.000 caratteri: le istruzioni vanno nella guida di
   scrittura.
 - **Fatto quando**: nella demo due rischi nati dallo stesso evento si citano a vicenda nel Registro e nelle schede.
 - **Impegno**: medio, circa 2-3 giorni.
@@ -255,165 +296,32 @@ Decisioni dell'utente che fanno da cornice:
 - **Fatto quando**: `Schede_<ciclo>.xlsx` ha una scheda per ogni driver con almeno due rischi.
 - **Impegno**: basso.
 
-## 4. Automazione del processo (piano `Analisi_Architettura/Archivio/10`)
+## 4. Automazione del processo: l'app di orchestrazione
 
-Oggi un trimestre chiede circa 13 passi manuali (9 comandi da scrivere, 3 salvataggi in Blocco note, copie a mano);
-una settimana circa 7 (piano 10, 10.1). Obiettivo: niente copia-incolla, gli agenti fanno il piu' possibile, ogni
-azione rimasta si lancia con un doppio clic o un messaggio.
+Obiettivo: niente copia-incolla, gli agenti fanno il piu' possibile, ogni azione rimasta si fa da una finestra. **Su
+`main` e' realizzato** (D-83): agenti in Agent Builder e app Python sul PC, con il motore Python (D-43, D-91); nel registro
+scrive solo il motore, dopo i controlli (D-10). Scelte dell'utente: finestra tkinter; risposte dagli appunti piu' il
+file; piu' analisti sullo stesso registro; niente coda delle richieste.
 
-Punti fermi:
-- **Python resta il motore** (D-43); il piano 07 e' in riserva (sezione 10).
-- **Copilot Studio e Power Query sono disponibili** nel tenant (D-44); **usare Copilot Studio non e' deciso**: e' la
-  decisione aperta A-15, da prendere con AU4. Dal 09/10 l'analisi ha **tre strade**
-  (`Analisi_Architettura/14_Tre_strade.md`): A, app Python sul PC (AU1-AU5); CS-1, ibrida con un PC esecutore (AU6);
-  CS-2, tutto in Copilot Studio senza Python sul PC, che e' l'obiettivo dichiarato dall'utente il 09/10. Si
-  decide dopo le prove K6, K8 (Office Scripts) e K9 (code interpreter su compiti lunghi). Dall'11/10 la CS-2 e'
-  approfondita in `Analisi_Architettura/15_CS2_approfondita.md`: raccomandata la variante V2 ("Python decide, Excel
-  esegue"), a tappe dopo la CS-1. Le tappe sono: adattatore del registro nel motore, esecutore in Office Script
-  (prova K8), motore nel prompt con code interpreter (K9) e PDF (K10). Dal 14/10 c'e' la variante **V4**
-  (`Analisi_Architettura/16_Report_HTML.md`, decisione aperta A-16): report HTML generato da Python al posto delle viste
-  di Excel e registro come file di dati senza formule; vale in tutte le strade e nella CS-2 sostituirebbe la V2 (niente
-  Office Scripts). Si decide dopo la prova K14 (B5.10) e la tappa T2.
-- **Separare chi chiede da chi esegue**: nella strada A la richiesta la scrive il menu, nella CS-1 un flusso di
-  Copilot Studio; tutto cio' che sta dietro la richiesta e' identico.
-- Qualunque strada: nel registro scrive solo il motore, dopo i controlli (D-10); kernel, schemi, controlli,
-  validazione e collaudo non cambiano.
-
-**Dal 23/10/2026 (D-83) la strada e' decisa**: su `main` la strada A, cioe' agenti in Agent Builder e un'app Python
-di orchestrazione sul PC; la versione tutta in Copilot Studio vive sul ramo `copilot-studio-pieno` (D-82). Le voci AU4 e
-AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a quattro tappe, piu' la M5 aggiunta il 23/10. **L'avanzamento voce per voce, con le spunte (fatto, da verificare, da fare), e' in `Analisi_Architettura/18_App_orchestrazione.md`**; qui solo il riassunto:
+**L'avanzamento voce per voce, con le spunte (fatto, da verificare, da fare), e' in
+`Analisi_Architettura/18_App_orchestrazione.md`**; qui solo il riassunto:
 
 | Tappa | Cosa | Moduli | Stato |
 |---|---|---|---|
-| M1 | motore: lucchetto per piu' analisti, copia di lavoro del registro, Salvataggio automatico spento; AU7; automatismi di AU1 (report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura) | `lucchetto.py`, `esegui_ciclo_locale.py`, `input_a1.py`, `excel_com.py` | **fatta il 23/10** |
-| M2 | l'app: ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, flussi di ogni processo, finestra tkinter (AU2, AU5) | `ingresso.py`, `appunti.py`, `stato.py`, `esecutore.py`, `flussi.py`, `app_nfr.py`, `NFR.cmd` | **fatta il 23/10** (collaudata senza Excel con un Ambiente finto; resta la prova a mano con gli agenti veri, B5-bis, e la demo attraverso i flussi) |
-| M3 | installazione con un doppio clic e Verifica del PC (AU3) | `installa.cmd`, `installa.py`, `installazione.py`, `verifica_pc.py`, `notizie_manuali.py` | **fatta il 29/10** (collaudata senza Windows: `test_installazione.py`; restano le prove sul PC della Banca: pip dietro il proxy, schtasks, collegamenti, Excel via COM); il 30/10 anche l'aggiornamento sopra un pacchetto installato (D-89: versione, `.cmd.txt`, kernel nella library, obsoleti, agenti da reincollare), da provare in Banca su una copia sopra il pacchetto del 23/10 |
-| M4 | report HTML al comitato come seconda uscita di `report`: viste, grafici e schede di tutti i rischi dal prototipo dell'analisi 16, numeri controllati contro Excel | `report_html.py` | **fatta il 29/10** (collaudata senza Excel sul registro della demo: `test_report_html.py`; la lettura via COM e il cancello con Excel sono nella catena, da lanciare sul PC) |
-| M5 | funzioni amministrative (richiesta del 23/10): pulizia dell'archivio dei cicli, ritorno indietro di N trimestri (registro dall'Excel validato del ciclo scelto), ripartenza da zero; niente si cancella subito, tutto nel parcheggio con l'atto; da decidere chi puo' farlo | `amministrazione.py`, voce Amministrazione dell'app | **fatta il 29/10** (collaudata senza Excel: `test_amministrazione.py`; ritorno e annullamento con Excel nella catena, da lanciare sul PC; chi puo' farlo: modalita' Admin, D-85) |
+| M1 | motore: lucchetto per piu' analisti, copia di lavoro del registro, Salvataggio automatico spento; AU7; automatismi (report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura) | `lucchetto.py`, `esegui_ciclo_locale.py`, `input_a1.py`, `excel_com.py` | **fatta il 23/10** |
+| M2 | l'app: ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, flussi di ogni processo, finestra tkinter | `ingresso.py`, `appunti.py`, `stato.py`, `esecutore.py`, `flussi.py`, `app_nfr.py`, `NFR.cmd` | **fatta il 23/10**, prima prova in Banca il 29/10 |
+| M3 | installazione con un doppio clic e Verifica del PC; dal 30/10 anche l'aggiornamento sopra un pacchetto installato (D-89) | `installa.cmd`, `installa.py`, `installazione.py`, `verifica_pc.py`, `notizie_manuali.py` | **fatta il 29-30/10**, da provare in Banca (B5-bis) |
+| M4 | report HTML al comitato come seconda uscita di `report`, con i numeri controllati contro Excel | `report_html.py` | **fatta il 29/10**, cancello con Excel da lanciare sul PC (sezione 0) |
+| M5 | funzioni amministrative in modalita' Admin (D-85): pulizia, ritorno a un ciclo validato, ripartenza, annullamento; niente si cancella subito; Testi a mano in Admin dal 30/10 (D-90) | `amministrazione.py`, finestra Admin dell'app | **fatta il 29-30/10**, ritorno e annullamento con Excel da lanciare sul PC (sezione 0) |
 
-Scelte dell'utente: finestra tkinter; risposte dagli appunti piu' il file; piu' analisti sullo stesso registro; niente
-coda delle richieste (serviva alla CS-1). Le voci AU1, AU2, AU3 e AU5 qui sotto restano come dettaglio di cio' che le
-tappe realizzano.
+### AU5 (resto). La demo attraverso i flussi
 
-### AU1. Motore: automatismi e scrittura robusta (piano 10: C2 e C3)
-
-- **Perche'**: spariscono passi a mano del trimestre (baseline copiata in `Kernel`, prompt copiati nell'archivio), e
-  la scrittura resta pulita anche con il registro in una cartella OneDrive: il Salvataggio automatico potrebbe salvare
-  righe scritte prima di un fermo (rischio trovato il 27/09, forse la causa di `RPC_E_DISCONNECTED`).
-- **Cosa fare**:
-  - *fatto il 23/10 (D-83, tappa M1): scrittura robusta, prompt archiviati, report da `valida`, PDF delle schede; la
-    copia della baseline in `kernel` non serve piu' (AU7)*;
-  - **scrittura robusta (passo 2 dell'ordine)**: `wb.AutoSaveOn = False` subito dopo l'apertura;
-    `registro_in_lavoro(conf)` per `trimestrale`, `settimanale`, `valida`, `riapri` e `dismetti`: copia di lavoro
-    locale, scrittura e controlli sulla copia, sostituzione solo se l'originale non e' cambiato nel frattempo;
-  - `_scrivi_baseline` copia anche `Baseline_corrente.txt` nella cartella `kernel` configurata (non quando `kernel`
-    e' la `01_Kernel` del pacchetto: collaudo e demo);
-  - `trimestrale` archivia i prompt generati in `Cicli/<ciclo>/Prompt_in_uso/`;
-  - `valida` lancia `report` per i trimestrali (il comando `report` c'e' dal 30/09, D-62); `schede` esporta anche
-    `Schede_<ciclo>.pdf`. Un errore nel PDF e' solo un avviso.
-- **Tocca**: `esegui_ciclo_locale.py`, `excel_com.py`, `schede.py`, `Demo_W1_W2/esegui_demo.py`, `run_catena.py`,
-  guida, `04_Riferimenti/controlli_e_model_risk.md`.
-- **Fatto quando**: la catena di collaudo prova il caso "registro cambiato nel frattempo", produce i due PDF, trova la
-  baseline in `kernel` e i prompt archiviati; la demo e' rilanciata.
-- **Impegno**: circa 2 giorni (la scrittura robusta circa 1).
-
-### AU2. Ingresso unico, stato del processo e coda delle richieste (piano 10: C4-C7)
-
-- **Perche'**: tutte le risposte degli agenti entrano da un solo posto, `Archivio_Cicli\In_arrivo\`, che vengano dagli
-  appunti (strada A) o da un flusso (CS-1). Ogni azione del motore diventa una richiesta controllata. Serve in
-  entrambe le strade.
-- **Cosa fare**:
-  - `07_Senza_Studio/ingresso.py`: `estrai_json` (toglie BOM e recinti ```json, trova il JSON in mezzo al testo, se e'
-    troncato unisce le parti successive); `riconosci_agente` dai campi `required` degli schemi; nomi dei file e
-    controllo di schema subito; `messaggio_correzione` esteso agli altri agenti e ai fermi di `settimanale` e `schede`
-    (per A1 c'e' dal 02/10, D-69, in `precontrollo.py` dal 05/10, D-70; per `trimestrale` dal 06/10, D-71); conserva
-    il testo originale;
-  - `stato(conf)`: stato del processo e prossimo passo, senza Excel, anche in `Esiti/Stato_processo.json`;
-  - esecutore del motore in un sottoprocesso: fasce OK / FERMATO / ERRORE TECNICO, `Esiti/Esito_<id>.json`, log in
-    `Archivio_Cicli/Log`;
-  - coda delle richieste: `01_Kernel/schema_richiesta.json`; lista bianca `baseline`, `precontrollo`, `trimestrale`,
-    `settimanale`, `valida`, `riapri`, `schede-input`, `schede`, `report`; validatori ammessi in
-    `configurazione.json`; `inizializza`, `dismetti` e `aggiorna-registro` solo da riga di comando;
-  - `02_Agenti/modelli/A3.md`: una riga ("le notizie possono arrivare anche come allegati o nel testo della
-    richiesta"), poi `componi_prompt.py` e ricaricare A3.
-- **Fatto quando**: i test senza Excel sono verdi (estrazione da testi reali, riconoscimento e nomi, stato calcolato
-  da archivi finti, richieste fuori lista o con un validatore non ammesso rifiutate); A3 resta sotto gli 8.000
-  caratteri.
-- **Impegno**: circa 3 giorni.
-
-### AU3. Installazione con un doppio clic e Verifica del PC (piano 10: C8)
-
-- **Perche'**: i blocchi della prima installazione del 24/09 erano di questo tipo (`.json.txt`, `Workbook non trovato:
-  None`, pythoncom a meta', proxy). Il PC che esegue il motore si installa allo stesso modo in entrambe le strade.
-- **Cosa fare**: `installa.cmd` + `installa.py`, ripetibili: controllo di Python e dei moduli, `pip install --user`
-  solo di cio' che manca (messaggio chiaro se il proxy blocca); `configurazione.json` compilato con finestre di
-  dialogo; `attrib +P` sulle cartelle sincronizzate; Verifica del PC (moduli, Excel via COM, `AutoSaveOn` e
-  `FullName` del registro) riga per riga in verde o rosso, con un file da mandare al manutentore. Con l'installatore
-  si uniscono anche le cartelle del codice (M4).
-- **Fatto quando**: `installa.cmd` su una cartella di prova produce una configurazione valida e la Verifica e' tutta
-  verde; la guida, sezione 0, e' riscritta.
+- **Perche'**: i flussi dell'app sono collaudati con un Ambiente finto; straordinario, schede, report, riapertura,
+  dismissione, parere di A4, A7, diagnosi e sblocca sono scritti ma non coperti dalla demo (18.2, F5).
+- **Cosa fare**: `Demo_W1_W2/esegui_demo.py` attraverso i flussi con appunti simulati: A1 con i recinti, A1 in due
+  parti, correzione dopo un fermo.
+- **Fatto quando**: la demo passa dai flussi e le voci `[~]` e `[ ]` di F5 in 18 diventano `[x]`.
 - **Impegno**: circa 1 giorno.
-
-### AU4. Scegliere la strada: A (procedura guidata) o CS-1 (Copilot Studio) — decisione A-15
-
-| | Strada A | Variante CS-1 |
-|---|---|---|
-| Cosa fa l'analista | menu al PC; per ogni agente trascina i file, incolla la richiesta, preme Copia | un messaggio in Teams e dei pulsanti; nessun gesto per agente |
-| Raccolta notizie | sul PC (proxy, `pypac`, attivita' pianificata) | flusso nel cloud |
-| Python | sul PC dell'analista | su un solo PC esecutore, in background |
-| Lavoro dopo la parte comune | 3-4 giorni | 13-15 giorni |
-| Cosa si aggiunge da mantenere | niente | Operatore, argomenti, flussi e sotto-agenti in Copilot Studio, piu' la soluzione esportata |
-| Nuove verifiche e pareri | V-A..V-G (piano 10, 10.5) | V-H..V-Q (10.18): DLP, modello, trascrizioni (parere DPO), sincronizzazione |
-| Agenti | quelli di oggi, in Agent Builder | da ricreare; la qualita' si rimisura con il doppio run |
-
-- **Come scegliere**: **CS-1** se piu' analisti useranno il sistema, se si vuole lavorare da Teams senza stare al PC
-  o se i gesti per agente e la raccolta sul PC si rivelano un peso; in piu' devono riuscire la prova K0 e il parere
-  sulle trascrizioni. **Strada A** se il pilota resta a una persona al proprio PC (D-13), se si vuole la minima
-  complessita' prima del primo ciclo vero, o se K0 o il parere non arrivano in tempo.
-- **Prova K0** (passo B5.9, pronta dal 05/10, D-70): A1 in Copilot Studio sullo stesso input della prova senza Copilot
-  Studio; il precontrollo dentro l'agente in due modi (Code interpreter dell'esperienza standard con lo script
-  allegato, oppure skill `precontrollo-nfr` nella nuova esperienza, a consumo di crediti). Criteri nuovi: se il
-  precontrollo gira dentro A1 con l'impronta verificata, il giro A1 -> PC si riduce in tutte e due le strade; i
-  crediti della nuova esperienza sono un costo che la strada A non ha.
-
-  Prima tornata del 09/10:
-  - in Banca c'e' solo l'opzione 1: funziona nel riquadro di prova;
-  - in Teams risponde spesso con errori, probabilmente per il limite di circa 100 KB dei messaggi;
-  - il salvataggio in SharePoint dall'agente funziona: all'inizio il file finiva nel OneDrive, risolto il 09/10; il JSON arriva intero (impronta uguale a quella del file scaricato).
-
-  Per la CS-1 questi sono i punti critici, perche' la CS-1 vive in Teams. Il 09/10 l'utente ha scelto di proseguire
-  con la prova K6 (passo B5.3; tutte le prove della CS-1 nel passo B5, `09_Copilot_Studio/Prove_CS1.md`): un argomento a passi fissi, con il JSON che passa solo per i flussi.
-- **Proposta, se alla fine del passo 5 la decisione non c'e'**: strada A. La CS-1 resta aggiungibile dopo, perche'
-  cambia solo chi scrive le richieste.
-- **Fatto quando**: A-15 e' chiusa in `04_Riferimenti/DECISIONI.md`.
-
-### AU5. Strada A: procedura guidata a menu (solo se A-15 sceglie la strada A)
-
-- **Cosa fare**: `07_Senza_Studio/appunti.py` (ascolto degli appunti con `win32clipboard`; cio' che si copia passa da
-  `ingresso.py`); `procedura.py` + `NFR.cmd`: menu con lo stato e il prossimo passo (Invio = procedi), che scrive le
-  richieste nella coda di AU2; per ogni agente prepara `%USERPROFILE%\NFR_Da_allegare\`, apre il link dell'agente,
-  mette la richiesta negli appunti, aspetta la copia; per la validazione apre Excel sulla griglia del foglio
-  Validazione; link degli agenti in `configurazione.json`; `NFR_incolla.cmd` con il tasto di scelta rapida (niente
-  Ctrl+Alt: sulla tastiera italiana e' AltGr); "Invia a -> NFR notizie manuali"; attivita' pianificata della raccolta
-  con `schtasks /create /xml`; guida riscritta attorno al menu; demo con appunti simulati.
-- **Verifiche nel tenant**: V-A..V-G (piano 10, 10.5).
-- **Fatto quando**: la demo passa dalla procedura con appunti simulati e la prova a mano sul PC riesce (10.6).
-- **Impegno**: 3-4 giorni.
-
-### AU6. Variante CS-1: Copilot Studio con il motore in background (solo se A-15 sceglie la CS-1)
-
-- **Cosa fare** (piano 10, 10.12 e fasi K1-K6 di 10.15): `07_Senza_Studio/motore_in_ascolto.py` sul PC esecutore
-  (parte all'accesso a Windows, esegue la coda di AU2, aggiorna `motore_attivo.json`); agent flow
-  `Deposita_Risposta`, `Scrivi_Richiesta`, `Leggi_Stato`, `Leggi_File`, `Salva_Allegato`, `Archivia_Parere`, con le
-  schede di costruzione in `09_Copilot_Studio/`; A1, A3, A4 e A8 come sotto-agenti, A5 e A6 come strumenti prompt con
-  uscita JSON, istruzioni sempre da `componi_prompt.py`; Operatore NFR con argomenti guidati, Adaptive Card e copioni
-  di collaudo con i casi ostili; cloud flow della raccolta del lunedi' (2-4 settimane in ombra con
-  `raccogli_notizie.py`); regole di governo 1-6 del piano 10 in `04_Riferimenti/controlli_e_model_risk.md`; A-11
-  chiusa (`04_Riferimenti/workflow.md` archiviata, sostituita da `09_Copilot_Studio`).
-- **Verifiche nel tenant**: V-H..V-Q (piano 10, 10.18).
-- **Fatto quando**: i copioni di conversazione sono superati due volte di fila; la demo con richieste simulate e'
-  rilanciata; il primo ciclo vero passa dal doppio run e dalla validazione.
-- **Impegno**: 13-15 giorni, piu' l'ombra della raccolta.
 
 ## 5. Quantificazione per i rischi piu' rilevanti
 
@@ -501,7 +409,7 @@ G2, poi i difetti di G5.
 | # | Voce | Stato |
 |---|---|---|
 | M1 (c) | Collaudo piu' corto: meno letture complete del registro nel gruppo `catena` (oggi circa 40-60 minuti in parallelo; il gruppo `catena` resta in sequenza e da solo dura quasi tutto) | aperta |
-| M4 (resto) | Cartelle del codice (`07_Senza_Studio`, `09_Copilot_Studio`) unite con l'installatore AU3, che rifa' i percorsi in `configurazione.json` e nelle attivita' pianificate | con AU3 |
+| M4 (resto) | Cartelle del codice (`07_Senza_Studio`, `09_Copilot_Studio`) da unire: doveva farlo l'installatore, che non l'ha fatto; `installa.cmd`, la guida e `AGGIORNAMENTO_IN_BANCA.md` puntano a `07_Senza_Studio`. Conviene solo insieme a un pacchetto che cambia comunque i percorsi | aperta, bassa priorita' |
 
 ## 8. Questioni aperte emerse dal lavoro
 
@@ -514,24 +422,23 @@ Piccole, da decidere quando capita l'occasione:
 - `sogliaDelta` colora solo il Delta; il nome `rmPxI` non e' usato;
 - i flag di A3 citano "il descrittore", che A3 non ha nel prompt (si risolve con P1).
 
-### Revisione dell'intera procedura per ridurne la complessita' (richiesta del 13/10/2026) — IMPORTANTE, dopo aver risolto l'installazione
+### Revisione dell'intera procedura per ridurne la complessita' (richiesta del 13/10/2026) — IMPORTANTE, dopo la prova in Banca
 
 - **Perche'**: il 13/10 l'allineamento al pacchetto ha richiesto molti giri a vuoto: script e kernel di versioni diverse
   (messaggi "e' della versione ..."), `configurazione.json` perso alla sostituzione della cartella, registro che risultava
   vuoto e poi con i dati di esempio del template, baseline lette da posti diversi (`trimestrale` la ricostruisce dal registro,
-  `precontrollo` la legge da un file), baseline da ricopiare nella knowledge (AU7), raccolta notizie scritta fuori da
-  `News_Inbox`, errori tecnici senza indicazione del punto. Ogni passo manuale e' una possibile deriva fra file.
-- **Cosa fare** (analisi, non ancora sviluppo): a) elencare ogni passo manuale e ogni file che deve coincidere fra PC,
-  SharePoint e Agent Builder, e togliere quelli eliminabili; b) un solo comando di verifica (`verifica`) che controlli
-  versione dello script, kernel, template, registro (ciclo, numero di rischi, assenza dei dati di esempio), percorsi di
-  `configurazione.json`, esistenza dei file di input, e dica cosa correggere; c) un solo pacchetto con manifest e
-  impronte, e un installatore che non tocchi `configurazione.json`; d) un controllo che rifiuti un registro con gli id di
-  esempio; e) mostrare nei messaggi di `baseline` e `trimestrale` quale registro e quale ciclo stanno usando; f) valutare
-  se il giro A1 → precontrollo → A5 → trimestrale → validazione possa avere meno passaggi a mano (si collega ad AU2, AU4,
-  AU7).
+  `precontrollo` la legge da un file), raccolta notizie scritta fuori da `News_Inbox`, errori tecnici senza indicazione del
+  punto. Ogni passo manuale e' una possibile deriva fra file.
+- **Gia' fatto**: installatore che aggiorna senza perdere `configurazione.json`, con versione del pacchetto e impronte di
+  kernel e agenti (D-89); Verifica del PC (M3) su ambiente, configurazione, kernel, template e registro chiuso; app che
+  guida il giro A1 -> precontrollo -> A5 -> trimestrale -> validazione (D-83); baseline non piu' nella knowledge (AU7).
+- **Cosa resta** (analisi, non ancora sviluppo): a) elencare i passi manuali e i file che devono coincidere fra PC,
+  SharePoint e Agent Builder rimasti dopo l'app, e togliere quelli eliminabili; b) estendere la Verifica del PC al
+  contenuto del registro (ciclo, numero di rischi, assenza dei dati di esempio); c) un controllo che rifiuti un registro
+  con gli id di esempio; d) mostrare nei messaggi di `baseline` e `trimestrale` quale registro e quale ciclo stanno usando.
 - **Fatto quando**: una persona che parte da un PC pulito arriva al primo `trimestrale` senza consultare piu' di una
   pagina di istruzioni e senza passaggi manuali di allineamento fra file.
-- **Impegno**: analisi circa 1 giorno, poi le voci che ne escono.
+- **Impegno**: analisi circa mezza giornata, poi le voci che ne escono.
 
 ## 9. Fatto
 
@@ -558,6 +465,29 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | AU1 (scrittura robusta e automatismi) e lucchetto | Piu' analisti: lucchetto nell'archivio condiviso, copia di lavoro del registro con l'impronta, Salvataggio automatico spento, `sblocca`; report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura | 23/10 | D-83 | guida, sezioni 0.3, 3, 7 e 9; `lucchetto.py` |
 | AU4 | Scelta della strada: A su `main`, tutto in Copilot Studio sul ramo `copilot-studio-pieno` | 23/10 | D-83 (chiude A-15 e A-16) | `CLAUDE.md`, DECISIONI |
 | P10 | Registro unico: nel radar i primi (Prossimita e Probabilita almeno 2, capienza 15 fino a 20, eccezioni), gli altri in osservazione; un solo modulo per la regola | 08/10 | D-79 | rubrica sezione 9, Parametri righe 65-75, guida; analisi `13_Scala_unica.md` |
+| AU2 | Ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, messaggi di correzione per A3, A5, A6 (tappa M2) | 23/10 | D-83 | `ingresso.py`, `stato.py`, `esecutore.py`; analisi 18.2 |
+| AU5 (parte) | La finestra dell'app al posto della procedura a menu: flussi di ogni processo, appunti, link degli agenti, riquadro "Risposta dell'agente" (al posto di `NFR_incolla.cmd`); resta la demo (sezione 4) | 23/10 | D-83 | `app_nfr.py`, `flussi.py`, `appunti.py`; guida, "L'app NFR" |
+| AU3 | Installazione con un doppio clic e Verifica del PC (tappa M3); aggiornamento sopra un pacchetto installato | 29-30/10 | D-89 | `installa.cmd`, `verifica_pc.py`; guida, sezione 0.3 |
+| Tappa M4 | Report al comitato in HTML, seconda uscita di `report` e `valida`, con il cancello su Excel | 29/10 | D-83 | `report_html.py`; guida, sezione 4 |
+| Tappa M5 | Funzioni amministrative in modalita' Admin: pulizia, ritorno a un ciclo validato, ripartenza, annullamento | 29/10 | D-85 | `amministrazione.py`; guida, 3-quater |
+| Aiuto nell'app | Pulsante Aiuto (F1) e suggerimenti sui pulsanti, letti dalla guida | 29/10 | — | `aiuto.py` |
+| P14 (lunghezze) | Lunghezze minime dei testi e controllo C10 per A1 e A8; testi piu' lunghi per A6 e A4 | 29/10 | D-86, D-88 | guida di scrittura di A1, `controlli_a5.py`, `schede.py` |
+| A7 in prima persona | A7 risponde come autore delle valutazioni | 29/10 | D-87 | modello di A7 |
+| Testi a mano in Admin | Con copia del registro e atto; il report si rifa' a fine correzione | 30/10 | D-90 | `amministrazione.py`; guida, 3-ter |
+| A-11 e PROMPT_MASTER | Variante Power Automate archiviata, parti vive spostate; PROMPT_MASTER allineato a D-83 | 30/10 | D-91 | `struttura_e_liste.md`, `controlli_e_model_risk.md` sezione 7, `Analisi_Architettura/Archivio` |
+
+### 9-bis. Superate
+
+Voci chiuse senza farle, perche' una decisione le ha rese inutili. Il contenuto resta dove dice l'ultima colonna.
+
+| Voce | Perche' | Dove resta |
+|---|---|---|
+| B5, B5.1-B5.9: prove della CS-1 | su `main` non decidono piu' nulla: A-15 e' chiusa (D-83) | ramo `copilot-studio-pieno`, `09_Copilot_Studio/TODO_Copilot_Studio.md`; protocollo in `09_Copilot_Studio/Prove_CS1.md`, esiti di K0 in `Prova_con_Copilot_Studio.md` |
+| B5.10: prova K14 del report HTML | A-16 chiusa da D-83: niente variante V4; il report HTML e' fatto (M4) e si prova con B5-bis | `Analisi_Architettura/16_Report_HTML.md`, 16.9 |
+| AU6: variante CS-1 con il motore in background | D-83 | `Analisi_Architettura/Archivio/10`, 10.12 e 10.15 |
+| AU1: copia della baseline nella cartella `kernel` | sostituita da AU7 | D-83 |
+| AU2: coda delle richieste | serviva alla CS-1; scelta dell'utente del 23/10 | `Analisi_Architettura/Archivio/10` |
+| Variante CS-2 in riserva | sostituita dal ramo `copilot-studio-pieno` (D-82) | `Analisi_Architettura/15_CS2_approfondita.md` |
 
 ## 10. In riserva (non pianificate)
 
@@ -566,5 +496,4 @@ Non sono voci di lavoro. Si riprendono solo se cambia la condizione indicata.
 | Voce | Cosa e' | Quando riprenderla |
 |---|---|---|
 | Piano 07, Power Query senza Python (`Analisi_Architettura/Archivio/07`) | controlli e consolidamento in Excel con Power Query; Python solo al manutentore. Era la voce AR1, chiusa da D-43 | se la Banca vietasse Python sul PC |
-| Variante CS-2, tutto nel cloud (piano 10, 10.11; `Analisi_Architettura/Archivio/06`) | motore in Office Scripts, stato in Liste SharePoint, report con Power Query: nessun PC in esercizio | solo dopo la CS-1 (AU6), se la Banca vuole un esercizio senza PC |
 | Foglio Manutenzione (anteprima del 07/10 cancellata l'08/10; disegno in D-76 e nell'HANDOFF, sezione 2-unvicies) | una riga per campo da cambiare fra un ciclo e l'altro, al posto della riapertura | se le modifiche fra un ciclo e l'altro diventano frequenti |

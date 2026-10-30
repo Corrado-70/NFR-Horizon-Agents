@@ -3,7 +3,8 @@
 Data: 23/10/2026. Decisione D-83 (chiude A-15 e A-16). Piano approvato dall'utente il 23/10, a tappe M1-M4.
 
 Questo documento e' il **registro di avanzamento** dell'app: a ogni passo si aggiornano le spunte. Il TODO (sezione 4)
-ne tiene solo la tabella riassuntiva; il racconto di cio' che e' stato fatto e' nell'HANDOFF.
+ne tiene solo la tabella riassuntiva e la sua sezione 0 dice da dove si riparte; il racconto di cio' che e' stato fatto
+e' nell'HANDOFF.
 
 **Legenda**
 - `[x]` fatto e collaudato;
@@ -16,9 +17,9 @@ ne tiene solo la tabella riassuntiva; il racconto di cio' che e' stato fatto e' 
 |---|---|---|
 | M1 | motore: piu' analisti (lucchetto, copia di lavoro), AU7, automatismi | fatta e collaudata (catena 375/375, gruppi rilanciati verdi); restano le prove in Banca |
 | M2 | l'app: finestra, flussi, stato, ingresso delle risposte | fatta; da provare con gli agenti veri e nella demo |
-| M3 | installazione con un doppio clic e Verifica del PC | da fare |
-| M4 | report HTML al comitato, seconda uscita di `report` | da fare |
-| M5 | funzioni amministrative: pulizia dell'archivio, ritorno indietro di N trimestri, ripartenza da zero, tutto nel parcheggio | da fare (richiesta del 23/10) |
+| M3 | installazione con un doppio clic e Verifica del PC | fatta il 29-30/10 (D-89); da provare in Banca |
+| M4 | report HTML al comitato, seconda uscita di `report` | fatta il 29/10; cancello con Excel da lanciare sul PC |
+| M5 | funzioni amministrative: pulizia dell'archivio, ritorno indietro di N trimestri, ripartenza da zero, tutto nel parcheggio | fatta il 29-30/10 (D-85, D-90); ritorno e annullamento con Excel da lanciare sul PC |
 
 Scelte dell'utente (23/10):
 - finestra tkinter;
@@ -113,7 +114,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Ripresa di un processo interrotto dalla risposta gia' in `In_arrivo` | `test_app.py` |
 | [x] | Validazione: registro aperto, attesa della chiusura, `valida` | `test_app.py` |
 | [x] | Settimanale: raccolta, Manuali, A3 con l'allegato, fermo e correzione | `test_app.py` |
-| [~] | Straordinario, schede (con e senza A6), report, riapertura, testi a mano, dismissione, parere di A4, A7, diagnosi, sblocca | scritti; da coprire nel collaudo e nella demo |
+| [~] | Straordinario, schede (con e senza A6), report, riapertura, testi a mano (in Admin dal 30/10, D-90), dismissione, parere di A4, A7, diagnosi, sblocca | scritti; da coprire nel collaudo e nella demo |
 | [ ] | Demo (`Demo_W1_W2/esegui_demo.py`) attraverso i flussi, con appunti simulati: A1 con i recinti, A1 in due parti, correzione dopo un fermo | — |
 
 ### F6. Finestra
@@ -199,13 +200,13 @@ rimettendo a posto il parcheggio. In `amministrazione.py` e nella finestra del p
 
 | Stato | Voce |
 |---|---|
-| [ ] | Estrarre il pacchetto (zip del 23/10, istruzioni in `AGGIORNAMENTO_IN_BANCA.md`); copiare `01_Kernel` e `DECISIONI.md` nella library Kernel; in `configurazione.json` le voci della guida 0.3 (`utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`, `ascolta_appunti`, `link_agenti`) |
+| [ ] | Estrarre il pacchetto corrente (istruzioni in `AGGIORNAMENTO_IN_BANCA.md`; il kernel lo copia `installa.cmd`, D-89); in `configurazione.json` le voci della guida 0.3 (`utente`, `validatore_predefinito`, `raccolta_su_questo_pc`, `agenti`, `ascolta_appunti`, `link_agenti`) |
 | [ ] | Reincollare A3, A4, A5, A6 e A8 (D-84); togliere `Baseline_corrente.txt` dalla knowledge di A3 e A4 e dalla library Kernel; cancellare il prompt schedulato di A3; `baseline` per gli allegati con i nomi nuovi |
 | [ ] | V-A: il link "Copia collegamento" apre la chat dell'agente |
 | [ ] | V-B, V-C: il pulsante Copia porta negli appunti un A1 intero di 40 KB |
 | [ ] | V-F: `AutoSaveOn` e `FullName` del registro aperto via COM |
 | [ ] | Lucchetto fra due PC con OneDrive: il collega vede "Il registro e' in uso" |
-| [ ] | Un trimestre di prova dall'app sul registro di prova: giro di correzione, validazione, report |
+| [~] | Un trimestre di prova dall'app sul registro di prova: giro di correzione, validazione, report. 29/10: prima prova fino alla validazione, con un pacchetto precedente; da rifare su quello corrente |
 | [ ] | App piu' esplicita (29/10): fascia e passo in corso, domande in primo piano, "Ho chiuso Excel: controlla ora", domanda su A5 dopo il precontrollo |
 | [ ] | M3: `installa.cmd` fino in fondo (pip o cartella `pacchetti`), finestra della configurazione, collegamenti e Invia a, attivita' della raccolta (V-E), Verifica del PC con Excel (V-F) |
 | [ ] | M4: `Report_comitato_<ciclo>.html` dopo `valida` sul registro di prova, schede collegate, "Cancello: N numeri uguali" |

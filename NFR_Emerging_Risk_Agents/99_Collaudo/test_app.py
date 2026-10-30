@@ -504,6 +504,25 @@ def test_flussi(e):
         e.verifica(amb.comandi == [["amministrazione", "--admin", "ripartenza", "--motivo", "r" * 25, "--decisore", "Prova",
                                     "--ciclo-precedente", "2025Q4", "--settimana", "2026-01-05", "--conferma", "R.xlsx"]],
                    "Admin -> Ripartenza: motivo, decisore, trimestre di partenza, settimana, conferma", amb.comandi)
+        # Testi a mano (D-90): con una riapertura aperta niente Excel, si propone la Validazione; poi testi e testi-fine
+        base = (u / "Baseline_corrente.json").read_text(encoding="utf-8")
+        _scrivi(u / "Baseline_corrente.json", {"ciclo_precedente": "2026Q4", "ciclo_da_valutare": "2027Q1"})
+        _scrivi(u / "Cicli" / "2026Q4" / "Validazione_2026Q4.json", {})
+        _scrivi(u / "Cicli" / "2026Q4" / "Riapertura_2026Q4.json", {"riaperto_da": "Analista", "rischi": ["NFR-03"]})
+        amb = AmbienteFinto(u, conferme=[True])
+        in_admin(amb).amministrazione("Testi a mano")
+        e.verifica(not amb.comandi and not amb.chiusure and any("riaperta" in m for _, m in amb.messaggi)
+                   and amb.richiesti and amb.richiesti[0][0].startswith("Validazione del periodo 2026Q4"),
+                   "Admin -> Testi a mano con la riapertura aperta: nessun comando, il perche' e il passaggio alla Validazione",
+                   f"{amb.messaggi}\n{amb.richiesti}")
+        (u / "Cicli" / "2026Q4" / "Riapertura_2026Q4.json").unlink()
+        amb = AmbienteFinto(u, moduli=[{"motivo": "refuso nella descrizione di NFR-03"}])
+        in_admin(amb).amministrazione("Testi a mano")
+        e.verifica(amb.comandi == [["amministrazione", "--admin", "testi", "--motivo", "refuso nella descrizione di NFR-03"],
+                                   ["amministrazione", "--admin", "testi-fine"]] and amb.chiusure == [str(conf["workbook"])],
+                   "Admin -> Testi a mano: motivo, copia del registro nel parcheggio, Excel, poi testi-fine (baseline e report)",
+                   f"{amb.comandi}\n{amb.chiusure}")
+        _scrivi(u / "Baseline_corrente.json", base)
         conf["workbook"].unlink()
 
         # annullato: nessuna risposta
@@ -525,7 +544,7 @@ def test_aiuto(e):
     voci = sorgente.split("voci = [", 1)[1].split("]\n", 1)[0]
     nomi = re.findall(r'\("([^"]+)", (?:self\.flussi|lambda)', voci)
     righe_guida = aiuto.pulsanti()
-    e.verifica(len(nomi) == 12 and set(nomi) == set(righe_guida),
+    e.verifica(len(nomi) == 11 and set(nomi) == set(righe_guida),
                "aiuto: ogni pulsante dei processi dell'app ha la sua riga nella tabella 'I processi' della guida, e viceversa",
                f"app {nomi}\nguida {sorgente and sorted(righe_guida)}")
     t = aiuto.suggerimento("Trimestre")

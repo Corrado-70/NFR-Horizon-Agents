@@ -11,7 +11,7 @@ di A1, lo calcola lo script, D-51; la Confidence non c'e' piu', D-58). Gli anni
 di adeguamento sono una stima (D-60): non entrano nel confronto.
 Cosa PUO' variare: la prosa (razionale, sintesi, descrizioni). Lo strumento
 serve soprattutto in tenant, per il doppio run del collaudo in ambiente
-(04_Riferimenti/workflow.md, test in ambiente; guida, Avvio del progetto, fase 7).
+(04_Riferimenti/controlli_e_model_risk.md, sezione 7; guida, Avvio del progetto, fase 7).
 
 --primo-ciclo: da registro vuoto A1 numera da se' i rischi nuovi, quindi lo
 stesso rischio puo' avere id diversi nei due run. Con questa opzione i rischi

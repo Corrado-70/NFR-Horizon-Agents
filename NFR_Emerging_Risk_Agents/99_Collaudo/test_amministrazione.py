@@ -237,8 +237,63 @@ def test_conferma(e, conf, grezza):
                "conferma scritta: un ciclo o un nome del registro diverso ferma prima di toccare qualcosa")
 
 
+def test_testi(e):
+    """D-90: testi a mano in Admin. Controlli prima (ciclo validato, nessuna riapertura), copia del registro nel
+    parcheggio, fine con l'impronta e la rigenerazione, annullamento."""
+    with tempfile.TemporaryDirectory() as tmp:
+        conf, grezza = archivio(Path(tmp))
+        u, reg = conf["cartella_uscita"], conf["workbook"]
+
+        def fermo(motivo="refuso nella descrizione di NFR-03"):
+            try:
+                amm.testi_inizio(conf, grezza, motivo, stato.leggi(conf))
+                return None
+            except amm.Fermo as ex:
+                return str(ex)
+        non_validato = fermo()
+        scrivi(u / "Cicli" / "2026Q4" / "Validazione_2026Q4.json", {"periodo": "2026Q4"})
+        scrivi(u / "Cicli" / "2026Q4" / "Riapertura_2026Q4.json", {"rischi": ["NFR-03"]})
+        riaperto = fermo()
+        (u / "Cicli" / "2026Q4" / "Riapertura_2026Q4.json").unlink()
+        corto = fermo("corto")
+        e.verifica(non_validato and "non ancora validato" in non_validato and riaperto and "riaperta" in riaperto
+                   and corto and not amm.elenco_parcheggi(conf),
+                   "testi a mano: fermo con il ciclo da validare, con la riapertura aperta (prima la Validazione), con il "
+                   "motivo corto; nessun parcheggio", f"{non_validato}\n{riaperto}\n{corto}")
+        cartella, atto = amm.testi_inizio(conf, grezza, "refuso nella descrizione di NFR-03", stato.leggi(conf))
+        e.verifica(reg.read_text(encoding="utf-8").startswith("registro di adesso")
+                   and (cartella / "registro" / "NFR_Registro.xlsx").read_text(encoding="utf-8") == reg.read_text(encoding="utf-8")
+                   and atto["ciclo"] == "2026Q4" and atto["operazione"] == "testi" and amm.testi_aperti(conf),
+                   "testi a mano: una COPIA del registro nel parcheggio con l'atto; il registro resta al suo posto")
+        rigenerati = []
+        _, atto, cambiato = amm.testi_fine(conf, grezza, rigenera=lambda c: rigenerati.append(True))
+        try:
+            amm.annulla(conf, grezza, cartella.name, "niente da annullare")
+            annullabile = True
+        except amm.Fermo:
+            annullabile = False
+        e.verifica(not cambiato and atto["stato"] == "senza modifiche" and not rigenerati and not annullabile,
+                   "testi a mano: registro non cambiato -> 'senza modifiche', niente rifatto, niente da annullare")
+        cartella, _ = amm.testi_inizio(conf, grezza, "razionale di NFR-05 riscritto", stato.leggi(conf))
+        reg.write_text("registro di adesso, testi corretti", encoding="utf-8")
+        cartella2, atto, cambiato = amm.testi_fine(conf, grezza, rigenera=lambda c: rigenerati.append(True))
+        try:
+            amm.testi_fine(conf, grezza)
+            ancora = True
+        except amm.Fermo:
+            ancora = False
+        e.verifica(cambiato and cartella2 == cartella and rigenerati == [True]
+                   and atto["impronta_registro_dopo"] == amm.impronta(reg) and not ancora,
+                   "testi a mano: registro cambiato -> baseline e report rifatti, impronta nell'atto; finiti, non si "
+                   "chiudono due volte")
+        atto, nuovo = amm.annulla(conf, grezza, cartella.name, "annullo i testi di prova")
+        e.verifica(reg.read_text(encoding="utf-8") == "registro di adesso (2026Q4 scritto)" and atto["stato"] == "annullato"
+                   and (nuovo / "registro" / "NFR_Registro.xlsx").read_text(encoding="utf-8") == "registro di adesso, testi corretti",
+                   "testi a mano annullati: torna il registro di prima, quello corretto va in un parcheggio nuovo")
+
+
 def main():
-    e = Esito("Funzioni amministrative: parcheggio, pulizia, ritorno, annulla, ripartenza, svuota (senza Excel)")
+    e = Esito("Funzioni amministrative: parcheggio, pulizia, ritorno, annulla, ripartenza, svuota, testi (senza Excel)")
     test_admin(e)
     with tempfile.TemporaryDirectory() as tmp:
         conf, grezza = archivio(Path(tmp))
@@ -248,6 +303,7 @@ def main():
         test_ripartenza(e, conf, grezza)
         test_conferma(e, conf, grezza)
         test_svuota(e, conf, grezza)
+    test_testi(e)
     return 0 if e.stampa() else 1
 
 

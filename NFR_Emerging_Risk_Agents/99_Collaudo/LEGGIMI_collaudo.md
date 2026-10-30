@@ -1,7 +1,7 @@
 # Collaudo a secco
 
 Verifica gli artefatti prima del deploy, senza tenant. Non sostituisce il test
-in ambiente (`04_Riferimenti/workflow.md`, "Test in ambiente"): non include il retrieval dalle
+in ambiente (`04_Riferimenti/controlli_e_model_risk.md`, sezione 7): non include il retrieval dalle
 knowledge source ne' la variabilita' dell'agente Copilot reale.
 
 ## Come si esegue

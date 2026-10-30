@@ -2133,6 +2133,38 @@ def amministrazione_catena(e, b):
     e.verifica(codice == 0 and sha(b.wb) == firma and (b.uscita / "Cicli" / corrente).exists()
                and carica(b.uscita / "Baseline_corrente.json")["ciclo_precedente"] == corrente,
                f"9. annullamento del ritorno: registro, {corrente} e baseline come prima", out[-600:])
+    testi_catena(e, b, corrente)
+
+
+def testi_catena(e, b, corrente):
+    """9. Testi a mano in Admin (D-90) con Excel: copia del registro nel parcheggio, una descrizione corretta, testi-fine
+    (baseline e report veri), annullamento (registro e baseline di prima)."""
+    validato = (b.uscita / "Cicli" / corrente / f"Validazione_{corrente}.json").exists()
+    riaperto = (b.uscita / "Cicli" / corrente / f"Riapertura_{corrente}.json").exists()
+    codice, out = b.esegui_amm("testi", "--motivo", "prova della catena: descrizione corretta a mano")
+    if not validato or riaperto:
+        e.verifica(codice == 1 and "Validazione" in out, f"9. testi a mano: fermo con il {corrente} da validare o riaperto",
+                   out[-400:])
+        return
+    e.verifica(codice == 0 and "copia del registro" in out, "9. testi a mano: copia del registro nel parcheggio", out[-400:])
+    firma, segno = sha(b.wb), " (testo corretto a mano nella catena)"
+    with SessioneExcel(b.wb) as sess:
+        scr = campo.Scrittore(sess, MAPPA)
+        righe = scr.righe("tblRegister")
+        n = max(i for i, r in enumerate(righe, start=1) if str(r["Ciclo"]) == str(corrente))
+        scr.aggiorna("tblRegister", n, {"Descrizione": f"{righe[n - 1]['Descrizione']}{segno}"})
+        sess.salva()
+    codice, out = b.esegui_amm("testi-fine")
+    base = (b.uscita / "Baseline_corrente.json").read_text(encoding="utf-8")
+    report = b.uscita / "Cicli" / corrente / f"Report_comitato_{corrente}.pdf"
+    e.verifica(codice == 0 and "registrati" in out and segno.strip(" ()") in base and report.exists()
+               and report.stat().st_mtime >= (b.uscita / "Baseline_corrente.json").stat().st_mtime - 600,
+               "9. testi a mano: testi-fine rifa' baseline (con il testo corretto) e report", out[-800:])
+    nome = next((r.split(":")[0] for r in b.esegui_amm("parcheggi")[1].splitlines() if "_testi" in r), None)
+    codice, out = b.esegui_amm("annulla", "--parcheggio", nome or "?", "--motivo", "fine della prova dei testi a mano")
+    e.verifica(codice == 0 and sha(b.wb) == firma
+               and segno.strip(" ()") not in (b.uscita / "Baseline_corrente.json").read_text(encoding="utf-8"),
+               "9. testi a mano annullati: registro di prima, baseline senza il testo corretto", out[-600:])
 
 
 def gate_copertura(e):

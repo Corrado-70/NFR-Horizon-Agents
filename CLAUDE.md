@@ -21,5 +21,8 @@
   esplicitamente, oppure quando lo chiedi tu prima e l'utente accetta.
 - Se l'ambiente della sessione ti mette d'ufficio su un altro ramo, chiedi all'utente come procedere prima di
   modificare qualcosa.
-- A inizio lavoro: `git fetch` e `git pull` sul ramo della cartella, per partire dalla versione piu' recente.
+- A inizio lavoro: `git fetch` e `git pull` sul ramo della cartella, per partire dalla versione piu' recente. Poi si
+  legge la sezione 0 del registro vivo del ramo, che dice da dove si riparte, e a fine intervento la si aggiorna:
+  `NFR_Emerging_Risk_Agents/TODO_possibili_sviluppi.md` su `main` (voci comuni e di `main`),
+  `NFR_Emerging_Risk_Agents/09_Copilot_Studio/TODO_Copilot_Studio.md` su `copilot-studio-pieno` (solo voci del ramo).
 - Commit e push solo quando l'utente lo chiede.

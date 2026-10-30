@@ -453,7 +453,7 @@ def risolvi(sorgente, ctx, stato):
     return valore
 
 
-# Campi calcolati dalla scrittura, non dal payload (vedi 04_Riferimenti/workflow.md, "Campi
+# Campi calcolati dalla scrittura, non dal payload (vedi 04_Riferimenti/struttura_e_liste.md, "Campi
 # derivati"). Il collaudo verifica che ogni 'derivato:' della mappa sia qui.
 DERIVATI = {
     "vuoto": lambda ctx, s: None,

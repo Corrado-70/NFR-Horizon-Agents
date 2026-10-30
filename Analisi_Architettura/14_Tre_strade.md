@@ -385,7 +385,7 @@ Le prove 4 e 5 servono alla multiutenza, che e' il motivo principale per sceglie
 prime della CS-2.
 
 **Protocollo preciso**: `NFR_Emerging_Risk_Agents/09_Copilot_Studio/Prove_CS1.md`, con i testi delle domande, i
-comandi e la tabella dei risultati. Nel TODO e' il passo B5, dopo l'allineamento al pacchetto (B1-B4). Le prove
+comandi e la tabella dei risultati. Nel TODO era il passo B5, dopo l'allineamento al pacchetto (B1-B4); dal 30/10 e' nel registro del ramo `copilot-studio-pieno`. Le prove
 hanno questi nomi: 1 = K6, 2 = K6.5, 3 = K4, 4 = K11, 5 = K12, 6 = K7a, 7 = K7b, 8-9 = D1-D2.
 
 ## Fonti (Microsoft Learn, consultate il 09/10/2026)

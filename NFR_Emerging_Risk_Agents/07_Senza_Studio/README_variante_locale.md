@@ -1,17 +1,14 @@
 # Variante senza Copilot Studio — Agent Builder + script locale
 
-Per un ambiente con licenza **Microsoft 365 Copilot** ma senza Copilot Studio
-e senza Power Automate. Il principio del sistema non cambia; cambia dove vive
-ciascuna meta':
+E' la versione in uso su `main` (D-83): licenza **Microsoft 365 Copilot**, senza Copilot Studio e senza Power
+Automate. La variante con Power Automate e' archiviata (D-91).
 
-| Meta' | Nel modulo principale | In questa variante |
-|---|---|---|
-| Giudizio (A1, A3, A4, A5, A6) | agenti Copilot Studio | agenti **Agent Builder** con le stesse istruzioni |
-| Calcolo e scrittura (A2, controlli di A5) | Power Automate + desktop flow | **lo stesso script**, lanciato a mano da un analista |
-| Orchestrazione | flow W0-W2 | prompt schedulati di Agent Builder (A3) e una procedura scritta |
-| Raccolta notizie (W0) | flow | `raccogli_notizie.py`, pianificato con l'Utilita' di pianificazione di Windows |
-
-Kernel, prompt, schemi e workbook sono identici al modulo principale.
+| Meta' | Dove vive |
+|---|---|
+| Giudizio (A1, A3-A8) | agenti **Agent Builder** |
+| Calcolo e scrittura (A2, controlli di A5) | `esegui_ciclo_locale.py`, lanciato dall'app NFR |
+| Orchestrazione | app NFR (`NFR.cmd`) |
+| Raccolta notizie (W0) | `raccogli_notizie.py`, pianificato con l'Utilita' di pianificazione di Windows |
 
 ## Cosa offre Agent Builder (verificato su Microsoft Learn, settembre 2026)
 
@@ -267,7 +264,7 @@ Mai svuotare a mano una riga dell'anagrafica: le viste perderebbero l'ultimo ris
 ## L'app NFR (D-83)
 
 Installazione su un PC nuovo: doppio clic su `installa.cmd` (tappa M3: moduli, configurazione con una finestra, collegamenti, raccolta pianificata, Verifica del PC; guida, sezione 0.3). Poi doppio clic sul collegamento **NFR Horizon Scan** del Desktop, o su `NFR.cmd`: la finestra mostra lo stato del processo e il prossimo passo e guida ogni processo
-(settimana, trimestre, straordinario, validazione, schede e report, riapertura, testi a mano, parere di A4). Per ogni
+(settimana, trimestre, straordinario, validazione, schede e report, riapertura, parere di A4; testi a mano in Admin). Per ogni
 agente prepara gli allegati, apre l'agente (`link_agenti` in `configurazione.json`) e mette la richiesta negli
 appunti; la risposta si incolla nel riquadro dell'app (o, con `ascolta_appunti`, basta premere Copia). Gli agenti
 possono essere in Agent Builder o in Copilot Studio (casella "Agenti": stessi nomi e cartelle, origine annotata). I

@@ -51,8 +51,7 @@ Principi, non negoziabili:
    calcola il foglio con i pesi di Parametri (D-50: media pesata delle dimensioni valutate).
 2. **Lo stato e' storico e non si riscrive**: RiskRegister, Azioni, KRI e
    NewsLog sono tabelle storiche (una riga per soggetto per ciclo o per
-   notizia, solo in coda); con Power Automate sono copiate anche nelle liste
-   SharePoint. Ogni ciclo e ogni settimana lasciano inoltre un Excel congelato.
+   notizia, solo in coda). Ogni ciclo e ogni settimana lasciano inoltre un Excel congelato.
 3. **Solo un ciclo di valutazione modifica uno score**: il trimestrale o, per
    un evento critico, il ciclo straordinario `AAAAQn-Sk` (D-41, D-75), deciso
    dalla funzione di rischio, che rivaluta solo i rischi indicati (o censisce
@@ -67,12 +66,15 @@ Principi, non negoziabili:
    rettifica conserva la proposta dell'agente, il valore deciso e il motivo:
    e' la base dati per insegnare agli agenti.
 
+**Sigle dei processi**: W0 raccolta delle notizie, W1 ciclo trimestrale, W2 aggiornamento settimanale, W3 parere di A4
+su richiesta, W4 spiegazioni di A7 su richiesta. I passi sono nella guida.
+
 ## Indice dei file
 
 ```text
 00_LEGGIMI.md                                          questo file
 00_GUIDA_PASSO_PASSO.md                                la guida per chi usa il sistema: cicli standard in breve, settimana, trimestre, validazione, errori, agenti e messaggi (sez. 8), comandi Python (sez. 9)
-TODO_possibili_sviluppi.md                             piano unico del lavoro da fare, con l'ordine di lavoro in testa: passi sul PC della Banca (B1-B7), processi (P1, P2, P4-P7, P9: segnali qualitativi per dimensione sul radar, scia, rapporti di scenario, rischi collegati, schede per driver, riepilogo mensile, temi da verificare), automazione del processo (AU1-AU6; scelta fra strada A e Copilot Studio: A-15), quantificazione (Q1), grafici (G1-G6), pulizia, questioni aperte; in fondo il fatto, una riga per voce, e le voci in riserva
+TODO_possibili_sviluppi.md                             registro vivo del lavoro, il punto da cui si parte: in testa la sezione 0 (quadro, cose in sospeso, prossimo passo, decisioni che aspettano) e l'ordine di lavoro; poi passi sul PC della Banca (B1-B9), processi (P1, P2, P4-P7, P9, P12-P15), automazione del processo (app fatta, resta la demo), quantificazione (Q1), grafici (G1-G6), pulizia, questioni aperte; in fondo il fatto, le voci superate e quelle in riserva. Il ramo `copilot-studio-pieno` ha il suo registro, `09_Copilot_Studio/TODO_Copilot_Studio.md`
 01_Kernel/tassonomia_nfr.md                            9 categorie di rischio in perimetro della tassonomia interna (D-74) + 8 driver emergenti
 01_Kernel/fonti.md                                     elenco commentato delle fonti (rss, siti, share), DA VALIDARE
 01_Kernel/rubrica_scoring.md                           4 dimensioni del composito (Impatto, Probabilita, Prossimita, Velocity facoltativa; pesi D-50 nelle note), anni di adeguamento, rilevanza delle fonti, regole di variazione, KRI (1-3, soglie facoltative), notizie, urgenza (Mosca, anni di adeguamento); presidio dei controlli della Banca (D-49)
@@ -105,9 +107,8 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 03_Excel/NFR_Dashboard_Template.xlsx                   versione 2026-10-07 (Note dell'analista nel Quadro; validazione una riga per oggetto con la colonna Segnalazioni dei controlli, livello di allerta nel radar, tipo dei KRI, sintesi settimanale di A3): 22 fogli in quattro gruppi (Guida; report Quadro..Metodologia; lavoro Registro..Dizionario, con la griglia Validazione; dati, con Storico_Validazioni), ognuno con fascia del titolo e guida in testa; 7 tabelle dall'intestazione in riga 5 (sopra, gruppi e significato delle colonne); 9 grafici; 12 rischi di esempio grigi, capienza 20
 03_Excel/costruzione_manuale_template.md               come rifare il template a mano, senza Python
 04_Riferimenti/DECISIONI.md                            registro delle decisioni: prese (con data, chi, perche', stato), aperte (con responsabile), cancelli G0-G4
-04_Riferimenti/struttura_e_liste.md                    SharePoint: 7 library, 3 liste storiche
-04_Riferimenti/workflow.md                             W0-W3, passi [Piattaforma]/[Umano], campi derivati, test in ambiente
-04_Riferimenti/controlli_e_model_risk.md               governance: controlli e controparti, evidenze per ciclo, model risk, limiti
+04_Riferimenti/struttura_e_liste.md                    SharePoint: 7 library, 3 liste storiche; campi derivati
+04_Riferimenti/controlli_e_model_risk.md               governance: controlli e controparti, evidenze per ciclo, model risk, limiti, test in ambiente
 04_Riferimenti/Prove/Prova_A7.md                       copione di prova di A7 Assistente del registro: undici domande con i fatti attesi, confronto con e senza il registro Excel come knowledge, tabella dei risultati (D-72)
 04_Riferimenti/Prove/Prova_senza_Copilot_Studio.md     prova sul PC della Banca della versione del 05/10: installazione sul registro vero, poi un ciclo completo su un registro di prova separato, con la tabella dei risultati
 04_Riferimenti/Tassonomia dei Rischi.csv               tassonomia interna dei rischi della Banca (famiglie e categorie; SI = in perimetro dell'agente NFR), fornita dall'utente il 07/10: fonte delle nove categorie di tassonomia_nfr.md (D-74); non la legge nessun componente
@@ -131,7 +132,7 @@ TODO_possibili_sviluppi.md                             piano unico del lavoro da
 07_Senza_Studio/notizie_manuali.py                     "Invia a -> NFR notizie manuali": copia i file scelti in News_Inbox/<lunedi'>/Manuali senza sovrascrivere
 07_Senza_Studio/NFR_notizie_manuali.cmd                destinazione del collegamento in Invia a: lancia notizie_manuali.py
 07_Senza_Studio/app_nfr.py                             la finestra dell'app (tkinter): stato, prossimo passo, un pulsante per processo, passo in corso con le istruzioni per l'agente, uscita del motore
-07_Senza_Studio/flussi.py                              i processi dell'app come sequenze di passi (settimana, trimestre con il giro di correzione, straordinario, validazione, schede e report, riapertura, testi a mano, dismissione, parere di A4), su un Ambiente che la finestra realizza e il collaudo simula
+07_Senza_Studio/flussi.py                              i processi dell'app come sequenze di passi (settimana, trimestre con il giro di correzione, straordinario, validazione, schede e report, riapertura, dismissione, parere di A4; in Admin le funzioni amministrative e i testi a mano), su un Ambiente che la finestra realizza e il collaudo simula
 07_Senza_Studio/stato.py                               stato del processo e prossimo passo, senza Excel, dall'archivio condiviso (baseline, cicli, settimane, In_arrivo, lucchetto)
 07_Senza_Studio/ingresso.py                            ingresso unico delle risposte degli agenti: JSON estratto dal testo copiato (recinti, testo attorno, risposta tagliata), agente riconosciuto dagli schemi, file in Archivio_Cicli/In_arrivo; pareri di A4 in Pareri
 07_Senza_Studio/appunti.py                             appunti di Windows per l'app: copia nuova riconosciuta dal numero di sequenza, le copie dell'app ignorate
