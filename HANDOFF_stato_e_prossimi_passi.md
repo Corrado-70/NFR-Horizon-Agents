@@ -1,5 +1,9 @@
 # HANDOFF — Sistema di agenti NFR Emerging Risk
 
+> **Per sapere da dove ripartire: `NFR_Emerging_Risk_Agents/TODO_possibili_sviluppi.md`, sezione 0** (sul ramo
+> `copilot-studio-pieno`: `09_Copilot_Studio/TODO_Copilot_Studio.md`). Questo documento e' il racconto di cio' che e'
+> stato fatto; le liste della sezione 6 sono storiche: dal 30/10 fa fede il registro vivo.
+
 > Stato al 30/09/2026 (prima installazione reale in corso: sezione 2-quinquies;
 > report al comitato, D-19 e aggiornamento del registro: sezione 2-sexies;
 > guida nei fogli, P3, P6, P11, versione 2026-09-25b: sezione 2-septies;
@@ -1535,6 +1539,57 @@ allineata a `da119c9` (le due righe su `Tassonomia dei Rischi.csv` erano gia' su
 - Da fare: la prova in Banca su una copia sopra il pacchetto del 23/10; sul ramo `copilot-studio-pieno` `git merge
   main` e `genera_CS.py`; la catena con Excel non e' stata rilanciata (nessun file della catena toccato).
 
+## 2-sextricesies. 30/10: testi a mano in Admin (D-90)
+
+Domanda dell'utente in Banca: "Testi a mano" con una riapertura aperta correggeva i testi ma saltava il report (il
+report si ferma con righe da validare). Spiegato il senso della funzione (forma dei testi di un ciclo validato, senza
+rifare la validazione); su proposta, l'utente l'ha fatta spostare in Admin.
+
+- `amministrazione.py`: `testi --motivo` (controlli, copia del registro nel parcheggio con l'atto) e `testi-fine`
+  (impronta, baseline, report; "senza modifiche" se il registro non e' cambiato); `annulla` di un "testi" rifa'
+  baseline e report. `parcheggia(copia=True)`.
+- App: pulsante tolto dai processi (11), seconda operazione della finestra Admin; con una riapertura aperta o un ciclo
+  da validare non apre Excel e propone la Validazione.
+- Collaudo: `test_amministrazione.py` 24/24, `test_app.py` 75/75, riferimenti 33/33; catena, gruppo 9 (`testi_catena`:
+  copia, descrizione corretta, testi-fine con baseline e report veri, annullamento). Trappole 145-146.
+- Documenti: guida (finestra, I processi, Pulsante Riapri un ciclo, Pulsante Admin, 3-ter, 3-quater, sezioni 5 e 9),
+  `controlli_e_model_risk.md` (non piu' "nessuna traccia"), 00_LEGGIMI, README della variante locale, DECISIONI D-90.
+
+## 2-septtricesies. 30/10: la TODO come registro vivo, un registro per ramo
+
+Richiesta dell'utente: togliere dalla TODO il fatto e il non piu' attuale, farne un registro vivo e il punto da cui
+partire; il ramo `copilot-studio-pieno` con una TODO propria, solo delle sue voci.
+
+- `TODO_possibili_sviluppi.md`: regole per tenerlo vivo e **sezione 0** (quadro, in sospeso, prossimo passo, decisioni
+  che aspettano); ordine di lavoro con lo stato e senza le tappe gia' fatte; numeri delle sezioni invariati. Passi B1-B4
+  riscritti su `installa.cmd` e sul pacchetto corrente, B5-bis e B7 "in corso" con la prova del 29/10. AU1, AU2, AU3, AU5
+  in "Fatto"; resta la demo attraverso i flussi. Nuova **9-bis, Superate**: B5, K14, AU6, coda delle richieste, CS-2.
+- **Correzione di priorita'**: A-19 (scale a 6 livelli) chiede di arrivare prima del primo ciclo vero; e' il passo 2
+  dell'ordine, prima di P4, P9, P14 e del ciclo di prova. E' una modifica comune, non ancora iniziata: nasce su `main`.
+- `09_Copilot_Studio/TODO_Copilot_Studio.md` sul ramo (file nuovo, da committare nella sua cartella): strada V1, prove
+  T0-T8, prove B5 con la loro attualita' dopo V1, da decidere. La TODO comune sul ramo non si modifica: nel prossimo
+  merge si tiene la versione di `main`.
+- Il merge di `aa7aea9` nel ramo era gia' fatto (`11520a3`): la nota di 2-quinquetricesies e' superata.
+- Trovati e annotati nella sezione 8 o 0 del TODO: A-11 rimasta aperta dopo la chiusura di A-15; passaggi del
+  PROMPT_MASTER di prima di D-83; `AGGIORNAMENTO_IN_BANCA.md` senza D-90.
+- Documenti: `CLAUDE.md` (si riparte dalla sezione 0), 00_LEGGIMI, PROMPT_MASTER (descrizione del TODO), analisi 14 e 18
+  (18.0 e 18.6 erano rimaste a M3-M5 da fare).
+
+## 2-octotricesies. 30/10: variante Power Automate archiviata, PROMPT_MASTER allineato (D-91)
+
+Decisioni dell'utente: "archivia la variante"; su `main` Python di sicuro; sul ramo la strada del motore e' da capire.
+
+- `workflow.md` passa in `Analisi_Architettura/Archivio/workflow_variante_Power_Automate.md`, con una nota in testa (chiude
+  A-11). Il controllo prima dello spostamento ha trovato parti vive: campi derivati in `struttura_e_liste.md` (li legge
+  `verifica_riferimenti.py`), test in ambiente in `controlli_e_model_risk.md`, sezione 7, sigle W0-W4 in 00_LEGGIMI. Citazioni
+  aggiornate anche in `mappatura_campi.json` (kernel), motore, `confronta.py`, LEGGIMI del collaudo; file vecchio in
+  `obsoleti.txt`. Il template non cambia: il generatore legge solo la sezione 5 della governance.
+- README della variante locale riscritto in testa (confrontava con un "modulo principale" che non esiste piu').
+- PROMPT_MASTER: stato al 30/10 in testa; Ambiente, registro delle decisioni, direzione futura, prove K0, tree e passi
+  allineati a D-83 e D-91; trappola 147.
+- Registro del ramo: V1 torna ipotesi di lavoro; sezione 1-bis con le strade (V1, CS-1b, agenti in Copilot Studio con
+  l'app Python). V2, F2 e F1 sono cadute con T4.1.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente
@@ -1791,6 +1846,8 @@ Miglioramenti aperti (scelte, non difetti):
       La versione precedente e' in `PROMPT_MASTER_rigenerazione_precedente.md`.
 
 ## 7. Come riprendere
+
+Si riparte dalla sezione 0 del registro vivo (`NFR_Emerging_Risk_Agents/TODO_possibili_sviluppi.md`).
 
 Ogni modifica: fonte unica (tabella "Dove vive ogni regola" in 00_LEGGIMI) ->
 `componi_prompt.py` -> `genera_dashboard.py` se servono -> `esegui_collaudo.py`

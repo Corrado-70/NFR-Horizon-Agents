@@ -6,7 +6,7 @@
     "rigenerare il workbook: nessun altro file contiene l'elenco delle colonne.",
     "Sintassi delle sorgenti:",
     "  payload:<percorso>[|trasformazione]  campo del payload; '[]' indica un elemento di array",
-    "  derivato:<nome>                       calcolato dalla scrittura (vedi 04_Riferimenti/workflow.md, 'Campi derivati')",
+    "  derivato:<nome>                       calcolato dalla scrittura (vedi 04_Riferimenti/struttura_e_liste.md, 'Campi derivati')",
     "  formula:<modello>                     formula del foglio; {Colonna} = cella della stessa riga, i nomi sono nomi definiti",
     "Trasformazioni: json (serializza), lista (unisce con ', '), non_presidiato (null -> 'NON PRESIDIATO'),",
     "  intensita:L1-0x (sceglie l'impatto dell'event type indicato)",

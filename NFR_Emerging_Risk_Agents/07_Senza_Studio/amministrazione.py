@@ -20,6 +20,11 @@ Comandi:
   ripartenza --motivo --decisore --conferma <nome del registro> --ciclo-precedente AAAAQn [--settimana AAAA-MM-GG]
                                  registro nuovo vuoto (inizializza) e baseline; il vecchio registro e l'archivio dei
                                  cicli nel parcheggio (per esempio dopo i cicli di prova)
+  testi --motivo                 testi a mano (D-90), primo passo: solo con il ciclo corrente validato e senza
+                                 riapertura aperta, una COPIA del registro nel parcheggio con l'atto; poi si correggono
+                                 in Excel le sole colonne di testo, si salva e si chiude
+  testi-fine [--parcheggio NOME] secondo passo: impronta del registro corretto nell'atto (per l'annullamento), poi
+                                 baseline (allegato di A1, knowledge di A7) e report; senza --parcheggio l'ultimo aperto
   svuota [--esegui]              cancella per sempre i parcheggi piu' vecchi di giorni_parcheggio (anteprima senza
                                  --esegui); l'elenco di cio' che si cancella resta nella traccia
 
@@ -128,8 +133,9 @@ def chi(conf_grezza):
     return {"utente": io["utente"], "pc": io["pc"]}
 
 
-def parcheggia(conf, conf_grezza, operazione, elementi, motivo, decisore=None, extra=None, adesso=None):
-    """Sposta 'elementi' (file o cartelle) in un parcheggio nuovo e scrive l'atto. Restituisce (cartella, atto)."""
+def parcheggia(conf, conf_grezza, operazione, elementi, motivo, decisore=None, extra=None, adesso=None, copia=False):
+    """Sposta 'elementi' (file o cartelle) in un parcheggio nuovo e scrive l'atto. Restituisce (cartella, atto).
+    copia=True: li copia e basta (testi a mano: il registro resta al suo posto, la copia e' quella di prima)."""
     adesso = adesso or dt.datetime.now()
     uscita = Path(conf["cartella_uscita"])
     cartella = uscita / PARCHEGGIO / f"{adesso:%Y%m%d_%H%M%S}_{operazione}"
@@ -152,7 +158,10 @@ def parcheggia(conf, conf_grezza, operazione, elementi, motivo, decisore=None, e
         origine = radici(conf)[v["radice"]] / v["percorso"]
         dest = cartella / v["radice"] / v["percorso"]
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(str(origine), str(dest))
+        if copia:
+            shutil.copy2(origine, dest)
+        else:
+            shutil.move(str(origine), str(dest))
     traccia(conf, atto, cartella)
     return cartella, atto
 
@@ -390,6 +399,71 @@ def ripartenza(conf, conf_grezza, motivo, decisore, crea=None):
     return cartella, atto
 
 
+# ------------------------------------------------------------ testi a mano (D-90)
+def controlli_testi(s):
+    """Prima di aprire il registro: un ciclo corrente validato e nessuna riapertura aperta (s: stato.leggi). Con una
+    riapertura o un ciclo da validare i testi si correggerebbero, ma il report si fermerebbe: prima la validazione."""
+    ciclo = s.get("ciclo_corrente")
+    if not ciclo:
+        raise Fermo("Il registro non ha ancora un ciclo: niente da correggere.")
+    if s.get("riapertura"):
+        raise Fermo(f"La validazione del ciclo {ciclo} e' riaperta e non ancora validata: prima la Validazione (chiude la "
+                    "riapertura), poi i testi a mano.")
+    if not s.get("validato"):
+        raise Fermo(f"Il ciclo {ciclo} e' scritto ma non ancora validato: prima la Validazione, poi i testi a mano.")
+    return ciclo
+
+
+def testi_inizio(conf, conf_grezza, motivo, s):
+    """Primo passo dei testi a mano: controlli, poi una copia del registro nel parcheggio con l'atto. Restituisce
+    (cartella, atto). Il registro lo apre chi corregge (l'app, o a mano); poi testi_fine."""
+    from esegui_ciclo_locale import aperto_qui
+    controlla_motivo(motivo, minimo=10)
+    ciclo = controlli_testi(s)
+    registro = Path(conf["workbook"])
+    if not registro.exists():
+        raise Fermo(f"Il registro {registro} non c'e'.")
+    if aperto_qui(registro):
+        raise Fermo(f"{registro.name} e' aperto in Excel su questo PC: chiuderlo e rilanciare.")
+    return parcheggia(conf, conf_grezza, "testi", [registro], motivo, extra={"ciclo": ciclo}, copia=True)
+
+
+def testi_aperti(conf):
+    """I parcheggi dei testi a mano iniziati e non finiti (atto attivo senza l'impronta del registro corretto)."""
+    return [(c, a) for c, a in elenco_parcheggi(conf) if a.get("operazione") == "testi" and a.get("stato") == "attivo"
+            and not a.get("impronta_registro_dopo")]
+
+
+def testi_fine(conf, conf_grezza, nome=None, rigenera=None):
+    """Secondo passo: se il registro e' cambiato, rigenera(conf) (baseline e report) e l'impronta del registro corretto
+    nell'atto, che serve all'annullamento; se non e' cambiato l'atto dice 'senza modifiche'. Restituisce (cartella,
+    atto, cambiato)."""
+    from esegui_ciclo_locale import aperto_qui
+    aperti = testi_aperti(conf)
+    scelto = next(((c, a) for c, a in aperti if c.name == nome), None) if nome else (aperti[-1] if aperti else None)
+    if not scelto:
+        raise Fermo(f"Nessun testo a mano aperto{' con il parcheggio ' + nome if nome else ''}: prima "
+                    "python amministrazione.py --admin testi --motivo \"...\".")
+    cartella, atto = scelto
+    registro = Path(conf["workbook"])
+    if aperto_qui(registro):
+        raise Fermo(f"{registro.name} e' ancora aperto in Excel su questo PC: salvarlo, chiuderlo e rilanciare.")
+    prima = atto["elementi"][0]["impronta"] if atto.get("elementi") else None
+    cambiato = impronta(registro) != prima
+    if not cambiato:
+        atto.update(stato="senza modifiche")
+    else:
+        atto["impronta_registro_dopo"] = impronta(registro)    # subito: se rigenera si ferma, l'annullamento resta possibile
+        _scrivi(cartella / "atto.json", atto)
+        if rigenera:
+            rigenera(conf)
+        atto["impronta_registro_dopo"] = impronta(registro)
+    atto["finito_il"] = dt.datetime.now().replace(microsecond=0).isoformat()
+    _scrivi(cartella / "atto.json", atto)
+    traccia(conf, {**atto, "operazione": "testi_fine"}, cartella)
+    return cartella, atto, cambiato
+
+
 # ------------------------------------------------------------ svuota
 def da_svuotare(conf, conf_grezza, adesso=None):
     adesso = adesso or dt.datetime.now()
@@ -440,6 +514,13 @@ def _rigenera(conf):
     motore.comando_baseline(argparse.Namespace(uscita=None, straordinario=False), conf)
 
 
+def _rigenera_testi(conf):
+    """Dopo i testi a mano o il loro annullamento: baseline (allegato di A1, knowledge di A7) e report (PDF e HTML)."""
+    import esegui_ciclo_locale as motore
+    _rigenera(conf)
+    motore.comando_report(argparse.Namespace(file=None, con_lavoro=False), conf)
+
+
 def _versione(percorso):
     import esegui_ciclo_locale as motore
     from excel_com import SessioneExcel
@@ -473,6 +554,10 @@ def main(argv=None):
     rp.add_argument("--settimana")
     sv = sub.add_parser("svuota")
     sv.add_argument("--esegui", action="store_true")
+    te = sub.add_parser("testi")
+    te.add_argument("--motivo", required=True)
+    tf = sub.add_parser("testi-fine")
+    tf.add_argument("--parcheggio")
     arg = p.parse_args(argv)
     try:
         controlla_admin(arg.admin)
@@ -534,8 +619,30 @@ def esegui(arg, conf, grezza):
     if arg.comando == "annulla":
         with lucchetto.preso(uscita, "annulla", utente):
             atto, nuovo = annulla(conf, grezza, arg.parcheggio.strip(), arg.motivo.strip())
+            if atto["operazione"] == "testi":            # il registro di prima: baseline e report tornano con lui
+                _rigenera_testi(conf)
         print(f"Annullata l'operazione {atto['operazione']} del {atto['quando']}: file rimessi al loro posto."
-              + (f"\nCio' che occupava i loro posti e' nel parcheggio {nuovo.name}." if nuovo else ""))
+              + (f"\nCio' che occupava i loro posti e' nel parcheggio {nuovo.name}." if nuovo else "")
+              + ("\nBaseline, allegato di A1, knowledge di A7 e report rifatti dal registro di prima."
+                 if atto["operazione"] == "testi" else ""))
+        return 0
+    if arg.comando == "testi":
+        import stato
+        with lucchetto.preso(uscita, "testi", utente):
+            cartella, atto = testi_inizio(conf, grezza, arg.motivo.strip(), stato.leggi(conf))
+        print(f"Testi a mano del ciclo {atto['ciclo']}: copia del registro di adesso nel parcheggio {cartella.name}.\n"
+              "Ora aprire il registro, correggere SOLO le colonne di testo (guida, sezione 3-ter), salvare e chiudere Excel; "
+              "poi: python amministrazione.py --admin testi-fine")
+        return 0
+    if arg.comando == "testi-fine":
+        with lucchetto.preso(uscita, "testi", utente):
+            cartella, atto, cambiato = testi_fine(conf, grezza, (arg.parcheggio or "").strip() or None, _rigenera_testi)
+        if cambiato:
+            print(f"Testi a mano del ciclo {atto['ciclo']} registrati: baseline, allegato di A1, knowledge di A7 e report "
+                  "rifatti.\nSi annulla, finche' nessuno scrive nel registro, con: python amministrazione.py --admin annulla "
+                  f"--parcheggio {cartella.name} --motivo \"...\" (Admin -> Annulla).")
+        else:
+            print("Il registro non e' cambiato: niente da rifare (l'atto dice 'senza modifiche').")
         return 0
     if arg.comando == "ripartenza":
         if arg.conferma.strip() != Path(conf["workbook"]).name:

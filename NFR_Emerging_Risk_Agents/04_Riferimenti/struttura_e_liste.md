@@ -3,7 +3,7 @@
 Un sito dedicato (es. `NFR-Emerging-Risk`) con **sette library** e **tre liste**.
 Le tabelle dati del workbook sono gia' storiche (RiskRegister, Azioni, KRI:
 una riga per soggetto per ciclo, solo in coda); le liste ne sono una copia
-interrogabile da SharePoint, caricata da Power Automate.
+interrogabile da SharePoint. Nella versione in uso nessuno le carica ("Variante senza Copilot Studio", sotto).
 
 > Le colonne delle liste NON si decidono qui: derivano dalle tabelle del
 > workbook secondo `01_Kernel/mappatura_campi.json` (sezione
@@ -152,3 +152,41 @@ workbook vivo, le cui tabelle dati sono tutte storiche (KRI compreso), con la
 cronologia versioni di SharePoint; in piu' ci sono gli Excel di output
 congelati e i file per ciclo in `Archivio_Cicli`
 (`Righe_liste_<ciclo>.json`, baseline, esiti) e i backup dello script.
+
+## Campi derivati
+
+Campi che la scrittura calcola, non l'agente. Sono i nomi `derivato:` di
+`01_Kernel/mappatura_campi.json`, implementati nel dizionario `DERIVATI` di
+`esegui_ciclo_locale.py` (il collaudo verifica che coincidano).
+
+| Derivato | Valore |
+|---|---|
+| `vuoto` | cella vuota (Approvato_Da, Data_Decisione, Decisa_Da) |
+| `data_scrittura` | data di esecuzione della scrittura |
+| `owner_da_anagrafica` | Owner del rischio in anagrafica; "Da assegnare" se nuovo |
+| `owner_esistente_o_da_assegnare` | in anagrafica: conserva l'Owner esistente, "Da assegnare" per un rischio nuovo |
+| `attenzione_supervisore_esistente` | in anagrafica: conserva l'indicazione del validatore (Sì/No; vuoto per un rischio nuovo); ◆ nel Radar_Mosca |
+| `anni_adeguamento_esistente` | in anagrafica: conserva gli anni di adeguamento scritti dal validatore (vuoto per un rischio nuovo); Y minima del Radar_Mosca |
+| `sintesi_a5` | in Sintesi_Cicli: la `sintesi` dell'output di A5 esaminato insieme ad A1 |
+| `osservazioni_controlli` | in Sintesi_Cicli: numero di rilievi non bloccanti (A5 + controlli meccanizzati) |
+| `stato_azione_iniziale` | "Proposta — da valutare" |
+| `id_azione` | `<ciclo>-<ID_Rischio>-A<n>`, n = posizione dell'azione nel rischio (anche se due azioni sono identiche) |
+| `kri_id` | kri_id del payload se valorizzato; altrimenti primo progressivo libero del rischio (NFR-nn-Kn), mai riusato |
+| `data_rilevazione` | vuota per un KRI nuovo; per un KRI in vigore la scrive la rilettura: data di riferimento del ciclo se c'e' un valore, vuota altrimenti |
+| `in_vigore` | "Sì" per i KRI proposti; "No" nella riga del ciclo in cui un KRI non e' riproposto (poi la serie finisce) |
+| `ciclo_definizione` | ciclo in cui il KRI e' nato; non cambia agli aggiornamenti |
+| `da_validare` | "Da validare" nella colonna Validazione; il comando `valida` la porta ad Accettato, Rettificato o Respinto |
+| `numero_notizie` | in Sintesi_Settimane: quante notizie ha valutato A3 nella settimana (D-66) |
+| `flag_proposti` | in Sintesi_Settimane: i flag di A3, uno per riga, "NFR-nn · direzione: motivazione"; "Nessun flag proposto" se non ce ne sono (D-66) |
+| `esito` | Nuovo se il rischio non e' nella baseline; Variato se cambia Impatto, Probabilita, Prossimita o Velocity (anche da vuota a un valore); altrimenti Confermato. Ricalcolato dopo la validazione (D-51) |
+| `presidio_esistente_o_non_verificato` | in anagrafica: conserva il Presidio_Controlli del validatore, "Non verificato" per un rischio nuovo (D-49) |
+| `rilievi_rischio` | nel RiskRegister: le segnalazioni di A5 e dei controlli sul rischio, una per riga `gravita' · controllo · origine: testo`, prima quelle "⚑ DA MOTIVARE" (D-71); le stesse nella colonna Segnalazioni della griglia |
+| `rilievi_ciclo` | in Sintesi_Cicli: i rilievi sul ciclo nel suo insieme (senza rischio), stesso formato |
+| `rilievi_superati` | in Sintesi_Cicli: quante segnalazioni sono da motivare in validazione, dai controlli e da A5 (D-71) |
+| `stato_radar` | nel RiskRegister (Stato): Radar, Radar, in uscita o Osservazione, dalla regola del registro unico (`radar.py`) sui valori proposti alla scrittura e sui validati dopo `valida`; Dismesso dopo `dismetti` (D-79) |
+| `motivo_stato` | nel RiskRegister: perche' quello stato (soglie, eccezione, capienza; primo ciclo in uscita) (D-79) |
+| `movimento` | nel RiskRegister: Entrato (era in osservazione, ora nel radar) o Uscito (era nel radar, ora in osservazione) nel ciclo; vuoto altrimenti, anche per un rischio nuovo (D-79) |
+| `decisione_stato` | nel RiskRegister: la decisione del validatore sullo stato in vigore (Automatico se nessuna); la griglia la propone e `valida` la scrive (D-79) |
+| `periodo_valutazione` | nel RiskRegister: il ciclo della riga; per un rischio riportato in un ciclo straordinario, il periodo da cui viene (D-75) |
+| `straordinario` | in Sintesi_Cicli: per un ciclo straordinario chi l'ha deciso, quando, il motivo, i rischi rivalutati e quelli nuovi e, se c'e', l'evento dell'analisi di A8 (D-77); vuoto per un trimestre (D-75) |
+| `proposta_straordinario` | in Sintesi_Settimane: "PROPOSTA DI CICLO STRAORDINARIO per ...: motivo" se A3 la fa, altrimenti "—" (D-75) |

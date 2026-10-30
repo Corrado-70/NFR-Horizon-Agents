@@ -26,17 +26,16 @@ Come si tiene vivo, a ogni intervento:
 | Obiettivo | versione del processo tutta nel tenant, senza Python sul PC (D-82); la scelta per l'esercizio fra le due versioni si fa sui risultati delle prove T0-T8 (D-83) |
 | Strada del motore | **da capire** (utente, 30/10; D-91). V1 (regole in TypeScript, eseguite da Office Scripts lanciati dai flussi) e' l'ipotesi di lavoro del 23/10, non ancora una scelta definitiva. V2 e F2 sono cadute con T4.1 (K9): il code interpreter dei prompt non esegue il nostro codice |
 | Agenti | Copilot Studio o Agent Builder si scelgono dopo, con il confronto di qualita': il motore e' lo stesso nei due casi |
-| Allineamento a `main` | fino a `aa7aea9` (merge `11520a3`) |
+| Allineamento a `main` | fino a D-91 (30/10), con `genera_CS.py` |
 | Motore V1 | non iniziato: nel ramo ci sono solo gli script delle prove (`Da_caricare/prove`). Stima 8-11 settimane, da misurare |
 
 **In sospeso**:
 
 | # | Cosa | Stato |
 |---|---|---|
-| 1 | `git merge main` e `genera_CS.py`, per ricevere D-90 e D-91. Nel merge di `TODO_possibili_sviluppi.md` si tiene la versione di `main`: le due righe proprie del ramo sono ora in questo file | da fare |
-| 2 | Causa dei 6 errori di formula nella colonna `Settimana` di NewsLog (T5.2): serve la riga `dettaglio_errori_prima` dello script nuovo, eseguito a mano e dal flusso. Se ci sono anche a mano e' un difetto del registro, da correggere su `main` | da fare |
+| 1 | Causa dei 6 errori di formula nella colonna `Settimana` di NewsLog (T5.2): serve la riga `dettaglio_errori_prima` dello script nuovo, eseguito a mano e dal flusso. Se ci sono anche a mano e' un difetto del registro, da correggere su `main` | da fare |
 
-**Prossimo passo**: il punto 1, poi la scelta della strada del motore (sezione 1-bis). Node.js e' installato su questo PC
+**Prossimo passo**: la scelta della strada del motore (sezione 1-bis). Node.js e' installato su questo PC
 (v24, solo sviluppo), se serve la misura di V1.
 
 **Da tenere presente**: le scale a 6 livelli (A-19, TODO comune, P15) sono una modifica comune: nascono su `main` e

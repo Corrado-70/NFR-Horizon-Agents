@@ -123,7 +123,7 @@ def verifica_passi(e):
 def verifica_derivati(e):
     sys.path.insert(0, str(CAMPO))
     import esegui_ciclo_locale as campo
-    doc = testo(RADICE / "04_Riferimenti" / "workflow.md").split("## Campi derivati", 1)[1].split("\n## ", 1)[0]
+    doc = testo(RADICE / "04_Riferimenti" / "struttura_e_liste.md").split("## Campi derivati", 1)[1].split("\n## ", 1)[0]
     documentati = sorted(re.findall(r"^\| `(\w+)` \|", doc, re.M))
     e.verifica(documentati == sorted(campo.DERIVATI), "5. campi derivati documentati = implementati",
                f"doc {documentati}\ncodice {sorted(campo.DERIVATI)}")
@@ -200,7 +200,7 @@ def verifica_guida(e):
     for script in ("esegui_collaudo.py", "run_catena.py"):
         uso = testo(RADICE / "99_Collaudo" / script).split('"""')[1]
         opzioni.update(re.findall(r"(?<![\w-])(--[a-z][a-z-]+)", uso))
-    for doc in (RADICE / "00_GUIDA_PASSO_PASSO.md", CAMPO / "README_variante_locale.md", RADICE / "04_Riferimenti" / "workflow.md"):
+    for doc in (RADICE / "00_GUIDA_PASSO_PASSO.md", CAMPO / "README_variante_locale.md"):
         t = testo(doc)
         # Il nome del comando, anche dopo le opzioni comuni (--workbook "..." --cartella-uscita ...); anche aggiorna-registro.
         citati = set(re.findall(r'esegui_ciclo_locale\.py (?:--[\w-]+ (?:"[^"]*"|\S+) )*([\w-]+)', t))

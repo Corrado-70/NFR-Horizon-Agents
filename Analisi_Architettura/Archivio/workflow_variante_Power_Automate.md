@@ -1,3 +1,9 @@
+> **Archiviato il 30/10/2026 (D-91, chiude A-11), non piu' aggiornato.** Descrive la variante con Power Automate e
+> Copilot Studio, che non esiste in nessuno dei due rami: `main` usa l'app NFR, il ramo `copilot-studio-pieno` i suoi
+> flussi. Era `04_Riferimenti/workflow.md`. Cio' che e' vivo sta altrove: il processo nella guida
+> (`00_GUIDA_PASSO_PASSO.md`), i campi derivati in `04_Riferimenti/struttura_e_liste.md`, il test in ambiente in
+> `04_Riferimenti/controlli_e_model_risk.md`, sezione 7, le sigle W0-W4 in `00_LEGGIMI.md`.
+
 # Workflow — W0, W1, W2, W3
 
 Specifica per chi configura Power Automate e Copilot Studio. Ogni passo e'

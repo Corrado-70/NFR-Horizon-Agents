@@ -4,8 +4,13 @@
 > Rigenera l'intero pacchetto in un colpo, con i controlli di coerenza
 > incorporati dal disegno invece che aggiunti dopo.
 >
-> **Versione del 23/09/2026, aggiornata il 24, 25, 29, 30/09, 01, 02, 05, 06 e 07/10**
-> (ultimo aggiornamento, 23/10, solo sul ramo `copilot-studio-pieno`: **versione tutta in Copilot Studio**
+> **Stato al 30/10/2026**: su `main` agenti in Agent Builder e app Python sul PC, con il motore Python (D-83, che chiude
+> A-15 e A-16; D-91). La versione tutta in Copilot Studio vive sul ramo `copilot-studio-pieno` (D-82), con la strada del
+> motore ancora da scegliere. La variante con Power Automate e' archiviata (D-91). Le note qui sotto sono in ordine
+> storico: dove una nota datata contrasta con questo stato, vale questo stato.
+>
+> **Versione del 23/09/2026, aggiornata il 24, 25, 29, 30/09, 01, 02, 05, 06 e 07/10 e poi fino al 30/10**
+> (aggiornamento del 23/10, solo sul ramo `copilot-studio-pieno`: **versione tutta in Copilot Studio**
 > (D-82): agente `NFR Operatore` con un argomento YAML per comando (trigger `OnActivity` sul testo), argomenti che
 > rileggono i file da SharePoint, variabili globali `Global.ingresso`/`uscita`/`periodo` solo come trasporto verso i
 > sotto-agenti A1, A8, A3; prompt A5, A6, Correggi e Motore; flussi `Leggi_File`, `Salva_JSON` (estrae il JSON fra la
@@ -155,7 +160,7 @@
 >
 > Cosa questo prompt PUO' far produrre: tutti gli artefatti (kernel, elenco
 > fonti, prompt, schemi, generatore Excel, script di campo, struttura
-> SharePoint, workflow, governance, guida per l'utente), una suite di collaudo
+> SharePoint, governance, guida per l'utente), una suite di collaudo
 > che esegue la catena con lo strumento vero ed Excel desktop, una demo. Cosa
 > NON puo': creare, pubblicare o eseguire gli agenti nel tenant della Banca.
 > Il collaudo verifica gli artefatti prima del deploy; non lo sostituisce.
@@ -177,11 +182,11 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
 
 - **Ambiente**: solo Microsoft 365 Copilot, **senza Copilot Studio ne' Power
   Automate**. Gli agenti vanno in **Agent Builder**; la parte deterministica e'
-  uno script Python sul PC dell'analista. La documentazione del modulo con
-  Power Automate resta (workflow W0-W3), ma riusa lo stesso script.
-  Dal 28/09 Copilot Studio e' **disponibile** nel tenant (D-44), ma **usarlo
-  non e' deciso** (A-15, TODO AU4). Finche' A-15 e' aperta vale questa
-  scelta. **Python resta il motore** in ogni caso (D-43).
+  uno script Python sul PC dell'analista, guidato dall'app NFR (D-83). La
+  variante con Power Automate e' archiviata (D-91). Dal 28/09 Copilot Studio e'
+  **disponibile** nel tenant (D-44): la versione che lo usa vive sul ramo
+  `copilot-studio-pieno` (D-82, D-83). Su `main` **Python resta il motore**
+  (D-43, D-91).
 - **Solo Python**, niente TypeScript/Office Script. Lo script scrive nel
   workbook tramite **Excel desktop via COM** (`pywin32`), non con openpyxl:
   solo il motore vero di Excel ricalcola le formule e trova gli errori.
@@ -205,7 +210,7 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   Lo **zip** del pacchetto si crea **solo su richiesta dell'utente** (25/09
   sera), non a ogni modifica.
 - **Registro delle decisioni** `04_Riferimenti/DECISIONI.md` (24/09, aggiornato il
-  25/09, 26/09, 28/09, 29/09, 30/09 e 01/10): 66 decisioni prese (D-01..D-66; D-41 e D-42 del 26/09:
+  25/09, 26/09, 28/09, 29/09, 30/09, 01/10 e poi fino al 30/10): decisioni prese D-01..D-91 (D-41 e D-42 del 26/09:
   principi confermati con l'eccezione del ciclo straordinario su segnale
   critico, e rischi separati ma collegati, entrambe da implementare; D-43
   Python resta il motore e il piano 07 va in riserva; D-44 Copilot Studio e
@@ -213,10 +218,9 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   29/09: settima library `Analisi_Esterne`, confidence 4-5 senza fonte interna,
   pavimento di Gap_Controlli (sostituito da D-49), Prossimita 4-5 solo con un
   caso nominato; **D-49..D-56 del 30/09**, la semplificazione dello scoring,
-  elencate sotto) e 4 aperte (A-15 strada A o variante
-  CS-1 con Copilot Studio, TODO AU4; A-11 variante 04_Riferimenti/workflow.md, con A-15; A-12
-  revisione dopo il primo ciclo; A-13 revisione annuale delle fonti; A-14
-  ridisegno del registro chiusa da D-39 e D-40), con data, chi, perche' e stato; cancelli G0, G1
+  elencate sotto) e, fra le aperte, A-12 revisione dopo il primo ciclo, A-13 revisione
+  annuale delle fonti, A-17 contraddittorio, A-19..A-24 dalla proposta esterna; ognuna
+  con data, chi, perche' e stato; cancelli G0, G1
   (provvisorio) e G2 (con condizione) firmati il 24/09. E' la
   fonte delle scelte della Banca: una rigenerazione lo **conserva cosi' com'e'**
   (non lo riscrive) e applica le decisioni "In vigore", "Provvisoria" e "Da
@@ -311,10 +315,10 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   D-43) e in `Analisi_Architettura/Archivio/10_Piano_automazione_processo.md` (27/09:
   Python resta il motore, procedura guidata per l'analista; dal 28/09 anche
   l'opzione Copilot Studio, dove gli agenti consegnano solo in `In_arrivo` e
-  nel registro scrive sempre e solo il motore). Le voci di lavoro del piano 10
-  sono nel TODO (AU1-AU6); la scelta della strada e' A-15. Niente e' ancora
-  approvato per la realizzazione: fino ad allora vale l'architettura
-  descritta qui.
+  nel registro scrive sempre e solo il motore). Su `main` il piano e' realizzato
+  con l'app NFR (D-83, tappe M1-M5, voci AU del TODO in "Fatto"); la versione
+  tutta in Copilot Studio e' sul ramo `copilot-studio-pieno` (D-82), con la strada
+  del motore ancora da scegliere (D-91).
 - Confronto con un Horizon Scanning fatto a mano con Copilot M365
   (`Analisi_Architettura/Archivio/08_Confronto_Horizon_Scanning_Copilot.md`, 25/09).
   Le proposte di **priorita' A sono approvate e applicate** il 25/09: P1 pagina
@@ -358,8 +362,9 @@ Lavora in italiano. Ogni documento destinato agli utenti e' in italiano.
   script unico composto dai moduli del pacchetto, eseguito dal Code interpreter
   dell'esperienza standard (allegato .txt) o dalla skill `precontrollo-nfr`
   nella nuova esperienza. In parallelo, la prova della versione senza Copilot
-  Studio su un registro di prova separato. Adottare un'opzione e' una decisione
-  da prendere con A-15; D-11 resta per gli agenti in esercizio.
+  Studio su un registro di prova separato. Queste prove proseguono sul ramo
+  `copilot-studio-pieno` (A-15 chiusa da D-83); su `main` resta D-11 per gli
+  agenti in esercizio.
 
 Fermati e chiedi solo per decisioni che spettano alla funzione di rischio della
 Banca (soglie, pesi, tassonomia, fonti, validatore) o se l'ambiente Microsoft
@@ -1455,7 +1460,7 @@ openpyxl (solo per il file delle schede). Moduli:
   - `precontrollo --payload A1.json [--baseline file]` (D-69): vedi
     `precontrolla` sopra; prima di A5, senza Excel. **Facoltativo, si puo'
     saltare**: `trimestrale` fa gli stessi controlli e, se ferma, scrive lo
-    stesso messaggio per A1. Guida, LEGGIMI, workflow, help del comando e
+    stesso messaggio per A1. Guida, LEGGIMI, help del comando e
     messaggio dello straordinario lo dicono (09/10, richiesta dell'utente).
   - `baseline`: esporta `Baseline_corrente.json` **e .txt** e l'allegato di A1
     `Input_A1_<ciclo>.txt` (D-69; stampa "Allegato per A1: ...") (input di A1, A3,
@@ -1681,7 +1686,13 @@ openpyxl (solo per il file delle schede). Moduli:
   knowledge; poi `comando_inizializza` e `comando_baseline`. `svuota`: solo parcheggi piu' vecchi di
   `giorni_parcheggio`, traccia prima della cancellazione. Conferma scritta: ciclo (ritorno) o nome del registro
   (ripartenza). Nell'app: finestra Admin (flussi.amministrazione(operazione): modulo con le scelte, anteprima,
-  conferma); "Nuovo registro" = inizializza e baseline del motore, solo se il registro non c'e'.
+  conferma); "Nuovo registro" = inizializza e baseline del motore, solo se il registro non c'e'. **Testi a mano**
+  (D-90, seconda operazione della finestra Admin; non piu' fra i pulsanti dei processi): `controlli_testi(stato)`
+  (ciclo corrente validato, nessuna `Riapertura_<ciclo>.json`; se no il perche' e la proposta della Validazione);
+  `testi --motivo` (minimo 10): `parcheggia(..., copia=True)` del registro, atto con il ciclo; l'app apre il
+  registro e aspetta la chiusura; `testi-fine [--parcheggio]` (senza: l'ultimo aperto): registro uguale -> stato
+  "senza modifiche"; cambiato -> `impronta_registro_dopo`, `comando_baseline` e `comando_report`, impronta riletta
+  dopo. `annulla` di un "testi" rifa' baseline e report dal registro rimesso.
 - **Report al comitato in HTML** (D-83, tappa M4): `report_html.py`, dal prototipo dell'analisi 16 (che ne e' ora un
   involucro: un solo codice). La `Vista` ricalcola in Python le viste del registro dalle tabelle dati, dai nomi
   definiti e dall'anagrafica (regole delle formule di `genera_dashboard.py`; lo score composito e' quello scritto
@@ -1797,7 +1808,7 @@ openpyxl (solo per il file delle schede). Moduli:
   dello script e pianificazione della raccolta, procedure, copertura dei
   controlli di A5, limiti onesti.
 
-## SHAREPOINT, WORKFLOW, GOVERNANCE
+## SHAREPOINT E GOVERNANCE
 
 - `04_Riferimenti/struttura_e_liste.md` (colonna Rilievi in RiskRegister_Storico,
   niente Gap_Controlli ne' Dimensione; Velocity e soglie possono essere vuote): sette library (Kernel con la baseline
@@ -1814,32 +1825,18 @@ openpyxl (solo per il file delle schede). Moduli:
   validazioni (base dati nel workbook + json per periodo). Nella variante
   senza Power Automate le liste si possono non creare: la storia e' nel
   workbook.
-- `04_Riferimenti/workflow.md`: W0 raccolta (tre canali; lo stesso script anche con
-  Power Automate); W1 trimestrale con i passi dello script numerati, passo 8
-  validazione umana e passo 9 comando valida, mai auto-approvazione per
-  decorrenza dei termini; passo 11 schede dei rischi (`schede-input`, A6,
-  `schede`); passo 12 report al comitato (PDF dei fogli da Quadro a
-  Metodologia dell'Excel validato, piu' il file delle schede); eventi fuori
-  ciclo: primo uso (un rischio per meccanismo di perdita, nessun event type
-  obbligatorio),
-  dismissione, anni di adeguamento, **attenzione del supervisore**,
-  **presidio dei controlli** (D-49),
-  **avanzamento delle azioni** (Stato In corso/Completata, unica colonna dei
-  dati modificabile a mano), **aggiornamento del template** (colonne
-  dismesse; righe da validare portate nella griglia, fermo solo su campi tolti
-  dal modello), **griglia di validazione rovinata a mano** (comando
-  `griglia`); nel passo 4
-  **A5 facoltativo** (D-71); nel passo 5 il fermo solo per l'integrita' e le
-  segnalazioni da motivare e, prima dell'append, pulizia dei riferimenti, esito e "da/a"
-  calcolati dallo script (D-51); nel passo 8 Velocity vuota, soglie entrambe o
-  nessuna, rischi con segnalazioni da motivare (colonna Segnalazioni); W2
-  settimanale con validazione facoltativa; W3 A4;
-  tabella dei campi derivati (tutti quelli della mappa, il collaudo li
-  confronta col codice: dal 30/09 anche `esito`,
-  `presidio_esistente_o_non_verificato`, `rilievi_rischio`, `rilievi_ciclo`,
-  `rilievi_superati`); test in ambiente **da registro vuoto** (nessun
-  trimestre gia' valutato a mano) con doppio run e `confronta.py --primo-ciclo`,
-  poi lettura dell'analisi e validazione.
+- La variante con Power Automate non si rigenera: e' archiviata in
+  `Analisi_Architettura/Archivio/workflow_variante_Power_Automate.md` (D-91). I
+  processi W0-W4 (sigle in 00_LEGGIMI) sono nella guida e nel motore, con le
+  stesse regole: validazione umana, mai auto-approvazione per decorrenza dei
+  termini, A5 facoltativo (D-71), fermo solo per l'integrita', eventi fuori ciclo.
+- In `04_Riferimenti/struttura_e_liste.md`, sezione **Campi derivati**: la tabella
+  di tutti i derivati della mappa (il collaudo li confronta col codice: dal 30/09
+  anche `esito`, `presidio_esistente_o_non_verificato`, `rilievi_rischio`,
+  `rilievi_ciclo`, `rilievi_superati`).
+- In `04_Riferimenti/controlli_e_model_risk.md`, sezione 7, il **test in ambiente**
+  da registro vuoto (nessun trimestre gia' valutato a mano), con doppio run e
+  `confronta.py --primo-ciclo`, poi lettura dell'analisi e validazione.
 - `04_Riferimenti/controlli_e_model_risk.md`: qualificazione model-risk prima del
   deploy; tabella dei controlli con controparte deterministica (schema, esito
   e "da/a" calcolati, C1-C9 nella versione del 30/09, soglie invertite o vuote,
@@ -1969,40 +1966,29 @@ openpyxl (solo per il file delle schede). Moduli:
   rimedio: `python genera_dashboard.py` in `03_Excel`, o `--template`). La
   verifica di pywin32 nella guida deve aprire Excel (`win32com.client` +
   `pythoncom` + `Dispatch`), non solo `import win32com`.
-- `TODO_possibili_sviluppi.md`: **il piano unico** del lavoro da fare (dal
-  28/09), proposte non fatte, ciascuna con perche', cosa fare, quando e'
-  fatta, impegno.
-  - Dall'08/10 sera il file e' riordinato: voci aperte in sezioni (ordine di
-    lavoro; passi sul PC della Banca B1-B7; processi; automazione; Q1; grafici;
-    pulizia; questioni aperte), il fatto in fondo, una riga per voce. In testa
-    l'**ordine di lavoro** unico:
-    0. passi sul PC della Banca (pacchetto, `aggiorna-registro`, agenti, prove);
-    1. P4 e P9, piccole e utili subito al trimestrale;
-    2. AU1, solo la scrittura robusta (registro protetto prima del primo ciclo);
-    3. P1; 4. P5;
-    5. AU1-AU3, la parte comune; 6. AU4 (A-15), poi AU5 oppure AU6;
-    7. P2, P7, P6; in parallelo Q1, G1/G3/G2, G6.
-
-    I processi vengono prima dell'automazione: la regola del 28/09 ("P dopo
-    AU3") valeva per P3, che toccava la coda delle richieste, ed e' fatta
-    (D-75, D-77); le P rimaste cambiano schemi, prompt e viste, validi in
-    tutte le strade.
-  - Sezione **automazione del processo**, dal piano
-    `Analisi_Architettura/Archivio/10`, al posto di AR1 chiusa da D-43:
-    - AU1 automatismi del motore (baseline in kernel, prompt archiviati,
-      comando `report` con PDF, PDF delle schede) e scrittura robusta
-      (`AutoSaveOn` spento, copia di lavoro locale con sostituzione
-      verificata);
-    - AU2 ingresso unico `In_arrivo` (`estrai_json`, `riconosci_agente` dagli
-      schemi, nomi, `messaggio_correzione`), `stato(conf)`, esecutore con esiti
-      in `Esiti/`, coda delle richieste con `schema_richiesta.json` e lista
-      bianca, riga di A3;
-    - AU3 `installa.cmd` e Verifica del PC;
-    - AU4 scelta della strada, con tabella di confronto, criteri, prova K0 e
-      proposta "strada A se non si decide";
-    - AU5 procedura guidata a menu con gli appunti (strada A);
-    - AU6 variante CS-1 (Copilot Studio con il motore in background).
-  - Sezione finale **in riserva**: piano 07 e variante CS-2.
+- `TODO_possibili_sviluppi.md`: **il registro vivo del lavoro** e il punto da cui
+  si parte (piano unico dal 28/09, registro vivo dal 30/10). Ogni voce aperta dice
+  perche' serve, cosa fare, quando e' fatta, impegno.
+  - In testa le regole per tenerlo vivo: a inizio intervento si legge la sezione 0,
+    alla fine la si aggiorna; una voce finita va in "Fatto", una non piu' utile in
+    "Superate" con il motivo; un passo provato in Banca cambia stato lo stesso giorno;
+    non si copia cio' che ha gia' un posto (DECISIONI, HANDOFF, analisi 18,
+    `AGGIORNAMENTO_IN_BANCA.md`); niente numeri che invecchiano; i codici non cambiano.
+  - **Sezione 0**: quadro, in sospeso, prossimo passo, decisioni che aspettano.
+    **Sezione 1**: ordine di lavoro con lo stato, in questa successione: in sospeso;
+    pacchetto in Banca e verifiche (B1-B4, B5-bis); scale a 6 livelli (A-19, prima del
+    primo ciclo vero); P4, P9, P14; ciclo di prova e qualita' (B7, B9, B6, B8); P1; P5;
+    P2, P7, P6; dopo il ciclo vero P13, P12, resto di P15, revisione della procedura;
+    in parallelo AU5 (demo), Q1, G1/G3/G2, G6.
+  - Sezioni seguenti: passi sul PC della Banca; processi; automazione del processo
+    (tabella delle tappe M1-M5, fatte; resta la demo attraverso i flussi, AU5); Q1;
+    grafici; pulizia; questioni aperte; **9 Fatto**, una riga per voce; **9-bis
+    Superate**, con il motivo e il posto dove resta il contenuto (prove B5 della CS-1,
+    K14, AU6, coda delle richieste, variante CS-2); **10 in riserva**: piano 07,
+    foglio Manutenzione.
+  - Il ramo `copilot-studio-pieno` ha un registro proprio, solo delle sue voci:
+    `09_Copilot_Studio/TODO_Copilot_Studio.md`; la TODO comune arriva da `main` e sul
+    ramo non si modifica.
   - Poi le voci che seguono. Almeno: G1 parametri dei grafici in una
   tabella unica; G2 guida alla modifica/estensione dei grafici; G3 script di
   anteprima PNG; G4 migrazione del registro vivo su un template rigenerato
@@ -3189,6 +3175,17 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     riscrive i file di testo con CRLF, mentre gli zip annidati del kit fatti su un altro PC (la sessione cloud, Linux)
     hanno LF: il confronto byte per byte del collaudo falliva senza nessuna differenza vera. I confronti fra un file
     del pacchetto e la sua copia (kit, kernel nella library, prompt degli agenti) si fanno a meno degli a capo.
+145. **Uno stato da un file JSON vuoto e' falso** (30/10, D-90). `stato.leggi` legge `Riapertura_<ciclo>.json` e lo usa
+    come vero o falso: un `{}` scritto da un test vale "nessuna riapertura". I file veri hanno sempre il contenuto
+    (chi, quando, che cosa); nei test si scrive un contenuto plausibile, non `{}`.
+146. **Prima i controlli, poi Excel** (30/10, D-90). Un flusso che apre il registro per una correzione e poi lancia
+    un comando che si puo' fermare (report con righe da validare) lascia l'utente con una correzione fatta e un passo
+    saltato. I controlli che fermerebbero il comando dopo si fanno prima di aprire Excel, con la strada giusta
+    (qui: la Validazione).
+147. **Un documento archiviato puo' avere parti vive** (30/10, D-91). `workflow.md` sembrava solo una variante dismessa,
+    ma `verifica_riferimenti.py` leggeva da li' i campi derivati e il doppio run era citato da collaudo, governance e
+    mappa. Prima di archiviare si cercano le citazioni, anche nel codice e nel kernel, si spostano le parti vive e
+    il file vecchio va in `obsoleti.txt` (trappola 142).
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3204,7 +3201,7 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
             COMMENTATI/A1_Horizon_Scanner_DOCUMENTATO.md  COMMENTATI/A3_A4_A5_DOCUMENTATO.md
 03_Excel/   genera_dashboard.py  NFR_Dashboard_Template.xlsx  costruzione_manuale_template.md
 04_Riferimenti/  DECISIONI.md (registro delle decisioni della Banca: si conserva, non si rigenera)
-                struttura_e_liste.md  workflow.md  controlli_e_model_risk.md
+                struttura_e_liste.md  controlli_e_model_risk.md
                 Prove/ Prova_senza_Copilot_Studio.md (installazione e ciclo su un registro di prova)
                        Prova_A7.md (copione di prova di A7)
 07_Senza_Studio/  README_variante_locale.md  esegui_ciclo_locale.py  raccogli_notizie.py  fonti.py
@@ -3253,7 +3250,7 @@ Fuori dal pacchetto: `Demo_W1_W2/`, `HANDOFF_stato_e_prossimi_passi.md`,
 8. Dati di prova generati con lo strumento vero; suite di collaudo; catena con
    Excel; prove di mutazione.
 9. Correggi ogni incoerenza NEL FILE GIUSTO (fonte unica), non a valle.
-10. SharePoint, workflow, governance, README, _DOCUMENTATO, guida passo passo,
+10. SharePoint, governance, README, _DOCUMENTATO, guida passo passo,
     TODO, 00_LEGGIMI.
 11. Demo con report; verifica finale della suite completa; HANDOFF con
     stato, scostamenti, trappole, decisioni aperte della Banca.

@@ -176,7 +176,7 @@ agenti. Se la finestra non si apre: sezione 7.
 |---|---|
 | **Stato** (due righe) | il ciclo corrente (scritto, DA VALIDARE, VALIDATO, RIAPERTO; report e schede pronti o da fare), il prossimo periodo, la settimana (raccolta, A3, scritta, validata), il registro (libero o in uso da chi). Si aggiorna da solo ogni mezzo minuto; e' lo stesso per tutti i colleghi, perche' si legge dall'archivio condiviso |
 | **▶ Prossimo passo** | il passo che lo stato propone, con chi lo deve fare (analista o validatore) e perche'. Un clic e parte |
-| **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Testi a mano, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti |
+| **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti (i testi a mano sono in **Admin**) |
 | **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71). Se non e' spuntata, l'app lo chiede comunque a precontrollo superato, prima di scrivere il ciclo (`chiedi_a5`, sezione 0.3) |
 | **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
 | **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC**, togli il lucchetto rimasto, ricostruisci la griglia di validazione (sezione "Menu Altro") |
@@ -231,7 +231,6 @@ della colonna di destra. Passando con il mouse su un pulsante compare la sua rig
 | **Schede** | prepara i dati validati; chiede se usare A6 per i testi; fa le schede dei rischi (Excel e PDF) e il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
 | **Report** | rifa' il report al comitato (PDF e, se i numeri tornano con Excel, HTML) e apre la cartella del ciclo | niente; serve dopo una correzione a mano delle celle gialle del registro |
 | **Riapri un ciclo** | chiede quali rischi riaprire (vuoto = tutti); riapre la validazione del ciclo; poi la Validazione | come nella validazione |
-| **Testi a mano** | apre il registro; quando lo chiudi aggiorna l'allegato di A1, la knowledge di A7 e il report | correggi solo le colonne di testo (descrizioni, razionali, KRI, azioni) |
 | **Parere di A4** | prepara A4 con il suo allegato; archivia il parere; se A4 propone uno straordinario, lo dice | incolli la notizia dopo il messaggio base; copi e incolli il parere |
 | **Chiedi ad A7** | apre A7 | fai le tue domande in chat |
 | **Diagnosi** | misura se le valutazioni pendono da una parte (solo lettura) e scrive l'esito nell'uscita e nella cartella del ciclo | leggi le misure |
@@ -335,13 +334,8 @@ l'uscita dice che l'HTML non e' uscito, il PDF c'e' lo stesso e il messaggio va 
 
 Per cambiare un valore gia' validato (un punteggio, una soglia, l'owner di un'azione). Scrivi i rischi da riaprire
 (vuoto = tutti) e **Conferma**; poi l'app passa alla validazione, come **Validazione**. Il ciclo dopo aspetta finche'
-la riapertura non e' validata.
-
-### Pulsante Testi a mano
-
-Per correggere solo i testi (descrizioni, razionali, KRI, azioni), senza toccare i valori. Si apre il registro:
-correggi, salva e chiudi Excel (se serve, **Ho chiuso Excel: controlla ora**); l'app aggiorna l'allegato di A1, la
-knowledge di A7 e il report.
+la riapertura non e' validata. Per correggere solo la forma di un testo, senza cambiare valori: **Admin** -> **Testi a
+mano**, a riapertura validata.
 
 ### Pulsante Parere di A4
 
@@ -375,9 +369,10 @@ finestra ogni operazione ha la sua spiegazione e il suo pulsante; il modulo che 
 | Operazione | A che cosa serve | Che cosa chiede |
 |---|---|---|
 | **Nuovo registro** | il primo registro, vuoto, quando non ce n'e' ancora uno (primo uso, o un ambiente di prova) | il trimestre prima del primo da valutare (per esempio 2025Q4 per cominciare dal 2026Q1) e il lunedi' della settimana corrente del registro |
+| **Testi a mano** | corregge la forma dei testi di un ciclo validato (descrizioni, razionali, nomi e note dei KRI, descrizioni delle azioni), senza cambiare valori: prima una copia del registro va nel parcheggio con l'atto, poi si apre il registro; quando lo chiudi l'app rifa' l'allegato di A1, la knowledge di A7 e il report. Si annulla con **Annulla** finche' nessuno scrive nel registro. Con una riapertura aperta o un ciclo da validare non apre Excel: propone prima la Validazione | che cosa correggi e perche'; poi correggi in Excel SOLO le colonne di testo, salvi e chiudi |
 | **Pulizia** | toglie dall'archivio cio' che non serve piu': tentativi e versioni vecchie dei report dei cicli validati, backup oltre gli ultimi 10, risposte incollate dei periodi chiusi, log vecchi | niente: mostra prima l'elenco e lo spazio, poi chiede se spostarli nel parcheggio |
 | **Ritorno** | torna a un ciclo validato: il registro torna com'era alla sua validazione; i cicli dopo e le settimane scritte dopo vanno nel parcheggio, e l'app riparte da quel ciclo | il ciclo (fra quelli validati prima del corrente), il motivo, chi ha deciso e il ciclo riscritto per conferma |
-| **Annulla** | rimette a posto un parcheggio; un ritorno o una ripartenza solo se nel frattempo nessuno ha scritto nel registro | il parcheggio (dall'elenco) e il motivo |
+| **Annulla** | rimette a posto un parcheggio; un ritorno, una ripartenza o dei testi a mano solo se nel frattempo nessuno ha scritto nel registro | il parcheggio (dall'elenco) e il motivo |
 | **Ripartenza** | registro nuovo vuoto; il vecchio e tutto l'archivio dei cicli nel parcheggio (per esempio dopo i cicli di prova, per ricominciare da inizio anno) | il motivo, chi ha deciso, il trimestre prima del primo da valutare, il lunedi' della settimana corrente e il nome del registro riscritto per conferma |
 | **Parcheggi** | l'elenco dei parcheggi: operazione, quando, chi, quanto spazio, stato | niente |
 | **Svuota** | cancella per sempre i parcheggi piu' vecchi di 30 giorni | niente: mostra prima l'elenco, poi chiede conferma |
@@ -1007,7 +1002,7 @@ e dettagli in `04_Riferimenti/DECISIONI.md`):
    allegati con i nomi nuovi. Nessun `aggiorna-registro`.
    In dubbio, ricaricarli tutti.
    Dal pacchetto dell'08/10 i documenti di riferimento stanno in una cartella sola,
-   `04_Riferimenti` (DECISIONI, SharePoint, workflow, governance e, in `Prove`, i
+   `04_Riferimenti` (DECISIONI, SharePoint, governance e, in `Prove`, i
    copioni di prova): nella copia del pacchetto sul PC cancellare le vecchie
    `04_SharePoint`, `05_Workflow`, `06_Governance` e `08_Deploy`; dal 09/10
    `Tassonomia dei Rischi.csv` sta in `04_Riferimenti`: se e' ancora nella library
@@ -1296,7 +1291,7 @@ vuota in mezzo fa sparire dalle viste l'ultimo rischio.
 
 ## 3-ter. Cambiare un ciclo gia' validato: riaprire la validazione, correggere i testi (D-76)
 
-> **Dall'app**: pulsante **Riapri un ciclo** e **Testi a mano** (capitolo "L'app NFR", sezione "Pulsante Riapri un ciclo"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Riapri un ciclo**; per i testi **Admin** -> **Testi a mano** (capitolo "L'app NFR", sezioni "Pulsante Riapri un ciclo" e "Pulsante Admin"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 Fra un ciclo e l'altro la funzione di rischio puo' dover cambiare qualcosa gia'
 validato: un punteggio, una soglia, l'owner di un'azione, la decisione sullo stato
@@ -1339,16 +1334,28 @@ Finche' la riapertura non e' validata il ciclo risulta "da validare": `trimestra
 messaggio della sezione 8 se serve); un rischio si toglie con `dismetti` (sezione
 3-bis).
 
-**Testi corretti a mano.** Per correggere la forma di un testo si scrive direttamente
-nel foglio dati, nelle sole colonne di testo: RiskRegister **Descrizione** e
+**Testi corretti a mano** (D-90: in modalita' Admin). Per correggere la forma di un testo di un ciclo validato, a
+riapertura chiusa, si scrive direttamente nel foglio dati, nelle sole colonne di testo: RiskRegister **Descrizione** e
 **Razionale** (lasciando le etichette RISCHIO:, IMPATTO:...); KRI **Nome**, **Unita**,
 **Fonte_Dati**, **Razionale**, **Nota_Rilevazione**; Azioni **Descrizione** e
 **Razionale**; RiskRegister **Segnale_Avvicinamento** dei rischi in osservazione. Mai
 ID, numeri, date, Validazione, Stato o righe intere (i valori passano
-dalla riapertura). Di queste correzioni non resta traccia automatica: se servono
-agli atti, annotarle nelle Note dell'analista. Poi salvare, chiudere e lanciare
-`python esegui_ciclo_locale.py baseline`: riscrive baseline, allegato di A1 e
-knowledge di A7 con i testi nuovi.
+dalla riapertura). Dall'app: **Admin** -> **Testi a mano**. Dal Prompt dei comandi, nella cartella degli script:
+
+```
+python amministrazione.py --admin testi --motivo "refuso nella descrizione di NFR-03"
+```
+
+che controlla il ciclo (validato, nessuna riapertura aperta) e mette una **copia** del registro nel parcheggio con
+l'atto (chi, quando, perche'); poi si apre il registro, si corregge, si salva e si chiude, e:
+
+```
+python amministrazione.py --admin testi-fine
+```
+
+che scrive nell'atto l'impronta del registro corretto e rifa' baseline, allegato di A1, knowledge di A7 e report. Se il
+registro non e' cambiato l'atto dice "senza modifiche". La correzione si annulla con **Annulla** (`annulla
+--parcheggio <nome>`), finche' nessuno scrive nel registro: torna il registro di prima e baseline e report si rifanno.
 
 ## 3-quater. Amministrazione dell'archivio e del registro (modalita' Admin, tappa M5)
 
@@ -1369,6 +1376,7 @@ Dal Prompt dei comandi, nella cartella degli script, l'opzione `--admin` va scri
 | Pulizia | `python amministrazione.py --admin pulizia` (anteprima), poi `python amministrazione.py --admin pulizia --esegui` | sposta nel parcheggio i tentativi dei cicli validati, i backup oltre gli ultimi `backup_da_tenere` (10), le versioni precedenti dei report, `In_arrivo\Originali` e `Precedenti` dei periodi chiusi, i log e le verifiche del PC piu' vecchi di `giorni_log` (90). L'anteprima dice cosa, perche' e quanto spazio |
 | Ritorno a un ciclo validato | `python amministrazione.py --admin ritorno --ciclo 2026Q3 --motivo "..." --decisore "..." --conferma 2026Q3` | il registro torna quello di fine validazione del ciclo (`Cicli\2026Q3\<registro>_2026Q3_validato.xlsx`, l'ultima validazione anche dopo una riapertura). Nel parcheggio: il registro di adesso, le cartelle dei cicli e straordinari dopo, le settimane scritte o validate dopo la validazione del ciclo, la baseline, gli allegati, la knowledge di A7 e le risposte degli agenti di quei periodi; poi `baseline` li rigenera. Lo stato dell'app riparte da "Ciclo 2026Q3: VALIDATO". Le settimane uscite dal registro sono elencate con il comando per riscriverle (`settimanale --payload` dal loro `A3_<lunedi'>.json` nel parcheggio). Il ciclo deve essere validato, con il suo Excel validato e della stessa versione del template; motivo di almeno 20 caratteri e decisore obbligatori |
 | Annulla | `python amministrazione.py --admin annulla --parcheggio <nome> --motivo "..."` | rimette a posto un parcheggio. Per un ritorno o una ripartenza **solo se nel frattempo nessuno ha scritto nel registro** (impronta uguale a quella lasciata dall'operazione): altrimenti si ferma senza toccare niente. Cio' che occupa i posti (il registro tornato, la baseline rigenerata) va in un parcheggio nuovo, "annullamento" |
+| Testi a mano | `python amministrazione.py --admin testi --motivo "..."`, poi (corretto e chiuso il registro) `python amministrazione.py --admin testi-fine` | solo con il ciclo corrente validato e nessuna riapertura aperta: una copia del registro nel parcheggio con l'atto; dopo la correzione l'impronta del registro corretto nell'atto, poi baseline e report. Si annulla come un ritorno (sezione 3-ter) |
 | Ripartenza da zero | `python amministrazione.py --admin ripartenza --motivo "..." --decisore "..." --ciclo-precedente 2026Q3 --conferma NFR_Registro.xlsx` | il vecchio registro e l'archivio dei cicli (cicli, settimane, backup, In_arrivo, baseline, allegati, knowledge di A7) nel parcheggio; poi un registro nuovo vuoto (`inizializza`, con la settimana di oggi o `--settimana`) e la baseline. Restano i log, le verifiche del PC, i parcheggi e la traccia. Le notizie di `News_Inbox` non si toccano |
 | Svuota | `python amministrazione.py --admin svuota` (anteprima), poi `python amministrazione.py --admin svuota --esegui` | cancella **per sempre** i parcheggi piu' vecchi di `giorni_parcheggio` (30); l'elenco di cio' che si cancella resta nella traccia |
 
@@ -1454,7 +1462,7 @@ mostra, e al ciclo dopo `trimestrale` la archivia nel foglio Sintesi_Cicli.
 I nomi dei file non cambiano mai: un rischio appena censito entra in un
 file che esiste gia', e A7 lo vede subito (solo alla prima installazione la cartella
 puo' entrare nella knowledge il giorno dopo). A7 spiega soltanto: i valori si cambiano riaprendo la validazione e
-i testi a mano (sezione 3-ter). Copione di prova: `04_Riferimenti/Prove/Prova_A7.md`, con il confronto fra
+i testi con Admin -> Testi a mano (sezione 3-ter). Copione di prova: `04_Riferimenti/Prove/Prova_A7.md`, con il confronto fra
 A7 che legge i file di testo e una copia di prova che legge solo il registro Excel.
 
 ## 5. Dove sono i file
@@ -1864,8 +1872,8 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
   solo censimento di rischi nuovi, D-77), `--motivo` (almeno 20 caratteri), `--decisore`
   e, facoltativa, `--data` (di norma oggi; dopo la data del ciclo corrente).
 - Quando: all'inizio del trimestre; la riscrivono anche `trimestrale`, `valida`, `dismetti`.
-  Senza `--uscita` riscrive anche la knowledge di A7: e' il comando da lanciare dopo aver
-  corretto dei testi a mano (sezione 3-ter).
+  Senza `--uscita` riscrive anche la knowledge di A7: la lancia `testi-fine` dopo
+  aver corretto dei testi a mano (sezione 3-ter).
 - Errori tipici: "il ciclo ... ha ancora N righe da validare" (avviso, sezione 3; per uno
   straordinario e' un fermo); "nel kernel ... mancano" (sezione 0-bis, punto 1); "Workbook
   non trovato" (sezione 7); con `--straordinario`: "--rischi: indicare i rischi ...",

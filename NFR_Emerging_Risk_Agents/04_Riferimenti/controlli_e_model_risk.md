@@ -24,8 +24,8 @@ Elementi per la decisione:
   Banca; esito e "da/a" delle variazioni li calcola lo script.
 - Ogni ciclo e' approvato da una persona (`Approvato_Da`); nessuna
   auto-approvazione.
-- La riproducibilita' si misura con un doppio run (04_Riferimenti/workflow.md, "Test in
-  ambiente"); il collaudo a secco la misura solo sugli artefatti.
+- La riproducibilita' si misura con un doppio run (sezione 7, "Test in ambiente"); il
+  collaudo a secco la misura solo sugli artefatti.
 - Non esiste un trimestre gia' valutato a mano con cui confrontare l'agente:
   il registro parte vuoto. Il primo ciclo si accetta con criteri fissati prima
   in `DECISIONI.md`: riproducibilita' del doppio run (`confronta.py
@@ -88,7 +88,7 @@ invertite.
 | Report al comitato | il PDF segue i dati validati e le correzioni manuali successive (D-62) | — | comando `report`: sola lettura, fermo con decisioni da prendere o errori di formula, la versione precedente del PDF resta | `esegui_ciclo_locale.py`, `run_catena.py` passo 2b |
 | Dismissione di un rischio | un rischio esce solo per decisione tracciata, senza buchi nelle viste | — | comando `dismetti`: motivazione obbligatoria, anagrafica ricompattata, KRI fuori vigore, azioni annullate, atto in `Dismissioni/` | `esegui_ciclo_locale.py`, `run_catena.py` |
 | Modifica di un valore gia' validato (D-76) | un valore cambia fuori dal ciclo solo con decisione motivata e tracciata | rischio: la riapertura diventa un modo di cambiare gli score senza il limite di un punto | comando `riapri`, poi `valida`: stesse regole della validazione tranne il limite di un punto, Motivazione obbligatoria per ogni valore cambiato, storico con "(riapertura)", valore di prima conservato; il report presentato resta nell'Excel archiviato del ciclo. Controllo di secondo livello: le righe "(riapertura)" di Storico_Validazioni | `esegui_ciclo_locale.py`, `run_catena.py` (passo 13) |
-| Testi corretti a mano (D-76) | descrizioni e razionali leggibili senza rifare il ciclo | limite accettato: **nessuna traccia automatica** di chi e quando (solo il Backup e l'Excel archiviato prima); un numero scritto in un testo non passa dai controlli | ammessi solo nelle colonne di testo elencate nel foglio Guida; mai ID, numeri, date o righe; `baseline` riallinea A1 e A7 | guida, sezione 3-ter |
+| Testi corretti a mano (D-76, D-90) | descrizioni e razionali leggibili senza rifare il ciclo | un numero scritto in un testo non passa dai controlli; la correzione stessa non si confronta cella per cella | solo in modalita' Admin, con il ciclo validato e nessuna riapertura aperta; copia del registro di prima nel parcheggio e atto (chi, quando, perche', impronta del registro corretto); si annulla finche' nessuno scrive dopo; ammessi solo nelle colonne di testo elencate nel foglio Guida, mai ID, numeri, date o righe; `testi-fine` rifa' baseline (A1, A7) e report | guida, sezione 3-ter |
 | Colonne tolte dal modello | un registro vecchio si aggiorna senza perdere dati | — | `aggiorna-registro`: le `colonne_dismesse` della mappa (Gap_Controlli, Dimensione delle azioni) restano solo nel backup; le righe ancora da validare passano nella griglia con le decisioni gia' scritte (D-67), fermo solo se riguardano campi tolti dal modello; presidio "Non verificato" | `esegui_ciclo_locale.py`, `run_catena.py` passo 11b |
 | Codici dello strumento di ricerca | nessun riferimento irrintracciabile nelle fonti | prompt di A1, passo 10 | la scrittura toglie i codici `turn…` dai riferimenti prima di scrivere il ciclo | `esegui_ciclo_locale.py` (`pulisci_riferimento`) |
 
@@ -205,3 +205,15 @@ Builder in Microsoft 365 Copilot", agg. agosto 2026). Va verificato con la
 compliance con la stessa cura riservata a Copilot Studio. Un amministratore puo'
 disattivare Agent Builder per policy di tenant: verificarlo prima di investire
 tempo nel setup.
+
+## 7. Test in ambiente (prima del primo ciclo reale)
+
+1. Partire da una copia **vuota** del workbook (nessun trimestre gia' valutato a mano: il primo ciclo individua i
+   rischi da zero).
+2. Eseguire il ciclo trimestrale sulla copia, **due volte** sullo stesso input.
+3. Confrontare i due output con `99_Collaudo/confronta.py --primo-ciclo` (abbina i rischi per categoria e nome, perche'
+   nel primo ciclo A1 li numera da se'): misura la riproducibilita' reale, retrieval incluso (il collaudo a secco non
+   la include). Rischi presenti in un solo run o punteggi diversi = il giudizio non e' abbastanza ancorato: rivedere
+   descrittori o istruzioni prima di andare in esercizio.
+4. La funzione di rischio legge l'analisi (aree coperte, motivazioni, fonti) e il validatore valida il ciclo di prova:
+   quota di rettifiche e criteri di accettazione in `DECISIONI.md`.

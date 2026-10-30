@@ -206,7 +206,7 @@ class App:
         voci = [("Settimana", self.flussi.settimanale), ("Trimestre", lambda: self.flussi.trimestrale(self.con_a5.get())),
                 ("Straordinario", lambda: self.flussi.straordinario(self.con_a5.get())), ("Validazione", self.flussi.validazione),
                 ("Schede", self.flussi.schede), ("Report", self.flussi.report), ("Riapri un ciclo", self.flussi.riapertura),
-                ("Testi a mano", self.flussi.testi_a_mano), ("Parere di A4", self.flussi.parere_a4),
+                ("Parere di A4", self.flussi.parere_a4),
                 ("Chiedi ad A7", self.flussi.assistente_a7), ("Diagnosi", self.flussi.diagnosi), ("Dismetti", self.flussi.dismetti)]
         self.pulsanti = [self.prossimo]
         guida_pulsanti = aiuto.pulsanti()             # dalla tabella "I processi" della guida
