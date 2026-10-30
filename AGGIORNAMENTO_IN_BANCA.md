@@ -156,7 +156,9 @@ Rinomina e togliere `.txt`. Se c'e' gia' un `NFR.cmd` di un pacchetto precedente
 **2. Library `Kernel`** (la cartella sincronizzata della voce `kernel` di `configurazione.json`)
 - copiare **tutti** i file di `NFR_Emerging_Risk_Agents\01_Kernel` e `04_Riferimenti\DECISIONI.md`: lo script legge
   il kernel da li';
-- **togliere `Baseline_corrente.txt`**, se c'e': nessun agente la legge piu' dalla library.
+- **togliere `Baseline_corrente.txt`**, se c'e': nessun agente la legge piu' dalla library;
+- **togliere `Tassonomia dei Rischi.csv`**, se c'e': dal 09/10 sta in `04_Riferimenti` e nessun componente la legge
+  dalla library.
 
 **3. `configurazione.json`** (cartella `07_Senza_Studio`; tabella completa nella sezione 0.3). Aprirlo con Blocco note,
 lasciare i percorsi come sono e aggiungere le voci nuove, come in `configurazione_esempio.json`:

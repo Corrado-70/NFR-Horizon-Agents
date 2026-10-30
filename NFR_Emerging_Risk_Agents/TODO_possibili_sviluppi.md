@@ -162,6 +162,16 @@ Decisioni dell'utente che fanno da cornice:
   scartati).
 - **Impegno**: variante 3b circa 3 giorni (esposizione nell'anagrafica, template nuovo), 17.10; punto 4 circa 1 giorno dopo la decisione.
 
+### P15. Spunti dalla proposta esterna di osservatorio (analisi 19, 30/10/2026)
+
+- **Perche'**: una proposta esterna per la stessa attivita' (`Analisi_Architettura/19_Confronto_proposta_esterna.md`)
+  porta scale a 6 livelli, alberi decisionali, rischio residuo, agente avversariale, fonti per scopo.
+- **Cosa fare**, uno per volta su richiesta dell'utente (19.11): scale a 6 livelli e registro nuovo (A-19); prova K15
+  con il mandato esteso (A-17); pavimento di evidenza con la prova C (A-20); driver per prevalenza, SOV e NOR, "agisce
+  su", casi reali nella scheda (A-24); fonti di orizzonte e natura della fonte (A-22); residuo (A-21); STOP morbidi
+  (A-23).
+- **Impegno**: circa 4-6 giorni per le scale, poi da mezza giornata a 4 giorni per voce (19.11).
+
 ### P1. Segnali qualitativi per dimensione e pressione sul radar (settimanale e spot)
 
 - **Perche'**: oggi fra un trimestre e l'altro il radar non dice quali rischi sono sotto pressione, e il settimanale

@@ -986,7 +986,9 @@ e dettagli in `04_Riferimenti/DECISIONI.md`):
    Dal pacchetto dell'08/10 i documenti di riferimento stanno in una cartella sola,
    `04_Riferimenti` (DECISIONI, SharePoint, workflow, governance e, in `Prove`, i
    copioni di prova): nella copia del pacchetto sul PC cancellare le vecchie
-   `04_SharePoint`, `05_Workflow`, `06_Governance` e `08_Deploy`. Le cartelle degli
+   `04_SharePoint`, `05_Workflow`, `06_Governance` e `08_Deploy`; dal 09/10
+   `Tassonomia dei Rischi.csv` sta in `04_Riferimenti`: se e' ancora nella library
+   `Kernel`, toglierlo (non lo legge nessun componente). Le cartelle degli
    script (`07_Senza_Studio`) e del kit (`09_Copilot_Studio`) non cambiano nome:
    `configurazione.json` e le attivita' pianificate restano validi.
 2. **Non serve validare prima**: le righe ancora da validare (per esempio le
