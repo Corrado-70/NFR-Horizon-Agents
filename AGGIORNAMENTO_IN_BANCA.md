@@ -1,11 +1,20 @@
-# Aggiornamento sul PC della Banca — pacchetto del 29/10/2026
+# Aggiornamento sul PC della Banca — pacchetto del 30/10/2026
 
 Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
-(`NFR-Horizon-Agents_2026-10-29_<commit>.zip`). I riferimenti fra parentesi sono le sezioni di
+(`NFR-Horizon-Agents_<data>_<commit>.zip`) e nel file `VERSIONE.txt` della cartella del pacchetto; `installa.cmd` lo
+scrive in testa, accanto alla versione gia' installata. I riferimenti fra parentesi sono le sezioni di
 `NFR_Emerging_Risk_Agents/00_GUIDA_PASSO_PASSO.md`. Questo pacchetto si mette **sopra quello del 23/10** gia'
-installato; se il PC non ha ancora il pacchetto del 23/10, prima i passi dell'appendice in fondo.
+installato; se il PC non ha ancora il pacchetto del 23/10, anche i passi dell'appendice in fondo che `installa.cmd`
+non fa (sono indicati li').
 
 ## Che cosa porta questo pacchetto
+
+- **`installa.cmd` fa anche l'aggiornamento** (D-89): dopo l'estrazione dello zip rinomina i `.cmd.txt` arrivati per
+  posta, aggiunge le voci nuove della configurazione, copia il kernel nella library Kernel (dopo una conferma; i file
+  sostituiti restano in `Kernel\_precedenti\<data>`, e toglie `Baseline_corrente.txt` e `Tassonomia dei Rischi.csv`),
+  sposta in `_obsoleti_<data>` i file e le cartelle dei pacchetti vecchi (`04_SharePoint`, `05_Workflow`,
+  `06_Governance`, `08_Deploy`...) e dice quali agenti reincollare. In fondo un riepilogo di cio' che e' fatto e di
+  cio' che resta a mano.
 
 - **Aiuto nell'app** (pulsante Aiuto o F1): un argomento per pulsante, preso dalla guida; passando con il mouse su un
   pulsante compare che cosa fa.
@@ -44,14 +53,23 @@ com'e' adesso (per tornare indietro).
 che resta com'e'.
 
 **Zip arrivato per posta** (nome che finisce con `_posta.zip`): la posta blocca i file `.cmd`, quindi nello zip i
-tre lanciatori finiscono con `.txt`: `07_Senza_Studio\NFR.cmd.txt`, `07_Senza_Studio\installa.cmd.txt`,
-`07_Senza_Studio\NFR_notizie_manuali.cmd.txt`. Dopo l'estrazione **rinominarli togliendo `.txt`** (Esplora file:
-Visualizza -> Mostra -> Estensioni nomi file, poi tasto destro -> Rinomina); se c'e' gia' un `NFR.cmd`, sostituirlo.
+tre lanciatori finiscono con `.txt`. A mano si rinomina solo **`07_Senza_Studio\installa.cmd.txt` in `installa.cmd`**
+(Esplora file: Visualizza -> Mostra -> Estensioni nomi file, poi tasto destro -> Rinomina; se c'e' gia' un
+`installa.cmd`, sostituirlo). Gli altri due li rinomina `installa.cmd`.
 
-**2. Doppio clic su `07_Senza_Studio\installa.cmd`** (0.3, punto 3). Si apre la finestra della configurazione con i
-valori di adesso: controllare le cartelle e i link degli agenti e premere **Salva** (la configurazione di prima resta
-accanto, `configurazione_<data>.json.precedente`). Alla fine la Verifica del PC: le righe NO vanno sistemate (il
-rimedio e' scritto sotto); il file e' in `Archivio_Cicli\Verifiche_PC\`.
+**2. Doppio clic su `07_Senza_Studio\installa.cmd`** (0.3, punto 3) e seguire i passi:
+- in testa: `Pacchetto: <commit> <data>` e la versione installata (la prima volta: "Prima installazione con
+  installa.cmd");
+- **finestra della configurazione** con i valori di adesso: controllare le cartelle e i link degli agenti e premere
+  **Salva** (la configurazione di prima resta accanto, `configurazione_<data>.json.precedente`);
+- **file dei pacchetti precedenti**: l'elenco; rispondere **S** (finiscono in `_obsoleti_<data>` accanto al pacchetto,
+  da cancellare a mano quando tutto funziona);
+- **Kernel**: l'elenco dei file nuovi, cambiati e da togliere; rispondere **S** (la library e' condivisa: i colleghi
+  vedono i file nuovi appena OneDrive sincronizza);
+- **agenti da reincollare**: la prima volta li elenca tutti, perche' non sa che cosa c'e' in Agent Builder; se il PC
+  ha gia' il pacchetto del 23/10 bastano **A4, A5, A6 e A7** (passo 3-bis). Reincollarli, poi rispondere **S**;
+- alla fine la Verifica del PC (le righe NO vanno sistemate, il rimedio e' scritto sotto; il file e' in
+  `Archivio_Cicli\Verifiche_PC\`) e il **riepilogo**: le righe "DA FARE A MANO" sono i passi rimasti.
 - Se pip non riesce (proxy): il messaggio dice la strada (cartella `pacchetti` o l'IT); i moduli che servono ci sono
   gia', dal pacchetto del 23/10, quindi si puo' proseguire.
 - Se l'attivita' pianificata o i collegamenti non si possono creare: a mano (sezione 1, "Raccolta notizie
@@ -61,10 +79,10 @@ rimedio e' scritto sotto); il file e' in `Archivio_Cicli\Verifiche_PC\`.
 la finestra delle operazioni, ognuna spiegata e con il suo pulsante (Aiuto -> "Pulsante Admin", D-85).
 
 **3-bis. Kernel, A4, A5, A6 e A7** (D-86, D-87, D-88)
-- Copiare nella library **Kernel** (la cartella della voce `kernel` di `configurazione.json`), sostituendoli, i quattro
-  file di `NFR_Emerging_Risk_Agents\01_Kernel`: `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`,
-  `schema_output_A6.json`.
-  Lo script li mette negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze.
+- Il kernel lo copia `installa.cmd` (passo 2). Cambiano quattro file di `NFR_Emerging_Risk_Agents\01_Kernel`:
+  `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`, `schema_output_A6.json`. Lo script li mette
+  negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze. Se si e' risposto N, rilanciare
+  `installa.cmd` o copiarli a mano nella library **Kernel** (la cartella della voce `kernel` di `configurazione.json`).
 - Agent Builder: **reincollare le istruzioni di A4, A5, A6 e A7** (`NFR_Emerging_Risk_Agents\02_Agenti\A4_News_Assessor.md`,
   `A5_Challenger.md`, `A6_Schede.md`, `A7_Assistente_registro.md`). A1, A3 e A8 non cambiano.
 
@@ -92,6 +110,11 @@ Nuove:
 - **schede di A6 (D-88)**: dopo la validazione di prova, Schede con A6: se A6 scrive corto, l'app lo dice e propone
   l'elenco per la stessa chat; con la risposta nuova le schede si rifanno; annotare quanto sono lunghe le schede;
 - **A4 (D-88)**: un parere su una notizia di prova e' piu' disteso nelle sei sezioni;
+- **aggiornamento con installa (D-89)**: in testa la versione del pacchetto; i `.cmd.txt` rinominati; il kernel
+  copiato con i precedenti in `Kernel\_precedenti\<data>` e `Kernel\versione_kernel.txt`; le cartelle vecchie in
+  `_obsoleti_<data>`; gli agenti elencati; `07_Senza_Studio\installato.json` scritto. Rilanciandolo: niente da
+  copiare, niente da spostare, nessun agente (se si e' risposto S); annotare se OneDrive ha avuto problemi con
+  `_precedenti` nella library;
 - **installazione (M3)**: `installa.cmd` arriva in fondo; la Verifica del PC ha `Excel via COM` OK e le righe
   `FullName` e `AutoSaveOn` (V-F: annotare cosa dicono); sul Desktop c'e' il collegamento, in Invia a la voce "NFR
   notizie manuali" (provarla su un file: finisce in `News_Inbox\<lunedi'>\Manuali`); sul PC della raccolta, in
@@ -112,12 +135,19 @@ Nuove:
 - I messaggi e i rimedi sono nella sezione 7 della guida; ogni comando lanciato dall'app lascia un log in
   `Archivio_Cicli\Log\`.
 - Per tornare indietro: rimettere la copia della cartella del pacchetto fatta al passo 0 e la configurazione
-  precedente (`configurazione_<data>.json.precedente` rinominato `configurazione.json`). Il registro non cambia
-  struttura con questo pacchetto.
+  precedente (`configurazione_<data>.json.precedente` rinominato `configurazione.json`); nella library Kernel
+  rimettere i file di `_precedenti\<data>` al loro posto. Il registro non cambia struttura con questo pacchetto.
 
 ---
 
 ## Appendice — pacchetto del 23/10/2026 (solo se il PC non lo ha ancora)
+
+**Con `installa.cmd` del pacchetto del 30/10 alcuni passi qui sotto si fanno da soli**: il rinomina dei `.cmd.txt`
+(passo 1), la library Kernel con `Baseline_corrente.txt` e `Tassonomia dei Rischi.csv` (passo 2), le voci nuove di
+`configurazione.json` nella finestra (passo 3), le cartelle vecchie e l'elenco degli agenti da reincollare (passo 4:
+la prima volta li elenca tutti, come serve a un PC precedente all'08/10). Restano a mano: il passo 0, nel passo 4
+la knowledge di A3 e A4 e il prompt schedulato di A3, il passo 5 (con `aggiorna-registro` se il registro e' di una
+struttura vecchia) e le prove del passo 7.
 
 Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 (`NFR-Horizon-Agents_2026-10-23_<commit>.zip`). I riferimenti fra parentesi sono le sezioni di

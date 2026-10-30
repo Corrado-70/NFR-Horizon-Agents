@@ -4,18 +4,36 @@ Le usa installa.py (che le esegue sul PC) e le prova il collaudo (test_installaz
   - quali moduli Python mancano e il comando pip per installarli (dalla rete o da una cartella di pacchetti);
   - la configurazione: valori proposti, unione con quella esistente, controllo delle voci;
   - l'attivita' pianificata della raccolta del lunedi' (XML per schtasks);
-  - i collegamenti sul Desktop e in "Invia a" (script PowerShell, nessun pacchetto in piu').
+  - i collegamenti sul Desktop e in "Invia a" (script PowerShell, nessun pacchetto in piu');
+  - l'aggiornamento sopra un pacchetto gia' installato (D-89): versione installata e nuova, lanciatori arrivati per
+    posta come .cmd.txt, kernel da copiare nella library, file e cartelle dei pacchetti vecchi, agenti da reincollare.
 
 Solo libreria standard.
 """
 
 import datetime as dt
+import hashlib
 import json
+import os
+import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
+RADICE = QUI.parent.parent                  # la cartella del pacchetto, dove si estrae lo zip
+FILE_VERSIONE = RADICE / "VERSIONE.txt"     # commit e data, scritti da git archive (export-subst)
+FILE_INSTALLATO = QUI / "installato.json"   # che cosa e' installato su questo PC: non e' nello zip
+FILE_OBSOLETI = QUI / "obsoleti.txt"
+KERNEL_PACCHETTO = QUI.parent / "01_Kernel"
+FILE_DECISIONI = QUI.parent / "04_Riferimenti" / "DECISIONI.md"
+CARTELLA_AGENTI = QUI.parent / "02_Agenti"
+# nella library Kernel fino al 23/10 (la baseline per A3 e A4, AU7) e al 09/10 (la tassonomia, ora in 04_Riferimenti)
+FUORI_DAL_KERNEL = ["Baseline_corrente.txt", "Tassonomia dei Rischi.csv"]
+PRECEDENTI = "_precedenti"
+VERSIONE_KERNEL = "versione_kernel.txt"     # nella library: il pacchetto che ha copiato il kernel l'ultima volta
+LANCIATORE_IN_USO = "installa.cmd"          # un .cmd che gira non si sostituisce: cmd lo rilegge riga per riga
 VERSIONE_MINIMA = (3, 10)
 # (prova di import, pacchetto pip, a che cosa serve). La prova di pywin32 importa anche pythoncom: un pywin32
 # installato a meta' passa "import win32com" e si ferma alla prima apertura di Excel (guida, sezione 7).
@@ -251,3 +269,179 @@ def comandi_mantieni_sul_pc(cartella):
     script non aspettano un download a meta' lavoro. La cartella (i file nuovi ereditano) e cio' che contiene gia'."""
     c = Path(cartella)
     return [["attrib", "+P", str(c)], ["attrib", "+P", str(c / "*"), "/S", "/D"]]
+
+
+# ------------------------------------------------------------ aggiornamento sopra un pacchetto installato (D-89)
+def adesso():
+    return dt.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+def impronta_file(percorso):
+    """12 caratteri del contenuto, a meno degli a capo (CRLF o LF): un file solo riconvertito non risulta cambiato."""
+    return hashlib.sha256(Path(percorso).read_bytes().replace(b"\r\n", b"\n")).hexdigest()[:12]
+
+
+def leggi_versione(file=None):
+    """'<commit> <data>' del pacchetto. Fuori da uno zip (copia di sviluppo) il segnaposto di git resta: 'sviluppo'."""
+    file = Path(file or FILE_VERSIONE)
+    if not file.exists():
+        return "sconosciuta"
+    testo = file.read_text(encoding="utf-8-sig").strip()
+    return "sviluppo" if not testo or "$Format" in testo else testo
+
+
+def data_versione(versione):
+    """La data di una versione '<commit> AAAA-MM-GG', o None."""
+    m = re.search(r"\d{4}-\d{2}-\d{2}", versione or "")
+    return m.group(0) if m else None
+
+
+def leggi_installato(file=None):
+    file = Path(file or FILE_INSTALLATO)
+    if not file.exists():
+        return {}
+    try:
+        return json.loads(file.read_text(encoding="utf-8-sig"))
+    except ValueError:
+        return {}
+
+
+def scrivi_installato(file, versione, kernel, agenti, utente=""):
+    """installato.json: versione, quando, chi, impronte del kernel copiato e dei prompt degli agenti reincollati."""
+    dati = {"versione": versione, "installato_il": dt.datetime.now().replace(microsecond=0).isoformat(),
+            "pc": os.environ.get("COMPUTERNAME", ""), "utente": utente, "kernel": kernel, "agenti": agenti}
+    Path(file).write_text(json.dumps(dati, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return Path(file)
+
+
+def rinomina_lanciatori(cartella=None):
+    """I .cmd arrivati per posta come <nome>.cmd.txt (la posta blocca i .cmd) tornano .cmd, sostituendo quello che c'e'.
+    installa.cmd, se c'e' gia' ed e' diverso, resta .txt: e' il file in esecuzione. Restituisce (fatti, lasciati)."""
+    cartella = Path(cartella or QUI)
+    fatti, lasciati = [], []
+    for f in sorted(cartella.glob("*.cmd.txt")):
+        dest = f.with_suffix("")
+        if dest.exists():
+            if dest.read_bytes() == f.read_bytes():
+                f.unlink()
+                fatti.append(dest.name)
+                continue
+            if dest.name.lower() == LANCIATORE_IN_USO:
+                lasciati.append(f.name)
+                continue
+            dest.unlink()
+        f.rename(dest)
+        fatti.append(dest.name)
+    return fatti, lasciati
+
+
+def predefiniti_mancanti(conf):
+    """Le voci facoltative che la configurazione non ha, con il valore predefinito: si scrivono, cosi' si vedono."""
+    from amministrazione import PREDEFINITI
+    tutte = {"attesa_lucchetto": 0, "ascolta_appunti": True, "chiedi_a5": True, **PREDEFINITI}
+    return {k: v for k, v in tutte.items() if k not in conf}
+
+
+def sorgenti_kernel(cartella=None, decisioni=None):
+    """I file che vanno nella library Kernel: tutto 01_Kernel (non le sottocartelle) e DECISIONI.md. Un file di
+    FUORI_DAL_KERNEL rimasto in 01_Kernel da un pacchetto vecchio non si copia."""
+    cartella = Path(cartella or KERNEL_PACCHETTO)
+    file = [p for p in sorted(cartella.iterdir()) if p.is_file() and p.name not in FUORI_DAL_KERNEL]
+    decisioni = Path(decisioni or FILE_DECISIONI)
+    return file + ([decisioni] if decisioni.exists() else [])
+
+
+def differenze_kernel(kernel, sorgenti=None):
+    """(nuovi, cambiati, da_togliere) fra il kernel del pacchetto e la library: i primi due sono file del pacchetto, il
+    terzo i nomi di FUORI_DAL_KERNEL ancora nella library. Se la library e' 01_Kernel stesso (sviluppo), niente."""
+    kernel = Path(kernel)
+    sorgenti = sorgenti_kernel() if sorgenti is None else sorgenti
+    if not sorgenti or kernel.resolve() == Path(sorgenti[0]).parent.resolve():
+        return [], [], []
+    nuovi = [s for s in sorgenti if not (kernel / s.name).exists()]
+    cambiati = [s for s in sorgenti if (kernel / s.name).exists() and impronta_file(kernel / s.name) != impronta_file(s)]
+    da_togliere = [n for n in FUORI_DAL_KERNEL if (kernel / n).exists()]
+    return nuovi, cambiati, da_togliere
+
+
+def kernel_piu_recente(kernel, versione):
+    """La versione del pacchetto che ha copiato il kernel nella library, se e' di una data successiva a questa: un
+    pacchetto vecchio, installato su un altro PC, non deve riportare indietro la library condivisa."""
+    f = Path(kernel) / VERSIONE_KERNEL
+    if not f.exists():
+        return None
+    nella_library = f.read_text(encoding="utf-8-sig").strip()
+    a, b = data_versione(nella_library), data_versione(versione)
+    return nella_library if a and b and a > b else None
+
+
+def copia_kernel(kernel, nuovi, cambiati, da_togliere, versione, quando=None):
+    """Copia i file nuovi e cambiati nella library; i sostituiti e quelli da togliere vanno in
+    <kernel>/_precedenti/<data>/, niente si cancella. Restituisce la cartella dei precedenti, o None se non serve."""
+    kernel = Path(kernel)
+    parcheggio = kernel / PRECEDENTI / (quando or adesso())
+    if cambiati or da_togliere:
+        parcheggio.mkdir(parents=True, exist_ok=True)
+    for nome in [s.name for s in cambiati] + list(da_togliere):
+        shutil.move(str(kernel / nome), str(parcheggio / nome))
+    for s in list(nuovi) + list(cambiati):
+        shutil.copy2(s, kernel / s.name)
+    if versione not in ("sconosciuta", "sviluppo"):
+        (kernel / VERSIONE_KERNEL).write_text(versione + "\n", encoding="utf-8")
+    return parcheggio if parcheggio.exists() else None
+
+
+def leggi_obsoleti(file=None):
+    """I percorsi di obsoleti.txt, relativi alla cartella del pacchetto; righe vuote e commenti (#) saltati. Un
+    percorso assoluto o con '..' si scarta: lo spostamento resta dentro il pacchetto."""
+    file = Path(file or FILE_OBSOLETI)
+    if not file.exists():
+        return []
+    righe = [r.strip().replace("\\", "/") for r in file.read_text(encoding="utf-8-sig").splitlines()]
+    return [r for r in righe if r and not r.startswith("#") and not r.startswith("/") and ":" not in r
+            and ".." not in r.split("/")]
+
+
+def obsoleti_presenti(radice=None, elenco=None):
+    radice = Path(radice or RADICE)
+    return [p for p in (leggi_obsoleti() if elenco is None else elenco) if (radice / p).exists()]
+
+
+def parcheggia_obsoleti(radice, presenti, quando=None):
+    """Sposta i file e le cartelle obsoleti in <radice>/_obsoleti_<data>/, con lo stesso percorso: si possono
+    riprendere o cancellare a mano."""
+    radice = Path(radice)
+    parcheggio = radice / f"_obsoleti_{quando or adesso()}"
+    for p in presenti:
+        dest = parcheggio / p
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(radice / p), str(dest))
+    return parcheggio
+
+
+def togli_pycache(radice=None):
+    """Le cartelle __pycache__ (Python le rifa' da solo): restano quelle dei moduli tolti. Restituisce quante."""
+    radice = Path(radice or RADICE)
+    cartelle = [d for d in radice.rglob("__pycache__") if d.is_dir()
+                and not any(parte.startswith("_obsoleti_") for parte in d.relative_to(radice).parts)]
+    for d in cartelle:
+        shutil.rmtree(d, ignore_errors=True)
+    return len(cartelle)
+
+
+def impronte_agenti(cartella=None):
+    """{agente: (file, impronta)} dei prompt di 02_Agenti (A1_Horizon_Scanner.md ...)."""
+    cartella = Path(cartella or CARTELLA_AGENTI)
+    esito = {}
+    for f in sorted(cartella.glob("A*_*.md")):
+        agente = f.name.split("_")[0]
+        if re.fullmatch(r"A\d+", agente):
+            esito[agente] = (f, impronta_file(f))
+    return esito
+
+
+def agenti_cambiati(installato, cartella=None):
+    """[(agente, file)] da reincollare: il prompt e' diverso da quello segnato come reincollato in installato.json.
+    Senza installato.json (prima installazione con installa) tutti."""
+    fatti = (installato or {}).get("agenti") or {}
+    return [(a, f) for a, (f, imp) in impronte_agenti(cartella).items() if fatti.get(a) != imp]

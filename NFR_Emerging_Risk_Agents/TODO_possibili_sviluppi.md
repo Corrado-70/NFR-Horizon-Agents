@@ -10,7 +10,7 @@ voci (P, AU, Q, G, M) non cambiano, perche' DECISIONI, HANDOFF e analisi li cita
 Sezioni:
 1. ordine di lavoro;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
-3. processi (P1, P2, P4, P5, P6, P7, P9);
+3. processi (P1, P2, P4, P5, P6, P7, P9, P12, P13, P14, P15);
 4. automazione del processo: l'app di orchestrazione (tappe M1-M4; AU1, AU2, AU3, AU5);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
@@ -27,7 +27,7 @@ che migliora quel ciclo.
 | Passo | Voci | Perche' qui | Giorni |
 |---|---|---|---|
 | 0 | **Passi sul PC della Banca** (sezione 2): pacchetto dell'08/10 sera, `aggiorna-registro`, agenti reincollati (B1-B4); poi le **prove della CS-1** (B5) | tutto il resto si appoggia su un'installazione allineata al pacchetto; le prove decidono la A-15 | 1-2 per B1-B4; 1-2 per le prove, piu' le attese (in Banca) |
-| 1 | **P4** rapporti di scenario e **P9** temi da verificare (AU7 fatta il 23/10, D-83) | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, e le richieste dell'analista restano tracciate | circa 1 |
+| 1 | **P4** rapporti di scenario, **P9** temi da verificare e **P14** il "so what" nei testi di A1 (AU7 fatta il 23/10, D-83; lunghezze dei testi fatte il 29/10, D-86) | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, le richieste dell'analista restano tracciate, le schede dicono che cosa significa ogni rischio per la Banca | circa 1,5 |
 | 3 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale (quale rischio e quale dimensione sono sotto pressione) | 2-3 |
 | 4 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 |
 | 5 | **App NFR, tappe M2-M4** (sezione 4: AU2, AU3, AU5 e report HTML; la tappa M1 e' fatta) | la strada A su `main` e' decisa (D-83): finestra che guida ogni processo, risposte dagli appunti, piu' analisti, report HTML al comitato | 13-15 |
@@ -68,6 +68,7 @@ Non sono sviluppo: si installa e si prova cio' che il pacchetto ha gia'. Istruzi
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`) | D-72 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5 | S1 (D-49...D-56), D-69, D-71 | da fare |
 | B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore | A-17 | da fare |
+| B9 | **Prova di qualita' di A1 e A8 su documenti pubblici** (proposta del 24/10): una libreria di documenti pubblici (EBA, BCE, ENISA, rassegne stampa; niente di interno alla Banca) sul PC di sviluppo e la stessa in Banca. (a) Sul PC di sviluppo Claude fa A1 o A8 con le istruzioni, l'allegato `Input_A1`/`Input_A8` e i documenti, poi precontrollo e `trimestrale` sul registro di prova: dice se istruzioni e documenti bastano, non che cosa fara' l'agente (Claude legge i documenti per intero, Agent Builder ne pesca dei pezzi). (b) Prova piu' utile: l'agente vero in Banca sugli stessi documenti, il JSON (senza dati della Banca) riportato e controllato da Claude affermazione per affermazione (fatti e date nel documento citato, descrittori della rubrica, fenomeni mancati o scartati a torto) | qualita' di A1 (D-21), P14 | da fare |
 
 ## 3. Processi: cosa manca rispetto al disegno atteso
 
@@ -96,6 +97,7 @@ Decisioni dell'utente che fanno da cornice:
 | Spostamento nel tempo dei rischi | in parte: Storico, Delta, schede; il radar e' una fotografia | **P2** |
 | Cadenza mensile | in parte: la finestra di 4 settimane lo e' di fatto | **P7** |
 | Contraddittorio sulla valutazione ("decimo uomo"): letture opposte, rischi mancanti, ipotesi, combinazioni | manca: A5 controlla la coerenza dell'output di A1, non la sua completezza ne' le letture alternative | **P12** |
+| Testi del registro e delle schede chiari e diretti, ma completi e approfonditi, con il "so what" per la Banca | in parte: guida di scrittura (descrizione in 3-5 frasi, razionale in parti con descrittore, fatto e "perche' non il valore vicino"), lunghezze minime e consigliate con il controllo C10 (D-86, D-88); manca il "so what" esplicito | **P14** |
 | Valutazioni senza asimmetrie: rischi nuovi non tutti bassi, rischi lontani a mitigazione lunga visibili all'urgenza | in parte: diagnosi e anni di adeguamento dei rischi in osservazione (D-80), esposizione non nota (D-81) fatti; restano salto con evidenza forte, taratura | **P13** |
 
 ### P4. Canale "rapporti di scenario" per A1
@@ -162,6 +164,26 @@ Decisioni dell'utente che fanno da cornice:
   scartati).
 - **Impegno**: variante 3b circa 3 giorni (esposizione nell'anagrafica, template nuovo), 17.10; punto 4 circa 1 giorno dopo la decisione.
 
+### P14. Il "so what" per la Banca nei testi di A1 (proposta del 24/10/2026; lunghezze fatte con D-86 e D-88)
+
+- **Perche'**: descrizioni e motivazioni finiscono nel registro e nelle schede per il comitato e devono dire che cosa
+  significa il rischio per la Banca e che cosa chiede al comitato. Le lunghezze minime e consigliate e il controllo C10
+  ci sono dal 29/10 (D-86 per A1 e A8, D-88 per A6 e A4); il "so what" non e' ancora chiesto in modo esplicito.
+- **Cosa fare**:
+  1. il **"so what"** come ultima parte del razionale di A1, con un'etichetta nuova (per esempio `QUINDI:`: che cosa
+     significa per la Banca, che cosa va deciso o osservato), nella guida di scrittura (il prompt e' al limite degli
+     8.000 caratteri); `schede.py` la riconosce e la mostra come voce a se' della scheda. Nessun campo nuovo nel JSON,
+     nessuna versione nuova del template;
+  2. un razionale senza `QUINDI:` diventa un rilievo di C10 (stessi livelli: Bloccante per A5, proposta di correzione
+     nel precontrollo, Osservazione in validazione);
+  3. nella guida di scrittura una breve sezione **"Stile"**: frasi brevi e dirette, niente gergo, ogni affermazione
+     completa (chi, cosa, quando, fonte);
+  4. da decidere se estendere ad A3 (motivazioni delle notizie).
+- **Tocca**: `01_Kernel/guida_scrittura_A1.md`, `controlli_A5.md`, `precontrollo.py`, `schede.py`, collaudo, demo, guida
+  passo passo, PROMPT_MASTER. Modifica comune: nasce su `main`, poi merge nel ramo `copilot-studio-pieno`.
+- **Fatto quando**: un ciclo di prova (B9) ha il suo `QUINDI:` in ogni scheda, il precontrollo segnala il razionale che
+  non ce l'ha e il collaudo e' verde.
+- **Impegno**: circa mezza giornata.
 ### P15. Spunti dalla proposta esterna di osservatorio (analisi 19, 30/10/2026)
 
 - **Perche'**: una proposta esterna per la stessa attivita' (`Analisi_Architettura/19_Confronto_proposta_esterna.md`)
@@ -267,7 +289,7 @@ AU6 non servono piu' su `main`. Il piano dell'app, approvato dall'utente, e' a q
 |---|---|---|---|
 | M1 | motore: lucchetto per piu' analisti, copia di lavoro del registro, Salvataggio automatico spento; AU7; automatismi di AU1 (report da `valida`, prompt archiviati, PDF delle schede, traccia della riapertura) | `lucchetto.py`, `esegui_ciclo_locale.py`, `input_a1.py`, `excel_com.py` | **fatta il 23/10** |
 | M2 | l'app: ingresso unico delle risposte (appunti e file), stato del processo, esecutore del motore, flussi di ogni processo, finestra tkinter (AU2, AU5) | `ingresso.py`, `appunti.py`, `stato.py`, `esecutore.py`, `flussi.py`, `app_nfr.py`, `NFR.cmd` | **fatta il 23/10** (collaudata senza Excel con un Ambiente finto; resta la prova a mano con gli agenti veri, B5-bis, e la demo attraverso i flussi) |
-| M3 | installazione con un doppio clic e Verifica del PC (AU3) | `installa.cmd`, `installa.py`, `installazione.py`, `verifica_pc.py`, `notizie_manuali.py` | **fatta il 29/10** (collaudata senza Windows: `test_installazione.py`; restano le prove sul PC della Banca: pip dietro il proxy, schtasks, collegamenti, Excel via COM) |
+| M3 | installazione con un doppio clic e Verifica del PC (AU3) | `installa.cmd`, `installa.py`, `installazione.py`, `verifica_pc.py`, `notizie_manuali.py` | **fatta il 29/10** (collaudata senza Windows: `test_installazione.py`; restano le prove sul PC della Banca: pip dietro il proxy, schtasks, collegamenti, Excel via COM); il 30/10 anche l'aggiornamento sopra un pacchetto installato (D-89: versione, `.cmd.txt`, kernel nella library, obsoleti, agenti da reincollare), da provare in Banca su una copia sopra il pacchetto del 23/10 |
 | M4 | report HTML al comitato come seconda uscita di `report`: viste, grafici e schede di tutti i rischi dal prototipo dell'analisi 16, numeri controllati contro Excel | `report_html.py` | **fatta il 29/10** (collaudata senza Excel sul registro della demo: `test_report_html.py`; la lettura via COM e il cancello con Excel sono nella catena, da lanciare sul PC) |
 | M5 | funzioni amministrative (richiesta del 23/10): pulizia dell'archivio dei cicli, ritorno indietro di N trimestri (registro dall'Excel validato del ciclo scelto), ripartenza da zero; niente si cancella subito, tutto nel parcheggio con l'atto; da decidere chi puo' farlo | `amministrazione.py`, voce Amministrazione dell'app | **fatta il 29/10** (collaudata senza Excel: `test_amministrazione.py`; ritorno e annullamento con Excel nella catena, da lanciare sul PC; chi puo' farlo: modalita' Admin, D-85) |
 

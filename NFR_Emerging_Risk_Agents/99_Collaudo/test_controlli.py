@@ -765,12 +765,14 @@ def test_kit_copilot_studio(e):
                "09_Copilot_Studio/prepara_kit.py)")
     e.verifica(kit.ALLEGATO.read_bytes() == kit.SCRIPT.read_bytes(),
                "kit: precontrollo_nfr.txt (opzione 1, code interpreter) e' lo stesso script della skill (opzione 2)")
-    skill_md = (kit.SKILL / "SKILL.md").read_bytes()
+    # a meno degli a capo: con core.autocrlf i file estratti da git su Windows hanno CRLF, gli zip quelli di chi li ha fatti
+    lf = lambda b: b.replace(b"\r\n", b"\n")
+    skill_md = lf((kit.SKILL / "SKILL.md").read_bytes())
     for file_zip, prefisso in ((kit.ZIP_CARTELLA, kit.NOME_SKILL + "/"), (kit.ZIP_PIATTO, "")):
         with zipfile.ZipFile(file_zip) as z:
             e.verifica(sorted(z.namelist()) == [prefisso + "SKILL.md", prefisso + "scripts/precontrollo_nfr.py"]
-                       and z.read(prefisso + "SKILL.md") == skill_md
-                       and z.read(prefisso + "scripts/precontrollo_nfr.py") == kit.SCRIPT.read_bytes(),
+                       and lf(z.read(prefisso + "SKILL.md")) == skill_md
+                       and lf(z.read(prefisso + "scripts/precontrollo_nfr.py")) == lf(kit.SCRIPT.read_bytes()),
                        f"kit: {file_zip.name} contiene SKILL.md e lo script attuali", str(z.namelist()))
     testa = re.match(r"---\n(.*?)\n---\n", skill_md.decode("utf-8"), re.S)
     campi = dict(re.findall(r"^(\w+): (.+)$", testa.group(1), re.M)) if testa else {}

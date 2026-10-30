@@ -1,18 +1,29 @@
-"""Installazione dell'app NFR su questo PC (D-83, tappa M3). Si lancia con un doppio clic su installa.cmd.
+"""Installazione e aggiornamento dell'app NFR su questo PC (D-83, tappa M3; D-89). Si lancia con un doppio clic su
+installa.cmd, dopo aver estratto lo zip del pacchetto sopra la cartella di prima.
 
-Passi, ognuno con il suo esito nel Prompt dei comandi:
+In testa la versione del pacchetto (VERSIONE.txt) e quella installata (installato.json). Poi i passi, ognuno con il
+suo esito nel Prompt dei comandi:
   1. Python 3.10+ e tkinter;
   2. i moduli (pywin32, openpyxl, pypac): cio' che manca si installa con pip --user, senza diritti di amministratore,
      dalla rete o, se c'e', dalla cartella 'pacchetti' accanto a 07_Senza_Studio;
-  3. configurazione.json con una finestra: cartelle sincronizzate, utente, validatore, PC della raccolta, versione e
-     link degli agenti. I valori di una configurazione che c'e' gia' si propongono; la precedente resta accanto;
-  4. i collegamenti: "NFR Horizon Scan" sul Desktop, "NFR notizie manuali" in Invia a;
-  5. sul PC della raccolta, l'attivita' pianificata del lunedi' alle 7;
-  6. a richiesta, le cartelle sincronizzate "sempre su questo dispositivo" (attrib +P);
-  7. la Verifica del PC (verifica_pc.py), salvata nell'archivio.
+  3. i lanciatori arrivati per posta come <nome>.cmd.txt tornano .cmd;
+  4. configurazione.json con una finestra: cartelle sincronizzate, utente, validatore, PC della raccolta, versione e
+     link degli agenti. I valori di una configurazione che c'e' gia' si propongono; la precedente resta accanto; le
+     voci facoltative che mancano si scrivono con il valore predefinito;
+  5. i file e le cartelle dei pacchetti precedenti (obsoleti.txt), dopo una conferma, in _obsoleti_<data>: prima del
+     kernel, perche' un file vecchio rimasto in 01_Kernel non finisca nella library;
+  6. il kernel nella library Kernel: i file nuovi e cambiati, dopo una conferma; i sostituiti, la baseline e la
+     tassonomia di prima vanno in <kernel>\\_precedenti\\<data>;
+  7. i collegamenti: "NFR Horizon Scan" sul Desktop, "NFR notizie manuali" in Invia a;
+  8. sul PC della raccolta, l'attivita' pianificata del lunedi' alle 7;
+  9. a richiesta, le cartelle sincronizzate "sempre su questo dispositivo" (attrib +P);
+  10. gli agenti da reincollare in Agent Builder (istruzioni cambiate rispetto a quelle segnate come reincollate);
+  11. la Verifica del PC (verifica_pc.py), salvata nell'archivio;
+in fondo il riepilogo (fatto e da fare a mano) e installato.json.
 Rilanciarlo non fa danni: ogni passo controlla prima che cosa c'e'.
 
-Uso: python installa.py [--senza-finestra] [--senza-collegamenti] [--senza-attivita] [--solo-verifica]
+Uso: python installa.py [--senza-finestra] [--senza-collegamenti] [--senza-attivita] [--senza-kernel]
+                        [--senza-obsoleti] [--solo-verifica]
 """
 
 import argparse
@@ -31,6 +42,11 @@ NASCOSTO = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 def titolo(n, testo):
     print(f"\n=== {n}. {testo} ===")
+
+
+def si(risposta, predefinito=True):
+    r = (risposta or "").strip().lower()
+    return predefinito if not r else r in ("s", "si", "si'", "sì", "y", "yes")
 
 
 def esegui(cmd, **opzioni):
@@ -208,24 +224,44 @@ def finestra_configurazione(vecchia):
     return esito.get("conf")
 
 
+def passo_lanciatori(riep):
+    titolo(3, "Lanciatori (.cmd)")
+    fatti, lasciati = ins.rinomina_lanciatori()
+    if fatti:
+        print(f"OK: {', '.join(fatti)} (arrivati per posta come .cmd.txt)")
+        riep["fatto"].append("lanciatori .cmd.txt rinominati .cmd")
+    for nome in lasciati:
+        print(f"ATTENZIONE: {nome} non rinominato: installa.cmd e' il file in esecuzione.")
+        riep["a_mano"].append(f"chiusa questa finestra, cancellare installa.cmd e togliere .txt a {nome}")
+    if not fatti and not lasciati:
+        print("OK: niente da rinominare")
+
+
 def passo_configurazione(con_finestra=True):
-    titolo(3, "Configurazione (configurazione.json)")
+    titolo(4, "Configurazione (configurazione.json)")
     vecchia = ins.carica_configurazione(FILE_CONF)
     if not vecchia and (QUI / "configurazione_esempio.json").exists() and not con_finestra:
         print("NO: configurazione.json non c'e' e --senza-finestra: copiare configurazione_esempio.json e compilarlo "
               "(guida, 0.3).")
         return {}
+    mancanti = ins.predefiniti_mancanti(vecchia)
     if con_finestra:
         if vecchia:
             print("Si apre la finestra con i valori di adesso: correggere cio' che serve e Salva.")
         else:
             print("Si apre la finestra: indicare cartelle, nome e link, poi Salva.")
-        conf = finestra_configurazione(vecchia)
+        conf = finestra_configurazione({**mancanti, **vecchia})
         if conf is None:
             print("Annullato: configurazione.json non cambiato.")
             conf = vecchia
         else:
             print(f"OK: salvato {ins.salva_configurazione(FILE_CONF, conf)}")
+            if vecchia and mancanti:
+                print(f"OK: voci facoltative aggiunte con il valore predefinito: {', '.join(mancanti)}")
+    elif mancanti:
+        conf = {**vecchia, **mancanti}
+        print(f"OK: salvato {ins.salva_configurazione(FILE_CONF, conf)}, con le voci facoltative che mancavano "
+              f"(valore predefinito): {', '.join(mancanti)}")
     else:
         conf = vecchia
     gravi, avvisi = ins.problemi(conf)
@@ -238,9 +274,69 @@ def passo_configurazione(con_finestra=True):
     return conf
 
 
-# ------------------------------------------------------------ 4-6. collegamenti, attivita', OneDrive
+# ------------------------------------------------------------ 5-6. file dei pacchetti precedenti e kernel
+def passo_kernel(conf, versione, riep, chiedi=input):
+    """Copia il kernel nella library dopo una conferma. Restituisce le impronte del kernel copiato, o None."""
+    titolo(6, "Kernel nella library Kernel")
+    k = conf.get("kernel")
+    if not k or not Path(k).is_dir():
+        print("NO: la cartella kernel della configurazione non c'e': il kernel non si copia.")
+        riep["a_mano"].append("copiare il kernel nella library Kernel (guida 0-bis, punto 1), poi rilanciare installa.cmd")
+        return None
+    impronte = {s.name: ins.impronta_file(s) for s in ins.sorgenti_kernel()}
+    if Path(k).resolve() == ins.KERNEL_PACCHETTO.resolve():
+        print("Saltato: la cartella kernel e' 01_Kernel del pacchetto (PC di sviluppo).")
+        return impronte
+    nuovi, cambiati, togliere = ins.differenze_kernel(k)
+    if not (nuovi or cambiati or togliere):
+        print(f"OK: la library ha gia' il kernel di questo pacchetto ({k})")
+        return impronte
+    for titolo_elenco, nomi in (("nuovi", [s.name for s in nuovi]), ("cambiati", [s.name for s in cambiati]),
+                                ("da togliere (non servono piu')", togliere)):
+        if nomi:
+            print(f"File {titolo_elenco}: {', '.join(nomi)}")
+    recente = ins.kernel_piu_recente(k, versione)
+    if recente:
+        print(f"ATTENZIONE: la library ha il kernel del pacchetto {recente}, piu' recente di questo ({versione}): "
+              "non si copia, per non riportarla indietro. Installare su questo PC il pacchetto piu' recente.")
+        riep["a_mano"].append(f"installare il pacchetto {recente} (la library Kernel e' gia' su quello)")
+        return None
+    if not si(chiedi(f"La library Kernel e' condivisa: i colleghi vedranno i file nuovi appena OneDrive sincronizza. "
+                     f"I file sostituiti restano in {Path(k) / ins.PRECEDENTI}. Copiare? [S/n] ")):
+        print("Saltato: kernel non copiato.")
+        riep["a_mano"].append("copiare il kernel nella library Kernel (rilanciare installa.cmd e rispondere S)")
+        return None
+    parcheggio = ins.copia_kernel(k, nuovi, cambiati, togliere, versione)
+    print(f"OK: copiati {len(nuovi) + len(cambiati)} file nella library" +
+          (f"; i precedenti in {parcheggio}" if parcheggio else ""))
+    riep["fatto"].append(f"kernel copiato nella library ({len(nuovi)} nuovi, {len(cambiati)} cambiati"
+                         + (f", tolti {', '.join(togliere)}" if togliere else "") + ")")
+    return impronte
+
+
+def passo_obsoleti(riep, chiedi=input):
+    titolo(5, "File dei pacchetti precedenti")
+    ins.togli_pycache(QUI.parent)
+    presenti = ins.obsoleti_presenti()
+    if not presenti:
+        print("OK: nessun file o cartella dei pacchetti precedenti")
+        return
+    print("Non servono piu' (elenco in 07_Senza_Studio\\obsoleti.txt):")
+    for p in presenti:
+        print(f"  {p}")
+    if not si(chiedi("Spostarli in una cartella _obsoleti_<data> accanto al pacchetto (non si cancellano: si possono "
+                     "riprendere)? [S/n] ")):
+        print("Saltato.")
+        riep["a_mano"].append("file dei pacchetti precedenti: spostarli o cancellarli (elenco qui sopra)")
+        return
+    parcheggio = ins.parcheggia_obsoleti(ins.RADICE, presenti)
+    print(f"OK: spostati in {parcheggio}")
+    riep["fatto"].append(f"{len(presenti)} file o cartelle dei pacchetti precedenti in {parcheggio.name}")
+
+
+# ------------------------------------------------------------ 7-9. collegamenti, attivita', OneDrive
 def passo_collegamenti():
-    titolo(4, "Collegamenti")
+    titolo(7, "Collegamenti")
     if os.name != "nt":
         print("Saltato: non e' Windows.")
         return
@@ -254,7 +350,7 @@ def passo_collegamenti():
 
 
 def passo_attivita(conf):
-    titolo(5, "Raccolta delle notizie del lunedi'")
+    titolo(8, "Raccolta delle notizie del lunedi'")
     if not conf.get("raccolta_su_questo_pc", True):
         print("Saltato: questo non e' il PC della raccolta (raccolta_su_questo_pc = false).")
         return
@@ -274,7 +370,7 @@ def passo_attivita(conf):
 
 
 def passo_onedrive(conf, chiedi=input):
-    titolo(6, "Cartelle sincronizzate sempre su questo PC")
+    titolo(9, "Cartelle sincronizzate sempre su questo PC")
     if os.name != "nt":
         print("Saltato: non e' Windows.")
         return
@@ -295,33 +391,78 @@ def passo_onedrive(conf, chiedi=input):
                "dispositivo): ") + str(c))
 
 
-# ------------------------------------------------------------ 7. verifica
+# ------------------------------------------------------------ 10-11. agenti e verifica
+def passo_agenti(installato, riep, chiedi=input):
+    """Gli agenti con le istruzioni cambiate. Restituisce le impronte da segnare come reincollate in installato.json."""
+    titolo(10, "Agenti da reincollare in Agent Builder")
+    segnati = dict(installato.get("agenti") or {})
+    da_fare = ins.agenti_cambiati(installato)
+    if not da_fare:
+        print("OK: le istruzioni degli agenti sono quelle gia' reincollate")
+        return segnati
+    if not segnati:
+        print("Prima installazione con installa.cmd: non si sa quali istruzioni sono in Agent Builder, si elencano "
+              "tutte. Se il PC aveva gia' il pacchetto precedente, bastano gli agenti di AGGIORNAMENTO_IN_BANCA.md.")
+    for agente, file in da_fare:
+        print(f"  {agente}: {file.relative_to(QUI.parent)}")
+    print("Come: in Agent Builder aprire l'agente in Configura e incollare il file intero nel campo Istruzioni, al "
+          "posto del testo di prima (guida, 0.2).")
+    attuali = {a: imp for a, (_, imp) in ins.impronte_agenti().items()}
+    if si(chiedi("Quando li hai reincollati scrivi S e Invio; N se lo fai dopo (te li ricordo alla prossima "
+                 "installazione) [s/N] "), predefinito=False):
+        segnati.update({a: attuali[a] for a, _ in da_fare})
+        riep["fatto"].append(f"agenti reincollati: {', '.join(a for a, _ in da_fare)}")
+    else:
+        riep["a_mano"].append(f"reincollare in Agent Builder: {', '.join(a for a, _ in da_fare)}")
+    return segnati
+
+
 def passo_verifica():
-    titolo(7, "Verifica del PC")
+    titolo(11, "Verifica del PC")
     import verifica_pc
     return verifica_pc.main([])
 
 
-def main(argv=None):
-    p = argparse.ArgumentParser(description="Installazione dell'app NFR su questo PC")
+def main(argv=None, chiedi=input):
+    p = argparse.ArgumentParser(description="Installazione e aggiornamento dell'app NFR su questo PC")
     p.add_argument("--senza-finestra", action="store_true", help="non apre la finestra della configurazione")
     p.add_argument("--senza-collegamenti", action="store_true")
     p.add_argument("--senza-attivita", action="store_true", help="non crea l'attivita' della raccolta")
+    p.add_argument("--senza-kernel", action="store_true", help="non copia il kernel nella library")
+    p.add_argument("--senza-obsoleti", action="store_true", help="non sposta i file dei pacchetti precedenti")
     p.add_argument("--solo-verifica", action="store_true")
     arg = p.parse_args(argv)
     if arg.solo_verifica:
         return passo_verifica()
+    versione, installato = ins.leggi_versione(), ins.leggi_installato()
     print("Installazione dell'app NFR Horizon Scan su questo PC. Rilanciarla non fa danni.")
+    print(f"Pacchetto: {versione}. " + (f"Installato su questo PC: {installato.get('versione', '?')} "
+                                         f"(il {str(installato.get('installato_il', ''))[:10]})." if installato else
+                                         "Prima installazione con installa.cmd su questo PC."))
+    riep = {"fatto": [], "a_mano": []}
     if not passo_python() or not passo_moduli():
         print("\nInstallazione ferma: sistemare il punto NO qui sopra e rilanciare installa.cmd.")
         return 1
+    passo_lanciatori(riep)
     conf = passo_configurazione(not arg.senza_finestra)
+    if not arg.senza_obsoleti:                       # prima del kernel: un file vecchio di 01_Kernel non va copiato
+        passo_obsoleti(riep, chiedi)
+    kernel = None if arg.senza_kernel else passo_kernel(conf, versione, riep, chiedi)
     if not arg.senza_collegamenti:
         passo_collegamenti()
     if not arg.senza_attivita:
         passo_attivita(conf)
-    passo_onedrive(conf)
+    passo_onedrive(conf, chiedi)
+    agenti = passo_agenti(installato, riep, chiedi)
     codice = passo_verifica()
+    ins.scrivi_installato(ins.FILE_INSTALLATO, versione, kernel if kernel is not None else installato.get("kernel", {}),
+                          agenti, conf.get("utente", ""))
+    print("\n=== Riepilogo ===")
+    for voce in riep["fatto"]:
+        print(f"fatto: {voce}")
+    for voce in riep["a_mano"]:
+        print(f"DA FARE A MANO: {voce}")
+    print("Gli altri passi del pacchetto (per esempio un prompt schedulato da cancellare) sono in AGGIORNAMENTO_IN_BANCA.md.")
     print("\nInstallazione finita." + (" Aprire l'app dal collegamento \"NFR Horizon Scan\" sul Desktop." if codice == 0 else
                                        " Ci sono punti NO nella verifica: sistemarli e rilanciare installa.cmd."))
     return codice

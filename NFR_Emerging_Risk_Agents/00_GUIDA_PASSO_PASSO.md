@@ -757,28 +757,45 @@ link alle fonti: l'app li ignora.
 2. Sincronizzare con OneDrive (pulsante "Sincronizza" di SharePoint) le
    raccolte `Kernel`, `Report_Trimestrali`, `Archivio_Cicli`, `News_Inbox`.
 3. **Doppio clic su `installa.cmd`** (cartella degli script, `07_Senza_Studio`; tappa M3). Si apre il Prompt dei
-   comandi con i passi numerati, ognuno con il suo esito (OK, ATTENZIONE, NO):
+   comandi: in testa la versione del pacchetto e quella gia' installata su questo PC (D-89), poi i passi numerati,
+   ognuno con il suo esito (OK, ATTENZIONE, NO):
    1. Python e tkinter;
    2. i moduli che mancano, installati con pip solo per il tuo utente (nessun diritto di amministratore). Se il
       proxy della Banca blocca pip, il messaggio lo dice: su un PC con la rete libera si scaricano i pacchetti con
       `python -m pip download pywin32 openpyxl pypac -d pacchetti` (stesso Python, 64 bit) e si copia la cartella
       `pacchetti` accanto a `07_Senza_Studio`; rilanciando `installa.cmd` si installano da li';
-   3. **la finestra della configurazione**: le quattro cartelle sincronizzate (pulsante Sfoglia), il tuo nome, chi
+   3. i lanciatori arrivati per posta come `<nome>.cmd.txt` tornano `.cmd` (tranne `installa.cmd` se c'e' gia' ed
+      e' diverso: e' il file in esecuzione, il riepilogo dice di rinominarlo a mano dopo);
+   4. **la finestra della configurazione**: le quattro cartelle sincronizzate (pulsante Sfoglia), il tuo nome, chi
       valida di solito, se questo e' il PC della raccolta del lunedi', le opzioni dell'app e i link dei sette agenti
       per la versione scelta (Agent Builder o Copilot Studio). Con una configurazione che c'e' gia' i valori sono
-      proposti; la precedente resta accanto (`configurazione_<data>.json.precedente`);
-   4. i collegamenti: **NFR Horizon Scan** sul Desktop e **Invia a -> NFR notizie manuali** (tasto destro su un
+      proposti; la precedente resta accanto (`configurazione_<data>.json.precedente`); le voci facoltative che
+      mancano si scrivono con il valore predefinito;
+   5. **i file dei pacchetti precedenti** che non servono piu' (elenco in `07_Senza_Studio\obsoleti.txt`, per esempio
+      le cartelle `04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy`): dopo una conferma si spostano in
+      `_obsoleti_<data>` accanto al pacchetto, da cui si possono riprendere o cancellare;
+   6. **il kernel nella library `Kernel`**: l'elenco dei file nuovi e cambiati rispetto alla library e di quelli da
+      togliere (`Baseline_corrente.txt`, `Tassonomia dei Rischi.csv`); dopo una conferma si copiano. La library e'
+      condivisa: i file sostituiti e quelli tolti restano in `Kernel\_precedenti\<data>\`. Un pacchetto piu' vecchio
+      di quello che ha copiato il kernel l'ultima volta (`Kernel\versione_kernel.txt`) non lo copia;
+   7. i collegamenti: **NFR Horizon Scan** sul Desktop e **Invia a -> NFR notizie manuali** (tasto destro su un
       file: lo copia in `News_Inbox\<lunedi'>\Manuali`);
-   5. solo sul PC della raccolta, l'attivita' pianificata **NFR raccolta notizie** ogni lunedi' alle 7 (se il PC
+   8. solo sul PC della raccolta, l'attivita' pianificata **NFR raccolta notizie** ogni lunedi' alle 7 (se il PC
       e' spento, appena si accende; sezione "Raccolta notizie automatica");
-   6. a richiesta, le cartelle sincronizzate "sempre su questo dispositivo" (consigliato);
-   7. la **Verifica del PC**: una riga per voce, salvata in `Archivio_Cicli\Verifiche_PC\`. Le righe NO vanno
-      sistemate (il rimedio e' scritto sotto); se non e' chiaro, mandare il file a chi mantiene il pacchetto.
+   9. a richiesta, le cartelle sincronizzate "sempre su questo dispositivo" (consigliato);
+   10. **gli agenti da reincollare** in Agent Builder, con il loro file di `02_Agenti`: quelli con le istruzioni
+       cambiate rispetto a quelle segnate come reincollate (alla prima volta tutti). Quando li hai reincollati
+       rispondi S; con N te li ricorda alla prossima installazione;
+   11. la **Verifica del PC**: una riga per voce, salvata in `Archivio_Cicli\Verifiche_PC\`. Le righe NO vanno
+       sistemate (il rimedio e' scritto sotto); se non e' chiaro, mandare il file a chi mantiene il pacchetto.
+
+   In fondo il **riepilogo**: che cosa e' stato fatto e che cosa resta da fare a mano. Che cosa e' installato si
+   scrive in `07_Senza_Studio\installato.json` (versione, kernel copiato, agenti reincollati), che lo zip non contiene.
 
    Rilanciare `installa.cmd` non fa danni (per esempio per cambiare un link): ogni passo controlla prima che cosa
    c'e'. Opzioni: `python installa.py --senza-finestra` (tiene la configurazione com'e'), `--senza-collegamenti`,
-   `--senza-attivita`, `--solo-verifica`. La verifica si rifa' quando serve anche dall'app (Altro -> Verifica del PC)
-   o con `python verifica_pc.py` (`--senza-excel` per non aprire il registro).
+   `--senza-attivita`, `--senza-kernel`, `--senza-obsoleti`, `--solo-verifica`. La verifica si rifa' quando serve
+   anche dall'app (Altro -> Verifica del PC) o con `python verifica_pc.py` (`--senza-excel` per non aprire il registro).
 
    **A mano, senza `installa.cmd`** (se le regole del PC non lo lasciano partire): da un Prompt dei comandi
    `pip install pywin32 pypac openpyxl` (`pypac` serve solo alla raccolta notizie, per trovare il proxy come fa il
@@ -946,7 +963,13 @@ e dettagli in `04_Riferimenti/DECISIONI.md`):
    OneDrive o della library `Kernel`.
 1. Estrarre il pacchetto (o lo zip di aggiornamento) **sopra la cartella del
    pacchetto** sul PC, sostituendo i file: `configurazione.json` non e' nello
-   zip e resta com'e'. Poi copiare **tutti i file di `01_Kernel`** e
+   zip e resta com'e'. **Dal pacchetto del 30/10/2026 (D-89) poi basta un doppio
+   clic su `installa.cmd`** (sezione 0.3, punto 3): rinomina i `.cmd.txt` arrivati
+   per posta, aggiunge le voci nuove della configurazione, copia il kernel nella
+   library (dopo una conferma, togliendo `Baseline_corrente.txt` e `Tassonomia dei
+   Rischi.csv`), sposta i file e le cartelle dei pacchetti vecchi e dice quali
+   agenti reincollare. Quello che segue in questo punto resta per chi lo fa a mano.
+   Poi copiare **tutti i file di `01_Kernel`** e
    `04_Riferimenti\DECISIONI.md` nella library `Kernel`, cioe' nella cartella
    sincronizzata indicata alla voce `kernel` di `configurazione.json`: **lo
    script legge da li'** mappa dei campi, schemi, rubrica ed elenco fonti, non
