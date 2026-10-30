@@ -39,18 +39,18 @@ Sezioni:
 |---|---|
 | Obiettivo | primo ciclo vero **2026Q4**, primo run di A1 a inizio gennaio 2027 (D-22) |
 | Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
-| Ultimo commit | 30/10: D-90, D-91 e il riordino di questa TODO, su GitHub |
-| Ultimo pacchetto preparato | 30/10, commit `aa7aea9`, zip per la posta; non contiene D-90 e D-91 |
+| Ultimo commit | 30/10: istruzioni del pacchetto con D-90 e D-91; non ancora su GitHub |
+| Ultimo pacchetto preparato | 30/10, zip per la posta con D-90 e D-91 (il commit e' nel nome dello zip); preparato prima del collaudo con Excel |
 | In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
-| Ramo `copilot-studio-pieno` | allineato a `main` il 30/10, con `genera_CS.py`; strada del motore da capire (D-91); ha il suo registro |
+| Ramo `copilot-studio-pieno` | allineato a `main` il 30/10, tranne l'ultimo commit (sole istruzioni del pacchetto); strada del motore da capire (D-91); ha il suo registro |
 
 **In sospeso** (da chiudere prima di ogni altra cosa):
 
 | # | Cosa | Stato |
 |---|---|---|
-| 1 | `AGGIORNAMENTO_IN_BANCA.md`, per il prossimo pacchetto: D-90 (il pulsante Testi a mano passa in Admin) e D-91 (`mappatura_campi.json` cambia nel kernel, `workflow.md` fra gli obsoleti) | da fare |
-| 2 | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa): non rilanciato dopo M4, M5, D-86 e D-90 | da fare |
-| 3 | `esegui_demo.py` con `REPORT_demo.md` sui testi lunghi (D-86), poi la presentazione | da fare |
+| 1 | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa): non rilanciato dopo M4, M5, D-86 e D-90 | da fare |
+| 2 | `esegui_demo.py` con `REPORT_demo.md` sui testi lunghi (D-86), poi la presentazione | da fare |
+| 3 | Push dell'ultimo commit e `git merge main` nel ramo | quando l'utente lo chiede |
 
 **Prossimo passo**: i punti 1-3 qui sopra, poi il pacchetto in Banca e le sue verifiche (B1-B4, B5-bis).
 

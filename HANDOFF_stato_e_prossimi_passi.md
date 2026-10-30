@@ -1505,6 +1505,8 @@ Decisioni dell'utente: "archivia la variante"; su `main` Python di sicuro; sul r
   allineati a D-83 e D-91; trappola 147.
 - Registro del ramo: V1 torna ipotesi di lavoro; sezione 1-bis con le strade (V1, CS-1b, agenti in Copilot Studio con
   l'app Python). V2, F2 e F1 sono cadute con T4.1.
+- Pacchetto per la posta del 30/10 con D-90 e D-91: `AGGIORNAMENTO_IN_BANCA.md` aggiornato (cinque file del kernel, passo per
+  chi ha gia' `aa7aea9`, verifica dei testi a mano). Preparato prima del collaudo completo con Excel.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 

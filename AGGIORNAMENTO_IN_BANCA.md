@@ -7,6 +7,9 @@ scrive in testa, accanto alla versione gia' installata. I riferimenti fra parent
 installato; se il PC non ha ancora il pacchetto del 23/10, anche i passi dell'appendice in fondo che `installa.cmd`
 non fa (sono indicati li').
 
+**Se il PC ha gia' lo zip del 30/10 con commit `aa7aea9`**: si rifanno i passi 0-2. Nessun agente da reincollare, se
+allora si era risposto S; nel kernel cambia solo `mappatura_campi.json`.
+
 ## Che cosa porta questo pacchetto
 
 - **`installa.cmd` fa anche l'aggiornamento** (D-89): dopo l'estrazione dello zip rinomina i `.cmd.txt` arrivati per
@@ -41,7 +44,12 @@ non fa (sono indicati li').
 - **Schede di A6, analisi dell'evento di A8 e pareri di A4 piu' estesi** (D-88): A6 ha lunghezze minime (descrizione
   1000-2000 caratteri, 400-800 per ogni valore) e l'app propone di fargli allungare i testi corti; l'analisi dell'evento
   di A8 entra nelle lunghezze di C10; A4 scrive un parere piu' disteso.
-- **Da reincollare: A4, A5, A6 e A7**; nella library Kernel quattro file aggiornati (passo 3-bis). Struttura del registro invariata
+- **Testi a mano in Admin** (D-90): il pulsante esce dai processi e diventa un'operazione della finestra Admin, con la
+  copia del registro nel parcheggio, l'atto e il report rifatto a fine correzione. Con una riapertura aperta o un ciclo
+  da validare non apre Excel e propone la Validazione.
+- **Variante Power Automate archiviata** (D-91): `04_Riferimenti\workflow.md` non serve piu', `installa.cmd` lo sposta
+  fra gli obsoleti. I processi non cambiano.
+- **Da reincollare: A4, A5, A6 e A7**; nella library Kernel cinque file aggiornati (passo 3-bis). Struttura del registro invariata
   (versione `2026-10-09`): nessun `aggiorna-registro`.
 
 ## Passi
@@ -79,9 +87,9 @@ tre lanciatori finiscono con `.txt`. A mano si rinomina solo **`07_Senza_Studio\
 la finestra delle operazioni, ognuna spiegata e con il suo pulsante (Aiuto -> "Pulsante Admin", D-85).
 
 **3-bis. Kernel, A4, A5, A6 e A7** (D-86, D-87, D-88)
-- Il kernel lo copia `installa.cmd` (passo 2). Cambiano quattro file di `NFR_Emerging_Risk_Agents\01_Kernel`:
-  `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`, `schema_output_A6.json`. Lo script li mette
-  negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze. Se si e' risposto N, rilanciare
+- Il kernel lo copia `installa.cmd` (passo 2). Cambiano cinque file di `NFR_Emerging_Risk_Agents\01_Kernel`:
+  `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`, `schema_output_A6.json` e, solo in una nota,
+  `mappatura_campi.json`. Lo script mette i primi negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze. Se si e' risposto N, rilanciare
   `installa.cmd` o copiarli a mano nella library **Kernel** (la cartella della voce `kernel` di `configurazione.json`).
 - Agent Builder: **reincollare le istruzioni di A4, A5, A6 e A7** (`NFR_Emerging_Risk_Agents\02_Agenti\A4_News_Assessor.md`,
   `A5_Challenger.md`, `A6_Schede.md`, `A7_Assistente_registro.md`). A1, A3 e A8 non cambiano.
@@ -126,6 +134,9 @@ Nuove:
   ADMIN, traccia in `Archivio_Cicli\Amministrazione`), poi nella finestra Admin ->
   pulizia (anteprima e poi spostamento), parcheggi, annulla della pulizia; poi un ritorno al ciclo validato prima
   di quello corrente e il suo annullamento (lo stato dell'app torna com'era).
+- **testi a mano in Admin (D-90), sul registro di prova**: a ciclo validato, Admin -> Testi a mano chiede il motivo e
+  apre il registro; chiuso Excel rifa' baseline e report; Annulla lo disfa. Con un ciclo da validare non apre Excel e
+  propone la Validazione;
 - **collaudo completo sul PC** (chi mantiene il pacchetto): `python NFR_Emerging_Risk_Agents\99_Collaudo\esegui_collaudo.py`
   (catena con Excel compresa: report HTML via COM, cancello, ritorno e annullamento); poi la presentazione con
   `python Presentazione\genera_presentazione.py`.
