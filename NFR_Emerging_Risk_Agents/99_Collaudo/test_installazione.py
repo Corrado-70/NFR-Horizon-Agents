@@ -7,13 +7,17 @@
   4. collegamenti: script PowerShell con gli apici raddoppiati, Desktop e Invia a;
   5. "Invia a -> NFR notizie manuali": copia nella cartella del lunedi', nomi gia' presenti non sovrascritti;
   6. Verifica del PC su una configurazione di prova (senza Excel): righe e file salvato nell'archivio;
-  7. i lanciatori nuovi (.cmd): solo ASCII, a capo di Windows, cartella dello script.
+  7. i lanciatori nuovi (.cmd): solo ASCII, a capo di Windows, cartella dello script;
+  8. l'aggiornamento sopra un pacchetto installato (D-89): versione, lanciatori .cmd.txt, voci facoltative, kernel
+     nella library con i precedenti messi da parte, file obsoleti, agenti da reincollare, installato.json.
 Le prove sul PC vero (pip, schtasks, collegamenti, Excel) sono nella guida, sezione 0.3, e in 18.3 dell'analisi.
 
 Uso: python test_installazione.py [-v]
 """
 
+import contextlib
 import datetime as dt
+import io
 import json
 import sys
 import tempfile
@@ -191,6 +195,142 @@ def test_lanciatori(e):
                    f"{nome}: solo ASCII, a capo di Windows (le etichette goto), cartella dello script, lancia {script}")
 
 
+def test_versione_e_lanciatori(e):
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp)
+        f = t / "VERSIONE.txt"
+        e.verifica(ins.leggi_versione(f) == "sconosciuta", "versione: senza VERSIONE.txt 'sconosciuta'")
+        f.write_text("$Format:%h %cs$\n", encoding="utf-8")
+        e.verifica(ins.leggi_versione(f) == "sviluppo", "versione: il segnaposto di git (copia di sviluppo) e' 'sviluppo'")
+        f.write_text("da119c9 2026-10-30\n", encoding="utf-8")
+        e.verifica(ins.leggi_versione(f) == "da119c9 2026-10-30" and ins.data_versione("da119c9 2026-10-30") == "2026-10-30",
+                   "versione: commit e data scritti da git archive")
+        (t / "NFR.cmd.txt").write_bytes(b"nuovo")
+        (t / "NFR_notizie_manuali.cmd.txt").write_bytes(b"nuovo")
+        (t / "NFR_notizie_manuali.cmd").write_bytes(b"vecchio")
+        (t / "installa.cmd.txt").write_bytes(b"nuovo")
+        (t / "installa.cmd").write_bytes(b"vecchio")
+        fatti, lasciati = ins.rinomina_lanciatori(t)
+        e.verifica(sorted(fatti) == ["NFR.cmd", "NFR_notizie_manuali.cmd"] and lasciati == ["installa.cmd.txt"]
+                   and (t / "NFR_notizie_manuali.cmd").read_bytes() == b"nuovo" and not (t / "NFR.cmd.txt").exists()
+                   and (t / "installa.cmd").read_bytes() == b"vecchio",
+                   "lanciatori: .cmd.txt -> .cmd, anche sopra quello di prima; installa.cmd in esecuzione resta", f"{fatti} {lasciati}")
+        (t / "installa.cmd").write_bytes(b"nuovo")
+        fatti, lasciati = ins.rinomina_lanciatori(t)
+        e.verifica(fatti == ["installa.cmd"] and not lasciati and not (t / "installa.cmd.txt").exists(),
+                   "lanciatori: installa.cmd.txt uguale a installa.cmd si toglie e basta", f"{fatti} {lasciati}")
+        e.verifica(ins.rinomina_lanciatori(t) == ([], []), "lanciatori: rilanciato, niente da fare")
+    mancanti = ins.predefiniti_mancanti({"utente": "x", "chiedi_a5": False, "giorni_log": 7})
+    e.verifica(mancanti == {"attesa_lucchetto": 0, "ascolta_appunti": True, "backup_da_tenere": 10, "giorni_parcheggio": 30},
+               "configurazione: le voci facoltative che mancano con il predefinito, quelle scritte restano", mancanti)
+
+
+def test_kernel(e):
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp)
+        sorg, lib = t / "01_Kernel", t / "Kernel"
+        sorg.mkdir()
+        (lib / "Spiegazioni").mkdir(parents=True)
+        (sorg / "rubrica.md").write_bytes(b"riga 1\nriga 2\n")
+        (sorg / "schema.json").write_bytes(b'{"nuovo": 1}\n')
+        (sorg / "guida.md").write_bytes(b"nuova\n")
+        (sorg / "Tassonomia dei Rischi.csv").write_bytes(b"csv")         # rimasta in 01_Kernel da un pacchetto vecchio
+        decisioni = t / "DECISIONI.md"
+        decisioni.write_bytes(b"D-89\n")
+        (lib / "rubrica.md").write_bytes(b"riga 1\r\nriga 2\r\n")          # solo a capo diversi: non e' cambiato
+        (lib / "schema.json").write_bytes(b'{"vecchio": 1}\n')
+        (lib / "Baseline_corrente.txt").write_bytes(b"baseline")
+        (lib / "Tassonomia dei Rischi.csv").write_bytes(b"csv")
+        (lib / "Spiegazioni" / "Ciclo.txt").write_bytes(b"spiegazioni")
+        sorgenti = ins.sorgenti_kernel(sorg, decisioni)
+        nuovi, cambiati, togliere = ins.differenze_kernel(lib, sorgenti)
+        e.verifica([s.name for s in nuovi] == ["guida.md", "DECISIONI.md"] and [s.name for s in cambiati] == ["schema.json"]
+                   and togliere == ["Baseline_corrente.txt", "Tassonomia dei Rischi.csv"],
+                   "kernel: nuovi, cambiati (non per gli a capo) e i file da togliere dalla library; la tassonomia "
+                   "rimasta in 01_Kernel non si copia",
+                   f"{nuovi}\n{cambiati}\n{togliere}")
+        e.verifica(ins.differenze_kernel(sorg, sorgenti) == ([], [], []), "kernel: library = 01_Kernel (sviluppo), niente")
+        parcheggio = ins.copia_kernel(lib, nuovi, cambiati, togliere, "da119c9 2026-10-30", quando="20261030_120000")
+        e.verifica(parcheggio == lib / "_precedenti" / "20261030_120000"
+                   and sorted(p.name for p in parcheggio.iterdir()) == ["Baseline_corrente.txt", "Tassonomia dei Rischi.csv", "schema.json"]
+                   and (parcheggio / "schema.json").read_bytes() == b'{"vecchio": 1}\n'
+                   and (lib / "schema.json").read_bytes() == b'{"nuovo": 1}\n' and (lib / "DECISIONI.md").exists()
+                   and not (lib / "Baseline_corrente.txt").exists() and (lib / "Spiegazioni" / "Ciclo.txt").exists()
+                   and (lib / "rubrica.md").read_bytes() == b"riga 1\r\nriga 2\r\n",
+                   "kernel: copiati i nuovi e i cambiati, i sostituiti e i tolti in _precedenti, Spiegazioni non toccata")
+        e.verifica(ins.differenze_kernel(lib, sorgenti) == ([], [], []), "kernel: rilanciato, niente da copiare")
+        e.verifica(ins.kernel_piu_recente(lib, "abc1234 2026-10-28") == "da119c9 2026-10-30"
+                   and ins.kernel_piu_recente(lib, "fff0000 2026-11-05") is None
+                   and ins.kernel_piu_recente(lib, "sviluppo") is None,
+                   "kernel: un pacchetto piu' vecchio di quello nella library non la riporta indietro")
+
+
+def test_obsoleti(e):
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp)
+        elenco = t / "obsoleti.txt"
+        elenco.write_text("# commento\n\nNFR/04_SharePoint\nNFR\\01_Kernel\\vecchio.csv\nDemo/manca.txt\n"
+                          "C:/Windows\n../fuori\n/assoluto\n", encoding="utf-8")
+        letti = ins.leggi_obsoleti(elenco)
+        e.verifica(letti == ["NFR/04_SharePoint", "NFR/01_Kernel/vecchio.csv", "Demo/manca.txt"],
+                   "obsoleti: commenti, righe vuote, percorsi assoluti e '..' scartati; barre rovesciate accettate", letti)
+        (t / "NFR" / "04_SharePoint").mkdir(parents=True)
+        (t / "NFR" / "04_SharePoint" / "struttura.md").write_text("x", encoding="utf-8")
+        (t / "NFR" / "01_Kernel").mkdir()
+        (t / "NFR" / "01_Kernel" / "vecchio.csv").write_text("x", encoding="utf-8")
+        presenti = ins.obsoleti_presenti(t, letti)
+        e.verifica(presenti == ["NFR/04_SharePoint", "NFR/01_Kernel/vecchio.csv"], "obsoleti: solo quelli che ci sono", presenti)
+        parcheggio = ins.parcheggia_obsoleti(t, presenti, quando="20261030_120000")
+        e.verifica(parcheggio == t / "_obsoleti_20261030_120000"
+                   and (parcheggio / "NFR" / "04_SharePoint" / "struttura.md").exists()
+                   and (parcheggio / "NFR" / "01_Kernel" / "vecchio.csv").exists()
+                   and not (t / "NFR" / "04_SharePoint").exists() and (t / "NFR" / "01_Kernel").exists(),
+                   "obsoleti: spostati in _obsoleti_<data> con lo stesso percorso, le cartelle in uso restano")
+        e.verifica(ins.obsoleti_presenti(t, letti) == [], "obsoleti: rilanciato, niente da spostare")
+        (t / "NFR" / "__pycache__").mkdir()
+        (t / "NFR" / "01_Kernel" / "__pycache__").mkdir()
+        (parcheggio / "NFR" / "__pycache__").mkdir()
+        e.verifica(ins.togli_pycache(t) == 2 and not (t / "NFR" / "__pycache__").exists()
+                   and (parcheggio / "NFR" / "__pycache__").exists(), "obsoleti: __pycache__ tolte, non nel parcheggio")
+    pacchetto = ins.leggi_obsoleti()
+    e.verifica(pacchetto and ins.obsoleti_presenti(ins.RADICE, pacchetto) == [],
+               "obsoleti.txt del pacchetto: nessun percorso elencato esiste nel pacchetto di adesso",
+               ins.obsoleti_presenti(ins.RADICE, pacchetto))
+
+
+def test_agenti(e):
+    import installa
+    with tempfile.TemporaryDirectory() as tmp:
+        t = Path(tmp)
+        (t / "COMMENTATI").mkdir()
+        (t / "A1_Horizon_Scanner.md").write_text("A1 v1", encoding="utf-8")
+        (t / "A3_Interim_Update.md").write_text("A3 v1", encoding="utf-8")
+        (t / "componi_prompt.py").write_text("", encoding="utf-8")
+        e.verifica([a for a, _ in ins.agenti_cambiati({}, t)] == ["A1", "A3"],
+                   "agenti: senza installato.json si elencano tutti")
+        imp = {a: i for a, (_, i) in ins.impronte_agenti(t).items()}
+        f = t / "installato.json"
+        ins.scrivi_installato(f, "da119c9 2026-10-30", {"rubrica.md": "abc"}, {"A1": imp["A1"], "A3": imp["A3"]}, "Analista")
+        letto = ins.leggi_installato(f)
+        e.verifica(letto["versione"] == "da119c9 2026-10-30" and letto["utente"] == "Analista"
+                   and ins.agenti_cambiati(letto, t) == [], "agenti: installato.json scritto e riletto, niente da reincollare")
+        (t / "A3_Interim_Update.md").write_text("A3 v2", encoding="utf-8")
+        e.verifica([a for a, _ in ins.agenti_cambiati(letto, t)] == ["A3"], "agenti: si elenca solo quello cambiato")
+        f.write_text("{rotto", encoding="utf-8")
+        e.verifica(ins.leggi_installato(f) == {} and ins.leggi_installato(t / "manca.json") == {},
+                   "agenti: installato.json illeggibile o assente vale come prima installazione")
+    riep = {"fatto": [], "a_mano": []}
+    tutti = {a: i for a, (_, i) in ins.impronte_agenti().items()}
+    with contextlib.redirect_stdout(io.StringIO()):
+        segnati = installa.passo_agenti({}, riep, chiedi=lambda _: "n")
+    e.verifica(segnati == {} and riep["a_mano"] and set(tutti) >= {"A1", "A3", "A4", "A5", "A6", "A7", "A8"},
+               "agenti: risposta N, restano da reincollare (nel riepilogo)", riep)
+    with contextlib.redirect_stdout(io.StringIO()):
+        segnati = installa.passo_agenti({"agenti": {"A1": tutti["A1"]}}, riep, chiedi=lambda _: "s")
+    e.verifica(segnati == tutti and ins.agenti_cambiati({"agenti": segnati}) == [],
+               "agenti: risposta S, segnati come reincollati quelli elencati e quelli di prima", segnati)
+
+
 def main():
     e = Esito("Installazione e Verifica del PC (senza Excel)")
     test_moduli(e)
@@ -200,6 +340,10 @@ def main():
     test_notizie_manuali(e)
     test_verifica_pc(e)
     test_lanciatori(e)
+    test_versione_e_lanciatori(e)
+    test_kernel(e)
+    test_obsoleti(e)
+    test_agenti(e)
     return 0 if e.stampa() else 1
 
 

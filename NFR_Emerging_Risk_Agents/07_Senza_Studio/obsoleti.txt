@@ -1,0 +1,17 @@
+# File e cartelle dei pacchetti precedenti che non servono piu' (D-89). installa.cmd li cerca nella cartella del
+# pacchetto e, dopo una conferma, li sposta in _obsoleti_<data>: non si cancella niente.
+# Un percorso per riga, relativo alla cartella del pacchetto (quella dove si estrae lo zip), con la barra /.
+# Quando si toglie o si sposta un file del pacchetto, aggiungerlo qui (PROMPT_MASTER, trappola 142).
+
+# documenti di riferimento, dall'08/10 in 04_Riferimenti (D-78)
+NFR_Emerging_Risk_Agents/04_SharePoint
+NFR_Emerging_Risk_Agents/05_Workflow
+NFR_Emerging_Risk_Agents/06_Governance
+NFR_Emerging_Risk_Agents/08_Deploy
+
+# tassonomia della Banca, dal 09/10 in 04_Riferimenti (D-74)
+NFR_Emerging_Risk_Agents/01_Kernel/Tassonomia dei Rischi.csv
+
+# demo: allegato di A8 rinominato Input_A8 (D-84), raccolte di prova del 05/10
+Demo_W1_W2/1_Input_agenti/Input_A1_2026Q4-S1.txt
+Demo_W1_W2/News_Inbox/2026-10-05

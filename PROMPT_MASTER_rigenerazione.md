@@ -1708,6 +1708,17 @@ openpyxl (solo per il file delle schede). Moduli:
   `AutoSaveOn` (V-F), lucchetto preso e lasciato, appunti, link, collegamenti, attivita'); file in
   `Archivio_Cicli/Verifiche_PC/`; codice 1 solo con un NO. `chiedi_a5` (predefinito vero): con la casella A5 non
   spuntata, a precontrollo superato `flussi.valutazione` chiede se passare da A5.
+- **Aggiornamento con installa** (D-89): `installa.py` in testa legge `VERSIONE.txt` (radice; `$Format:%h %cs$` con
+  `export-subst` in `.gitattributes`: fuori da uno zip resta il segnaposto, "sviluppo") e `installato.json`
+  (`07_Senza_Studio`, fuori da git e dallo zip); undici passi: Python, moduli, lanciatori `.cmd.txt` -> `.cmd`
+  (`installa.cmd` diverso resta `.txt`: e' il batch in esecuzione), configurazione con le voci facoltative
+  mancanti, obsoleti prima del kernel (un file vecchio di `01_Kernel` non va copiato; `obsoleti.txt`, percorsi
+  relativi alla radice senza `..` ne' assoluti, in `_obsoleti_<data>/`; `__pycache__` tolte), kernel nella library (`differenze_kernel` per impronta a meno degli a capo; `copia_kernel` sposta i
+  sostituiti e `FUORI_DAL_KERNEL` in `<kernel>/_precedenti/<data>/` e scrive `versione_kernel.txt`;
+  `kernel_piu_recente` blocca un pacchetto di data precedente; library = `01_Kernel`: saltato; `sorgenti_kernel` salta i nomi di
+  `FUORI_DAL_KERNEL`), collegamenti, attivita', `attrib +P`, agenti (`agenti_cambiati` contro le impronte segnate; si segnano solo
+  con la risposta S), Verifica del PC; poi `installato.json` e il riepilogo (fatto / DA FARE A MANO). Ogni
+  conferma passa da `chiedi` (il collaudo la sostituisce).
 - **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
   poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
   prossimo passo, un pulsante per processo, passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
@@ -3114,6 +3125,21 @@ l'ultimo usato in tutti e due i rami.)
     righe "- " di un fermo restano quelle di `controlla_a6`: i due elenchi non si mescolano. La spiegazione di una
     Velocity non valutata e' esclusa dal minimo. Una risposta finta di A6 nei test deve rispettare i minimi dello
     schema (spiegazione almeno 40 caratteri), altrimenti `chiedi_ad_agente` la scarta e il flusso si interrompe.
+142. **Un file tolto dal pacchetto resta sul PC che lo aggiorna** (30/10, D-89). Estrarre lo zip sopra la cartella
+    sostituisce e aggiunge, non toglie: le cartelle spostate (D-78), la tassonomia uscita dal kernel, i file della demo
+    rinominati restano li', e chi legge il pacchetto in Banca li trova accanto a quelli nuovi. Chi toglie, sposta o
+    rinomina un file del pacchetto lo aggiunge a `07_Senza_Studio/obsoleti.txt` (percorso dalla radice, barra `/`);
+    il collaudo controlla che nessun percorso elencato esista nel pacchetto di adesso, quindi un file rimesso al suo
+    posto va tolto dall'elenco. Lo stesso per la library Kernel: un file che non deve piu' starci va in
+    `installazione.FUORI_DAL_KERNEL`.
+143. **Un `.cmd` in esecuzione non si sostituisce** (30/10, D-89). `cmd.exe` rilegge il batch dalla posizione in cui era
+    rimasto: se `installa.py` rinominasse `installa.cmd.txt` sopra l'`installa.cmd` che lo ha lanciato, al ritorno
+    `cmd` eseguirebbe pezzi di righe del file nuovo. `rinomina_lanciatori` lascia `installa.cmd.txt` se e' diverso e
+    lo dice nel riepilogo; se e' uguale toglie solo il `.txt`.
+144. **I file estratti da git su Windows hanno gli a capo di Windows** (30/10). Con `core.autocrlf=true` un `git pull`
+    riscrive i file di testo con CRLF, mentre gli zip annidati del kit fatti su un altro PC (la sessione cloud, Linux)
+    hanno LF: il confronto byte per byte del collaudo falliva senza nessuna differenza vera. I confronti fra un file
+    del pacchetto e la sua copia (kit, kernel nella library, prompt degli agenti) si fanno a meno degli a capo.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3136,7 +3162,8 @@ l'ultimo usato in tutti e due i rami.)
                   excel_com.py  controlli_a5.py  valida_output.py  schede.py  input_a1.py
                   precontrollo.py  radar.py  spiegazioni.py  diagnosi.py  lucchetto.py  configurazione_esempio.json
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
-                  installa.cmd  installa.py  installazione.py  verifica_pc.py  notizie_manuali.py  report_html.py
+                  installa.cmd  installa.py  installazione.py  obsoleti.txt  verifica_pc.py  notizie_manuali.py
+                  report_html.py
                   amministrazione.py  aiuto.py
                   NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md

@@ -1430,6 +1430,27 @@ A-20..A-24, A-17 con il mandato esteso; TODO P15. Nessun codice cambiato.
 
 **Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC.
 
+## 2-quinquetricesies. 30/10: `installa.cmd` come aggiornamento completo (D-89)
+
+Richiesta dell'utente ("l'installazione riconosce una versione gia' installata, cancella cio' che non serve e
+sovrascrive il resto?"), con il piano preparato dalla sessione cloud e approvato. Prima, sul PC di casa: cartella
+allineata a `da119c9` (le due righe su `Tassonomia dei Rischi.csv` erano gia' su GitHub), P14 del TODO ridotta al
+"so what" (le lunghezze le ha fatte la D-86), P15 della sessione cloud conservata.
+
+- `installa.py`: in testa versione del pacchetto (`VERSIONE.txt`, riempito da `git archive` con `export-subst`) e
+  installata (`installato.json`); passi nuovi: lanciatori `.cmd.txt` (3), voci facoltative della configurazione (4),
+  file dei pacchetti precedenti da `obsoleti.txt` in `_obsoleti_<data>` (5, prima del kernel: la prova sul pacchetto
+  estratto ha mostrato che una tassonomia vecchia rimasta in `01_Kernel` finiva nella library), kernel nella library
+  con `_precedenti` e `versione_kernel.txt` (6), agenti da reincollare (10); riepilogo finale. Opzioni `--senza-kernel`,
+  `--senza-obsoleti`. Funzioni senza effetti sul sistema in `installazione.py`.
+- Collaudo: `test_installazione.py` 53/53 (kernel, obsoleti, agenti, lanciatori, versione, predefiniti); il test del
+  kit in `test_controlli.py` confronta a meno degli a capo (dopo il `git pull` i file avevano CRLF e gli zip LF:
+  301/301); riferimenti 33/33. Trappole 142-144.
+- Documenti: guida 0.3 (undici passi) e 0-bis (punto 1), `AGGIORNAMENTO_IN_BANCA.md` (pacchetto del 30/10: a mano solo
+  l'estrazione e, per posta, `installa.cmd.txt`), 00_LEGGIMI, DECISIONI D-89, PROMPT_MASTER, TODO (M3).
+- Da fare: la prova in Banca su una copia sopra il pacchetto del 23/10; sul ramo `copilot-studio-pieno` `git merge
+  main` e `genera_CS.py`; la catena con Excel non e' stata rilanciata (nessun file della catena toccato).
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente
