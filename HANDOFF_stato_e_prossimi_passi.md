@@ -1423,6 +1423,11 @@ corti, l'app propone di farli allungare ad A6 nella stessa chat); analisi dell'e
 lunghezze e in C10 (dati `run4` allungati); A4 con un parere piu' disteso (prompt 6.089 caratteri; A6 6.040). Collaudo
 senza Excel: controlli 301/301, riferimenti 33/33, app 71/71. Trappola 141.
 
+**Confronto con una proposta esterna** (30/10, `Analisi_Architettura/19_Confronto_proposta_esterna.md`): valutazione
+punto per punto e note sulle slide (due copie annotate, interna e per i consulenti, consegnate in chat e non nel
+repository). L'utente ha dato per assodate le scale a 6 livelli con ripartenza da zero (A-19); decisioni aperte
+A-20..A-24, A-17 con il mandato esteso; TODO P15. Nessun codice cambiato.
+
 **Prossimo**: le verifiche in Banca (18.6) e il collaudo completo con Excel sul PC.
 
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
