@@ -20,7 +20,7 @@ import sys
 import types
 from pathlib import Path
 
-VERSIONE = "0ab42f3f015e"
+VERSIONE = "9c3483eeea03"
 
 SCHEMA_A1 = r'''{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -607,16 +607,18 @@ BLOCCANTE, DA_MOTIVARE, OSSERVAZIONE = "Bloccante", "Da motivare", "Osservazione
 # D-86: lunghezze dei testi di A1 (caratteri, spazi compresi): (chiave, testo, minimo, consigliato fino a). La stessa
 # tabella e' nella guida di scrittura (01_Kernel/guida_scrittura_A1.md, "Lunghezze dei testi"); il collaudo la confronta.
 # I massimi dello schema di A1 restano il limite; C10 guarda solo i minimi.
+# D-92 (03/11/2026): righe dei rischi portate a una fascia intermedia (circa il 40% in meno): con la fascia alta l'output
+# di A1 non stava nelle risposte di Copilot e il "continua" non funziona. Le righe di A8 (analisi dell'evento) restano.
 LUNGHEZZE = [
-    ("descrizione", "descrizione del rischio", 500, 900),
-    ("rischio", "razionale, parte RISCHIO:", 300, 450),
-    ("dimensione", "razionale, ogni parte IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (VELOCITY null esclusa)", 300, 400),
-    ("adeguamento", "razionale, parte ADEGUAMENTO: (se anni_adeguamento non e' null)", 150, 300),
-    ("evidenza", "evidenza di una variazione", 250, 500),
-    ("segnale", "segnale di avvicinamento (se lo scrivi)", 150, 300),
-    ("azione", "azione: descrizione", 200, 400),
-    ("azione_razionale", "azione: razionale (con EFFETTO:)", 300, 600),
-    ("kri_razionale", "KRI: razionale (con EFFETTO:)", 300, 600),
+    ("descrizione", "descrizione del rischio", 350, 600),
+    ("rischio", "razionale, parte RISCHIO:", 200, 300),
+    ("dimensione", "razionale, ogni parte IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (VELOCITY null esclusa)", 150, 250),
+    ("adeguamento", "razionale, parte ADEGUAMENTO: (se anni_adeguamento non e' null)", 100, 200),
+    ("evidenza", "evidenza di una variazione", 150, 300),
+    ("segnale", "segnale di avvicinamento (se lo scrivi)", 100, 200),
+    ("azione", "azione: descrizione", 120, 250),
+    ("azione_razionale", "azione: razionale (con EFFETTO:)", 150, 300),
+    ("kri_razionale", "KRI: razionale (con EFFETTO:)", 150, 300),
     ("evento", "ciclo straordinario, analisi_evento: evento", 300, 700),                          # D-88: A8
     ("catena_causale", "ciclo straordinario, analisi_evento: catena_causale", 600, 1300),
     ("effetto", "ciclo straordinario, analisi_evento: effetto su ogni rischio toccato", 150, 350),

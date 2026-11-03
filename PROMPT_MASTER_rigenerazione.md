@@ -741,8 +741,10 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   la frase "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" nella parte PROBABILITA quando le fonti
   non dicono se la Banca e' esposta): come A1 scrive la descrizione (3-5 frasi:
   meccanismo causa-evento-danno, dove tocca la Banca, perche' emergente; niente
-  punteggi; dal D-86 5-8 frasi e la tabella "Lunghezze dei testi" con minimo e consigliato per ogni testo, la
-  stessa di `controlli_a5.LUNGHEZZE`), il razionale in parti (per ogni valore: descrittore, fatto con
+  punteggi; dal D-86 la tabella "Lunghezze dei testi" con minimo e consigliato per ogni testo, la
+  stessa di `controlli_a5.LUNGHEZZE`; dal D-92 a fascia intermedia: descrizione 350-600, RISCHIO 200-300, ogni
+  dimensione 150-250, ADEGUAMENTO 100-200, evidenza 150-300, segnale 100-200, azione 120-250 e 150-300 il
+  razionale, KRI 150-300; A8 come D-88), il razionale in parti (per ogni valore: descrittore, fatto con
   documento e data, **perche' non il valore vicino**, da/a o fonti ancora
   valide; "Attribuisci a un documento solo cio' che il documento dice"), le
   azioni (verbo, oggetto, risultato verificabile; quale anello interrompe;
@@ -1968,12 +1970,14 @@ openpyxl (solo per il file delle schede). Moduli:
     `AGGIORNAMENTO_IN_BANCA.md`); niente numeri che invecchiano; i codici non cambiano.
   - **Sezione 0**: quadro, in sospeso, prossimo passo, decisioni che aspettano.
     **Sezione 1**: ordine di lavoro con lo stato, in questa successione: in sospeso;
-    pacchetto in Banca e verifiche (B1-B4, B5-bis); scale a 6 livelli (A-19, prima del
-    primo ciclo vero); P4, P9, P14; ciclo di prova e qualita' (B7, B9, B6, B8); P1; P5;
+    pacchetto in Banca e verifiche (B1-B4, B5-bis); P17 (testi dei rischi esistenti
+    aggiornati, non riscritti; AU9, A1 a lotti, se la prova lo chiede); scale a 6 livelli
+    (A-19, prima del primo ciclo vero); P4, P16, P9, P14; ciclo di prova e qualita' (B7, B9, B6, B8); P1; P5;
     P2, P7, P6; dopo il ciclo vero P13, P12, resto di P15, revisione della procedura;
     in parallelo AU5 (demo), Q1, G1/G3/G2, G6.
   - Sezioni seguenti: passi sul PC della Banca; processi; automazione del processo
-    (tabella delle tappe M1-M5, fatte; resta la demo attraverso i flussi, AU5); Q1;
+    (tabella delle tappe M1-M5, fatte; restano la demo attraverso i flussi, AU5, e la
+    revisione della finestra con i pulsanti per cadenza, AU8, e A1 a lotti, AU9); Q1;
     grafici; pulizia; questioni aperte; **9 Fatto**, una riga per voce; **9-bis
     Superate**, con il motivo e il posto dove resta il contenuto (prove B5 della CS-1,
     K14, AU6, coda delle richieste, variante CS-2); **10 in riserva**: piano 07,
@@ -3137,6 +3141,12 @@ l'ultimo usato in tutti e due i rami.)
     ma `verifica_riferimenti.py` leggeva da li' i campi derivati e il doppio run era citato da collaudo, governance e
     mappa. Prima di archiviare si cercano le citazioni, anche nel codice e nel kernel, si spostano le parti vive e
     il file vecchio va in `obsoleti.txt` (trappola 142).
+148. **La lunghezza dei testi di A1 si paga nella risposta di Copilot** (03/11, D-92). Con la fascia alta della D-86
+    un ciclo di 13-15 rischi valeva 70-90.000 caratteri (circa 5.000 per rischio): nessuna risposta di Agent Builder
+    lo contiene e il "continua" non funziona (A1 ricomincia da capo o dice di non avere altro). Prima di alzare una
+    lunghezza si moltiplica per i testi del rischio (le quattro dimensioni del razionale pesano quattro volte) e per i
+    rischi del ciclo; la guida dice ad A1 di non superare il consigliato. Il test della somma dei minimi in
+    `test_controlli.py` taglia il razionale a una lunghezza senza spazio in coda: C10 misura il testo con `strip()`.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 

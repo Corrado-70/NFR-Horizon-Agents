@@ -1196,24 +1196,24 @@ def test_lunghezze(e):
         return [r for r in controlli_a5.controlla(p, b)["rilievi"] if r["controllo"] == "C10"]
     r = c10(lambda p: rischio(p, "NFR-01").update(descrizione="Frodi con voce sintetica sui bonifici istantanei."))
     e.verifica(len(r) == 1 and r[0]["id_rischio"] == "NFR-01" and r[0]["gravita"] == "Osservazione"
-               and "descrizione 49 caratteri (minimo 500)" in r[0]["descrizione"],
+               and "descrizione 49 caratteri (minimo 350)" in r[0]["descrizione"],
                "C10: descrizione corta = un'Osservazione sul rischio, con lunghezza e minimo", r)
     r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"].replace(
         "IMPATTO: grave.", "IMPATTO: grave. FINE.", 1).split("FINE.")[0] + "PROBABILITA:" +
         rischio(p, "NFR-01")["razionale"].split("PROBABILITA:", 1)[1]))
-    e.verifica(len(r) == 1 and "razionale IMPATTO 6 caratteri (minimo 300)" in r[0]["descrizione"],
+    e.verifica(len(r) == 1 and "razionale IMPATTO 6 caratteri (minimo 150)" in r[0]["descrizione"],
                "C10: una parte del razionale corta (IMPATTO) e' segnalata con il suo nome", r)
     r = c10(lambda p: [a.update(descrizione="Formare il personale.") for a in rischio(p, "NFR-01")["azioni_mitigazione"]]
             + [k.update(razionale="Misura il fenomeno.") for k in rischio(p, "NFR-01")["kri_proposti"]])
     e.verifica(len(r) == 1 and "azione 1, descrizione 21 caratteri" in r[0]["descrizione"]
-               and "KRI di Evoluzione, razionale 19 caratteri (minimo 300)" in r[0]["descrizione"],
+               and "KRI di Evoluzione, razionale 19 caratteri (minimo 150)" in r[0]["descrizione"],
                "C10: azioni e KRI corti in un solo rilievo per rischio", r)
     senza_velocity = next(x for x in run3["rischi"] if x.get("velocity") is None and "VELOCITY:" in x["razionale"])
     e.verifica(not controlli_a5.testi_corti(dict(senza_velocity, razionale=senza_velocity["razionale"].split("VELOCITY:")[0]
                                                   + "VELOCITY: nessuna fonte documenta i tempi.")),
                "C10: con Velocity non valutata la parte VELOCITY puo' essere breve")
-    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"][:1200]), RUN1, BASE_Q3)
-    e.verifica(len(r) == 1 and "razionale (senza le parti) 1200 caratteri (minimo 1500)" in r[0]["descrizione"],
+    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"][:650]), RUN1, BASE_Q3)
+    e.verifica(len(r) == 1 and "razionale (senza le parti) 650 caratteri (minimo 800)" in r[0]["descrizione"],
                "C10: un razionale senza etichette si misura intero, contro la somma dei minimi delle parti", r)
     a5 = {"rilievi": [{"controllo": "C10", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Testi corti"},
                       {"controllo": "C3", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Evidenza vaga"}]}

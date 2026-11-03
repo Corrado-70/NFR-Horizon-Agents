@@ -235,6 +235,10 @@ rischio e lo porta in validazione come Osservazione: non ferma il ciclo. Il
 precontrollo propone di farli allungare ad A1 nella stessa chat; chi lavora
 puo' dire di no e proseguire. Un razionale senza le etichette (scritto prima
 della D-68) si misura intero, contro la somma dei minimi delle sue parti.
+Dal 03/11 (D-92) le righe dei rischi sono a una fascia intermedia (descrizione
+350-600, ogni dimensione 150-250, azioni e KRI 150-300): con la fascia alta
+l'output di A1 non stava nelle risposte di Copilot e il "continua" non
+funzionava. Le righe dell'analisi dell'evento di A8 non cambiano.
 
 ## Esito
 "Da rivedere" se almeno un Bloccante. Dal 06/10 (D-71) A5 e' **facoltativo** e

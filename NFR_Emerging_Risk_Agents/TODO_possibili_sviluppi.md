@@ -3,7 +3,7 @@
 **Da qui si parte.** Questo file dice a che punto e' il lavoro su `main` e che cosa viene dopo: per riprendere basta la
 sezione 0. Ogni voce aperta dice perche' serve, cosa fare e come capire che e' fatta.
 
-**Aggiornato al 30/10/2026.**
+**Aggiornato al 03/11/2026.**
 
 Come si tiene vivo, a ogni intervento:
 1. all'inizio si legge la sezione 0; alla fine si aggiornano la data, il quadro, gli impegni in sospeso e il prossimo
@@ -24,8 +24,9 @@ Sezioni:
 0. da dove si riparte;
 1. ordine di lavoro;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
-3. processi (P1, P2, P4, P5, P6, P7, P9, P12, P13, P14, P15);
-4. automazione del processo: l'app di orchestrazione, fatta; resta la demo (AU5);
+3. processi (P1, P2, P4, P5, P6, P7, P9, P12, P13, P14, P15, P16, P17);
+4. automazione del processo: l'app di orchestrazione, fatta; restano la demo (AU5), la revisione della finestra (AU8) e
+   A1 a lotti (AU9);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
@@ -39,8 +40,8 @@ Sezioni:
 |---|---|
 | Obiettivo | primo ciclo vero **2026Q4**, primo run di A1 a inizio gennaio 2027 (D-22) |
 | Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
-| Ultimo commit | 30/10: istruzioni del pacchetto con D-90 e D-91; non ancora su GitHub |
-| Ultimo pacchetto preparato | 30/10, zip per la posta con D-90 e D-91 (il commit e' nel nome dello zip); preparato prima del collaudo con Excel |
+| Ultimo commit | 03/11: lunghezze dei testi di A1 a fascia intermedia (D-92), voci P16, P17, AU8, AU9; non ancora su GitHub |
+| Ultimo pacchetto preparato | 03/11, zip per la posta con D-92 (il commit e' nel nome dello zip); istruzioni del delta dal 30/10 in testa ad `AGGIORNAMENTO_IN_BANCA.md`; preparato prima del collaudo con Excel |
 | In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
 | Ramo `copilot-studio-pieno` | allineato a `main` il 30/10, tranne l'ultimo commit (sole istruzioni del pacchetto); strada del motore da capire (D-91); ha il suo registro |
 
@@ -50,9 +51,10 @@ Sezioni:
 |---|---|---|
 | 1 | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa): non rilanciato dopo M4, M5, D-86 e D-90 | da fare |
 | 2 | `esegui_demo.py` con `REPORT_demo.md` sui testi lunghi (D-86), poi la presentazione | da fare |
-| 3 | Push dell'ultimo commit e `git merge main` nel ramo | quando l'utente lo chiede |
+| 3 | Push dell'ultimo commit e `git merge main` nel ramo (con D-92: sul ramo rilanciare `genera_CS.py`) | quando l'utente lo chiede |
+| 4 | In Banca, con il pacchetto nuovo: la risposta di A1 con le lunghezze della D-92 arriva intera? Se si taglia ancora, AU9 | da provare (B7) |
 
-**Prossimo passo**: i punti 1-3 qui sopra, poi il pacchetto in Banca e le sue verifiche (B1-B4, B5-bis).
+**Prossimo passo**: i punti 1-3 qui sopra, poi il pacchetto in Banca e le sue verifiche (B1-B4, B5-bis). Da decidere con l'utente il disegno di **P17** (testi dei rischi esistenti aggiornati, non riscritti).
 
 **Decisioni che aspettano** (il testo e' in DECISIONI):
 
@@ -73,14 +75,17 @@ migliorare la qualita' dei contenuti.
 |---|---|---|---|---|
 | 0 | **In sospeso** (sezione 0) | pacchetto, demo e documenti devono essere allineati prima di andare in Banca | circa 0,5 | in corso |
 | 1 | **B1-B4, B5-bis**: pacchetto in Banca e verifiche dell'app | tutto il resto si appoggia su un'installazione allineata | 1-2 | in corso (prima prova il 29/10) |
+| 1-bis | **P17** testi dei rischi esistenti aggiornati, non riscritti | indicazione dell'utente del 03/11 ("molto importante"): un rischio confermato non deve perdere i testi validati; riduce anche l'output di A1 a ogni ciclo dopo il primo. Tocca lo schema di A1 come A-19: da fare prima o insieme | 2-3 | da decidere il disegno con l'utente |
 | 2 | **P15, punto 1**: scale a 6 livelli e registro nuovo (A-19), con i driver (A-24) | A-19 va fatta prima del ciclo vero: cambia rubrica, schemi e registro, che riparte da zero. Viene prima delle voci piccole, che toccano gli stessi testi | 4-6 | su richiesta dell'utente |
-| 3 | **P4** rapporti di scenario, **P9** temi da verificare, **P14** il "so what" nei testi di A1 | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori, le richieste dell'analista restano tracciate, le schede dicono che cosa significa ogni rischio per la Banca | circa 1,5 | da fare |
+| 3 | **P4** rapporti di scenario, **P16** meccanismi anche solo potenziali, **P9** temi da verificare, **P14** il "so what" nei testi di A1 | piccole, migliorano subito la qualita' del trimestrale: A1 legge i rapporti di analisti e regolatori e censisce anche cio' che e' solo potenziale, le richieste dell'analista restano tracciate, le schede dicono che cosa significa ogni rischio per la Banca | circa 2 | da fare |
 | 4 | **B7** ciclo di prova, **B9** qualita' di A1 e A8, **B6** prova di A7; **B8** (K15) se c'e' tempo | il collaudo di qualita' prima del ciclo vero, sulla versione con le voci dei passi 2 e 3 | in Banca, con le attese | da fare |
 | 5 | **P1** segnali qualitativi per dimensione e pressione sul radar | e' il pezzo che manca di piu' al settimanale, ma non cambia il primo trimestrale: si comincia solo se finisce prima di gennaio | 2-3 | da fare |
 | 6 | **P5** rischi collegati | un evento che tocca piu' rischi resta leggibile come un insieme; con il registro unico capitera' piu' spesso | 2-3 | da fare |
 | 7 | **P2**, **P7**, **P6** | presentazione: scia sul radar, riepilogo mensile, scheda per tema | 2-3 | da fare |
 | dopo il ciclo vero | **P13** (diagnosi con la funzione di rischio), **P12** se K15 dice che serve, gli altri punti di **P15**, **revisione della procedura** (sezione 8) | servono i dati e l'esperienza di un ciclo vero | | |
 | in parallelo | **AU5** demo attraverso i flussi (sezione 4) | copre i flussi oggi provati solo con l'Ambiente finto | circa 1 | da fare |
+| subito dopo il passo 1, se serve | **AU9** A1 a lotti (sezione 4) | il "continua" non funziona: se la risposta di A1 si taglia anche con le lunghezze della D-92, il ciclo di prova non si chiude | circa 1-1,5 | da fare se la prova lo chiede |
+| in parallelo, prima del passo 4 | **AU8** revisione della finestra (sezione 4) | il ciclo di prova deve usare la finestra definitiva, e il primo ciclo vero la usano piu' analisti | circa 1 | da fare |
 | in parallelo | **Q1** nota di metodo (il prototipo dopo il passo 6) | e' soprattutto lavoro della Banca (stime degli esperti) | nota 1-2, prototipo 3-5 | da fare |
 | in parallelo | **G1, G3, G2**; **G6** quando servira' leggere A1 accanto ai controlli prima della scrittura | toccano solo il generatore o sono strumenti di lettura | circa 2 | da fare |
 | sempre | **G5** difetti estetici, **sezione 8** questioni aperte | quando capitano | | |
@@ -122,7 +127,7 @@ Decisioni dell'utente che fanno da cornice:
 | Trimestrale su rapporti approfonditi di analisti e regolatori | in parte: vigilanza e cyber arrivano come notizie; nessun canale per i rapporti da leggere per intero | **P4** |
 | Temi che l'analista chiede di verificare | in parte: si scrivono nel messaggio ad A1, non restano tracciati | **P9** |
 | Report aggiornato, non rifatto, e ciclo straordinario | c'e' (Confermato/Variato/Nuovo, al piu' un punto; straordinario D-75, A8 D-77) | — |
-| Fenomeni lontani o quasi impossibili oggi | c'e': rischi in osservazione del registro unico (D-79) | — |
+| Fenomeni lontani o quasi impossibili oggi | c'e': rischi in osservazione del registro unico (D-79); il testo per A1 non dice ancora che basta un meccanismo potenziale | **P16** |
 | Settimanale: analisi su tutti i rischi toccati | in parte: nove intensita' per notizia, un solo rischio collegato | **P1** |
 | Settimanale: trend dei rischi esistenti e pressione visibile sul radar | in parte: segnali netti, flag, soglia 3 in 4 settimane; il radar non mostra la pressione | **P1** |
 | Spot: impatto per dimensione | in parte: A4 indica il descrittore messo in discussione | **P1** |
@@ -233,6 +238,63 @@ Decisioni dell'utente che fanno da cornice:
   `genera_CS.py`.
 - **Impegno**: circa 4-6 giorni per le scale, piu' un ciclo di prova; poi da mezza giornata a 4 giorni per voce (19.11).
 
+### P16. Horizon scan: meccanismi di perdita anche solo potenziali (indicazione dell'utente del 30/10/2026)
+
+- **Perche'**: il sistema e' un horizon scan: i meccanismi di perdita possono essere molto potenziali. Le regole li
+  ammettono (Probabilita 1 "solo teorica", Prossimita 1 "oltre 3 anni", rischi in osservazione), ma non lo dicono
+  apertamente e tre punti spingono A1 verso cio' che e' gia' visibile:
+  - "meccanismo di perdita per la Banca" non dice che basta un meccanismo plausibile, senza casi avvenuti;
+  - `fonte_non_specifica` chiede una fonte "datata nella finestra del ciclo": un rapporto di foresight di un anno fa
+    non basta a censire un fenomeno. Il limite sta nella guida, non nel codice: C5 ferma solo le fonti datate dopo la
+    data di riferimento;
+  - il passo 4 del prompt dice "parti dai driver sotto pressione", cioe' dal presente, e nessuna istruzione chiede di
+    cercare i segnali deboli.
+- **Cosa fare**:
+  1. nella guida di scrittura (sezioni "Fenomeni considerati e non censiti" e "Radar e osservazione"): il meccanismo puo'
+     essere potenziale, non serve un caso avvenuto; `nessun_meccanismo` vale solo se il tema non potrebbe toccare
+     processi, sistemi, fornitori o clientela della Banca;
+  2. per un rischio nuovo in osservazione basta una fonte precedente alla finestra del ciclo, con la sua data (scelta
+     dell'utente del 30/10). Per cambiare un valore resta la regola di C3: evidenza datata nel ciclo;
+  3. nella guida una riga sulla ricerca dei segnali deboli (il prompt e' al limite degli 8.000 caratteri).
+- **Tocca**: `01_Kernel/guida_scrittura_A1.md`, documentazione di A1, demo, guida passo passo, PROMPT_MASTER; collaudo se
+  cambia un controllo. Modifica comune: nasce su `main`. Lavora insieme a P4 e A-22, che portano ad A1 le fonti di
+  orizzonte.
+- **Fatto quando**: nel ciclo di prova (B9) un fenomeno senza casi avvenuti, sostenuto da un rapporto di scenario, entra
+  come rischio in osservazione con orizzonte e segnale di avvicinamento, e `fenomeni_non_censiti` non lo scarta per
+  `nessun_meccanismo` o `fonte_non_specifica`.
+- **Impegno**: circa mezza giornata.
+
+### P17. Testi dei rischi esistenti: aggiornare e integrare, non sostituire (indicazione dell'utente del 03/11/2026)
+
+- **Perche'**: a ogni trimestre A1 riscrive da capo descrizione, razionale, azioni e KRI di tutti i rischi del radar.
+  Il testo validato del ciclo prima si perde, anche quando non e' cambiato niente, e chi legge il registro non vede
+  che cosa e' nuovo. Riscrivere costa anche lunghezza: e' la parte piu' grande dell'output di A1 (D-92, AU9).
+  L'allegato oggi non aiuta: la baseline porta il razionale dei rischi, ma **non la descrizione**
+  (`input_a1.py`, chiavi dei rischi della baseline), quindi A1 non puo' che riscriverla.
+- **Cosa fare** (disegno da decidere con l'utente):
+  1. la baseline porta anche la descrizione dei rischi;
+  2. per un rischio esistente A1 scrive solo cio' che cambia:
+     - descrizione: resta quella validata; A1 la riscrive solo se cambia il meccanismo, altrimenti puo' aggiungere
+       un'integrazione breve (che cosa c'e' di nuovo nel ciclo);
+     - razionale: riscrive le parti delle dimensioni che cambiano; per le altre aggiunge solo le fonti nuove che le
+       sostengono, oppure le lascia com'erano;
+     - azioni e KRI in vigore: non si riscrivono; A1 propone solo quelli nuovi (le regole C8 e del riuso del kri_id ci
+       sono gia');
+  3. lo script ricompone il testo intero dalla baseline e dalle integrazioni (come fa gia' `completa_payload` per i
+     "da/a"); C10 misura solo i testi che A1 scrive; il validatore vede che cosa e' nuovo (colonna o segno nella
+     griglia);
+  4. da decidere: l'integrazione si accoda con la data del ciclo o si fonde nel testo; come evitare che la descrizione
+     cresca senza fine (per esempio una riscrittura consolidata una volta l'anno, o quando supera il massimo dello
+     schema); che cosa fanno A8 (straordinario) e la riapertura.
+- **Tocca**: schema di A1 (campi facoltativi o nuovi per i rischi esistenti), `input_a1.py`, `completa_payload`,
+  controlli C1-C10, guida di scrittura, prompt di A1 (al limite: la regola va nella guida), schede (A6 legge i testi
+  interi dal registro), demo e dati di prova, collaudo, documentazione. Modifica comune: nasce su `main`. Lavora con
+  A-19 (registro nuovo) e AU9.
+- **Fatto quando**: in un ciclo di prova un rischio confermato senza variazioni arriva nel registro con la descrizione e
+  il razionale del ciclo prima, piu' l'eventuale integrazione, e l'output di A1 per quel rischio e' una frazione di
+  quello di oggi.
+- **Impegno**: circa 2-3 giorni, dopo la scelta del disegno.
+
 ### P1. Segnali qualitativi per dimensione e pressione sul radar (settimanale e spot)
 
 - **Perche'**: oggi fra un trimestre e l'altro il radar non dice quali rischi sono sotto pressione, e il settimanale
@@ -321,6 +383,55 @@ file; piu' analisti sullo stesso registro; niente coda delle richieste.
   parti, correzione dopo un fermo.
 - **Fatto quando**: la demo passa dai flussi e le voci `[~]` e `[ ]` di F5 in 18 diventano `[x]`.
 - **Impegno**: circa 1 giorno.
+
+### AU8. Revisione della finestra: pulsanti parlanti, organizzati per processo (richiesta dell'utente del 30/10/2026)
+
+- **Perche'**: oggi i pulsanti dei processi sono undici in una griglia unica, in un ordine che non dice quando si usa
+  ciascuno. I nomi sono di una parola ("Schede", "Report", "Diagnosi", "Dismetti") e la spiegazione compare solo passando
+  con il mouse. Chi apre l'app deve sapere gia' quale processo gli serve.
+- **Cosa fare**:
+  1. raggruppare i pulsanti per cadenza, in riquadri con il titolo, ognuno nell'ordine in cui si fanno i passi. Proposta
+     di partenza, da confermare con l'utente:
+
+     | Riquadro | Pulsanti |
+     |---|---|
+     | Ogni settimana | Settimana |
+     | Ogni trimestre | Trimestre, Schede, Diagnosi |
+     | All'occorrenza | Straordinario, Riapri un ciclo, Report (serve dopo una correzione a mano: `valida` lo rifa' gia'), Parere di A4, Chiedi ad A7, Dismetti |
+
+     Validazione serve sia alla settimana sia al trimestre: da decidere se un pulsante solo fuori dai riquadri o uno
+     per riquadro;
+  2. nomi che dicono l'azione e non l'oggetto (per esempio "Valuta le notizie della settimana", "Prepara le schede dei
+     rischi", "Rifai il report al comitato"), da scegliere con l'utente, senza allargare troppo la finestra;
+  3. "Prossimo passo" resta in alto, fuori dai riquadri, e la casella di A5 va accanto ai processi che la usano.
+- **Tocca**: `app_nfr.py`; `aiuto.py` legge suggerimenti e aiuto per nome dalla guida (tabella "I processi", sezioni
+  "Pulsante ..."), quindi i nomi cambiano insieme nella guida; i messaggi di `flussi.py` e `stato.py` che nominano i
+  pulsanti; `test_app.py`; presentazione (immagine `app_finestra.png`); `AGGIORNAMENTO_IN_BANCA.md`. I processi e il
+  motore non cambiano. Solo su `main`: il ramo `copilot-studio-pieno` non usa l'app.
+- **Fatto quando**: chi non conosce l'app trova il pulsante giusto senza passare il mouse e senza aprire la guida; la
+  finestra resta leggibile con la scala di Windows al 100, 125 e 150%; `test_app.py` e' verde e ogni pulsante ha il suo
+  suggerimento e la sua sezione di aiuto.
+- **Impegno**: circa 1 giorno, piu' la scelta dei nomi.
+
+### AU9. A1 a lotti, al posto del "continua" (segnalazione dell'utente del 03/11/2026)
+
+- **Perche'**: in Agent Builder il "continua" nella stessa chat non funziona: A1 a volte ricomincia da capo, a volte
+  dice che non ha altro da aggiungere. Con la D-92 l'output di A1 scende di circa il 40% (sulla demo da circa 4.900 a
+  circa 3.000 caratteri per rischio), ma un ciclo di 15-20 rischi resta di 45-60.000 caratteri. Se la risposta si
+  taglia ancora, il ciclo di prova non si chiude.
+- **Cosa fare**:
+  1. A1 consegna il ciclo in piu' risposte, ognuna un JSON completo: per esempio rischi del radar a gruppi di 5, poi
+     rischi nuovi e in osservazione, fenomeni non censiti e ricalcolo dei KRI. Da decidere con l'utente se il lotto lo
+     chiede l'app (messaggio "Lotto 2: rischi NFR-06...NFR-10" negli appunti) o se A1 si ferma da se' a fine lotto;
+  2. l'ingresso dell'app riconosce i lotti dello stesso ciclo, li unisce e passa al precontrollo solo il ciclo intero;
+  3. la regola sta nella guida di scrittura (il prompt di A1 e' al limite degli 8.000 caratteri); lo schema di A1 non
+     cambia se l'unione la fa l'app.
+- **Tocca**: `ingresso.py`, `flussi.py`, guida di scrittura di A1, `test_app.py`, guida passo passo; A8 se servira'
+  anche a lui. Da valutare la stessa cosa sul ramo `copilot-studio-pieno` (nella prova K6-ter A1 in Copilot Studio ha
+  scritto 27.500 caratteri in una risposta).
+- **Fatto quando**: un ciclo di 15 rischi arriva intero in Banca senza "continua", e il precontrollo lo legge come un
+  output solo.
+- **Impegno**: circa 1-1,5 giorni.
 
 ## 5. Quantificazione per i rischi piu' rilevanti
 
@@ -472,6 +583,7 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | Aiuto nell'app | Pulsante Aiuto (F1) e suggerimenti sui pulsanti, letti dalla guida | 29/10 | — | `aiuto.py` |
 | P14 (lunghezze) | Lunghezze minime dei testi e controllo C10 per A1 e A8; testi piu' lunghi per A6 e A4 | 29/10 | D-86, D-88 | guida di scrittura di A1, `controlli_a5.py`, `schede.py` |
 | A7 in prima persona | A7 risponde come autore delle valutazioni | 29/10 | D-87 | modello di A7 |
+| Lunghezze di A1 ridotte | Fascia intermedia delle lunghezze dei testi dei rischi (circa il 40% in meno), perche' l'output di A1 stesse nelle risposte di Copilot | 03/11 | D-92 | guida di scrittura di A1, `controlli_a5.py` |
 | Testi a mano in Admin | Con copia del registro e atto; il report si rifa' a fine correzione | 30/10 | D-90 | `amministrazione.py`; guida, 3-ter |
 | A-11 e PROMPT_MASTER | Variante Power Automate archiviata, parti vive spostate; PROMPT_MASTER allineato a D-83 | 30/10 | D-91 | `struttura_e_liste.md`, `controlli_e_model_risk.md` sezione 7, `Analisi_Architettura/Archivio` |
 

@@ -1508,6 +1508,28 @@ Decisioni dell'utente: "archivia la variante"; su `main` Python di sicuro; sul r
 - Pacchetto per la posta del 30/10 con D-90 e D-91: `AGGIORNAMENTO_IN_BANCA.md` aggiornato (cinque file del kernel, passo per
   chi ha gia' `aa7aea9`, verifica dei testi a mano). Preparato prima del collaudo completo con Excel.
 
+## 2-novotricesies. 03/11: lunghezze dei testi di A1 a fascia intermedia (D-92)
+
+Segnalazione dell'utente: con le lunghezze della D-86 le risposte di A1 sono troppo lunghe per Copilot e il "continua"
+non funziona (nella stessa chat A1 a volte ricomincia da capo, a volte dice che non ha altro da aggiungere). Scelta
+dell'utente: limare le lunghezze (strada 1 di tre: le altre erano la consegna a lotti e i testi invariati dei rischi
+confermati).
+
+- Misura sulla demo: il ciclo 2026Q3 (13 rischi) era 30.000 caratteri prima della D-86 e 68.000 dopo (circa 4.900 per
+  rischio, di cui 1.600 di razionale); il 2026Q4 89.000. Prima della D-86 la guida diceva solo 3-5 frasi per la
+  descrizione e 2-3 per la parte RISCHIO, senza caratteri.
+- `controlli_a5.LUNGHEZZE` e tabella della guida di scrittura: descrizione 350-600, RISCHIO 200-300, ogni dimensione
+  150-250, ADEGUAMENTO 100-200, evidenza 150-300, segnale 100-200, azione 120-250 (razionale 150-300), KRI 150-300;
+  righe di A8 invariate. Circa il 40% in meno per rischio. La guida dice ora 3-5 frasi per la descrizione, 2-3 per
+  RISCHIO e per ogni dimensione, e di non superare il consigliato.
+- Collaudo: prove di C10 in `test_controlli.py` sui minimi nuovi; kit di Copilot Studio rigenerato
+  (`prepara_kit.py`). Suite veloci verdi (controlli 301/301, riferimenti 31/31, app 75/75, prompt); catena con Excel
+  non rilanciata (C10 non tocca il registro). Dati di prova e demo invariati: restano sopra i minimi nuovi.
+- Non cambia nessun prompt: la tabella arriva ad A1 e ad A5 negli allegati. In Banca: ricaricare
+  `guida_scrittura_A1.md` nella library Kernel.
+- Aperta la voce AU9 (A1 a lotti): se anche con le lunghezze nuove la risposta si taglia, il "continua" non e' una
+  strada.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente

@@ -1,4 +1,4 @@
-# Aggiornamento sul PC della Banca — pacchetto del 30/10/2026
+# Aggiornamento sul PC della Banca — pacchetto del 03/11/2026
 
 Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 (`NFR-Horizon-Agents_<data>_<commit>.zip`) e nel file `VERSIONE.txt` della cartella del pacchetto; `installa.cmd` lo
@@ -7,8 +7,41 @@ scrive in testa, accanto alla versione gia' installata. I riferimenti fra parent
 installato; se il PC non ha ancora il pacchetto del 23/10, anche i passi dell'appendice in fondo che `installa.cmd`
 non fa (sono indicati li').
 
-**Se il PC ha gia' lo zip del 30/10 con commit `aa7aea9`**: si rifanno i passi 0-2. Nessun agente da reincollare, se
-allora si era risposto S; nel kernel cambia solo `mappatura_campi.json`.
+## Aggiornamento rapido: il PC ha gia' il pacchetto del 30/10
+
+Vale se `installa.cmd` e' gia' stato lanciato con lo zip del 30/10 (commit `7d689ae` o `aa7aea9`: lo dice la riga
+`Pacchetto:` in testa a `installa.cmd`, oppure `VERSIONE.txt` nella cartella del pacchetto). Altrimenti si segue tutto
+il documento, dai passi in giu'.
+
+Che cosa cambia rispetto al 30/10:
+- **lunghezze dei testi di A1 ridotte** (D-92): con quelle del 29/10 la risposta di A1 non stava in Copilot e il
+  "continua" non funzionava. Ora descrizione 350-600 caratteri, ogni parte del razionale 150-250, azioni e KRI
+  150-300 (tabella completa nella parte 3 di `Input_A1_<ciclo>.txt`);
+- nel kernel cambia **solo `guida_scrittura_A1.md`**; nessun agente da reincollare (A5 riceve la tabella nuova dal suo
+  allegato); struttura del registro invariata, niente `aggiorna-registro`;
+- il resto e' documentazione (registro vivo, decisioni, analisi).
+
+Passi:
+1. Chiudere l'app, Excel e il registro; copiare per sicurezza la cartella del pacchetto com'e' adesso.
+2. Estrarre lo zip nella cartella del pacchetto, sostituendo i file. Zip per la posta (`..._posta.zip`): rinominare
+   `07_Senza_Studio\installa.cmd.txt` in `installa.cmd` (sostituendo quello che c'e'); gli altri due `.cmd.txt` li
+   rinomina `installa.cmd`.
+3. Doppio clic su `07_Senza_Studio\installa.cmd`:
+   - in testa: `Pacchetto: <commit> 2026-11-03` accanto alla versione installata;
+   - configurazione: controllare e premere **Salva** (non cambia niente);
+   - file dei pacchetti precedenti: nessuno nuovo; se ne elenca, **S**;
+   - **Kernel**: deve elencare come cambiato solo `guida_scrittura_A1.md`; rispondere **S** (il file di prima resta in
+     `Kernel\_precedenti\<data>`). Senza questa copia A1 riceve ancora le lunghezze del 29/10;
+   - agenti: deve dire "OK: le istruzioni degli agenti sono quelle gia' reincollate". Se ne elenca qualcuno, e' perche'
+     al 30/10 si era risposto N: reincollare quelli;
+   - riepilogo e Verifica del PC: le righe "DA FARE A MANO" e NO come al solito.
+4. Verifica, al primo trimestre di prova (B7):
+   - `Archivio_Cicli\...\Input_A1_<ciclo>.txt`, parte 3: la tabella "Lunghezze dei testi" con descrizione **350 | 600**;
+   - la risposta di A1 arriva intera? Se l'app dice "Risposta tagliata", annotare quante volte e che cosa fa A1 al
+     "continua" (ricomincia, si ferma, prosegue): serve per decidere la voce AU9 (A1 a lotti);
+   - se A1 scrive sotto i minimi, il precontrollo lo dice (C10) come prima.
+
+Esiti da annotare nel registro vivo (`NFR_Emerging_Risk_Agents/TODO_possibili_sviluppi.md`, sezione 2, B1 e B7).
 
 ## Che cosa porta questo pacchetto
 
@@ -34,11 +67,12 @@ allora si era risposto S; nel kernel cambia solo `mappatura_campi.json`.
 - **Amministrazione** (tappa M5, pulsante **Admin...** della finestra, D-85): pulizia dell'archivio,
   ritorno a un ciclo validato, ripartenza da zero, annullamento; niente si cancella subito, tutto va nel parcheggio
   con l'atto (3-quater).
-- **Testi di A1 piu' lunghi e controllo C10** (D-86): la guida di scrittura fissa per ogni testo un minimo e un
-  consigliato (descrizione 500-900 caratteri, ogni parte del razionale 300-400, azioni e KRI 300-600...); un testo
-  piu' corto e' il rilievo **C10**: per A5 un Bloccante, nel precontrollo l'app chiede se farlo allungare ad A1 nella
-  stessa chat (si puo' dire di no), in validazione un'Osservazione. Le risposte di A1 diventano circa il doppio: piu'
-  spesso servira' "continua".
+- **Testi di A1 piu' lunghi e controllo C10** (D-86, lunghezze riviste dalla D-92 del 03/11): la guida di scrittura
+  fissa per ogni testo un minimo e un consigliato (descrizione 350-600 caratteri, ogni parte del razionale 150-250,
+  azioni e KRI 150-300...); un testo piu' corto e' il rilievo **C10**: per A5 un Bloccante, nel precontrollo l'app
+  chiede se farlo allungare ad A1 nella stessa chat (si puo' dire di no), in validazione un'Osservazione. Con la
+  fascia alta del 29/10 l'output di A1 non stava nelle risposte di Copilot e il "continua" non funzionava (A1
+  ricominciava da capo o diceva di non avere altro): la D-92 lo riduce di circa il 40%.
 - **A7 risponde in prima persona** (D-87), come chi ha proposto le valutazioni e le difende, senza nominare gli
   altri agenti e senza cautele di rito; dopo una rettifica: "avevo proposto..., il validatore ha deciso...".
 - **Schede di A6, analisi dell'evento di A8 e pareri di A4 piu' estesi** (D-88): A6 ha lunghezze minime (descrizione
@@ -112,7 +146,8 @@ Nuove:
 - **lunghezze dei testi (C10)**: nel trimestre di prova `Input_A1_<ciclo>.txt` ha nella parte 3 la tabella "Lunghezze
   dei testi"; se A1 risponde corto, l'app dice quanti rischi hanno testi troppo corti e propone il messaggio per
   allungarli; dopo la correzione il precontrollo non li segnala piu'; A5 (reincollato) segnala C10 come Bloccante e in
-  validazione compare come osservazione; annotare se le risposte di A1 si tagliano piu' spesso (V-B);
+  validazione compare come osservazione; annotare se la risposta di A1 arriva intera e, se si taglia, quante volte
+  e che cosa fa A1 al "continua" (D-92, TODO AU9);
 - **A7 in prima persona**: le domande 2, 5 e 9 del copione `04_Riferimenti\Prove\Prova_A7.md`; A7 risponde "ho dato...",
   dopo una rettifica "avevo proposto..., il validatore ha deciso...", senza nominare A1 o A5 e senza cautele di rito;
 - **schede di A6 (D-88)**: dopo la validazione di prova, Schede con A6: se A6 scrive corto, l'app lo dice e propone
