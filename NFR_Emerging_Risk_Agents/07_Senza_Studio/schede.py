@@ -11,7 +11,11 @@ Tre passi, tutti dopo la validazione del ciclo trimestrale:
    non stia nei dati del rischio o nella rubrica. Se no, niente file.
 3. scrivi_file_schede(): Schede_<ciclo>.xlsx, un indice e una scheda per
    rischio nell'ordine della classifica (comando schede). Senza l'output di A6
-   le schede usano i testi di A1 dal registro.
+   le schede usano i testi di A1 dal registro. Dal 04/11/2026 (P6, D-101) in fondo
+   una scheda per tema: un foglio per ogni driver con almeno due rischi (nel radar
+   e in osservazione), con i loro score e l'andamento e i gruppi collegati; nessuno
+   score del tema (D-42). I temi li calcola lo script (chiave "temi" dell'input),
+   non A6: l'allegato di A6 non li porta.
 
 Il passo 1 legge il workbook via Excel (COM); i passi 2 e 3 sono Python puro
 (openpyxl), quindi il collaudo li prova anche senza Excel.
@@ -54,6 +58,42 @@ def _colonna(sessione, nome):
     return [r[0] for r in v] if isinstance(v, tuple) else [v]
 
 
+def _valori(sessione, nome):
+    """Valori di un intervallo di una colonna, da Excel (tuple di righe) o dal lettore del report HTML (lista)."""
+    v = sessione.intervallo_nome(nome).Value
+    if isinstance(v, tuple):
+        return [r[0] if isinstance(r, tuple) else r for r in v]
+    return list(v) if isinstance(v, list) else [v]
+
+
+def temi_per_driver(ultime, prec, cicli, nomi_driver, legami, minimo=2):
+    """P6 (D-101): un tema per driver con almeno 'minimo' rischi attivi (radar e osservazione, non dismessi), dall'ultima
+    riga di ogni rischio. Per ogni rischio stato, score, score del ciclo prima e andamento sugli ultimi quattro cicli;
+    per il tema i collegamenti (D-97) fra i suoi rischi. Nessuno score del tema (D-42)."""
+    per_driver = {}
+    for rid, r in ultime.items():
+        if str(r.get("Stato") or "") == "Dismesso":
+            continue
+        for d in [x.strip() for x in str(r.get("Driver") or "").split(",") if x.strip()]:
+            per_driver.setdefault(d, []).append(rid)
+    temi = []
+    for cod, ids in per_driver.items():
+        if len(ids) < minimo:
+            continue
+        rischi = []
+        for rid in ids:
+            r = ultime[rid]
+            rischi.append({"id_rischio": rid, "nome": r.get("Nome"), "stato": r.get("Stato") or "Radar",
+                           "score": _num(r.get("Score_Composito")), "score_ciclo_precedente": _num((prec.get(rid) or {}).get("Score_Composito")),
+                           "andamento": [[c, _num(s)] for c, s in cicli.get(rid, [])[-4:]]})
+        rischi.sort(key=lambda x: (-(x["score"] or 0), x["id_rischio"]))
+        gruppi = [f"{rid} con {', '.join(c['id_rischio'] for c in legami.get(rid, {}).get('collegati', []) if c['id_rischio'] in ids)}"
+                  for rid in ids if any(c["id_rischio"] in ids for c in legami.get(rid, {}).get("collegati", []))]
+        temi.append({"driver": cod, "nome": nomi_driver.get(cod) or cod, "rischi": rischi, "collegati": sorted(gruppi)})
+    temi.sort(key=lambda x: (-len(x["rischi"]), x["driver"]))
+    return temi
+
+
 # ---------------------------------------------------------------- razionali in parti (D-68)
 # A1 scrive il razionale del rischio in parti con etichette fisse, come MESSAGGIO/DECISIONI della sintesi:
 # "RISCHIO: il fenomeno in termini di rischio. IMPATTO: perche' il valore, fatto e documento. PROBABILITA: ...
@@ -61,9 +101,13 @@ def _colonna(sessione, nome):
 # Un'etichetta conta all'inizio del testo o dopo un punto, un punto e virgola o un a capo (maiuscole o minuscole),
 # oppure ovunque se e' scritta tutta in maiuscolo: "Impatto resta 4:" a meta' frase non e' un'etichetta. I razionali
 # scritti prima (senza etichette) restano interi.
+# Dal 04/11/2026 due parti in fondo: QUINDI: (P14, D-96: che cosa significa il rischio per la Banca e che cosa va deciso
+# o osservato) e COLLEGATI: (D-97, facoltativa, solo nel rischio primario: gli id dei rischi dello stesso evento o della
+# stessa causa, ognuno con il motivo).
 ETICHETTE_RAZIONALE = {"RISCHIO": "rischio", "IMPATTO": "impatto", "PROBABILITA": "probabilita",
-                       "PROSSIMITA": "prossimita", "VELOCITY": "velocity", "ADEGUAMENTO": "adeguamento"}
-_NOMI = r"RISCHIO|IMPATTO|PROBABILIT(?:A'|À|A)|PROSSIMIT(?:A'|À|A)|VELOCITY|ADEGUAMENTO"
+                       "PROSSIMITA": "prossimita", "VELOCITY": "velocity", "ADEGUAMENTO": "adeguamento",
+                       "QUINDI": "quindi", "COLLEGATI": "collegati"}
+_NOMI = r"RISCHIO|IMPATTO|PROBABILIT(?:A'|À|A)|PROSSIMIT(?:A'|À|A)|VELOCITY|ADEGUAMENTO|QUINDI|COLLEGATI"
 _ETICHETTA = re.compile(rf"(?:(?:^|(?<=[.;\n]))\s*(?i:({_NOMI}))|(?<=\s)({_NOMI}))\s*:")
 _EFFETTO = re.compile(r"(?:(?:^|(?<=[.;\n]))\s*(?i:EFFETTO(?: ATTESO)?)|(?<=\s)EFFETTO(?: ATTESO)?)\s*:")
 
@@ -94,6 +138,40 @@ def parti_razionale(testo):
     return parti
 
 
+ID_RISCHIO = re.compile(r"NFR-\d{2}")
+
+
+def collegati(testo):
+    """D-97: i rischi citati nella parte COLLEGATI: di un razionale, [(id, motivo)] nell'ordine in cui sono scritti
+    ("COLLEGATI: NFR-07 (stesso evento); NFR-12 (stessa causa)"); [] se la parte manca."""
+    parte = parti_razionale(testo).get("collegati") or ""
+    out = []
+    for pezzo in re.split(r"[;\n]", parte):
+        ids = ID_RISCHIO.findall(pezzo)
+        motivo = ID_RISCHIO.sub("", pezzo).strip(" ,.:-–()").replace("(", "").replace(")", "").strip()
+        for i in ids:
+            if i not in [x for x, _ in out]:
+                out.append((i, motivo or None))
+    return out
+
+
+def legami_collegati(righe):
+    """D-97: da {id: riga del registro} (colonne ID_Rischio, Nome, Razionale, Score_Composito, Stato), per ogni rischio
+    {"collegati": i rischi che cita nella sua parte COLLEGATI: con motivo, score e stato; "collegato_a": i rischi primari
+    che lo citano}. Il verso opposto lo ricava lo script: A1 lo scrive solo nel rischio primario."""
+    out = {rid: {"collegati": [], "collegato_a": []} for rid in righe}
+    for rid, riga in righe.items():
+        for c, motivo in collegati(riga.get("Razionale")):
+            if c == rid:
+                continue
+            altra = righe.get(c) or {}
+            out[rid]["collegati"].append({"id_rischio": c, "nome": altra.get("Nome"), "motivo": motivo,
+                                          "score": _num(altra.get("Score_Composito")), "stato": altra.get("Stato") or None})
+            if c in out and rid not in [x["id_rischio"] for x in out[c]["collegato_a"]]:
+                out[c]["collegato_a"].append({"id_rischio": rid, "nome": riga.get("Nome"), "motivo": motivo})
+    return out
+
+
 def parti_effetto(testo):
     """(perche', effetto atteso) dal razionale di un'azione o di un KRI; effetto None se manca "EFFETTO:"."""
     testo = str(testo or "")
@@ -120,6 +198,10 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
     et_nomi = [r[0] for r in sessione.intervallo_nome("codiciL1").GetOffset(0, 1).Value]
     nome_et = dict(zip(et_codici, et_nomi))
     pesi = {d: _num(sessione.intervallo_nome(n).Value) for d, n in PESI.items()}
+    ultime = {}                                  # D-97: l'ultima riga di ogni rischio fino al ciclo, radar o osservazione
+    for x in sorted((x for x in reg if x["Ciclo"] <= ciclo), key=lambda x: x["Ciclo"]):
+        ultime[x["ID_Rischio"]] = x
+    legami = legami_collegati(ultime)
     rischi = []
     for _, a in anag:
         rid = a["ID"]
@@ -141,6 +223,8 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
             "razionale_rischio": (" ".join(p for p in (parti.get("altro"), parti.get("rischio")) if p) or None)
                                  if parti else r["Razionale"],
             "motivazioni": {k: parti.get(k) for k in DIMENSIONI + ["adeguamento"]} if parti else None,
+            "quindi": parti.get("quindi"),            # P14 (D-96): che cosa significa per la Banca
+            **legami.get(rid, {"collegati": [], "collegato_a": []}),
             "valori": {d: _num(r[COLONNA_DIM[d]]) for d in DIMENSIONI},
             "score": _num(r["Score_Composito"]),
             "score_ciclo_precedente": _num(prec["Score_Composito"]) if prec else None,
@@ -169,17 +253,37 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
     rischi.sort(key=lambda x: (-(x["score"] or 0), posizione[x["id_rischio"]]))
     for n, x in enumerate(rischi, start=1):
         x["posizione_in_classifica"] = n
+    # P6 (D-101): i temi per driver, dagli stessi dati (radar e osservazione).
+    prec_righe = {x["ID_Rischio"]: x for x in reg if x["Ciclo"] == ciclo_prec}
+    andamenti = {}
+    for c in cicli:
+        for x in reg:
+            if x["Ciclo"] == c:
+                andamenti.setdefault(x["ID_Rischio"], []).append((c, x["Score_Composito"]))
+    try:
+        nomi_driver = dict(zip(_valori(sessione, "codiciDriver"), _valori(sessione, "nomiDriver")))
+    except Exception:                                # noqa: BLE001 - registro senza i nomi dei driver: i codici bastano
+        nomi_driver = {}
     return {"ciclo": ciclo, "data_riferimento": data_rif, "ciclo_precedente": ciclo_prec, "pesi": pesi,
-            "rischi": rischi}
+            "rischi": rischi, "temi": temi_per_driver(ultime, prec_righe, andamenti, nomi_driver, legami)}
+
+
+def per_a6(ingresso):
+    """L'allegato di A6: l'input delle schede senza i temi, che sono dello script (P6)."""
+    return {k: v for k, v in ingresso.items() if k != "temi"}
 
 
 # ================================================================ 2. controlli sull'output di A6
 NUMERO = re.compile(r"\d+(?:[.,]\d+)?")
 
 
+CODICI = re.compile(r"\b(?:NFR-\d{2}(?:-K\d+)?|TEMA-\d{2,3}|DRV-[A-Z]+)\b")
+
+
 def numeri(testo):
-    """Numeri di un testo come valori (4,2 = 4.2; 06 = 6): cosi' 10/06/2026 e 2026-06-10 coincidono."""
-    return {float(n.replace(",", ".")) for n in NUMERO.findall(str(testo))}
+    """Numeri di un testo come valori (4,2 = 4.2; 06 = 6): cosi' 10/06/2026 e 2026-06-10 coincidono. Gli identificativi
+    (NFR-07, NFR-07-K1, TEMA-01) non sono numeri: una scheda puo' citare un rischio collegato (D-97)."""
+    return {float(n.replace(",", ".")) for n in NUMERO.findall(CODICI.sub(" ", str(testo)))}
 
 
 def controlla_a6(ingresso, uscita, testo_rubrica=""):
@@ -313,6 +417,20 @@ def _nv(v):
     return NON_VALUTATA if v is None else v
 
 
+def nome_foglio_tema(tema):
+    return f"Tema {tema['driver']}"[:31]
+
+
+def testo_collegati(r):
+    """D-97: le righe del riquadro "Rischi collegati" di una scheda: i rischi che cita (rischio primario) e quelli che lo
+    citano (con la riga "Collegato a", ricavata dallo script)."""
+    righe = [f"• {c['id_rischio']} {c.get('nome') or ''} — score {_it(c.get('score'))}, {c.get('stato') or 'stato non noto'}"
+             + (f" ({c['motivo']})" if c.get("motivo") else "") for c in r.get("collegati") or []]
+    righe += [f"• Collegato a {c['id_rischio']} {c.get('nome') or ''} (rischio primario"
+              + (f"; {c['motivo']}" if c.get("motivo") else "") + ")" for c in r.get("collegato_a") or []]
+    return righe
+
+
 def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
     """Schede_<ciclo>.xlsx: indice e una scheda per rischio. uscita_a6 = output di A6 gia'
     controllato, o None (testi di A1 dal registro)."""
@@ -401,6 +519,19 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             ws.cell(row=riga, column=x).border = sottile
         ws.row_dimensions[riga].height = 20
     fine = 5 + len(ingresso["rischi"])
+    temi = ingresso.get("temi") or []
+    if temi:                                         # P6: l'elenco delle schede per tema, sotto i rischi
+        fine += 1
+        ws.merge_cells(start_row=fine, start_column=1, end_row=fine, end_column=8)
+        cella(ws, fine, 1, "Schede per tema: un foglio per driver con almeno due rischi (nel radar e in osservazione); "
+                           "nessuno score del tema (D-42).", font=Font(size=11, bold=True, color=BLU_NOTTE))
+        for tema in temi:
+            fine += 1
+            c = cella(ws, fine, 2, tema["driver"], font=Font(bold=True, color=BLU_DIM, underline="single"))
+            c.hyperlink = f"#'{nome_foglio_tema(tema)}'!A1"
+            cella(ws, fine, 3, f"{tema['nome']} · {len(tema['rischi'])} rischi: "
+                               + ", ".join(x["id_rischio"] for x in tema["rischi"]), font=Font(size=9))
+        fine += 1
     ws.merge_cells(start_row=fine + 1, start_column=1, end_row=fine + 1, end_column=8)
     cella(ws, fine + 1, 1, "Legenda — " + LEGENDA, font=Font(size=8, italic=True, color=TESTO_TENUE),
           alignment=Alignment(wrap_text=True, vertical="top"))
@@ -473,6 +604,15 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             sezione("Razionale: il fenomeno in termini di rischio" if motivazioni else "Razionale (registro)")
             testo_lungo(r.get("razionale_rischio", r.get("razionale")) or "—")
         riga += 1
+        if r.get("quindi"):                          # P14 (D-96): dal razionale di A1, anche con i testi di A6
+            sezione("Che cosa significa per la Banca")
+            testo_lungo(r["quindi"], fondo="F7F9FC")
+            riga += 1
+        righe_coll = testo_collegati(r)
+        if righe_coll:                               # D-97
+            sezione("Rischi collegati")
+            testo_lungo("\n".join(righe_coll))
+            riga += 1
         sezione("Valutazione, dimensione per dimensione (valori validati)")
         for j, testo in ((1, "Dimensione"), (2, "Valore"), (3, "Perche' questo valore: informazioni e documenti")):
             cella(ws, riga, j, testo, font=Font(size=9, bold=True, color=TESTO_TENUE))
@@ -579,7 +719,8 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             ws.merge_cells(start_row=riga, start_column=7, end_row=riga, end_column=8)
             cella(ws, riga, 1, f["riferimento"], font=Font(size=10), alignment=Alignment(wrap_text=True, vertical="top"))
             cella(ws, riga, 4, _data_it(f.get("data")), font=Font(size=10), alignment=Alignment(vertical="top"))
-            cella(ws, riga, 5, f.get("tipo"), font=Font(size=10, bold=True, color=BLU_DIM if f.get("tipo") == "Interna" else TESTO_TENUE),
+            cella(ws, riga, 5, f.get("tipo"), font=Font(size=10, bold=True, color={"Interna": BLU_DIM, "Rapporto": BLU_NOTTE}.get(
+                      f.get("tipo"), TESTO_TENUE), italic=f.get("tipo") == "Rapporto"),
                   alignment=Alignment(vertical="top"))
             ril = f.get("rilevanza")
             cella(ws, riga, 6, RILEVANZA.get(ril, ril), fill=fill(SCALA_RIL.get(ril, "FFFFFF")), font=Font(size=10, bold=True),
@@ -655,6 +796,53 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
               alignment=Alignment(wrap_text=True, vertical="top"))
         ws.row_dimensions[riga].height = righe_testo("Legenda — " + LEGENDA, tot, 8) * 11 + 6   # 36 fisso la tagliava
         stampa(ws)
+    nel_file = {r["id_rischio"] for r in ingresso["rischi"]}
+    for tema in ingresso.get("temi") or []:          # P6 (D-101): una scheda per tema
+        ws = wb.create_sheet(nome_foglio_tema(tema))
+        ws.sheet_view.showGridLines = False
+        for l, w in zip("ABCDEFGH", [10, 46, 14, 9, 10, 30, 10, 10]):
+            ws.column_dimensions[l].width = w
+        ws.merge_cells("A1:F1")
+        cella(ws, 1, 1, intestazione, font=Font(size=9, color="FFFFFF"), fill=fill(BLU_MEDIO),
+              alignment=Alignment(vertical="center", indent=1))
+        ws.merge_cells("A2:F2")
+        cella(ws, 2, 1, f"Tema {tema['driver']} · {tema['nome']} · {len(tema['rischi'])} rischi",
+              font=Font(size=14, bold=True, color="FFFFFF"), fill=fill(BLU_NOTTE), alignment=Alignment(vertical="center", indent=1))
+        ws.row_dimensions[2].height = 30
+        ws.merge_cells("A3:F3")
+        cella(ws, 3, 1, "I rischi del registro alimentati da questo driver, nel radar e in osservazione, con i loro score. "
+                        "Ogni rischio resta valutato a se': il tema non ha uno score proprio (D-42).",
+              font=Font(size=9, color=TESTO), fill=fill("DDEBF7"), alignment=Alignment(wrap_text=True, vertical="top", indent=1))
+        ws.row_dimensions[3].height = 30
+        for j, testo in enumerate(["ID", "Rischio", "Stato", "Score", "Variazione", "Andamento (ultimi cicli)"], start=1):
+            cella(ws, 5, j, testo, font=Font(bold=True, color="FFFFFF"), fill=fill(BLU_NOTTE))
+        riga = 6
+        for x in tema["rischi"]:
+            c = cella(ws, riga, 1, x["id_rischio"], font=Font(bold=True, color=BLU_DIM, underline="single" if x["id_rischio"] in nel_file else None))
+            if x["id_rischio"] in nel_file:
+                c.hyperlink = f"#'{x['id_rischio']}'!A1"
+            cella(ws, riga, 2, x["nome"], font=Font(size=10), alignment=Alignment(wrap_text=True, vertical="center"))
+            cella(ws, riga, 3, x["stato"], font=Font(size=9))
+            cella(ws, riga, 4, x["score"], number_format="0.00", font=Font(bold=True))
+            d = None if x["score_ciclo_precedente"] is None or x["score"] is None else round(x["score"] - x["score_ciclo_precedente"], 2)
+            cella(ws, riga, 5, "nuovo" if d is None else ("▲ +" if d > 0 else "▼ " if d < 0 else "● ") + _it(d), font=Font(size=9))
+            cella(ws, riga, 6, " → ".join(_it(s, 1) for _, s in x["andamento"] if s is not None), font=Font(size=9, color=TESTO_TENUE))
+            for col in range(1, 7):
+                ws.cell(row=riga, column=col).border = sottile
+            ws.row_dimensions[riga].height = max(20, righe_testo(x["nome"] or "", 46) * 13.5 + 5)
+            riga += 1
+        if tema["collegati"]:
+            riga += 1
+            cella(ws, riga, 1, "Rischi collegati (stesso evento o stessa causa, D-97): " + "; ".join(tema["collegati"]) + ".",
+                  font=Font(size=9.5))
+            riga += 1
+        riga += 1
+        ws.merge_cells(start_row=riga, start_column=1, end_row=riga, end_column=6)
+        cella(ws, riga, 1, "Score 1-5, 5 = peggiore. Variazione sul ciclo precedente. In osservazione = fuori dal radar (niente "
+                           "KRI ne' azioni). La scheda di un rischio del radar si apre con un clic sull'ID.",
+              font=Font(size=8, italic=True, color=TESTO_TENUE), alignment=Alignment(wrap_text=True))
+        ws.row_dimensions[riga].height = 24
+        stampa(ws, orizzontale=True)
     Path(percorso).parent.mkdir(parents=True, exist_ok=True)
     wb.save(percorso)
     return percorso

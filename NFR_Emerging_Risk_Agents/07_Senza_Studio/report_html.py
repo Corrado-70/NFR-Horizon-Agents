@@ -344,6 +344,15 @@ class Vista:
         self.prec = self.cicli[-2] if len(self.cicli) > 1 else None
         self.meno2 = trimestre_meno(ciclo, 2)
         self.trend = self.cicli[-8:]
+        # P2 (04/11/2026): come esegui_ciclo_locale.cicli_scia (Parametri, cicloScia e cicliTraiettoria).
+        self.scia = next((c for c in reversed(self.cicli) if "-S" not in c and c < ciclo[:6]), None)
+        ultimo = {}
+        for c in self.cicli:
+            ultimo[c[:6]] = c
+        quattro = [ciclo[:6]]
+        while len(quattro) < 4:
+            quattro.insert(0, trimestre_meno(quattro[0], 1))
+        self.traiettoria = [ultimo.get(q) for q in quattro]
         p = {n: reg.nome(n) for n in ("pesoImpatto", "pesoProbabilita", "pesoProssimita", "pesoVelocity", "moscaX",
                                        "moscaYDefault", "livelloPxI", "livelloQuotaKRI", "livelloMargine", "livelloForti",
                                        "sogliaDirezione", "sogliaDelta", "sogliaProssimitaRadar",
@@ -487,11 +496,33 @@ class Vista:
             if x["settore"] is not None:
                 x["angolo"] = 2 * math.pi * (x["settore"] + (x["n_settore"] + 0.5) / tot) / len(self.codici)
                 x["raggio"] = max(RAGGIO_MIN, min(RAGGIO_MAX, x["margine"] + SCOSTAMENTO_RAGGIO))
+            self._scia(x)
         self.classifica = sorted(self.rischi, key=lambda x: (-x["score"], x["pos"]))
         for k, x in enumerate(self.classifica, start=1):
             x["rank"] = k
         self.lente = sorted(self.rischi, key=lambda x: (x["margine"], x["rank"]))
         self.per_rid = {x["id"]: x for x in self.rischi}
+
+    def _scia(self, x):
+        """P2: raggio del rischio nel trimestre della scia (Radar_Mosca, colonne della scia: Z dalla Prossimita di allora,
+        Y dalle azioni del suo periodo di valutazione o dagli anni di adeguamento di quella riga, angolo di oggi) e se il
+        cerchio si e' spostato (solo se allora era nel radar)."""
+        p = self.p
+        x["raggio_scia"], x["scia"] = None, 0
+        r = self.score_di(x["id"], self.scia) if self.scia else None
+        if r is None or r.get("Prossimita") in (None, "") or x.get("raggio") is None:
+            return
+        periodo = r.get("Periodo_Valutazione") or self.scia
+        mesi = [z["Mesi_Orizzonte"] for z in self.azioni if z["ID_Rischio"] == x["id"] and z["Ciclo"] == periodo
+                and z["Stato"] != "Respinta" and (z["Mesi_Orizzonte"] or 0) > 0]
+        y = max(max(mesi) / 12 if mesi else p["moscaYDefault"], r.get("Anni_Adeguamento") or 0)
+        z = p["anniProssimita"][r["Prossimita"] - 1]
+        x["raggio_scia"] = max(RAGGIO_MIN, min(RAGGIO_MAX, z - (p["moscaX"] + y) + SCOSTAMENTO_RAGGIO))
+        x["scia"] = int(str(r.get("Stato") or "Radar").startswith("Radar") and abs(x["raggio_scia"] - x["raggio"]) > 0.001)
+
+    def traiettoria_di(self, rid):
+        """P2: score alla fine di ognuno degli ultimi quattro trimestri (None dove il rischio non c'era)."""
+        return [(c, (self.score_di(rid, c) or {}).get("Score_Composito") if c else None) for c in self.traiettoria]
 
     # ------------------------------------------------ altre viste
     def rischi_oss(self):
@@ -595,6 +626,10 @@ def verifica(reg, v):
     excel = {n: dict(zip(ids, reg.nome(n))) for n in ("rmZ", "rmX", "rmY", "rmMargine", "rmUrgenza", "rmLivello",
                                                       "rmMotivoLivello")}
     netti = dict(zip(reg.nome("posID"), reg.nome("posNetti")))
+    try:
+        scia, raggio_scia = dict(zip(ids, reg.nome("rmScia"))), dict(zip(ids, reg.nome("rmRaggioScia")))
+    except Exception:                                # noqa: BLE001 - registro di un template prima della scia
+        scia, raggio_scia = None, {}
     campi = [("rmZ", "z"), ("rmX", "x"), ("rmY", "y"), ("rmMargine", "margine"), ("rmUrgenza", "urgenza"),
              ("rmLivello", "livello"), ("rmMotivoLivello", "motivo")]
     uguali, diversi = 0, []
@@ -609,6 +644,13 @@ def verifica(reg, v):
         uguali += ok
         if not ok:
             diversi.append(f"{x['id']} posNetti: Python {x['netti']!r}, Excel {netti.get(x['id'])!r}")
+        if scia is not None:                         # P2: template 2026-11-04
+            b = scia.get(x["id"])
+            ok = x["scia"] == b and (not b or abs(x["raggio_scia"] - (raggio_scia.get(x["id"]) or 0)) < 1e-6)
+            uguali += ok
+            if not ok:
+                diversi.append(f"{x['id']} rmScia: Python {x['scia']!r} {x['raggio_scia']!r}, Excel {b!r} "
+                               f"{raggio_scia.get(x['id'])!r}")
     ordine_excel = [reg.cella("Classifica", 5 + i, 2) for i in range(len(v.rischi))]
     ok = ordine_excel == [x["id"] for x in v.classifica]
     uguali += ok
@@ -674,6 +716,20 @@ def grafico_radar(v, piccolo=False):
         out.append(f'<text class="et-settore" text-anchor="middle" x="{rx:.1f}" y="{ry - 4:.1f}">'
                    f'<tspan class="cod">{esc(cod)}</tspan><tspan x="{rx:.1f}" dy="15">{esc(nome)}</tspan></text>')
     k_area = (8.6 if piccolo else 10.5)
+    if not piccolo:                           # P2: punto del trimestre della scia e freccia fino al bordo del cerchio
+        out.append('<defs><marker id="freccia-scia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" '
+                   'markerHeight="7" orient="auto-start-reverse"><path class="scia-punta" d="M0,0 L10,5 L0,10 z"/></marker></defs>')
+        for x in v.rischi:
+            if not x.get("scia"):
+                continue
+            a = x["angolo"]
+            sx, sy = c + x["raggio_scia"] * s * math.sin(a), c - x["raggio_scia"] * s * math.cos(a)
+            verso = 1 if x["raggio"] > x["raggio_scia"] else -1
+            fine = x["raggio"] * s - verso * min(k_area * math.sqrt(x["pxi"]) + 3, abs(x["raggio"] - x["raggio_scia"]) * s * .6)
+            ex, ey = c + fine * math.sin(a), c - fine * math.cos(a)
+            out.append(f'<g><title>{esc(x["id"])}: posizione nel {esc(v.scia)}</title>'
+                       f'<line class="scia" x1="{sx:.1f}" y1="{sy:.1f}" x2="{ex:.1f}" y2="{ey:.1f}" marker-end="url(#freccia-scia)"/>'
+                       f'<circle class="scia-punto" cx="{sx:.1f}" cy="{sy:.1f}" r="4.5"/></g>')
     etichette, occupate = [], []
     for x in sorted(v.rischi, key=lambda x: -x["pxi"]):  # i grandi sotto, i piccoli sopra
         if x.get("angolo") is None:
@@ -713,6 +769,10 @@ def grafico_radar(v, piccolo=False):
             out.append(f'<circle class="campione" cx="{xs + r}" cy="{y2}" r="{r:.1f}"/>'
                        f'<text class="et-leg" x="{xs + 2 * r + 6:.1f}" y="{y2 + 4}">{val}</text>')
             xs += 2 * r + 34
+        if v.scia:
+            out.append(f'<circle class="scia-punto" cx="{xs + 10}" cy="{y2}" r="4.5"/><line class="scia" x1="{xs + 14}" '
+                       f'y1="{y2}" x2="{xs + 40}" y2="{y2}" marker-end="url(#freccia-scia)"/><text class="et-leg" '
+                       f'x="{xs + 48}" y="{y2 + 4}">posizione nel {esc(v.scia)}</text>')
     out.append("</svg>")
     return "".join(out)
 
@@ -1039,15 +1099,24 @@ def s_quadro(v, testi):
     straord = v.sintesi.get("Straordinario")
     if straord:
         h.append(f'<div class="riquadro avviso"><strong>Ciclo straordinario.</strong> {esc(straord)}</div>')
+    # commento di A1, in prima pagina come nel foglio Quadro (richiesta dell'utente del 04/11/2026)
+    mess, dec = parti_commento(v.sintesi.get("Sintesi_A1"))
+    righe = [("Messaggio chiave", mess), ("Decisioni richieste", dec),
+             ("Dopo il commento", f"Il validatore ha rettificato {rett} valori." if rett else "Nessuna rettifica dopo il commento.")]
+    h.append('<div class="pannello"><h3>Il commento dell' + "'" + 'analisi (agente A1, scritto prima della validazione)</h3>'
+             '<dl class="commento">' + "".join(f"<dt>{esc(a)}</dt><dd>{esc(b) or '—'}</dd>" for a, b in righe) + "</dl></div>")
     # priorita' e matrice
     righe = []
     for x in v.classifica[:5]:
+        tr = v.traiettoria_di(x["id"])                  # P2: ultimi quattro trimestri
         righe.append([f'<b>{x["rank"]}</b>', f'{link_rischio(x["id"])} {esc(x["nome"])}{" ◆" if x["sup"] else ""}',
+                      sparkline([s for _, s in tr], [c or "—" for c, _ in tr], 90, 28),
                       f'<span class="barretta"><span style="width:{x["score"] / 5 * 100:.0f}%" class="b-urg-{x["urg"]}">'
                       f'</span></span> <b>{it(x["score"])}</b>', segnato(x["delta"]), chip_urgenza(x)])
     h.append('<div class="griglia-2"><div class="pannello"><h3>Priorita' + "'" + ' — primi cinque per score composito</h3>'
-             + tabella(["#", "Rischio", "Score", "Δ", "Urgenza"], righe, "compatta", {0: "num", 3: "num"})
-             + '<p class="nota">Score 1-5, 5 = peggiore; barra su scala fissa 0-5. Δ sul ciclo precedente.</p></div>'
+             + tabella(["#", "Rischio", "Ultimi 4 trimestri", "Score", "Δ", "Urgenza"], righe, "compatta", {0: "num", 4: "num"})
+             + '<p class="nota">Score 1-5, 5 = peggiore; barra su scala fissa 0-5. Δ sul ciclo precedente. Ultimi 4 trimestri = '
+             'score alla fine di ciascuno (l' + "'" + 'ultimo ciclo del trimestre, straordinario compreso).</p></div>'
              '<div class="pannello"><h3>Gravita' + "'" + ': Probabilita x Impatto</h3>' + matrice_html(v, piccola=True)
              + '<p class="nota">Numeri = NFR-nn. Verde P x I fino a 6, ambra 8-12, rosso da 15.</p></div></div>')
     note = v.sintesi.get("Note_Analista")
@@ -1060,15 +1129,12 @@ def s_quadro(v, testi):
              + "".join(f'<li>{chip_livello(x["livello"])} {link_rischio(x["id"])} {esc(x["nome"])}{" ◆" if x["sup"] else ""}</li>'
                        for x in sorted(v.rischi, key=lambda x: x["pos"]))
              + "</ul></div></div>")
-    # commento di A1
-    mess, dec = parti_commento(v.sintesi.get("Sintesi_A1"))
+    # controlli e segnalazioni da motivare (in seconda pagina, come nel foglio Quadro)
     a5 = v.sintesi.get("Sintesi_A5") or ""
     oss = v.sintesi.get("Osservazioni_Controlli")
-    righe = [("Messaggio chiave", mess), ("Decisioni richieste", dec),
-             ("Controlli (A5 se usato)", a5 + (f" Osservazioni: {oss}." if oss not in (None, "") else "")),
-             ("Dopo il commento", f"Il validatore ha rettificato {rett} valori." if rett else "Nessuna rettifica dopo il commento."),
+    righe = [("Controlli (A5 se usato)", a5 + (f" Osservazioni: {oss}." if oss not in (None, "") else "")),
              ("Segnalazioni da motivare", v.sintesi.get("Rilievi_Superati"))]
-    h.append('<div class="pannello"><h3>Il commento dell' + "'" + 'analisi (agente A1, scritto prima della validazione)</h3>'
+    h.append('<div class="pannello"><h3>Controlli e segnalazioni da motivare</h3>'
              '<dl class="commento">' + "".join(f"<dt>{esc(a)}</dt><dd>{esc(b) or '—'}</dd>" for a, b in righe) + "</dl></div>")
     # segnalati
     seg = [x for x in v.classifica if x["rank"] <= 3 or x["livello"] in ("Attivazione", "Attenzione")
@@ -1091,6 +1157,9 @@ def s_quadro(v, testi):
                    testi["legenda"])
 
 
+MAX_IN_CELLA = {False: 6, True: 4}            # G5: quanti ID entrano in una cella della matrice, poi "+n"
+
+
 def matrice_html(v, piccola=False):
     celle = {}
     for x in sorted(v.rischi, key=lambda x: x["pos"]):
@@ -1102,10 +1171,19 @@ def matrice_html(v, piccola=False):
             pxi = p * i
             fascia = "verde" if pxi <= 6 else "ambra" if pxi <= 12 else "rosso"
             dentro = celle.get((p, i), [])
+            # G5 (04/11/2026): celle di misura fissa; oltre MAX_IN_CELLA rischi la cella dice quanti sono e l'elenco e'
+            # nel suo suggerimento (e nella vista Matrice, con tutti gli ID): la tabella non si deforma.
+            limite = MAX_IN_CELLA[piccola]
+            mostrati = dentro if len(dentro) <= limite else dentro[:limite - 1]
             testo = " ".join(f'<a href="#scheda-{x["id"]}" title="{esc(x["id"] + " " + x["nome"])}">'
                              f'{x["id"][4:] if piccola else x["id"]}{"◆" if x["sup"] and not piccola else ""}</a>'
-                             for x in dentro)
-            t.append(f'<td class="fascia-{fascia}" title="P {p} x I {i} = {pxi}">{testo}</td>')
+                             for x in mostrati)
+            if len(mostrati) < len(dentro):
+                altri = dentro[len(mostrati):]
+                testo += (f' <span class="altri" title="{esc(", ".join(x["id"] for x in altri))}">+{len(altri)}</span>')
+            elenco = ", ".join(x["id"] for x in dentro)
+            t.append(f'<td class="fascia-{fascia}" title="P {p} x I {i} = {pxi}{": " + esc(elenco) if elenco else ""}">'
+                     f'<div class="cella-matrice">{testo}</div></td>')
         t.append("</tr>")
     t.append('<tr><th></th>' + "".join(f'<th class="col-i"><b>{i}</b>{"" if piccola else "<br>" + NOMI_IMP[i]}</th>'
                                         for i in range(1, 6)) + "</tr></tbody></table>")
@@ -1555,6 +1633,7 @@ def scheda_radar(v, r, prec_id, succ_id, totale):
     h.append(f'<h3>Il rischio</h3><p>{esc(r["descrizione"])}</p>')
     h.append(f'<h3>{"Razionale: il fenomeno in termini di rischio" if motiv else "Razionale (registro)"}</h3>'
              f'<p>{esc(r.get("razionale_rischio") or "—")}</p>')
+    h.append(quindi_e_collegati(r.get("quindi"), schede.testo_collegati(r)))
     righe = []
     for d_, nome, _ in DIM:
         val = r["valori"][d_]
@@ -1643,6 +1722,7 @@ def scheda_oss(v, o, prec_id, succ_id, totale, n):
              "finche' non entra; orizzonte " + (f"{it_breve(o['orizzonte'])} anni" if o["orizzonte"] else "—")
              + f". <b>Segnale che lo porterebbe nel radar:</b> {esc(o['segnale'])}</p>")
     h.append(f'<h3>Il rischio</h3><p>{esc(r.get("Descrizione"))}</p><h3>Razionale</h3><p>{esc(raz or "—")}</p>')
+    h.append(quindi_e_collegati(parti.get("quindi"), schede.testo_collegati(legami(v).get(o["id"]) or {})))
     righe = [[f"<b>{nome}</b>", cella_dim(o[k]), esc(parti.get(d_)) if parti.get(d_) else '<span class="tenue">—</span>']
              for (d_, nome, _), k in zip(DIM, ("I", "P", "Pr", "V"))]
     h.append("<h3>Valutazione</h3>" + tabella(["Dimensione", "Valore", "Perche' questo valore"], righe, "dimensioni"))
@@ -1666,6 +1746,22 @@ def scheda_oss(v, o, prec_id, succ_id, totale, n):
             + "".join(h) + "</section>")
 
 
+def quindi_e_collegati(quindi, righe_collegati):
+    """P14 (D-96) e D-97: che cosa significa il rischio per la Banca e i rischi collegati, come nelle schede Excel."""
+    return ((f"<h3>Che cosa significa per la Banca</h3><p class='riquadro'>{esc(quindi)}</p>" if quindi else "")
+            + ("<h3>Rischi collegati</h3><p>" + "<br>".join(esc(x) for x in righe_collegati) + "</p>" if righe_collegati else ""))
+
+
+def legami(v):
+    """D-97: i collegamenti fra i rischi, dall'ultima riga di ciascuno fino al ciclo della vista (radar e osservazione)."""
+    if not hasattr(v, "_legami"):
+        ultime = {}
+        for r in sorted((r for r in v.rr_tutte if r["Ciclo"] <= v.ciclo), key=lambda r: r["Ciclo"]):
+            ultime[r["ID_Rischio"]] = r
+        v._legami = schede.legami_collegati(ultime)
+    return v._legami
+
+
 def nav_schede(prec_id, succ_id):
     return ('<nav class="nav-schede">' + (f'<a href="#scheda-{prec_id}">← {prec_id}</a>' if prec_id else "<span></span>")
             + '<a href="#schede">Indice delle schede</a>'
@@ -1686,9 +1782,20 @@ def s_schede(v):
     for o in oss:
         righe.append(["—", link_rischio(o["id"]), esc(o["nome"]), f'<b>{it(o["score"])}</b>', "—",
                       chip("In osservazione", "stato-oss"), esc(o["riga"]["Esito"]), "—"])
+    temi = ""
+    for tema in ingresso.get("temi") or []:          # P6 (D-101): i rischi di ogni driver, senza uno score del tema
+        rr = [[link_rischio(x["id_rischio"]), esc(x["nome"]), esc(x["stato"]), f'<b>{it(x["score"])}</b>',
+               sparkline([s for _, s in x["andamento"]], [c for c, _ in x["andamento"]], 90, 28)] for x in tema["rischi"]]
+        temi += (f'<div class="pannello"><h3>Tema {esc(tema["driver"])} · {esc(tema["nome"])} · {len(tema["rischi"])} rischi</h3>'
+                 + tabella(["ID", "Rischio", "Stato", "Score", "Andamento"], rr, "compatta", {3: "num"})
+                 + (f'<p class="nota">Rischi collegati: {esc("; ".join(tema["collegati"]))}.</p>' if tema["collegati"] else "")
+                 + "</div>")
+    if temi:
+        temi = ('<h3>Schede per tema</h3><p class="nota">Un tema per driver con almeno due rischi, nel radar e in '
+                'osservazione; nessuno score del tema (D-42).</p>' + temi)
     indice = sezione("schede", "Schede dei rischi", "Schede", '<div class="pannello">' + tabella(
         ["#", "ID", "Rischio", "Score", "Urgenza", "Livello", "Esito", "Owner"], righe, "compatta", {0: "num", 3: "num"})
-        + "</div>",
+        + "</div>" + temi,
         f"Una scheda per rischio: prima i {len(radar)} del radar nell'ordine della classifica, poi i {len(oss)} in "
         "osservazione. Valori validati del registro; testi di A1 dal registro (senza A6). Clic sull'ID per aprire la "
         "scheda.", "Legenda — " + schede.LEGENDA)
@@ -1882,8 +1989,8 @@ span.b-urg-agire{background:var(--agire)}span.b-urg-entro{background:var(--entro
 .sw-x{background:var(--x)}.sw-y-entro{background:var(--y-entro)}.sw-y-oltre{background:var(--y-oltre)}
 .sw-z{width:auto;height:auto;color:var(--z);background:none}.sw-su{background:var(--su)}.sw-giu{background:var(--giu)}
 .sw-int1{background:var(--i1)}.sw-int2{background:var(--i2)}.sw-int3{background:var(--i3)}
-.matrice{width:auto;border-collapse:separate;border-spacing:3px}.matrice td{width:96px;height:64px;text-align:center;
-vertical-align:middle;border:0;border-radius:4px;font-size:12.5px;font-weight:600}.matrice.piccola td{width:52px;height:38px}
+.matrice{width:auto;border-collapse:separate;border-spacing:3px;table-layout:fixed}.matrice td{width:96px;height:64px;max-width:96px;overflow:hidden;padding:2px;text-align:center;
+vertical-align:middle;border:0;border-radius:4px;font-size:12.5px;font-weight:600}.matrice.piccola td{width:52px;height:38px;max-width:52px}.cella-matrice{max-height:60px;overflow:hidden;line-height:1.25}.matrice.piccola .cella-matrice{max-height:36px}.matrice .altri{font-weight:700;color:var(--ink-2);cursor:help}
 .matrice th{background:none;color:var(--ink-2);font-weight:400;text-align:right;font-size:12px;vertical-align:middle}
 .matrice th.col-i{text-align:center;vertical-align:top}.matrice a{display:inline-block;margin:1px 3px;color:var(--ink);text-decoration:none}
 .fascia-verde{background:var(--fascia-verde)}.fascia-ambra{background:var(--fascia-ambra)}.fascia-rosso{background:var(--fascia-rosso)}
@@ -1939,6 +2046,8 @@ svg .mosca{fill:none;stroke:var(--agire);stroke-width:3}
 svg .bolla{fill-opacity:.82;stroke:var(--surface);stroke-width:2}
 svg .bolla.liv-attivazione{fill:var(--att)}svg .bolla.liv-attenzione{fill:var(--attz)}svg .bolla.liv-monitoraggio{fill:var(--mon)}
 svg .campione{fill:var(--brand-soft);stroke:var(--brand-2);stroke-width:1}
+svg .scia{stroke:var(--ink-2);stroke-width:1.6;fill:none}svg .scia-punto{fill:var(--muted);stroke:var(--ink-2);stroke-width:1}
+svg .scia-punta{fill:var(--ink-2)}
 svg .b-urg-agire{fill:var(--agire)}svg .b-urg-entro{fill:var(--entro)}svg .b-urg-margine{fill:var(--margine)}
 svg .b-x{fill:var(--x)}svg .b-y-entro{fill:var(--y-entro)}svg .b-y-oltre{fill:var(--y-oltre)}svg .rombo{fill:var(--z);stroke:var(--surface);stroke-width:2}
 svg .b-su{fill:var(--su)}svg .b-giu{fill:var(--giu)}

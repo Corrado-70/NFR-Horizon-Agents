@@ -21,6 +21,7 @@
       "prossimita": 4,
       "probabilita": 4,
       "esito_precedente": "Nuovo",
+      "descrizione": "Frodi a danno dei clienti tramite voci o video sintetici che inducono bonifici istantanei irrevocabili verso conti di terzi.",
       "razionale": "Il report frodi del terzo trimestre conferma importi medi elevati e casi con voce sintetica in linea con il trimestre precedente: severity 4 (danno reputazionale nazionale possibile), velocity 4 (impatto in minuti), prossimita' 4 (casi in banche comparabili). Gap_Controlli resta 3: la verifica fuori banda e' approvata ma non ancora attiva sui bonifici istantanei.",
       "fonti": [
         {
@@ -70,6 +71,7 @@
       "prossimita": 3,
       "probabilita": 2,
       "esito_precedente": "Nuovo",
+      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.",
       "razionale": "Gap_Controlli scende da 4 a 3 perche' la exit strategy e' ora testata su tutti i servizi critici (descrittore 3: controlli disegnati e testati di recente ma con rilievi aperti). Severity, velocity e prossimita' invariate: la concentrazione resta al 72% dei servizi critici e non ci sono incidenti gravi nel trimestre.",
       "fonti": [
         {
@@ -114,6 +116,7 @@
       "prossimita": 4,
       "probabilita": 2,
       "esito_precedente": "Nuovo",
+      "descrizione": "Claim ambientali non sostanziati nella documentazione di prodotti di investimento ESG, con rischio di sanzioni e rimborsi.",
       "razionale": "Prossimita' sale a 4: la sanzione a una banca comparabile e' un caso nel settore entro 12 mesi (descrittore 4). Severity resta 3 perche' l'impatto potenziale non cambia; Gap_Controlli resta 3 perche' la revisione dei claim non e' ancora completata.",
       "fonti": [
         {
@@ -152,6 +155,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Alluvioni o ondate di calore che rendono inagibili sedi operative o degradano il data center secondario.",
       "razionale": "Nessun evento nuovo sulle sedi nel trimestre e i piani specifici per le due sedi critiche non sono ancora redatti: si confermano severity 3, velocity 2, prossimita' 3 e gap 3 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -185,6 +189,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Errori di conversione dati e controlli di processo non ridisegnati durante la migrazione a ondate del sistema core.",
       "razionale": "La wave 2 resta pianificata per il 2027 e i controlli di riconciliazione testati a maggio restano efficaci: si confermano tutte le dimensioni. Gli incidenti di produzione scendono ma restano sopra la soglia di attenzione.",
       "fonti": [
         {
@@ -224,6 +229,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Dipendenti che trasferiscono intenzionalmente dati riservati su servizi di AI generativa esterni per uso personale o a favore di terzi.",
       "razionale": "Gap_Controlli scende a 3 perche' il DLP ora copre tutti i servizi, ma l'estensione e' recente e non ancora verificata dall'audit (descrittore 3). Severity, velocity e prossimita' invariate: i tentativi rilevati dal DLP calano ma non si azzerano.",
       "fonti": [
         {
@@ -263,6 +269,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Blocco prolungato dei pagamenti per un attacco ransomware al fornitore esterno che gestisce il gateway di pagamento della Banca.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 4, velocity 5, prossimita' 3, gap 3 e probabilita' 3 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -297,6 +304,7 @@
       "prossimita": 3,
       "probabilita": 2,
       "esito_precedente": "Nuovo",
+      "descrizione": "Dipendenti che consultano o estraggono dati di clienti senza motivo di servizio, per curiosita' o a favore di terzi.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 3, velocity 3, prossimita' 3, gap 3 e probabilita' 2 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -330,6 +338,7 @@
       "prossimita": 2,
       "probabilita": 2,
       "esito_precedente": "Nuovo",
+      "descrizione": "Pagamenti di clientela corporate verso controparti sanzionate interposte in paesi terzi, non intercettati dal filtro sanzioni.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 4, velocity 3, prossimita' 2, gap 3 e probabilita' 2 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -364,6 +373,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Chatbot di assistenza basati su AI generativa che danno ai clienti informazioni errate su condizioni, costi o diritti, con reclami e rimborsi.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 3, velocity 3, prossimita' 3, gap 4 e probabilita' 3 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -397,6 +407,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Nuovo",
+      "descrizione": "Componenti del sistema di pagamento fuori supporto del produttore, senza patch di sicurezza e con competenze interne in riduzione.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 3, velocity 2, prossimita' 3, gap 4 e probabilita' 3 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -430,6 +441,7 @@
       "prossimita": 4,
       "probabilita": 4,
       "esito_precedente": "Nuovo",
+      "descrizione": "Errori di riconciliazione e rimborsi indebiti dopo l'obbligo di offrire i bonifici istantanei a tutta la clientela.",
       "razionale": "Nessuna evidenza nuova nel trimestre: si confermano severity 3, velocity 4, prossimita' 4, gap 3 e probabilita' 4 con le fonti del ciclo precedente.",
       "fonti": [
         {
@@ -460,7 +472,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 6,
       "valore_corrente": 4.8,
-      "data_rilevazione": "2026-09-30"
+      "data_rilevazione": "2026-09-30",
+      "razionale": "Misura la prossimita': frequenza dei tentativi sul canale piu' esposto."
     },
     {
       "kri_id": "NFR-01-K2",
@@ -472,7 +485,8 @@
       "soglia_attenzione": 10,
       "soglia_allerta": 25,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura quanto il driver AI pesa sul fenomeno complessivo."
     },
     {
       "kri_id": "NFR-01-K3",
@@ -484,7 +498,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura l'efficacia dei controlli: tempi crescenti indicano un gap in aumento."
     },
     {
       "kri_id": "NFR-02-K1",
@@ -496,7 +511,8 @@
       "soglia_attenzione": 60,
       "soglia_allerta": 75,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la concentrazione, cioe' la severity potenziale."
     },
     {
       "kri_id": "NFR-02-K2",
@@ -508,7 +524,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 2,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Sostituisce i giorni dall'ultimo test: misura direttamente il gap_controlli residuo."
     },
     {
       "kri_id": "NFR-02-K3",
@@ -520,7 +537,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 4,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la prossimita': incidenti reali sul fornitore."
     },
     {
       "kri_id": "NFR-03-K1",
@@ -532,7 +550,8 @@
       "soglia_attenzione": 1.5,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Segnale anticipato di contestazioni della clientela."
     },
     {
       "kri_id": "NFR-03-K2",
@@ -544,7 +563,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 40,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il gap_controlli residuo."
     },
     {
       "kri_id": "NFR-03-K3",
@@ -556,7 +576,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il gap_controlli dal punto di vista della terza linea."
     },
     {
       "kri_id": "NFR-04-K1",
@@ -568,7 +589,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il gap_controlli sulle sedi."
     },
     {
       "kri_id": "NFR-04-K2",
@@ -580,7 +602,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la prossimita' osservata."
     },
     {
       "kri_id": "NFR-04-K3",
@@ -592,7 +615,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 4,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la severity di un degrado del data center."
     },
     {
       "kri_id": "NFR-05-K1",
@@ -604,7 +628,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 50,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura l'efficacia dei controlli di riconciliazione."
     },
     {
       "kri_id": "NFR-05-K2",
@@ -616,7 +641,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 6,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la prossimita' degli errori di processo."
     },
     {
       "kri_id": "NFR-05-K3",
@@ -628,7 +654,8 @@
       "soglia_attenzione": 30,
       "soglia_allerta": 60,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il gap_controlli in vista della wave 2."
     },
     {
       "kri_id": "NFR-06-K1",
@@ -640,7 +667,8 @@
       "soglia_attenzione": 10,
       "soglia_allerta": 30,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura la prossimita' del comportamento."
     },
     {
       "kri_id": "NFR-06-K2",
@@ -652,7 +680,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 40,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il presidio sul capitale umano."
     },
     {
       "kri_id": "NFR-06-K3",
@@ -664,7 +693,8 @@
       "soglia_attenzione": 5,
       "soglia_allerta": 15,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura il gap_controlli sugli accessi piu' sensibili."
     },
     {
       "kri_id": "NFR-07-K1",
@@ -676,7 +706,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 2,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-07; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-07-K2",
@@ -688,7 +719,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-07; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-07-K3",
@@ -700,7 +732,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-07; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-08-K1",
@@ -712,7 +745,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 50,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-08; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-08-K2",
@@ -724,7 +758,8 @@
       "soglia_attenzione": 5,
       "soglia_allerta": 15,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-08; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-08-K3",
@@ -736,7 +771,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-08; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-09-K1",
@@ -748,7 +784,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-09; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-09-K2",
@@ -760,7 +797,8 @@
       "soglia_attenzione": 5,
       "soglia_allerta": 15,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-09; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-09-K3",
@@ -772,7 +810,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-09; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-10-K1",
@@ -784,7 +823,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-10; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-10-K2",
@@ -796,7 +836,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 6,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-10; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-10-K3",
@@ -808,7 +849,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 50,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-10; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-11-K1",
@@ -820,7 +862,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 8,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-11; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-11-K2",
@@ -832,7 +875,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 6,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-11; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-11-K3",
@@ -844,7 +888,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-11; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-12-K1",
@@ -856,7 +901,8 @@
       "soglia_attenzione": 10,
       "soglia_allerta": 30,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-12-K2",
@@ -868,7 +914,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 10,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-12-K3",
@@ -880,7 +927,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "Misura una componente del rischio NFR-12; valori crescenti indicano peggioramento."
     }
   ],
   "azioni_aperte": [

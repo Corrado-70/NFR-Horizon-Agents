@@ -9,6 +9,17 @@
 > motore ancora da scegliere. La variante con Power Automate e' archiviata (D-91). Le note qui sotto sono in ordine
 > storico: dove una nota datata contrasta con questo stato, vale questo stato.
 >
+> **04/11/2026** (passo 3 dell'ordine di lavoro, D-94...D-98): meccanismi di perdita anche solo potenziali e segnali
+> deboli (P16), rapporti di scenario in `Analisi_Esterne/Rapporti_Scenario` con tipo di fonte Rapporto (P4), parte
+> QUINDI: del razionale e sezione "Stile" (P14), rischi collegati nella parte COLLEGATI: del rischio primario (al posto
+> di P5), temi da verificare curati nell'app e passati ad A1 nella baseline (P9, `temi.py`). Tutto nella guida di
+> scrittura e nel codice: i prompt di A1 e A8 non cambiano (trappole 150 e 151).
+>
+> **04/11/2026, passo 7 e finestra** (D-99...D-102, template `2026-11-04`): scia sul radar solo di posizione e
+> traiettoria dei primi cinque; commento di A1 in prima pagina del Quadro; riepilogo mensile delle notizie in Excel e HTML
+> (`riepilogo_mensile.py`, comando `mensile`); schede per tema; finestra dell'app per processo con il riquadro unico
+> "Approvazioni e report"; l'approvazione delle notizie rigenera il report; Quadro sempre in due pagine (trappola 152).
+>
 > **Versione del 23/09/2026, aggiornata il 24, 25, 29, 30/09, 01, 02, 05, 06 e 07/10 e poi fino al 30/10**
 > (aggiornamento del 23/10, solo sul ramo `copilot-studio-pieno`: **versione tutta in Copilot Studio**
 > (D-82): agente `NFR Operatore` con un argomento YAML per comando (trigger `OnActivity` sul testo), argomenti che
@@ -674,11 +685,12 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   `^[0-9]{4}Q[1-4]$`; **impatto**, prossimita, **probabilita** interi 1-5;
   **velocity `["integer","null"]` obbligatoria** (null = non valutata);
   **anni_adeguamento `["number","null"]` 0-30 obbligatorio** (D-60); niente
-  confidence (D-58);
+  confidence (D-58); dal 03/11 (D-93) **`descrizione` e `razionale` non obbligatori e senza minimo** (un rischio
+  esistente li riprende dalla baseline, uno nuovo li scrive: C1);
   NESSUN score composito, **nessun gap_controlli ne' esito**; variazioni
   (dimensione fra impatto, velocity, prossimita, probabilita;
   evidenza >= 20 caratteri; data_evidenza; **niente da/a**: li aggiunge lo
-  script); fonti (tipo Interna/Esterna, **rilevanza** intero 1-3 obbligatorio,
+  script); fonti (tipo Interna/Esterna, dal 04/11 anche Rapporto, D-95; **rilevanza** intero 1-3 obbligatorio,
   D-58); azioni 1-5 (owner funzione, orizzonte
   3/6/12 mesi, **niente dimensione**); kri_proposti **esattamente 2** (D-64),
   ciascuno con **`tipo` obbligatorio "Esposizione" o "Evoluzione"**, soglie
@@ -749,17 +761,36 @@ Codice `MAN` = file caricato a mano da una fonte fuori elenco.
   la frase "ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe N" nella parte PROBABILITA quando le fonti
   non dicono se la Banca e' esposta): come A1 scrive la descrizione (3-5 frasi:
   meccanismo causa-evento-danno, dove tocca la Banca, perche' emergente; niente
-  punteggi; dal D-86 5-8 frasi e la tabella "Lunghezze dei testi" con minimo e consigliato per ogni testo, la
-  stessa di `controlli_a5.LUNGHEZZE`), il razionale in parti (per ogni valore: descrittore, fatto con
-  documento e data, **perche' non il valore vicino**, da/a o fonti ancora
-  valide; "Attribuisci a un documento solo cio' che il documento dice"), le
+  punteggi; dal D-86 la tabella "Lunghezze dei testi" con minimo e consigliato per ogni testo, la
+  stessa di `controlli_a5.LUNGHEZZE`; dal D-92 a fascia intermedia: descrizione 350-600, RISCHIO 200-300, ogni
+  dimensione 150-250, ADEGUAMENTO 100-200, evidenza 150-300, segnale 100-200, azione 120-250 e 150-300 il
+  razionale, KRI 150-300; A8 come D-88; dal D-93 si misurano solo i testi scritti), il razionale in parti (per ogni
+  valore: descrittore, fatto con documento e data, **perche' non il valore vicino**, da/a per un valore che cambia; "Attribuisci a un documento solo cio' che il documento dice"), le
   azioni (verbo, oggetto, risultato verificabile; quale anello interrompe;
   EFFETTO osservabile; **un'azione aperta non si ripropone**: passo successivo)
   e i KRI; poi un **esempio completo di forma** (frode con voce clonata sui
   bonifici corporate) con fatti e documenti dichiarati inventati ("Documento
   A/B/C"). Esempio coerente con la rubrica: Probabilita 5 perche' gia'
   osservato presso banche, Prossimita 4 e "non 5" perche' nessun tentativo
-  presso la Banca (trappola 79).
+  presso la Banca (trappola 79). Dal 03/11 (D-93, P17) la sezione **"Rischi esistenti: aggiorna, non
+  riscrivere"**, dopo le note e prima delle lunghezze: un rischio gia' nel registro scrive solo cio' che cambia;
+  descrizione una sola (non scritta se niente cambia; se cambia, riscritta dalla baseline raccontando l'evoluzione,
+  nelle stesse lunghezze); razionale solo le parti che cambiano (sempre quella di un valore cambiato; RISCHIO se cambia
+  la descrizione o l'esposizione; ADEGUAMENTO se cambiano gli anni; intero se quello della baseline non ha etichette);
+  KRI in vigore che restano, uno nuovo al posto di quello del suo tipo; azioni solo nuove; un rischio nuovo per intero;
+  vale anche per l'osservazione e lo straordinario. Le righe su radar ("1-5 azioni nuove; i due KRI in vigore
+  restano"), osservazione e straordinario lo richiamano.
+  Dal 04/11 (D-94...D-98), sempre nella guida e non nel prompt: la sezione **"Stile"** (frasi brevi, niente gergo,
+  chi-che cosa-quando-fonte) dopo le lunghezze; nel razionale la parte **`QUINDI:`** (che cosa significa il rischio per
+  la Banca e che cosa va deciso o osservato; riga "razionale, parte QUINDI:" 120-250 nella tabella delle lunghezze; si
+  riscrive se cambia un valore o la descrizione) e, nel solo rischio primario, la parte facoltativa **`COLLEGATI:`**
+  (sezione "Rischi collegati": id e motivo, mai il rischio stesso, mai dai due lati); le sezioni **"Fonti e rapporti
+  di scenario"** (`Analisi_Esterne/Rapporti_Scenario/<anno>`, letti per primi, tipo "Rapporto"; un rapporto prima
+  della finestra sostiene conferme e rischi nuovi, non cambi di valore) e **"Temi da verificare"** (per ogni tema della
+  baseline una risposta con il codice TEMA-nn, in un rischio o fra i fenomeni non censiti); in "Fenomeni" e "Radar e
+  osservazione" il **meccanismo anche solo potenziale** (`nessun_meccanismo` solo se il tema non potrebbe toccare la
+  Banca), la fonte anche precedente alla finestra per un rischio nuovo in osservazione, i **segnali deboli**; l'esempio
+  di forma chiude con QUINDI e COLLEGATI.
 
 ## PROMPT (02_Agenti)
 
@@ -1108,7 +1139,10 @@ entro l'anno, grigio margine), `sezione()`.
   vigore, 1/0; **AA livello** = Attivazione se F1+F2+F3 >= `livelloForti`,
   Attenzione se almeno uno o se margine < `livelloMargine` con un aggravante,
   Monitoraggio altrimenti, vuoto se il rischio non e' valutato; **AB motivo**
-  con TEXTJOIN, senza numeri; nomi `rmLivello`, `rmMotivoLivello`) e grafico a
+  con TEXTJOIN, senza numeri; nomi `rmLivello`, `rmMotivoLivello`; dal 04/11, D-99, colonne nascoste da `SCIA` = 100,
+  CV-DF, con la posizione nel trimestre `cicloScia` (Prossimita, stato, periodo di valutazione e anni di adeguamento
+  di allora, Y, raggio con l'angolo di oggi, "spostato" 1 solo se era nel radar e il raggio cambia, estremi della
+  freccia fino al bordo del cerchio di oggi), nomi `rmRaggioScia` e `rmScia`; nessun nome di livello in riga 3) e grafico a
   **DISPERSIONE** costruito da `grafico_radar(ws, base, piccolo)`, che scrive
   l'appoggio nel foglio stesso (colonne nascoste da `base`: 30 nel
   Radar_Mosca, dopo le colonne del livello; 60 nel Quadro) e
@@ -1165,11 +1199,14 @@ entro l'anno, grigio margine), `sezione()`.
   10,5): cinque riquadri (rischi valutati su anagrafica, **livello di allerta
   "n · m"** = in attivazione · in attenzione, con gli ID in attivazione e il
   numero in monitoraggio (T4 nascosta = in attivazione; D-63), variati · nuovi,
-  KRI in rosso, validazione ✓ o decisioni mancanti); primi cinque della Classifica (score con barra, Δ, urgenza chip,
-  ◆); **matrice piccola** con i soli numeri; **radar di Mosca piccolo** (8,5
-  cm, appoggio nel foglio stesso) con l'elenco dei rischi a fianco (righe da
-  12 punti: 20 rischi nella prima pagina); interruzione di pagina. Pagina 2:
-  **commento di A1** diviso in "Messaggio
+  KRI in rosso, validazione ✓ o decisioni mancanti); dal 04/11 (D-99, richiesta dell'utente) subito sotto il **commento
+  di A1** (righe 9-11, `quadroCommento`: messaggio chiave, decisioni, "dopo il commento"; AB9 e AB10 nascoste);
+  primi cinque della Classifica (score con barra, Δ, urgenza chip, ◆, colonna **"Ultimi 4 trimestri"** da
+  `cicliTraiettoria` con le colonne nascoste X-AA e TEXTJOIN); **matrice piccola** con i soli numeri ("n rischi" da sei
+  in su, G5); Note dell'analista (C21); **radar di Mosca piccolo** (7,7 cm, appoggio nel foglio stesso, senza scia) con
+  l'elenco dei rischi a fianco (righe da 11 punti); interruzione di pagina alla riga 43. Pagina 2: controlli e
+  segnalazioni da motivare (`quadroControlli`, righe 46-47), poi i rischi segnalati (righe 52-71). Prima del 04/11 il
+  commento era in pagina 2, diviso in "Messaggio
   chiave" e "Decisioni richieste" (SEARCH del marcatore "DECISIONI:"; senza
   marcatore tutto nel messaggio), controllo indipendente (A5 e osservazioni),
   "Dopo il commento" (avviso se sono state applicate rettifiche o
@@ -1186,7 +1223,7 @@ entro l'anno, grigio margine), `sezione()`.
   generazione da `04_Riferimenti/controlli_e_model_risk.md`, sezione 5; legenda. Stampa a scala 78%,
   margini ridotti: pagina 1 il quadro, pagina 2 commento e segnalati; con
   molti rischi segnalati la scala la riduce `prepara_report` (fino al 60%)
-  perche' resti in due pagine.
+  perche' resti in due pagine; oltre, `rischi_fuori_dal_quadro` nasconde gli ultimi segnalati e li elenca nella nota.
 - **Metodologia**, in sezioni colorate per processo: chi produce i numeri
   (anche A6 e le schede), fonti ed evidenze, analisi per dimensioni, score
   composito con i pesi come riferimenti a Parametri (quattro, Velocity "se
@@ -1379,7 +1416,8 @@ openpyxl (solo per il file delle schede). Moduli:
   azioni del ciclo o aperte, KRI in vigore con valore del ciclo prima, storia
   degli ultimi otto cicli; numeri arrotondati; dal 02/10, D-68,
   `razionale_rischio` e `motivazioni` da `parti_razionale` e, per azioni e KRI,
-  `razionale` ed `effetto_atteso` da `parti_effetto`); `parti_razionale`
+  `razionale` ed `effetto_atteso` da `parti_effetto`; dal 04/11 `quindi`, `collegati` e `collegato_a`, D-96 e D-97, e
+  la chiave `temi` per le schede per tema, D-101, che `per_a6` toglie dall'allegato di A6); `parti_razionale`
   (etichette RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO,
   con o senza accento o apostrofo: valgono all'inizio del testo o dopo un
   punto, un punto e virgola o un a capo, in maiuscolo anche ovunque dopo uno
@@ -1437,7 +1475,18 @@ openpyxl (solo per il file delle schede). Moduli:
   lascia un riferimento vuoto), calcola `_esito` (Nuovo se l'id non e' nella
   baseline; Variato se cambia una delle `DIMENSIONI_ESITO` — Impatto,
   Probabilita, Prossimita, Velocity —, da vuota a un valore compreso;
-  altrimenti Confermato) e aggiunge `da`/`a` alle variazioni; idempotente;
+  altrimenti Confermato) e aggiunge `da`/`a` alle variazioni; idempotente; subito dopo
+  **`controlli_a5.eredita_testi(payload, baseline)`** (D-93, P17): per un rischio esistente riprende dalla baseline
+  descrizione e segnale non scritti, ricompone il razionale con le parti validate non scritte (`_segmenti`, testo com'e'
+  scritto; ordine `ORDINE_PARTI`; ADEGUAMENTO solo con gli anni; un razionale di A1 senza etichette resta com'e'),
+  aggiunge i KRI in vigore non riproposti (`_ereditato`; uno nuovo sostituisce quello in vigore dello stesso tipo, uno
+  senza tipo resta solo se A1 non propone KRI); segna `_ereditati`, `_razionale_a1`, `_esistente`; idempotente. La
+  chiamano anche `controlla` e `precontrolla`, su una copia. Nella scrittura dei KRI un KRI `_ereditato` non riscrive la
+  definizione (ne' `Ciclo_Aggiornamento`) e non fa uscire gli altri; `ricostruisci_griglia` aggiunge in fondo alle
+  Segnalazioni di un rischio esistente proposto (non riaperto) `riga_testi_p17` ("Testi (P17) · aggiornati da A1: ...;
+  validati del ciclo prima: ...", dal confronto di Descrizione e parti del razionale con la riga del ciclo prima e dal
+  `Ciclo_Aggiornamento` dei KRI in vigore), MAI nella colonna Rilievi; dal 04/11 `ORDINE_PARTI` comprende `quindi` e
+  `collegati` (D-96, D-97);
   **`testo_rilievi(stato, id_rischio)`**: i rilievi di A5 e dei controlli di un
   rischio (o del ciclo, id None), uno per riga `[controllo · gravita' ·
   origine] testo`, con BLOCCANTE SUPERATO per i Bloccanti superati;
@@ -1449,7 +1498,10 @@ openpyxl (solo per il file delle schede). Moduli:
   il grafico accanto non copre la nota sulla scala) e `scala_quadro` (01/10:
   scala di stampa del Quadro fra 60% e 78%, calcolata dall'altezza delle due
   pagine e dall'altezza utile dell'A4 orizzontale, perche' Limiti e legenda
-  non finiscano soli su una terza pagina); se fallisce
+  non finiscano soli su una terza pagina; dal 04/11 `rischi_fuori_dal_quadro`: se
+  anche al 60% la seconda pagina non sta, si nascondono gli ultimi rischi segnalati per score e la nota della
+  sezione li elenca con il rimando a Classifica e schede; a ogni report si rimette tutto com'era prima di
+  rimisurare); se fallisce
   avvisa e non ferma. Letture dal workbook **solo per nome**
   (`copertura_foglio`, `segnali_sopra_soglia`, `aree_non_presidiate`,
   `colonna_nome`). JSON delle liste (variazioni, fonti) scritto con le chiavi in
@@ -1466,9 +1518,13 @@ openpyxl (solo per il file delle schede). Moduli:
     `Input_A1_<ciclo>.txt` (D-69; stampa "Allegato per A1: ...") (input di A1, A3,
     A4, A5: rischi con impatto, velocity — null se non valutata —, prossimita,
     probabilita, **presidio_controlli**, **anni_adeguamento** (dall'anagrafica),
-    esito_precedente, fonti (con la rilevanza),
+    esito_precedente, **descrizione** (D-93) e razionale, fonti (con la rilevanza),
     storico di due cicli; niente gap_controlli; KRI in vigore nel ciclo
-    corrente; azioni aperte); avvisa se il ciclo non e' validato.
+    corrente, con il **razionale** (D-93); azioni aperte; dal 04/11, D-98, in un trimestre i **temi da verificare**
+    aperti di `temi_da_verificare.md`, `con_temi`, anche con `--uscita`); avvisa se il ciclo non e' validato.
+    `trimestrale` controlla i temi che A1 ha ricevuto (`temi_ricevuti`, dalla Baseline_corrente di quel ciclo:
+    `controlli_a5.controlla_temi`, Osservazione di C1 sul ciclo), stampa "TEMI DA VERIFICARE (P9): ..." e scrive
+    `Cicli/<ciclo>/Temi_<ciclo>.json` (`scrivi_risposte_temi`).
   - `trimestrale --payload A1.json [--challenger A5.json]` (A5 **facoltativo**,
     D-71): si ferma se il ciclo precedente ha decisioni "Da decidere"; valida lo
     schema; controlli meccanizzati con **tre gravita'** (`controlli_a5.py`):
@@ -1692,7 +1748,14 @@ openpyxl (solo per il file delle schede). Moduli:
   `testi --motivo` (minimo 10): `parcheggia(..., copia=True)` del registro, atto con il ciclo; l'app apre il
   registro e aspetta la chiusura; `testi-fine [--parcheggio]` (senza: l'ultimo aperto): registro uguale -> stato
   "senza modifiche"; cambiato -> `impronta_registro_dopo`, `comando_baseline` e `comando_report`, impronta riletta
-  dopo. `annulla` di un "testi" rifa' baseline e report dal registro rimesso.
+  dopo. `annulla` di un "testi" rifa' baseline e report dal registro rimesso. D-93: `valida` ricava dalle decisioni con
+  il suffisso (riapertura) i testi da rileggere (`testi_da_rileggere`: rettificati con una voce in `TESTI_DA_RILEGGERE`
+  per oggetto e campo, respinti di KRI e azioni una volta per oggetto; non Decisione_Stato ne' le righe Invariato), li
+  stampa dopo "TESTI DA RILEGGERE", li accumula in `Cicli/<ciclo>/Testi_da_rileggere_<ciclo>.json`
+  (`scrivi_testi_da_rileggere`) e li mette nella traccia chiusa della riapertura; `testi_inizio` li mette nell'atto
+  (`testi_da_rileggere`), il comando `testi` li stampa, `testi_fine` toglie il file; nell'app `validazione` cerca
+  "TESTI DA RILEGGERE" nell'uscita di valida e propone `testi_a_mano(m, motivo=...)` prima delle schede, anche fuori da
+  Admin; `testi_a_mano` mostra l'elenco con il messaggio che apre Excel.
 - **Report al comitato in HTML** (D-83, tappa M4): `report_html.py`, dal prototipo dell'analisi 16 (che ne e' ora un
   involucro: un solo codice). La `Vista` ricalcola in Python le viste del registro dalle tabelle dati, dai nomi
   definiti e dall'anagrafica (regole delle formule di `genera_dashboard.py`; lo score composito e' quello scritto
@@ -1740,11 +1803,16 @@ openpyxl (solo per il file delle schede). Moduli:
   conferma passa da `chiedi` (il collaudo la sostituisce).
 - **L'app NFR** (D-83, tappa M2; strada A dell'analisi 14): `NFR.cmd` (ASCII, `%~dp0`, `chcp 65001`; `pyw -3`,
   poi `pythonw`, poi `python`) apre `app_nfr.py`, finestra tkinter: stato in testa (ogni 30 secondi), pulsante del
-  prossimo passo, un pulsante per processo, passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
+  prossimo passo, dal 04/11 (AU8, D-102) i pulsanti in riquadri (Ogni settimana, Ogni trimestre, All'occorrenza; in fondo
+  "Approvazioni e report" con il periodo nel nome, `etichette_uscite`; riga di descrizione sotto i riquadri; nomi e
+  testi dalla tabella "I processi" della guida), passo in corso con le istruzioni e i pulsanti "Leggi gli appunti adesso",
   "Scegli file...", "Ho chiuso Excel: controlla ora" (controlla che il registro non sia piu' aperto), "Annulla il passo", log con l'esito colorato. **L'app non contiene
   regole**: i processi sono in `flussi.py`, scritti contro un `Ambiente` (esegui, apri, copia, risposta,
-  attendi_chiusura, chiedi, conferma, mostra) che la finestra realizza e il collaudo simula (`AmbienteFinto` di
+  attendi_chiusura, chiedi, conferma, mostra; dal 04/11 `modifica_temi`, D-98) che la finestra realizza e il collaudo simula (`AmbienteFinto` di
   `test_app.py`). Ogni processo gira in un thread; le chiamate alla finestra passano da una coda al thread di tkinter.
+  - `riepilogo_mensile.py` (P7, D-100): `calcola(reg, mese)` dalle tabelle del registro (un lettore di `report_html`),
+    `scrivi_xlsx` e `scrivi_html` dagli stessi dati, `ultimo_mese_completo`; comando `mensile` (solo lettura) e, con
+    l'approvazione delle notizie dell'ultima settimana di un mese, `valida` (AU8).
   - `stato.py`: stato e prossimo passo **senza Excel**, dall'archivio condiviso (Baseline_corrente: `ciclo_precedente`
     = ciclo corrente, `ciclo_da_valutare`; `Validazione_<c>.json` = validato; `Riapertura_<c>.json` aperta; report
     piu' recente della validazione; schede; settimana dal lunedi' di oggi: Raccolta, A3 in In_arrivo, Settimane;
@@ -1976,12 +2044,13 @@ openpyxl (solo per il file delle schede). Moduli:
     `AGGIORNAMENTO_IN_BANCA.md`); niente numeri che invecchiano; i codici non cambiano.
   - **Sezione 0**: quadro, in sospeso, prossimo passo, decisioni che aspettano.
     **Sezione 1**: ordine di lavoro con lo stato, in questa successione: in sospeso;
-    pacchetto in Banca e verifiche (B1-B4, B5-bis); scale a 6 livelli (A-19, prima del
-    primo ciclo vero); P4, P9, P14; ciclo di prova e qualita' (B7, B9, B6, B8); P1; P5;
+    pacchetto in Banca e verifiche (B1-B4, B5-bis; AU9, A1 a lotti, se la prova lo chiede); scale a 6 livelli
+    (A-19, prima del primo ciclo vero); P4, P16, P9, P14; ciclo di prova e qualita' (B7, B9, B6, B8); P1; P5;
     P2, P7, P6; dopo il ciclo vero P13, P12, resto di P15, revisione della procedura;
     in parallelo AU5 (demo), Q1, G1/G3/G2, G6.
   - Sezioni seguenti: passi sul PC della Banca; processi; automazione del processo
-    (tabella delle tappe M1-M5, fatte; resta la demo attraverso i flussi, AU5); Q1;
+    (tabella delle tappe M1-M5, fatte; restano la demo attraverso i flussi, AU5, e la
+    revisione della finestra con i pulsanti per cadenza, AU8, e A1 a lotti, AU9); Q1;
     grafici; pulizia; questioni aperte; **9 Fatto**, una riga per voce; **9-bis
     Superate**, con il motivo e il posto dove resta il contenuto (prove B5 della CS-1,
     K14, AU6, coda delle richieste, variante CS-2); **10 in riserva**: piano 07,
@@ -3186,6 +3255,44 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
     ma `verifica_riferimenti.py` leggeva da li' i campi derivati e il doppio run era citato da collaudo, governance e
     mappa. Prima di archiviare si cercano le citazioni, anche nel codice e nel kernel, si spostano le parti vive e
     il file vecchio va in `obsoleti.txt` (trappola 142).
+148. **La lunghezza dei testi di A1 si paga nella risposta di Copilot** (03/11, D-92). Con la fascia alta della D-86
+    un ciclo di 13-15 rischi valeva 70-90.000 caratteri (circa 5.000 per rischio): nessuna risposta di Agent Builder
+    lo contiene e il "continua" non funziona (A1 ricomincia da capo o dice di non avere altro). Prima di alzare una
+    lunghezza si moltiplica per i testi del rischio (le quattro dimensioni del razionale pesano quattro volte) e per i
+    rischi del ciclo; la guida dice ad A1 di non superare il consigliato. Il test della somma dei minimi in
+    `test_controlli.py` taglia il razionale a una lunghezza senza spazio in coda: C10 misura il testo con `strip()`.
+149. **Un testo validato non si fa riscrivere** (03/11, D-93, P17). Se a ogni ciclo l'agente riscrive i testi di tutti
+    i rischi, il testo validato si perde anche quando niente cambia, chi legge non vede che cosa e' nuovo e l'output
+    cresce con il registro. A1 scrive solo cio' che cambia e lo script riprende il resto dalla baseline prima di
+    controlli, precontrollo e scrittura (`eredita_testi`), cosi' tutto cio' che viene dopo vede il rischio completo.
+    Tre punti fini: i controlli completano una copia (l'impronta del precontrollo e l'allegato di A5 restano
+    dell'output di A1); C10 e la frase ESPOSIZIONE NON NOTA guardano solo il testo scritto nel ciclo (il resto e' gia'
+    validato); la parte del razionale di un valore che cambia non si eredita senza un segnale (C2 da motivare), perche'
+    motiverebbe il valore di prima. La baseline deve portare cio' che si eredita (descrizione dei rischi del radar,
+    razionale dei KRI): senza, l'agente non puo' che riscrivere. E un'informazione per chi valida non va nella colonna
+    Rilievi: la Classifica conta le sue righe come segnalazioni ("N oss."); la riga dei testi sta nella sola griglia.
+150. **Il prompt pieno non si allunga: le regole nuove vanno nell'allegato** (04/11, D-94...D-98). A1 e A8 hanno una
+    decina di caratteri liberi, la versione Copilot Studio di A1 due, e le righe dello scheletro sono ancore cercate alla
+    lettera da `genera_A1_CS.py` (e da `genera_CS.py` sul ramo): una parola in piu' nel prompt rompe il limite o il
+    generatore. Le regole nuove (meccanismi potenziali, rapporti di scenario, QUINDI, COLLEGATI, temi) stanno nella guida
+    di scrittura, che A1 riceve sempre per intero, e nel codice che le controlla; lo scheletro resta indietro di una
+    parola ("Interna|Esterna") e la guida lo dice. Per lo stesso motivo un controllo nuovo dello script sta sotto un
+    codice esistente (C1, C2, C10) invece di un C11, che dovrebbe entrare nel prompt di A5 (34 caratteri liberi) e in
+    tutti i documenti dei controlli (trappola 140). Anche una fonte nuova in `fonti.md` costa: il suo nome entra nel
+    prompt di A3; i rapporti di scenario sono una sottocartella di FNT-35.
+151. **Un dato che l'analista cura non va nel pacchetto** (04/11, D-98). `installa.cmd` copia nella library Kernel ogni
+    file di `01_Kernel` e sostituisce quelli cambiati: un `temi_da_verificare.md` del pacchetto cancellerebbe a ogni
+    aggiornamento la lista scritta dagli analisti. Il file lo crea e lo scrive l'app (`temi.py`), nella library Kernel;
+    sul PC di sviluppo, dove il kernel e' 01_Kernel, va nella cartella di uscita (come la knowledge di A7). E i temi da
+    controllare sono quelli che A1 ha ricevuto (la Baseline_corrente del ciclo), non quelli del file al momento di
+    `trimestrale`: un tema aggiunto dopo non e' una risposta mancante. Il file e' condiviso: chi salva controlla
+    l'impronta letta all'apertura.
+152. **Una scala minima non basta se il contenuto cresce** (04/11). Con i testi piu' lunghi della D-86 e molti
+    rischi segnalati la seconda pagina del Quadro arrivava a 880 punti: anche alla scala minima del 60% (529 punti su
+    523) Limiti e legenda finivano su una terza pagina, e il collaudo lo segnalava da settimane come "3 pagine" senza
+    dire perche'. Due lezioni: la verifica di un'impaginazione deve dire scala e altezze delle parti, non solo il numero
+    di pagine (`run_catena.pagine_quadro`); e oltre il limite di leggibilita' si toglie contenuto in modo dichiarato (gli
+    ultimi rischi segnalati, elencati nella nota con il rimando a Classifica e schede), non si rimpicciolisce ancora.
 
 ## STRUTTURA DEI FILE DA PRODURRE
 
@@ -3210,7 +3317,7 @@ riallinea ai numeri nuovi (righe, livelli, segnalazioni).
                   NFR.cmd  app_nfr.py  flussi.py  stato.py  ingresso.py  appunti.py  esecutore.py
                   installa.cmd  installa.py  installazione.py  obsoleti.txt  verifica_pc.py  notizie_manuali.py
                   report_html.py
-                  amministrazione.py  aiuto.py
+                  amministrazione.py  aiuto.py  temi.py  riepilogo_mensile.py
                   NFR_notizie_manuali.cmd
 09_Copilot_Studio/  Prova_con_Copilot_Studio.md  Prova_K6_Operatore.md  Prove_CS1.md  prepara_kit.py  precontrollo-nfr/SKILL.md
                     Copilot_Studio_pieno.md (ramo copilot-studio-pieno, D-82)  genera_CS.py  prepara_busta.py

@@ -15,6 +15,7 @@ cartella e registro sono gli stessi, l'origine si annota. Il registro lo apre Ex
 nel registro scrive solo il motore.
 """
 
+import datetime as dt
 import os
 import queue
 import threading
@@ -80,6 +81,31 @@ class Suggerimento:
             self.finestra = None
 
 
+RIGA_DESCRIZIONE = "ⓘ Passa sopra un pulsante per sapere che cosa fa."
+
+
+def ultimo_mese_completo(oggi=None):
+    """Il mese prima di quello di oggi (AAAA-MM): il mese su cui gira il report mensile delle notizie."""
+    oggi = oggi or dt.date.today()
+    return (oggi.replace(day=1) - dt.timedelta(days=1)).strftime("%Y-%m")
+
+
+def etichette_uscite(s, attesa, oggi=None):
+    """AU8: i nomi dei pulsanti di "Approvazioni e report" con il periodo su cui lavorano, dallo stato del processo."""
+    c = s.get("ciclo_corrente")
+    pronto = bool(c and s.get("validato") and not s.get("riapertura"))
+    if not attesa:
+        approva = "Approva (niente in attesa)"
+    elif len(attesa) == 1:
+        approva = f"Approva {attesa[0][1]}"
+    else:
+        approva = "Approva: " + " o ".join(e.split(" ", 1)[1] for _, e in attesa)
+    return {"Approva": approva,
+            "Prepara le schede (A6)": f"Prepara le schede (A6) del {c}" if pronto else "Prepara le schede (A6): dopo l'approvazione",
+            "Genera report": f"Genera report del {c}" if pronto else "Genera report: dopo l'approvazione",
+            "Report mensile notizie": f"Report mensile notizie ({ultimo_mese_completo(oggi)})"}
+
+
 class AmbienteTk:
     """L'Ambiente di flussi.py sulla finestra. I metodi si chiamano dal thread del processo."""
 
@@ -135,6 +161,9 @@ class AmbienteTk:
 
     def chiedi(self, titolo, campi):
         return self._main(self.app.modulo, titolo, campi)
+
+    def modifica_temi(self, titolo, temi, risposte):
+        return self._main(self.app.finestra_temi, titolo, temi, risposte)
 
     def risposta(self, agente, istruzioni):
         attesa = threading.Event()
@@ -203,28 +232,56 @@ class App:
         processi = ttk.Frame(self.root, padding=(10, 0))
         processi.pack(fill="x")
         self.con_a5 = tk.BooleanVar(value=False)
-        voci = [("Settimana", self.flussi.settimanale), ("Trimestre", lambda: self.flussi.trimestrale(self.con_a5.get())),
-                ("Straordinario", lambda: self.flussi.straordinario(self.con_a5.get())), ("Validazione", self.flussi.validazione),
-                ("Schede", self.flussi.schede), ("Report", self.flussi.report), ("Riapri un ciclo", self.flussi.riapertura),
-                ("Parere di A4", self.flussi.parere_a4),
-                ("Chiedi ad A7", self.flussi.assistente_a7), ("Diagnosi", self.flussi.diagnosi), ("Dismetti", self.flussi.dismetti)]
+        # AU8 (scelte dell'utente del 04/11/2026): riquadri per cadenza con il lavoro che produce proposte, in fondo un
+        # riquadro unico "Approvazioni e report" i cui pulsanti dicono su quale periodo lavorano (aggiorna_stato). I nomi
+        # sono quelli della tabella "I processi" della guida, da cui vengono suggerimenti e descrizioni.
+        voci = [("Analizza le notizie (A3)", self.flussi.settimanale, "Ogni settimana"),
+                ("Analizza il trimestre (A1)", lambda: self.flussi.trimestrale(self.con_a5.get()), "Ogni trimestre"),
+                ("Ciclo straordinario (A8)", lambda: self.flussi.straordinario(self.con_a5.get()), "All'occorrenza"),
+                ("Aggiungi un rischio (A8)", lambda: self.flussi.aggiungi_rischio(self.con_a5.get()), "All'occorrenza"),
+                ("Parere su una notizia (A4)", self.flussi.parere_a4, "All'occorrenza"),
+                ("Apri chat (A7)", self.flussi.assistente_a7, "All'occorrenza"),
+                ("Riapri un ciclo validato", self.flussi.riapertura, "All'occorrenza"),
+                ("Rimuovi rischio", self.flussi.dismetti, "All'occorrenza"),
+                ("Approva", self.flussi.approva, "Approvazioni e report"),
+                ("Prepara le schede (A6)", self.flussi.schede, "Approvazioni e report"),
+                ("Genera report", self.flussi.report, "Approvazioni e report"),
+                ("Report mensile notizie", self.flussi.mensile, "Approvazioni e report")]
         self.pulsanti = [self.prossimo]
+        self.per_nome = {}
         guida_pulsanti = aiuto.pulsanti()             # dalla tabella "I processi" della guida
+        self.guida_pulsanti = guida_pulsanti
         parti = aiuto.parti_finestra()
         Suggerimento(self.prossimo, parti.get("▶ Prossimo passo", ""))
-        for i, (testo, azione) in enumerate(voci):
-            b = ttk.Button(processi, text=testo, command=lambda a=azione, n=testo: self.avvia(a, n))
-            b.grid(row=i // 6, column=i % 6, sticky="ew", padx=2, pady=2)
-            Suggerimento(b, aiuto.suggerimento(testo, voci=guida_pulsanti))
-            self.pulsanti.append(b)
-        for c in range(6):
+        riquadri = {}
+        for n, (titolo, riga, colonna, largo) in enumerate((("Ogni settimana", 0, 0, 1), ("Ogni trimestre", 0, 1, 1),
+                                                           ("All'occorrenza", 1, 0, 2), ("Approvazioni e report", 2, 0, 2))):
+            r = ttk.LabelFrame(processi, text=titolo, padding=(6, 2))
+            r.grid(row=riga, column=colonna, columnspan=largo, sticky="nsew", padx=2, pady=3)
+            riquadri[titolo] = r
+        for c in range(2):
             processi.columnconfigure(c, weight=1)
+        conta = {}
+        for testo, azione, riquadro in voci:
+            k = conta[riquadro] = conta.get(riquadro, -1) + 1
+            per_riga = 2 if riquadro == "Approvazioni e report" else 3
+            b = ttk.Button(riquadri[riquadro], text=testo, command=lambda a=azione, n=testo: self.avvia(a, n))
+            b.grid(row=k // per_riga, column=k % per_riga, sticky="ew", padx=2, pady=2)
+            riquadri[riquadro].columnconfigure(k % per_riga, weight=1)
+            Suggerimento(b, aiuto.suggerimento(testo, voci=guida_pulsanti))
+            b.bind("<Enter>", lambda ev, n=testo: self.descrivi(n), add="+")
+            b.bind("<Leave>", lambda ev: self.descrivi(None), add="+")
+            self.pulsanti.append(b)
+            self.per_nome[testo] = b
+        casella_a5 = ttk.Checkbutton(riquadri["Ogni trimestre"], text="Con A5 Challenger (facoltativo)", variable=self.con_a5)
+        casella_a5.grid(row=0, column=1, sticky="w", padx=6)
+        self.etichette_dinamiche = {}
+        self.descrizione = ttk.Label(processi, text=RIGA_DESCRIZIONE, foreground="#595959", wraplength=1500, justify="left")
+        self.descrizione.grid(row=3, column=0, columnspan=2, sticky="w", padx=4, pady=(2, 4))
         opzioni = ttk.Frame(processi)
-        opzioni.grid(row=2, column=0, columnspan=6, sticky="w", pady=(4, 0))
-        casella_a5 = ttk.Checkbutton(opzioni, text="Con A5 Challenger (facoltativo)", variable=self.con_a5)
-        casella_a5.pack(side="left")
+        opzioni.grid(row=4, column=0, columnspan=2, sticky="w", pady=(4, 0))
         Suggerimento(casella_a5, parti.get("Con A5 Challenger", ""))
-        ttk.Label(opzioni, text="   Agenti:").pack(side="left")
+        ttk.Label(opzioni, text="Agenti:").pack(side="left")
         self.origine = tk.StringVar(value=self.flussi.origine)
         scelta = ttk.Combobox(opzioni, textvariable=self.origine, values=list(flussi.ingresso.ORIGINI), state="readonly", width=16)
         scelta.pack(side="left")
@@ -236,6 +293,8 @@ class App:
         menu.add_command(label="Apri l'archivio", command=lambda: self.amb.apri(self.conf["cartella_uscita"]))
         menu.add_command(label="Aggiorna lo stato", command=self.aggiorna_stato)
         menu.add_command(label="Verifica del PC", command=lambda: self.avvia(self.flussi.verifica_pc, "Verifica del PC"))
+        menu.add_command(label="Temi da verificare (per A1)",
+                         command=lambda: self.avvia(self.flussi.temi_da_verificare, "Temi da verificare"))
         menu.add_separator()
         menu.add_command(label="Togli il lucchetto rimasto (sblocca)", command=lambda: self.avvia(self.flussi.sblocca, "Sblocca"))
         menu.add_command(label="Ricostruisci la griglia di validazione",
@@ -307,6 +366,22 @@ class App:
         self.righe_stato.config(text="   ·   ".join(r[:2]) + "\n" + "   ·   ".join(r[2:]))
         p = s["prossimo"]
         self.prossimo.config(text=f"▶  Prossimo passo: {p['titolo']}\n{p['chi']}: {p['perche']}")
+        self.etichette_dinamiche = etichette_uscite(s, self.flussi.da_approvare())
+        for nome, testo in self.etichette_dinamiche.items():
+            if nome in self.per_nome:
+                self.per_nome[nome].config(text=testo)
+
+    def descrivi(self, nome):
+        """AU8: la riga sotto i riquadri dice che cosa fa il pulsante su cui passa il mouse (dalla guida)."""
+        if not nome:
+            self.descrizione.config(text=RIGA_DESCRIZIONE)
+            return
+        testo = self.etichette_dinamiche.get(nome, nome)
+        app = (self.guida_pulsanti.get(nome) or ("",))[0]
+        app = app.split(". ")[0].rstrip(".")                # la prima frase; la riga intera e' nella finestrella
+        if len(app) > 230:
+            app = app[:230].rsplit(";", 1)[0] + "..."
+        self.descrizione.config(text=f"ⓘ {testo}: {app}." if app else f"ⓘ {testo}")
 
     def aggiorna_periodico(self):
         if not self.in_corso:
@@ -563,6 +638,96 @@ class App:
         riga = len(campi) + 1
         ttk.Button(finestra, text="Conferma", command=ok).grid(row=riga, column=1, sticky="e", padx=10, pady=10)
         ttk.Button(finestra, text="Annulla", command=finestra.destroy).grid(row=riga, column=0, sticky="w", padx=10, pady=10)
+        self.root.wait_window(finestra)
+        return esito.get("v")
+
+    def finestra_temi(self, titolo, temi, risposte):
+        """P9 (D-98): la tabella dei temi da verificare con l'ultima risposta di A1; sotto, il tema scelto da modificare.
+        Conferma restituisce la lista (anche invariata), Annulla None."""
+        self.istruzioni.config(text=f"In attesa che tu riveda i temi da verificare (\"{titolo}\": Conferma o Annulla).")
+        self.fase("in attesa dei temi da verificare")
+        self.in_primo_piano()
+        finestra = tk.Toplevel(self.root)
+        finestra.title("Temi da verificare")
+        finestra.transient(self.root)
+        finestra.grab_set()
+        finestra.lift()
+        finestra.focus_force()
+        elenco, esito = [dict(t) for t in temi], {}
+        ttk.Label(finestra, text=titolo, font=("Segoe UI", 11, "bold")).pack(anchor="w", padx=10, pady=(8, 2))
+        ttk.Label(finestra, wraplength=900, justify="left",
+                  text="I temi aperti arrivano ad A1 nella baseline del prossimo ciclo trimestrale: per ognuno A1 risponde con "
+                       "un rischio (nel radar o in osservazione) o fra i fenomeni non censiti, con il motivo. Chiudi un tema "
+                       "quando la risposta basta; resta nel file come traccia.").pack(anchor="w", padx=10)
+        colonne = ("codice", "tema", "chiesto_da", "stato", "risposta")
+        albero = ttk.Treeview(finestra, columns=colonne, show="headings", height=10, selectmode="browse")
+        for c, testo, largo in zip(colonne, ("Codice", "Tema", "Chiesto da", "Stato", "Ultima risposta di A1"),
+                                   (80, 380, 140, 70, 260)):
+            albero.heading(c, text=testo)
+            albero.column(c, width=largo, stretch=c in ("tema", "risposta"))
+        albero.pack(fill="both", expand=True, padx=10, pady=6)
+        modulo = ttk.Frame(finestra)
+        modulo.pack(fill="x", padx=10)
+        campi = {}
+        for i, (chiave, etichetta) in enumerate((("tema", "Tema (che cosa verificare)"), ("chiesto_da", "Chiesto da"),
+                                                 ("perche", "Perche'"))):
+            ttk.Label(modulo, text=etichetta).grid(row=i, column=0, sticky="w", pady=2)
+            campi[chiave] = tk.StringVar()
+            ttk.Entry(modulo, textvariable=campi[chiave], width=100).grid(row=i, column=1, sticky="ew", pady=2)
+        campi["stato"] = tk.StringVar(value="aperto")
+        ttk.Label(modulo, text="Stato").grid(row=3, column=0, sticky="w", pady=2)
+        ttk.Combobox(modulo, textvariable=campi["stato"], values=("aperto", "chiuso"), state="readonly",
+                     width=10).grid(row=3, column=1, sticky="w", pady=2)
+        modulo.columnconfigure(1, weight=1)
+
+        def ridisegna(scelto=None):
+            albero.delete(*albero.get_children())
+            for i, t in enumerate(elenco):
+                albero.insert("", "end", iid=str(i), values=(t.get("codice") or "(nuovo)", t.get("tema"), t.get("chiesto_da"),
+                                                            t.get("stato") or "aperto", risposte.get(t.get("codice"), "—")))
+            if scelto is not None and str(scelto) in albero.get_children():
+                albero.selection_set(str(scelto))
+
+        def scelto():
+            sel = albero.selection()
+            return int(sel[0]) if sel else None
+
+        def carica(_=None):
+            i = scelto()
+            if i is not None:
+                for k, v in campi.items():
+                    v.set(elenco[i].get(k) or ("aperto" if k == "stato" else ""))
+
+        def valori():
+            return {k: v.get().strip() for k, v in campi.items()}
+
+        def aggiungi():
+            if not campi["tema"].get().strip():
+                messagebox.showwarning("Temi da verificare", "Scrivi prima il tema.", parent=finestra)
+                return
+            elenco.append({"codice": "", "data": "", **valori()})
+            ridisegna(len(elenco) - 1)
+
+        def applica():
+            i = scelto()
+            if i is None:
+                messagebox.showinfo("Temi da verificare", "Scegli prima un tema nella tabella.", parent=finestra)
+                return
+            elenco[i].update(valori())
+            ridisegna(i)
+
+        albero.bind("<<TreeviewSelect>>", carica)
+        bottoni = ttk.Frame(finestra)
+        bottoni.pack(fill="x", padx=10, pady=8)
+        ttk.Button(bottoni, text="Aggiungi come tema nuovo", command=aggiungi).pack(side="left")
+        ttk.Button(bottoni, text="Modifica il tema scelto", command=applica).pack(side="left", padx=6)
+
+        def conferma():
+            esito["v"] = elenco
+            finestra.destroy()
+        ttk.Button(bottoni, text="Conferma", command=conferma).pack(side="right")
+        ttk.Button(bottoni, text="Annulla", command=finestra.destroy).pack(side="right", padx=6)
+        ridisegna()
         self.root.wait_window(finestra)
         return esito.get("v")
 

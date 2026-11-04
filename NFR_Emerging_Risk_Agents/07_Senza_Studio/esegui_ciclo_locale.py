@@ -159,6 +159,7 @@ import controlli_a5                      # noqa: E402
 import input_a1                          # noqa: E402
 import lucchetto                         # noqa: E402  un solo analista alla volta scrive (D-83)
 import radar                             # noqa: E402  regola del registro unico (D-79)
+import temi                              # noqa: E402  temi da verificare (P9, D-98)
 from fonti import codici_ammessi, leggi_fonti   # noqa: E402
 from precontrollo import ciclo_di, conta, conta_testi, impronta, messaggio_correzione, precontrolla, riga_esito   # noqa: E402
 from precontrollo import agente as agente_di   # noqa: E402  A1 per un trimestre, A8 per uno straordinario (D-77)
@@ -166,7 +167,7 @@ from valida_output import carica_json, valida   # noqa: E402
 
 # Versione della struttura del workbook richiesta (nome definito versioneTemplate,
 # scritto da 03_Excel/genera_dashboard.py con lo stesso valore).
-VERSIONE_TEMPLATE = "2026-10-09"
+VERSIONE_TEMPLATE = "2026-11-04"
 TEMPLATE_PREDEFINITO = QUI.parent / "03_Excel" / "NFR_Dashboard_Template.xlsx"
 GIALLO_INPUT = 0xCCF2FF                  # FFF2CC in formato BGR di Excel: celle di input
 STATO_AZIONE_INIZIALE = "Proposta — da valutare"
@@ -327,6 +328,30 @@ def imposta_ciclo(scr, ciclo, data_rif):
     for i, p in enumerate(prima[::-1] + [ciclo], start=1):
         trend.Cells(i, 1).Value = per_cella(p)
     scr.x.intervallo_nome("dataRiferimento").Value = a_data(data_rif)
+    # P2 (04/11/2026): trimestre della scia del radar e cicli della traiettoria del Quadro (template 2026-11-04).
+    scia, traiettoria = cicli_scia(periodi_registro(scr), ciclo)
+    scr.imposta_nome("cicloScia", scia)
+    rng = scr.x.intervallo_nome("cicliTraiettoria")
+    for i, p in enumerate(traiettoria, start=1):
+        rng.Cells(i, 1).Value = per_cella(p)
+
+
+def cicli_scia(registrati, ciclo):
+    """P2: (trimestre della scia, cicli della traiettoria). La scia parte dall'ultimo ciclo trimestrale del registro prima
+    del trimestre corrente (per 2026Q4 e 2026Q4-S1: 2026Q3; "" se non c'e'); la traiettoria sono gli ultimi quattro
+    trimestri fino al corrente, ognuno con il suo ultimo ciclo (uno straordinario prende il posto del suo trimestrale),
+    "" per i trimestri senza un ciclo."""
+    tutti = sorted(set(registrati) | {ciclo})
+    trim = trimestre_di(ciclo)
+    scia = next((p for p in reversed(tutti) if not e_straordinario(p) and p < trim), "")
+    ultimo = {}
+    for p in tutti:
+        if p <= ciclo:
+            ultimo[trimestre_di(p)] = p
+    quattro = [trim]
+    while len(quattro) < 4:
+        quattro.insert(0, ciclo_precedente(quattro[0]))
+    return scia, [ultimo.get(q, "") for q in quattro]
 
 
 def a_data(valore):
@@ -631,10 +656,41 @@ def scala_quadro(sessione, massima=78, minima=60):
     manuali = [ws.HPageBreaks(i).Location.Row for i in range(1, ws.HPageBreaks.Count + 1)
                if ws.HPageBreaks(i).Type == -4135]                   # xlPageBreakManual
     salto = min(manuali) if manuali else ultima + 1
-    altezza = lambda da, a: sum(ws.Rows(r).RowHeight for r in range(da, a + 1))
+    altezza = lambda da, a: sum(ws.Rows(r).RowHeight for r in range(da, a + 1) if not ws.Rows(r).Hidden)
     disponibile = 595.3 - ps.TopMargin - ps.BottomMargin           # A4 orizzontale, in punti
+    nascosti = rischi_fuori_dal_quadro(sessione, lambda: altezza(salto, ultima) * minima / 100 > disponibile * 0.98)
     serve = max(altezza(1, salto - 1), altezza(salto, ultima))
     ps.Zoom = int(max(minima, min(massima, disponibile * 0.98 / serve * 100)))
+    return nascosti
+
+
+SEGNO_FUORI_DAL_QUADRO = " Per stare in due pagine "
+
+
+def rischi_fuori_dal_quadro(sessione, non_sta):
+    """04/11/2026 (testi lunghi della D-86): con molti rischi segnalati la seconda pagina del Quadro non sta in una
+    pagina neanche alla scala minima, e Limiti e legenda finivano su una terza. Si nascondono allora gli ultimi rischi
+    segnalati (i piu' bassi per score) finche' non sta, e la nota della sezione li elenca con il rimando a Classifica e
+    schede, dove ci sono tutti. Prima si rimette tutto com'era (prepara_report si rilancia a ogni report)."""
+    area = sessione.intervallo_nome("quadroSegnalati")
+    nota = area.Worksheet.Cells(area.Row - 2, 1)
+    base = str(nota.Value or "").split(SEGNO_FUORI_DAL_QUADRO)[0]
+    nota.Value = base
+    righe = list(area.Rows)
+    for r in righe:
+        r.EntireRow.Hidden = False
+    nascosti = []
+    for r in reversed(righe):
+        if not non_sta():
+            break
+        testo = str(r.Cells(1, 1).Value or "")
+        if testo.strip():
+            nascosti.insert(0, testo.split("\n")[0])
+            r.EntireRow.Hidden = True
+    if nascosti:
+        nota.Value = (f"{base}{SEGNO_FUORI_DAL_QUADRO}qui mancano {len(nascosti)} rischi segnalati, gli ultimi per score "
+                      f"({', '.join(nascosti)}): sono nella Classifica e nelle schede.")
+    return nascosti
 
 
 def prepara_report(sessione):
@@ -643,6 +699,8 @@ def prepara_report(sessione):
     Solo aspetto: se non riesce avvisa e basta."""
     try:
         adatta_altezze(sessione, "quadroCommento", 15)
+        adatta_altezze(sessione, "quadroNote", 15)               # vuota: la riga si abbassa (pagina 1)
+        adatta_altezze(sessione, "quadroControlli", 15)          # 04/11: in pagina 2, il commento e' in pagina 1
         adatta_altezze(sessione, "quadroSegnalati", 3)
         adatta_altezze(sessione, "deltaMotivi", 3)
         adatta_altezze(sessione, "fenomeniLista", 3)              # D-79: rischi in osservazione
@@ -941,6 +999,7 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
     if baseline is None:
         baseline = estrai_baseline(scr.x, mappa)
     completa_payload(payload, baseline)
+    controlli_a5.eredita_testi(payload, baseline)    # P17: i testi validati che A1 non ha riscritto
     ciclo = payload["ciclo"]
     _, anag = scr.leggi_anagrafica()
     stato = {"oggi": a_data(oggi), "owner": {r["ID"]: r["Owner"] for _, r in anag}, "controlli": controlli}
@@ -1007,9 +1066,13 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
         raise Fermo(f"Rilettura di KRI non in vigore nel ciclo {ciclo_prec}: {ignoti}")
     usati = {r["KRI_ID"] for r in tutte}
     spec_kri = mappa["tabelle"]["tblKRI"]
-    proposti, proposti_per_rischio = {}, {}
+    proposti, proposti_per_rischio, ereditati = {}, {}, set()
     for ctx in contesti(payload_radar, spec_kri["righe_da"]):          # D-79: niente KRI per chi e' in osservazione
         k, rid = ctx["rischi[].kri_proposti[]"], ctx["rischi[]"]["id_rischio"]
+        if k.get("_ereditato"):
+            ereditati.add(k["kri_id"])               # P17: in vigore e non riproposto da A1, resta com'era
+            k["_kri_id"] = k["kri_id"]
+            continue
         if k.get("kri_id"):
             k["_kri_id"] = k["kri_id"]
         else:
@@ -1050,6 +1113,8 @@ def scrivi_trimestrale(scr, payload, oggi, controlli=None, baseline=None):
                 nuova.pop("Soglia_Attenzione")
                 nuova.pop("Soglia_Allerta")
             riga.update(nuova)
+        elif r["KRI_ID"] in ereditati:
+            pass                                     # P17: definizione invariata, nuova fotografia del valore
         elif r["ID_Rischio"] in proposti_per_rischio:
             riga["In_Vigore"] = "No"                 # non riproposto: esce di vigore in questo ciclo
             usciti.append(r["KRI_ID"])
@@ -1319,6 +1384,69 @@ def _titolo_sezione(oggetto, voci):
 SUFFISSO_RIAPERTURA = " (riapertura)"
 DECISIONE_RIAPERTURA = {"Accettato": "Invariato", "Rettificato": "Rettificato", "Respinto": "Respinto"}
 
+# P17 (03/11/2026, scelta dell'utente): la riapertura cambia valori, non testi. Validata la riapertura, l'elenco delle
+# rettifiche dice quali testi rileggere (motivano ancora il valore di prima); si correggono subito dopo con Testi a mano
+# (Admin, D-90), che mostra lo stesso elenco e lo mette nell'atto. Nessuna correzione automatica: decide chi valida.
+TESTI_DA_RILEGGERE = {
+    **{("Rischio", c): f"RiskRegister, Razionale: parte {c.upper()}: (e la Descrizione, se il valore cambia il quadro)"
+       for c in ("Impatto", "Probabilita", "Prossimita", "Velocity")},
+    ("Rischio", "Anni_Adeguamento"): "RiskRegister, Razionale: parte ADEGUAMENTO:",
+    ("KRI", "Valore_Corrente"): "KRI, Nota_Rilevazione (il commento del valore)",
+    ("KRI", "Soglia_Attenzione"): "KRI, Razionale (EFFETTO:), se cita le soglie",
+    ("KRI", "Soglia_Allerta"): "KRI, Razionale (EFFETTO:), se cita le soglie",
+    ("Azione", "Owner"): "Azioni, Razionale (EFFETTO:), se cita chi la fa",
+    ("Azione", "Orizzonte"): "Azioni, Razionale (EFFETTO:), se cita i tempi",
+}
+TESTI_DOPO_RESPINTO = {"KRI": "RiskRegister, Razionale del rischio e dell'altro KRI, se citano il KRI tolto",
+                       "Azione": "RiskRegister e Azioni, razionali che citano l'azione annullata"}
+NOME_TESTI_DA_RILEGGERE = "Testi_da_rileggere_{ciclo}.json"
+INIZIO_TESTI_DA_RILEGGERE = "TESTI DA RILEGGERE"        # l'app lo cerca nell'uscita di valida
+
+
+def file_testi_da_rileggere(conf, ciclo):
+    return Path(conf["cartella_uscita"]) / "Cicli" / str(ciclo) / NOME_TESTI_DA_RILEGGERE.format(ciclo=ciclo)
+
+
+def testi_da_rileggere(decisioni):
+    """Dalle decisioni di una validazione (righe dello storico con Decisione), le rettifiche e le respinte della
+    riapertura con i testi da rileggere: [{oggetto, id, nome, campo, da, a, motivazione, testi}]. Una decisione sullo
+    stato (Decisione_Stato) non tocca testi."""
+    voci, respinti = [], set()
+    for r in decisioni:
+        dec = str(r.get("Decisione") or "")
+        if not dec.endswith(SUFFISSO_RIAPERTURA) or not dec.startswith(("Rettificato", "Respinto")):
+            continue
+        if dec.startswith("Respinto"):
+            if (r["Oggetto"], r["ID"]) in respinti or r["Oggetto"] not in TESTI_DOPO_RESPINTO:
+                continue
+            respinti.add((r["Oggetto"], r["ID"]))
+            voci.append({"oggetto": r["Oggetto"], "id": r["ID"], "nome": r.get("Nome"), "campo": None, "da": None,
+                         "a": "respinto", "motivazione": r.get("Motivazione"), "testi": TESTI_DOPO_RESPINTO[r["Oggetto"]]})
+        elif (r["Oggetto"], r["Campo"]) in TESTI_DA_RILEGGERE:
+            voci.append({"oggetto": r["Oggetto"], "id": r["ID"], "nome": r.get("Nome"), "campo": r["Campo"],
+                         "da": r.get("Proposta_Agente"), "a": r.get("Valore_Validato"), "motivazione": r.get("Motivazione"),
+                         "testi": TESTI_DA_RILEGGERE[(r["Oggetto"], r["Campo"])]})
+    return voci
+
+
+def riga_testo_da_rileggere(v):
+    """Una voce dell'elenco come riga per chi corregge."""
+    cosa = (f"{v['oggetto']} {v['id']} respinto" if v["a"] == "respinto" else
+            f"{v['oggetto']} {v['id']} {v['campo']} {'—' if v['da'] in (None, '') else v['da']} -> "
+            f"{'—' if v['a'] in (None, '') else v['a']}")
+    return f"{cosa} (motivazione: {v.get('motivazione') or '—'}): rileggere {v['testi']}"
+
+
+def scrivi_testi_da_rileggere(conf, ciclo, voci):
+    """Aggiunge le voci all'elenco del ciclo ancora da correggere (due riaperture prima dei testi a mano: uno solo).
+    Restituisce (percorso, tutte le voci)."""
+    percorso = file_testi_da_rileggere(conf, ciclo)
+    prima = carica_json(percorso)["voci"] if percorso.exists() else []
+    tutte = prima + voci
+    _scrivi_json(percorso, {"ciclo": str(ciclo), "voci": tutte,
+                            "aggiornato_il": dt.datetime.now().replace(microsecond=0).isoformat()})
+    return percorso, tutte
+
 
 def riga_dato(righe_tabella, o, ident, periodo):
     """(posizione 1-based, riga) del dato di un oggetto della griglia, per ID e periodo; un'azione riaperta puo' essere
@@ -1345,6 +1473,26 @@ def oggetti_riaperti(scr, chiavi):
     return out
 
 
+def riga_testi_p17(riga, riga_prima, kri, periodo):
+    """P17 (D-93): per chi valida, quali testi di un rischio esistente A1 ha aggiornato nel periodo e quali sono quelli
+    validati del ciclo prima, dal confronto delle righe del registro (riga e riga_prima del RiskRegister; kri: righe del
+    periodo in vigore del rischio). None per un rischio nuovo. Va nella griglia, non nella colonna Rilievi: le viste
+    contano le righe dei Rilievi come segnalazioni."""
+    if not riga_prima:
+        return None
+    pulito = lambda v: re.sub(r"\s+", " ", str(v or "")).strip()
+    aggiornati, validati = [], []
+    (validati if pulito(riga.get("Descrizione")) == pulito(riga_prima.get("Descrizione")) else aggiornati).append("descrizione")
+    ora, prima = controlli_a5._segmenti(riga.get("Razionale")), controlli_a5._segmenti(riga_prima.get("Razionale"))
+    for k in controlli_a5.ORDINE_PARTI:
+        if k in ora:
+            (validati if pulito(ora[k]) == pulito(prima.get(k)) else aggiornati).append(controlli_a5.ETICHETTE_PARTI[k] + ":")
+    for k in kri:
+        (aggiornati if str(k.get("Ciclo_Aggiornamento")) == str(periodo) else validati).append(f"KRI {k['KRI_ID']}")
+    return (f"Testi (P17) · aggiornati da A1: {', '.join(aggiornati) or 'nessuno'}; validati del ciclo prima: "
+            f"{', '.join(validati) or 'nessuno'}.")
+
+
 def ricostruisci_griglia(scr, modifiche=None):
     """Riscrive la griglia del foglio Validazione con gli oggetti ancora da decidere (storico, Stato 'Da decidere').
     Per una riga gia' presente (stesso oggetto, periodo e ID) conserva i valori gialli, la Motivazione e Respingi
@@ -1360,8 +1508,21 @@ def ricostruisci_griglia(scr, modifiche=None):
     tipo_kri = {(str(r["Ciclo"]), r["KRI_ID"]): r.get("Tipo") for r in scr.righe("tblKRI")}
     # D-71: le segnalazioni di A5 e dei controlli su ogni rischio (colonna Rilievi del RiskRegister) vanno nella
     # colonna Segnalazioni della griglia; quelle "da motivare" chiedono una Motivazione (⚑).
-    segnalazioni = {(str(r["Ciclo"]), r["ID_Rischio"]): r.get("Rilievi") or None for r in scr.righe("tblRegister")}
+    righe_rr = scr.righe("tblRegister")
+    segnalazioni = {(str(r["Ciclo"]), r["ID_Rischio"]): r.get("Rilievi") or None for r in righe_rr}
     superati = {k for k, v in segnalazioni.items() if da_motivare(v)}
+    # P17 (D-93): in fondo alle segnalazioni di un rischio esistente proposto da A1, i testi aggiornati e quelli validati.
+    per_chiave = {(str(r["Ciclo"]), r["ID_Rischio"]): r for r in righe_rr}
+    righe_kri = scr.righe("tblKRI")
+    for (oggetto, periodo, ident) in pendenti:
+        if oggetto != "Rischio" or (oggetto, periodo, ident) in riaperti or (periodo, ident) not in per_chiave:
+            continue
+        prima = periodi_prima(scr, periodo, 1)[0]
+        testo = riga_testi_p17(per_chiave[(periodo, ident)], per_chiave.get((str(prima), ident)),
+                               [k for k in righe_kri if str(k["Ciclo"]) == periodo and k["ID_Rischio"] == ident
+                                and k.get("In_Vigore") == "Sì"], periodo)
+        if testo:
+            segnalazioni[(periodo, ident)] = "\n".join(t for t in (segnalazioni.get((periodo, ident)), testo) if t)
     rischio_azione = {(str(r["Ciclo"]), r["ID_Azione"]): r["ID_Rischio"] for r in scr.righe("tblAzioni")}
     # D-79: lo stato calcolato del rischio, con il motivo (si ricalcola a ogni validazione).
     stato_rischio = {(str(r["Ciclo"]), r["ID_Rischio"]): (f"{r.get('Stato')}: {r.get('Motivo_Stato')}" if r.get("Stato") else None)
@@ -1850,7 +2011,8 @@ def estrai_baseline(sessione, mappa, straordinario=None):
             "anni_adeguamento": _vuoto(a.get("Anni_Adeguamento")),
             "attenzione_supervisore": a.get("Attenzione_Supervisore") == "Sì",
             **{v: _vuoto(colonna(r, k, mappa)) for v, k in DIMENSIONI_BASELINE},
-            "esito_precedente": r["Esito"], "razionale": r["Razionale"],
+            # P17: descrizione e razionale validati, che A1 aggiorna invece di riscrivere.
+            "esito_precedente": r["Esito"], "descrizione": r.get("Descrizione"), "razionale": r["Razionale"],
             "fonti": json.loads(r["Fonti"] or "[]"),
             # D-79: stato nel registro unico e decisione del validatore (la regola li usa per il ciclo dopo).
             "stato": r.get("Stato") if r.get("Stato") in radar.STATI else radar.RADAR,
@@ -1880,7 +2042,7 @@ def estrai_baseline(sessione, mappa, straordinario=None):
             "nome": k["Nome"], "unita": k["Unita"],
             "fonte_dati": k["Fonte_Dati"], "soglia_attenzione": k["Soglia_Attenzione"],
             "soglia_allerta": k["Soglia_Allerta"], "valore_corrente": k["Valore_Corrente"],
-            "data_rilevazione": k["Data_Rilevazione"]}
+            "data_rilevazione": k["Data_Rilevazione"], "razionale": k.get("Razionale")}      # razionale: P17
            for k in scr.righe("tblKRI") if k["Ciclo"] == ciclo_prec and k["In_Vigore"] == "Sì" and k["ID_Rischio"] in attivi]
     azioni = [{"id_azione": z["ID_Azione"], "id_rischio": z["ID_Rischio"], "descrizione": z["Descrizione"],
                "owner": z["Owner"], "stato": z["Stato"], "orizzonte": z.get("Orizzonte"), "ciclo": str(z.get("Ciclo") or "")}
@@ -1933,7 +2095,8 @@ def _scrivi_baseline(conf, dati):
     Input_A1_<ciclo>.txt (Input_A8_<periodo>.txt per uno straordinario) con baseline,
     controlli di A5 e guida di scrittura (D-69), Input_A3_A4.txt con la sola baseline
     (AU7: non piu' dalla knowledge; nomi D-84). Un file del kernel mancante non ferma niente (la baseline
-    basta ad A1): avviso."""
+    basta ad A1): avviso. Dal 04/11/2026 (P9) con i temi da verificare aperti."""
+    dati = con_temi(conf, dati)
     percorso = _scrivi_json(_cartella(conf) / "Baseline_corrente.json", dati)
     shutil.copy2(percorso, percorso.with_suffix(".txt"))
     input_a1.scrivi_allegato_a3_a4(_cartella(conf), dati, dt.date.today().isoformat())   # AU7: allegato di A3 e A4
@@ -1942,6 +2105,33 @@ def _scrivi_baseline(conf, dati):
         print(f"Avviso: nel kernel ({conf['kernel']}) mancano {', '.join(mancanti)}: l'allegato di A1 {allegato.name} ha "
               "solo la baseline. Copiare nella library Kernel tutti i file di 01_Kernel del pacchetto.")
     return percorso
+
+
+def con_temi(conf, dati):
+    """P9 (D-98): i temi da verificare aperti nella baseline di un ciclo trimestrale; non in uno straordinario, che
+    valuta solo l'evento. Senza temi aperti la baseline resta com'era."""
+    if "straordinario" in dati:
+        return dati
+    aperti = temi.per_baseline(temi.leggi(temi.file_temi(conf)))
+    return {**dati, "temi_da_verificare": aperti} if aperti else dati
+
+
+def temi_ricevuti(conf, ciclo):
+    """I temi che A1 ha ricevuto per il ciclo: quelli della Baseline_corrente scritta per quel ciclo. trimestrale
+    ricostruisce la baseline dal registro e li riprende da li', per controllare le risposte (non quelli aggiunti dopo)."""
+    try:
+        b = carica_json(conf["cartella_uscita"] / "Baseline_corrente.json")
+    except Exception:                                # noqa: BLE001 - senza il file non ci sono temi da controllare
+        return []
+    return (b.get("temi_da_verificare") or []) if b.get("ciclo_da_valutare") == ciclo else []
+
+
+def scrivi_risposte_temi(conf, ciclo, payload, temi_ciclo):
+    """Le risposte di A1 ai temi del ciclo, Cicli/<ciclo>/Temi_<ciclo>.json: l'app le mostra accanto a ogni tema."""
+    risposte = controlli_a5.risposte_temi(payload, [t["codice"] for t in temi_ciclo])
+    _scrivi_json(_cartella(conf, "Cicli", ciclo) / f"Temi_{ciclo}.json",
+                 [{**t, "risposte": risposte.get(t["codice"]) or []} for t in temi_ciclo])
+    return "; ".join(f"{t['codice']} -> {', '.join(risposte.get(t['codice']) or ['SENZA RISPOSTA'])}" for t in temi_ciclo)
 
 
 CARTELLA_PROMPT = QUI.parent / "02_Agenti"
@@ -2138,6 +2328,9 @@ def comando_trimestrale(arg, conf):
         raise Fermo(f"Il ciclo precedente {baseline['ciclo_precedente']} non e' ancora validato: {righe_griglia(pendenti)} righe "
                     "da validare nel foglio Validazione. Validarlo prima (comando valida): un ciclo nuovo non si "
                     "costruisce su valutazioni non accettate.")
+    temi_ciclo = [] if decisione else temi_ricevuti(conf, ciclo)       # P9: quelli che A1 ha ricevuto
+    if temi_ciclo:
+        baseline["temi_da_verificare"] = temi_ciclo
     _scrivi_json(tentativo / f"Baseline_usata_{ciclo}.json", baseline)
     meccanico = controlli_a5.controlla(payload, baseline)
     agente = None
@@ -2202,6 +2395,8 @@ def comando_trimestrale(arg, conf):
         shutil.copy2(f, cartella / f.name)
     prompt_in_uso = archivia_prompt(cartella)
     excel = _excel_di_output(conf["workbook"], cartella, ciclo)
+    if temi_ciclo:
+        print(f"TEMI DA VERIFICARE (P9): {scrivi_risposte_temi(conf, ciclo, payload, temi_ciclo)}.")
 
     fuori = sorted(x["id_rischio"] for x in payload["rischi"] if x["event_type"] == controlli_a5.FUORI_PERIMETRO)
     riclass = sorted(x["id_rischio"] for x in payload["rischi"]
@@ -2342,8 +2537,22 @@ def comando_valida(arg, conf):
         # D-83: validato il ciclo corrente, il report al comitato si esporta dalla stessa sessione (gia' ricalcolata),
         # senza riaprire Excel, in una cartella temporanea: entra nell'archivio solo dopo la sostituzione del registro,
         # cosi' un fermo "registro cambiato" non lascia un report di dati non salvati. Un errore e' solo un avviso.
-        msg_report, pdf_tmp, html = None, None, None
-        if periodo == ciclo_corrente and "Q" in periodo and not getattr(arg, "senza_report", False):
+        msg_report, pdf_tmp, html, mensile = None, None, None, None
+        # AU8 (scelta dell'utente del 04/11/2026): anche l'approvazione delle notizie rigenera il report del ciclo corrente
+        # validato, perche' le notizie cambiano il livello di allerta e i rischi segnalati; e con l'ultima settimana di un
+        # mese il riepilogo mensile di quel mese (P7).
+        settimana = "Q" not in periodo
+        if settimana and not getattr(arg, "senza_report", False):
+            if (dt.date.fromisoformat(periodo) + dt.timedelta(days=7)).month != int(periodo[5:7]):
+                try:
+                    import report_html
+                    import riepilogo_mensile
+                    mensile = riepilogo_mensile.calcola(report_html.RegistroExcel(s), periodo[:7])
+                except Exception as ex:              # noqa: BLE001 - un avviso, mai un fermo
+                    msg_report = f"Avviso: riepilogo mensile non prodotto ({type(ex).__name__}: {ex})."
+        if ((periodo == ciclo_corrente and "Q" in periodo)
+                or (settimana and ciclo_corrente and not da_decidere(scr, ciclo_corrente))) \
+                and not getattr(arg, "senza_report", False):
             pdf_tmp = Path(conf["cartella_lavoro"]) / f"report_{os.getpid()}.pdf"
             try:
                 esporta_pdf(s, scr, ciclo_corrente, FOGLI_REPORT, pdf_tmp)
@@ -2355,7 +2564,9 @@ def comando_valida(arg, conf):
     if nuova_baseline is not None:
         _scrivi_baseline(conf, nuova_baseline)
     cartella = _cartella(conf, "Cicli" if "Q" in periodo else "Settimane", periodo)
-    chiusa = chiudi_riapertura(cartella, periodo, arg.validatore.strip())
+    rileggere = testi_da_rileggere(registro) if "Q" in periodo else []          # P17: dopo una riapertura
+    chiusa = chiudi_riapertura(cartella, periodo, arg.validatore.strip(), rileggere)
+    file_testi, tutte = scrivi_testi_da_rileggere(conf, periodo, rileggere) if rileggere else (None, [])
     if liste is not None:
         _scrivi_json(cartella / f"Righe_liste_{periodo}.json", liste)   # sostituisce quelle "da validare"
     _scrivi_json(cartella / f"Validazione_{periodo}.json",
@@ -2363,6 +2574,8 @@ def comando_valida(arg, conf):
     if pdf_tmp is not None:                          # dopo Validazione_: l'app lo vede piu' recente della validazione
         msg_report = pubblica_report(pdf_tmp, conf, ciclo_corrente, FOGLI_REPORT)
         msg_report += "\n" + pubblica_html(html, conf, ciclo_corrente)
+    if mensile is not None:
+        msg_report = ((msg_report + "\n") if msg_report else "") + scrivi_mensile(conf, mensile)
     excel = _excel_di_output(conf["workbook"], cartella, f"{periodo}_validato")
     print(f"Validazione del periodo {periodo} applicata: {sum(esiti_righe.values())} righe — accettate "
           f"{esiti_righe['Accettato']}, rettificate {esiti_righe['Rettificato']} ({esiti['Rettificato']} valori cambiati), "
@@ -2374,18 +2587,23 @@ def comando_valida(arg, conf):
           + ("\nBaseline per il prossimo ciclo aggiornata con i valori validati." if nuova_baseline is not None else "")
           + (f"\nRighe per le liste con i valori validati: {cartella / f'Righe_liste_{periodo}.json'}" if liste is not None else "")
           + (f"\nRiapertura chiusa: {chiusa}" if chiusa else "")
+          + (f"\n{INIZIO_TESTI_DA_RILEGGERE} ({len(tutte)}, P17): le rettifiche della riapertura hanno cambiato i valori, "
+             "non i testi che li motivano.\n" + "\n".join(f"  - {riga_testo_da_rileggere(v)}" for v in tutte)
+             + "\nSi correggono con Admin -> Testi a mano (python amministrazione.py --admin testi --motivo \"...\"), che "
+             f"mostra lo stesso elenco: {file_testi}" if tutte else "")
           + (f"\n{msg_report}" if msg_report else "")
           + (f"\n{msg_a7}" if msg_a7 else ""))
 
 
-def chiudi_riapertura(cartella, periodo, validatore):
+def chiudi_riapertura(cartella, periodo, validatore, testi=None):
     """D-83: la traccia della riapertura (Riapertura_<ciclo>.json, scritta da riapri) si chiude con la validazione:
-    resta nella cartella del ciclo con la data e l'ora nel nome, e chi ha validato."""
+    resta nella cartella del ciclo con la data e l'ora nel nome, e chi ha validato (e, P17, i testi da rileggere)."""
     traccia = cartella / f"Riapertura_{periodo}.json"
     if not traccia.exists():
         return None
     dati = carica_json(traccia)
-    dati.update(validata_il=dt.datetime.now().replace(microsecond=0).isoformat(), validata_da=validatore)
+    dati.update(validata_il=dt.datetime.now().replace(microsecond=0).isoformat(), validata_da=validatore,
+                testi_da_rileggere=testi or [])
     chiusa = cartella / f"Riapertura_{periodo}_{dt.datetime.now():%Y%m%d_%H%M%S}.json"
     _scrivi_json(chiusa, dati)
     traccia.unlink()
@@ -2665,8 +2883,11 @@ def comando_baseline(arg, conf):
         print(f"ATTENZIONE: il ciclo {dati['ciclo_precedente']} ha ancora {righe_griglia(pendenti)} righe da validare nel foglio "
               "Validazione. Questa baseline contiene valori NON validati; il comando trimestrale si fermera' finche' "
               "il ciclo non e' validato.")
-    uscita = _scrivi_json(Path(arg.uscita), dati) if arg.uscita else _scrivi_baseline(conf, dati)
+    uscita = _scrivi_json(Path(arg.uscita), con_temi(conf, dati)) if arg.uscita else _scrivi_baseline(conf, dati)
     print(f"Baseline scritta: {uscita}")
+    aperti = [] if decisione else temi.per_baseline(temi.leggi(temi.file_temi(conf)))
+    if aperti:
+        print(f"Temi da verificare per A1 (P9): {len(aperti)} aperti, nella baseline ({', '.join(t['codice'] for t in aperti)}).")
     if not arg.uscita:
         print(f"Allegato per {agente_di(dati.get('ciclo_da_valutare'))}: {uscita.parent / input_a1.nome_file(dati)} "
               "(baseline, controlli di A5 e guida di scrittura)")
@@ -2745,6 +2966,35 @@ def archivia_nota_quadro(s, scr, ciclo_prec):
 
 FOGLI_REPORT = ["Quadro", "Classifica", "Radar_Mosca", "Matrice", "Delta", "Fenomeni", "Metodologia"]
 FOGLI_LAVORO = ["Registro", "Parametri"]
+
+
+def comando_mensile(arg, conf):
+    """P7 (D-100): il riepilogo delle settimane di un mese dal registro (solo lettura), in Excel e in HTML dagli stessi
+    dati, in Archivio_Cicli/Mensili. Senza --mese: l'ultimo mese completo (gia' finito alla settimana corrente)."""
+    from excel_com import SessioneExcel
+    import report_html
+    import riepilogo_mensile as rm
+    with SessioneExcel(conf["workbook"], sola_lettura=True) as s:
+        controlla_versione(s)
+        reg = report_html.RegistroExcel(s)
+        mese = getattr(arg, "mese", None) or rm.ultimo_mese_completo(reg)
+        if not mese:
+            raise Fermo("Nessuna settimana nel registro: il riepilogo mensile si fa dopo la prima settimana scritta.")
+        try:
+            dati = rm.calcola(reg, mese)
+        except ValueError as ex:
+            raise Fermo(str(ex))
+    print(scrivi_mensile(conf, dati))
+
+
+def scrivi_mensile(conf, dati):
+    """P7: i due file del riepilogo mensile in Archivio_Cicli/Mensili; restituisce il messaggio."""
+    import riepilogo_mensile as rm
+    cartella = _cartella(conf, "Mensili")
+    xlsx = rm.scrivi_xlsx(dati, cartella / f"Riepilogo_{dati['mese']}.xlsx")
+    pagina = rm.scrivi_html(dati, cartella / f"Riepilogo_{dati['mese']}.html")
+    return (f"Riepilogo mensile di {dati['nome_mese']} ({len(dati['settimane'])} settimane, {dati['notizie']} notizie): "
+            + ", ".join(f"{k.lower()} {v}" for k, v in rm.numeri_chiave(dati)[2:]) + f".\nExcel: {xlsx}\nHTML: {pagina}")
 
 
 def comando_report(arg, conf):
@@ -2871,7 +3121,8 @@ def comando_schede_input(arg, conf):
         s.ricalcola()
         dati = _input_schede(s, mappa)
     ciclo = dati["ciclo"]
-    uscita = _scrivi_json(_cartella(conf, "Cicli", ciclo) / input_a1.NOME_A6.format(ciclo=ciclo), dati)
+    import schede
+    uscita = _scrivi_json(_cartella(conf, "Cicli", ciclo) / input_a1.NOME_A6.format(ciclo=ciclo), schede.per_a6(dati))   # P6: senza i temi
     print(f"Input delle schede del ciclo {ciclo} ({len(dati['rischi'])} rischi): {uscita}\n"
           f"Allegarlo, da solo, all'agente A6; salvarne l'output come A6_{ciclo}.json e lanciare:\n"
           f"  python esegui_ciclo_locale.py schede --payload A6_{ciclo}.json")
@@ -2896,7 +3147,7 @@ def comando_schede(arg, conf):
         if problemi:
             raise Fermo("Output di A6 non coerente con i dati validati (nessun file scritto):\n  - " + "\n  - ".join(problemi))
     cartella = _cartella(conf, "Cicli", ciclo)
-    _scrivi_json(cartella / input_a1.NOME_A6.format(ciclo=ciclo), dati)
+    _scrivi_json(cartella / input_a1.NOME_A6.format(ciclo=ciclo), schede.per_a6(dati))
     if uscita_a6:
         _scrivi_json(cartella / f"A6_{ciclo}.json", uscita_a6)
     file = schede.scrivi_file_schede(dati, uscita_a6, cartella / f"Schede_{ciclo}.xlsx",
@@ -2908,7 +3159,7 @@ def comando_schede(arg, conf):
         msg_pdf = f"PDF: {pdf}"
     except Exception as ex:                          # noqa: BLE001
         msg_pdf = f"Avviso: PDF delle schede non prodotto ({type(ex).__name__}: {ex}); il file Excel c'e'."
-    print(f"Schede del ciclo {ciclo}: {len(dati['rischi'])} rischi, "
+    print(f"Schede del ciclo {ciclo}: {len(dati['rischi'])} rischi e {len(dati.get('temi') or [])} temi, "
           f"{'testi di A6 controllati' if uscita_a6 else 'testi di A1 dal registro (senza A6)'}.\nFile: {file}\n{msg_pdf}")
     corti = schede.testi_corti_a6(dati, uscita_a6) if uscita_a6 else []
     if corti:                                        # D-88: le schede sono scritte; i testi si possono far allungare
@@ -3229,6 +3480,8 @@ def main(argv=None):
     d.add_argument("--decisore", required=True, help="chi ha deciso: una funzione o un comitato")
     sub.add_parser("schede-input", help="dopo la validazione: input dell'agente A6 per le schede dei rischi")
     sub.add_parser("diagnosi", help="solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani (analisi 17)")
+    me = sub.add_parser("mensile", help="solo lettura: riepilogo delle settimane di un mese, in Excel e HTML (P7)")
+    me.add_argument("--mese", help="AAAA-MM (default: l'ultimo mese completo con settimane nel registro)")
     sc = sub.add_parser("schede", help="dopo la validazione: file delle schede dei rischi (con l'output di A6 o senza)")
     sc.add_argument("--payload", help="output di A6 (A6_<ciclo>.json); senza, testi di A1 dal registro")
     r = sub.add_parser("report", help="rigenera il PDF del report al comitato dall'Excel, dopo modifiche manuali")
@@ -3253,7 +3506,7 @@ def main(argv=None):
                    "inizializza": comando_inizializza, "dismetti": comando_dismetti,
                    "aggiorna-registro": comando_aggiorna_registro, "schede-input": comando_schede_input,
                    "schede": comando_schede, "report": comando_report,
-                   "diagnosi": comando_diagnosi, "sblocca": comando_sblocca}[arg.comando]
+                   "diagnosi": comando_diagnosi, "sblocca": comando_sblocca, "mensile": comando_mensile}[arg.comando]
         if arg.comando in SCRIVONO:
             with lucchetto.preso(conf["cartella_uscita"], arg.comando, conf.get("utente"), conf["attesa_lucchetto"]):
                 codice = comando(arg, conf)

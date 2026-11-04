@@ -8,13 +8,16 @@ Sul registro della demo (Demo_W1_W2/NFR_Registro.xlsx, letto con openpyxl: i val
   4. il cancello scatta con un numero alterato (un valore dei dati o una cella delle viste di Excel): l'HTML non esce;
   5. l'indice dei cicli dai riassunti accanto ai report;
   6. pubblicazione nell'archivio (esegui_ciclo_locale.pubblica_html): versione precedente conservata, riassunto e
-     indice; con il cancello scattato niente file, solo l'avviso.
+     indice; con il cancello scattato niente file, solo l'avviso;
+  7. P2 (04/11/2026): scia sul radar, traiettoria dei primi cinque, commento di A1 in testa al Quadro;
+  8. P7: riepilogo mensile in Excel e in HTML dagli stessi dati.
 La lettura via COM (RegistroExcel) e il cancello sulle viste ricalcolate da Excel sono nella catena (run_catena.py).
 
 Uso: python test_report_html.py [-v]
 """
 
 import copy
+import html
 import json
 import re
 import sys
@@ -119,6 +122,66 @@ def test_indice_e_pubblicazione(e, testo, riga):
                    "cancello scattato: nessun file, solo l'avviso (il PDF esce lo stesso)", msg)
 
 
+def test_p2(e, testo):
+    """P2 e richiesta del 04/11/2026: scia sul radar grande, traiettoria dei primi cinque, commento di A1 prima delle
+    priorita' nel Quadro (come nel foglio)."""
+    quadro = testo.split('id="quadro"', 1)[1].split("</section>", 1)[0]
+    e.verifica(quadro.index("Il commento dell") < quadro.index("primi cinque") < quadro.index("Controlli e segnalazioni"),
+               "Quadro: il commento di A1 subito dopo i riquadri, controlli e segnalazioni dopo il radar")
+    e.verifica("Ultimi 4 trimestri" in quadro and quadro.count('class="spark"') >= 5,
+               "Quadro: la traiettoria degli ultimi quattro trimestri per i primi cinque")
+    radar = testo.split('id="radar"', 1)[1].split("</section>", 1)[0]
+    e.verifica('marker-end="url(#freccia-scia)"' in radar and "NFR-01: posizione nel 2026Q3" in radar
+               and "NFR-16: posizione" not in radar and "freccia-scia" not in quadro,
+               "radar (P2): scia di NFR-01 dal 2026Q3 (Prossimita da 4 a 5); niente scia per NFR-16, entrato dall'osservazione, "
+               "ne' nel radar piccolo del Quadro")
+
+
+def test_matrice(e):
+    """G5 (segnalazione dell'utente del 04/11/2026): con molti rischi nella stessa cella la matrice non si deforma."""
+    from types import SimpleNamespace
+    rischi = [{"id": f"NFR-{n:02d}", "nome": f"Rischio {n}", "P": 4, "I": 4, "pos": n, "sup": False} for n in range(1, 10)]
+    for piccola, limite in ((False, 6), (True, 4)):
+        t = rh.matrice_html(SimpleNamespace(rischi=rischi), piccola=piccola)
+        cella = t.split('title="P 4 x I 4 = 16')[1].split("</td>")[0]
+        e.verifica("table-layout:fixed" in rh.CSS and cella.count("<a ") == limite - 1 and f"+{9 - limite + 1}</span>" in cella
+                   and "NFR-09" in cella.split('">')[0],
+                   f"matrice {'piccola' if piccola else 'grande'} (G5): celle di misura fissa, al massimo {limite - 1} ID e "
+                   f"\"+n\" per gli altri, l'elenco intero nel suggerimento", cella[:300])
+
+
+def test_riepilogo_mensile(e, reg):
+    """P7 (D-100): riepilogo di un mese dalle settimane del registro, in Excel e in HTML dagli stessi dati."""
+    import riepilogo_mensile as rm
+    from openpyxl import load_workbook
+    mesi = rm.mesi_disponibili(reg)
+    e.verifica("2026-10" in mesi and "2026-11" in mesi, "riepilogo mensile: i mesi con settimane nel registro", mesi)
+    d = rm.calcola(reg, "2026-10")
+    netti = {x["id"]: x["netti"] for x in d["rischi"]}
+    attese = [n for n in reg.tab["tblNews"] if str(n["Settimana"])[:7] == "2026-10"]
+    e.verifica(d["notizie"] == len(attese) and sum(d["segnali"].values()) <= len(attese)
+               and netti.get("NFR-16") is not None and d["rischi"][0]["netti"] >= d["rischi"][-1]["netti"],
+               "riepilogo mensile: notizie del mese per segnale, segnali netti per rischio (anche NFR-16) in ordine", str(netti))
+    nov = rm.calcola(reg, "2026-11")
+    e.verifica(len(nov["proposte"]) == 1 and "NFR-01" in nov["proposte"][0]["proposta"]
+               and any(c["rischio"] == "NFR-01" for c in nov["critiche"]),
+               "riepilogo mensile: a novembre la proposta di ciclo straordinario di A3 e la notizia forte su NFR-01 (Impatto 4)")
+    with tempfile.TemporaryDirectory() as tmp:
+        x = rm.scrivi_xlsx(d, Path(tmp) / "R.xlsx")
+        h = rm.scrivi_html(d, Path(tmp) / "R.html").read_text(encoding="utf-8")
+        celle = [c.value for r in load_workbook(x)["Riepilogo"].iter_rows() for c in r if c.value is not None]
+        numeri = rm.numeri_chiave(d)
+        e.verifica(all(v in celle and f"<b>{v}</b>{html.escape(k)}" in h for k, v in numeri)
+                   and all(html.escape(t) in h and t in celle for t, _, _ in rm.tabelle(d)),
+                   "riepilogo mensile: Excel e HTML con gli stessi numeri in testa e le stesse sezioni", str(numeri))
+    try:
+        rm.calcola(reg, "2026-13")
+        fermato = False
+    except ValueError:
+        fermato = True
+    e.verifica(fermato, "riepilogo mensile: un mese non valido si ferma")
+
+
 def main():
     e = Esito("Report al comitato in HTML (senza Excel)")
     if not DEMO.exists():
@@ -128,6 +191,9 @@ def main():
     testo, riga = test_report(e, reg)
     test_cancello(e, reg)
     test_indice_e_pubblicazione(e, testo, riga)
+    test_p2(e, testo)
+    test_matrice(e)
+    test_riepilogo_mensile(e, reg)
     return 0 if e.stampa() else 1
 
 

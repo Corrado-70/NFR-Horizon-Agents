@@ -1,0 +1,389 @@
+RACCOLTA NOTIZIE — settimana del 2026-11-02 (raccolta del 2026-11-04)
+Finestra: dal 2026-10-28 al 2026-11-04. Fonti interrogate: 18; con notizie: 12; notizie: 125.
+Raccolta automatica dai feed dell'elenco fonti (01_Kernel/fonti.md), senza selezione di merito.
+Ogni notizia porta il codice della fonte: usalo come codice_fonte.
+
+FONTI NON RAGGIUNGIBILI IN QUESTA RACCOLTA (la settimana e' incompleta per queste fonti):
+- FNT-04 ESMA, notizie: URLError: <urlopen error [Errno 11002] getaddrinfo failed>
+- FNT-14 Europol, notizie: URLError: <urlopen error [Errno 11002] getaddrinfo failed>
+
+== FNT-01 BCE Vigilanza bancaria, comunicati ==
+- [FNT-01] 2026-11-03 | Pedro Machado: Simplification and complexity in the banking union: separating the wheat from the chaff
+  https://www.bankingsupervision.europa.eu//press/speeches/date/2026/html/ssm.sp261103~dff42acdd1.en.html
+- [FNT-01] 2026-10-30 | Pedro Machado: Interview with Bloomberg
+  https://www.bankingsupervision.europa.eu//press/interviews/date/2026/html/ssm.in261030~21a824d8f2.en.html
+
+== FNT-03 EBA, notizie e comunicati ==
+- [FNT-03] 2026-10-29 | The EBA advises on targeted simplifications to Taxonomy disclosures
+  https://www.eba.europa.eu/publications-and-media/press-releases/eba-advises-targeted-simplifications-taxonomy-disclosures
+  The European Banking Authority (EBA) has published its response to the European Commission’s Call for Technical Advice on certain key performance indicators (KPIs) and other aspects of the Disclosures Delegated Act under Article 8 of the Taxonomy Regulation. The EBA advises on targeted changes to streamline disclosure requirements, reduce complexity and enhance the usability of information disclos
+
+== FNT-05 Banca d'Italia, aggiornamenti del sito ==
+- [FNT-05] 2026-11-04 | Simposio "Market Power in the AI Value Chain: between Trade and Finance"
+  https://www.bancaditalia.it/media/notizia/simposio-market-power-in-the-ai-value-chain-between-trade-and-finance?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-04 | L'economia del Lazio - Aggiornamento congiunturale, novembre 2026
+  https://www.bancaditalia.it/media/notizia/l-economia-del-lazio-aggiornamento-congiunturale-novembre-2026?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-04 | N. 33 - L'economia del Lazio
+  https://www.bancaditalia.it/pubblicazioni/economie-regionali/2026/2026-0033/index.html?com.dotmarketing.htmlpage.language=102
+  Aggiornamento congiunturale
+- [FNT-05] 2026-11-04 | Presentazione del secondo rapporto "La mappa dei comuni digitali"
+  https://www.bancaditalia.it/media/notizia/presentazione-del-secondo-rapporto-la-mappa-dei-comuni-digitali?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-04 | Sergio Nicoletti Altimari apre la 13ª Giornata delle Autorità europee di vigilanza sulla tutela dei consumatori
+  https://www.bancaditalia.it/media/notizia/sergio-nicoletti-altimari-apre-la-13-giornata-delle-autorit-europee-di-vigilanza-sulla-tutela-dei-consumatori?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-03 | La Banca d'Italia e la BCE organizzano l'High-Level Policy Dialogue on Electronic Payments and Digital Currencies
+  https://www.bancaditalia.it/media/notizia/la-banca-d-italia-e-la-bce-organizzano-l-high-level-policy-dialogue-on-electronic-payments-and-digital-currencies?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-03 | L'economia della Toscana - Aggiornamento congiunturale, novembre 2026
+  https://www.bancaditalia.it/media/notizia/l-economia-della-toscana-aggiornamento-congiunturale-novembre-2026?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-03 | N. 30 - L'economia della Toscana
+  https://www.bancaditalia.it/pubblicazioni/economie-regionali/2026/2026-0030/index.html?com.dotmarketing.htmlpage.language=102
+  Aggiornamento congiunturale
+- [FNT-05] 2026-11-03 | Protocollo di intesa tra Banca d'Italia, CONSOB e IVASS in materia di risoluzione alternativa delle controversie
+  https://www.bancaditalia.it/media/notizia/protocollo-di-intesa-tra-banca-d-italia-consob-e-ivass-in-materia-di-risoluzione-alternativa-delle-controversie?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-03 | ITA-coin - ottobre 2026 [xlsx, 15.9 KB]
+  https://www.bancaditalia.it/statistiche/tematiche/indicatori/indicatore-ciclico-coincidente/Itacoin_it.xlsx
+  Indicatore ciclico coincidente
+- [FNT-05] 2026-11-03 | €-coin è aumentato in ottobre
+  https://www.bancaditalia.it/media/notizia/coin-aumentato-in-ottobre?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-11-03 | Indicatore eurocoin: ottobre 2026 [pdf, 300.3 KB]
+  https://www.bancaditalia.it/media/comunicati/documenti/2026-02/cs-EuroCOIN-Ottobre-2026.pdf
+- [FNT-05] 2026-11-03 | Dati sui tassi di interesse per la riserva obbligatoria [pdf, 117.3 KB]
+  https://www.bancaditalia.it/compiti/polmon-garanzie/tassi-eurosistema/Tassi-Rob.pdf
+  Aggiornato a novembre 2026
+- [FNT-05] 2026-11-02 | Contratto per la partecipazione a TARGET-Banca d'Italia come sistema ancillare [pdf, 1.1 MB]
+  https://www.bancaditalia.it/compiti/sistema-pagamenti/t2-t2s-consolidation/contratti/Contratto_per_la_partecipazione_a_TARGET-Banca_d_Italia_come_sistema_ancillare.pdf
+- [FNT-05] 2026-11-02 | Contratto per la partecipazione a TARGET-Banca d'Italia [pdf, 1.0 MB]
+  https://www.bancaditalia.it/compiti/sistema-pagamenti/t2-t2s-consolidation/contratti/Contratto_per_la_partecipazione_a_TARGET-Banca_d_Italia.pdf
+- [FNT-05] 2026-11-02 | Rendistato relativo all'anno 2026 [pdf, 277.0 KB]
+  https://www.bancaditalia.it/compiti/operazioni-mef/rendistato-rendiob/documenti/rendistato-2026.pdf
+- [FNT-05] 2026-11-02 | Convegno "28° Regime, EU Inc. and Other Attempts to Unify Company Law"
+  https://www.bancaditalia.it/media/notizia/convegno-28-regime-eu-inc-and-other-attempts-to-unify-company-law?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-30 | Comunicazione relativa al ciclo di contribuzione 2027 al Fondo di Risoluzione Unico
+  https://www.bancaditalia.it/compiti/risoluzione-gestione-crisi/fondi-risol-crisi/2026/comunicazione-2026.10.30/index.html?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-30 | Ciclo contributivo 2027 al Fondo di Risoluzione Unico
+  https://www.bancaditalia.it/media/notizia/ciclo-contributivo-2027-al-fondo-di-risoluzione-unico?com.dotmarketing.htmlpage.language=102
+- [FNT-05] 2026-10-30 | Tassi di riferimento relativamente alle operazioni di credito agevolato da stipularsi nel mese di novembre 2026 [pdf, 151.5 KB]
+  https://www.bancaditalia.it/media/comunicati/documenti/2026-02/cs-operazioni-credito-agevolato-30102026.pdf
+
+== FNT-06 Commissione europea, sala stampa ==
+- [FNT-06] 2026-11-04 | Statement following meeting on prosperity talks today
+  https://ec.europa.eu/commission/presscorner/detail/en/statement_26_2348
+  European Commission Statement Brussels, 04 Nov 2026 Today, the European Commission hosted talks as part of ongoing efforts to secure a sustainable peace for Ukraine. Delegations from the EU, Ukraine, Germany, Fra...
+- [FNT-06] 2026-11-04 | Closing Speech by Commissioner Lahbib at the European Civil Protection Forum
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2346
+  European Commission Speech Brussels, 04 Nov 2026 What a fantastic way to end this Forum. I have just come from our workshop with 100 young people. Their energy is contagious. These two days have been unforgett...
+- [FNT-06] 2026-11-04 | €525 million investment set to drive new generation of European chip design companies
+  https://ec.europa.eu/commission/presscorner/detail/en/ip_26_2345
+  European Commission Press release Brussels, 04 Nov 2026 Launching today, the European Chip Design Platform will mobilise €525 million in investment to stimulate a new generation of European chip design companies.
+- [FNT-06] 2026-11-04 | Remarks by High Representative/Vice-President Kallas and Commissioner Kos on the 2026 Enlargement Package
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2344
+  European Commission Speech Brussels, 04 Nov 2026 High Representative/Vice-President Kallas Good afternoon. Today, the European Commission adopted the annual report on Enlargement, a scorecard of 10 accession c...
+- [FNT-06] 2026-11-04 | Daily News 04 / 11 / 2026
+  https://ec.europa.eu/commission/presscorner/detail/en/mex_26_2341
+  European Commission Daily news Brussels, 04 Nov 2026 Commission greenlights Latvia's fifth and final payment request for €504 million under NextGenerationEU Yesterday, the European Commission greenlighted Latvia'...
+- [FNT-06] 2026-11-04 | Speech by Commissioner Albuquerque (by video message) for the 13th Joint ESAs Consumer Protection Day, Rome
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2336
+  European Commission Speech Online, 04 Nov 2026 Good morning, ladies and gentlemen. I had hoped to join you in Rome today. Unfortunately, other commitments require me to remain in Brussels, but I was determin...
+- [FNT-06] 2026-11-04 | Press remarks by Executive Vice-President Fitto and Commissioner Tzitzikostas on the EU Sustainable Tourism Strategy
+  https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2333
+  European Commission Speech Brussels, 04 Nov 2026 Executive Vice-President Fitto Good afternoon, everyone. Today, the College has approved the EU Sustainable Tourism Strategy. I would like to start by thankin...
+- [FNT-06] 2026-11-03 | La Commissione rafforza la posizione dell'Europa quale principale destinazione turistica mondiale
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2281
+  European Commission Comunicato stampa Brussels, 04 Nov 2026 La Commissione europea ha presentato oggi una nuova strategia dell'UE per il turismo sostenibile, volta ad aumentare la competitività, la sostenibilità e la resilienza del settore.
+- [FNT-06] 2026-11-03 | Factsheet - EU Sustainable Tourism Strategy
+  https://ec.europa.eu/commission/presscorner/detail/en/fs_26_2283
+  European Commission Factsheet Brussels, 04 Nov 2026 Factsheet - EU Sustainable Tourism Strategy Factsheet - EU Sustainable Tourism Strategy
+- [FNT-06] 2026-11-03 | La Commissione presenta il programma di lavoro 2027 per un'Europa più forte e sovrana e riferisce in merito agli sforzi di semplificazione
+  https://ec.europa.eu/commission/presscorner/detail/it/ip_26_2321
+  European Commission Comunicato stampa Brussels, 04 Nov 2026 Oggi la Commissione ha adottato il suo programma di lavoro per il 2027, che definisce le sue principali iniziative legislative e non legislative per l'anno a venire. È accompagnata dalla relazione annuale 2026 sui progressi compiuti in materia di semplificazione, attuazione e applicazione, che fa il punto dei progressi compiuti verso norm
+
+== FNT-07 FSB, pubblicazioni e comunicati ==
+- [FNT-07] 2026-11-03 | FSB Regional Consultative Group for Europe meets in Bern
+  https://www.fsb.org/2026/11/fsb-regional-consultative-group-for-europe-meets-in-bern/
+  Swiss National Bank hosts the FSB Europe group in Bern.
+- [FNT-07] 2026-10-29 | Strengthening the crisis-preparedness community in an interconnected world
+  https://www.fsb.org/2026/10/strengthening-the-crisis-preparedness-community-in-an-interconnected-world/
+  In this speech, Dominique Laboureix, Chair of the FSB Resolution Steering Group, discusses the importance of cross-border, cross-sectoral crisis preparedness.
+
+== FNT-09 Commissione europea, strategia digitale ==
+- [FNT-09] 2026-11-04 | Independent study on the impact of age assurance on fundamental rights and costs for businesses
+  https://digital-strategy.ec.europa.eu/en/library/independent-study-impact-age-assurance-fundamental-rights-and-costs-businesses
+  Independent study on the impact of age assurance on fundamental rights and costs for businesses Anonymous (not verified) Wed, 11/04/2026 - 15:04 An independent study analyses the impacts of age assurance on fundamental rights and the costs for businesses concerned. Age assurance is key for a safer online environment as it ensures that children only access online services and features that are safe
+- [FNT-09] 2026-11-04 | Call for evidence on advertising repositories
+  https://digital-strategy.ec.europa.eu/en/consultations/call-evidence-advertising-repositories
+  Call for evidence on advertising repositories Anonymous (not verified) Wed, 11/04/2026 - 11:10 Opening: 04 November 2026 Closing: 02 December 2026 The Commission is seeking feedback on upcoming technical guidelines concerning advertising repositories under the Digital Services Act (DSA). The feedback is being gathered through a call for evidence . The responses collected through the call for evide
+- [FNT-09] 2026-11-03 | Call for proposals: EU AI Media Platform – Modular multilingual public-interest infrastructure for European news and audiovisual media (IA) - Apply AI
+  https://digital-strategy.ec.europa.eu/en/funding/call-proposals-eu-ai-media-platform-modular-multilingual-public-interest-infrastructure-european
+  Call for proposals: EU AI Media Platform – Modular multilingual public-interest infrastructure for European news and audiovisual media (IA) - Apply AI Anonymous (not verified) Tue, 11/03/2026 - 11:49 Opening: 20 October 2026 Closing: 16 February 2027 This call will support pilots for AI-enabled media infrastructures, fostering research and innovation in the European media sector. Main link https:/
+- [FNT-09] 2026-11-03 | Web Summit 2026
+  https://digital-strategy.ec.europa.eu/en/events/web-summit-2026
+  Web Summit 2026 Anonymous (not verified) Tue, 11/03/2026 - 11:13 10 November 2026 - 12 November 2026 DG Connect will be at Web Summit in Lisbon from 10 to 12 November. Main link https://digital-strategy.ec.europa.eu/en/news/digitaleu-web-summit-2026-support… Related topics Cloud computing Start-ups High-performance computing Data policy Quantum computing Artificial intelligence EU funding for digi
+- [FNT-09] 2026-10-29 | Local Digital Twins CiTiVERSE EDIC joins Smart City Expo World Congress 2026
+  https://digital-strategy.ec.europa.eu/en/events/local-digital-twins-citiverse-edic-joins-smart-city-expo-world-congress-2026
+  Local Digital Twins CiTiVERSE EDIC joins Smart City Expo World Congress 2026 Anonymous (not verified) Thu, 10/29/2026 - 09:12 03 November 2026 - 05 November 2026 Fira de Barcelona, Hall 3, Stand D71 Explore human-centric AI solutions for smart cities with the LDT CiTiVERSE EDIC at Smart City Expo World Congress 2026. The Local Digital Twin (LDT) CiTiVERSE European Digital Infrastructure Consortium
+
+== FNT-10 ACN, CSIRT Italia: avvisi e allerte ==
+- [FNT-10] 2026-11-04 | Sicurezza dei sistemi a supporto della catena del freddo e interfacce di management di sistemi connessi: richiamo urgente alle misure di verifica e mitigazione
+  https://www.acn.gov.it/portale/w/sicurezza-dei-sistemi-a-supporto-della-catena-del-freddo-e-interfacce-di-management-di-sistemi-connessi-richiamo-urgente-alle-misure-di-verifica-e-mitigazione
+  Alla luce dei recenti accadimenti e delle evidenze rilevate, si richiamano i soggetti nazionali ad applicare con urgenza le raccomandazioni già formulate da questo CSIRT per gli operatori della distribuzione alimentare e della filiera del freddo.
+- [FNT-10] 2026-11-04 | WordPress: rilevato sfruttamento in rete della CVE-2026-119977
+  https://www.acn.gov.it/portale/w/wordpress-rilevato-sfruttamento-in-rete-della-cve-2026-119977
+  È stato rilevato lo sfruttamento attivo in rete della vulnerabilità CVE-2026-119977 - già sanata dal vendor - presente in WordPress. Tale vulnerabilità, qualora sfruttata, potrebbe consentire ad un attaccante remoto non autenticato di eseguire codice arbitrario sui sistemi interessati.
+- [FNT-10] 2026-11-04 | Supply Chain Attack: distribuzione di versioni malevole dell'estensione Claude Code sul Marketplace di Cursor
+  https://www.acn.gov.it/portale/w/supply-chain-attack-distribuzione-di-versioni-malevole-dell-estensione-claude-code-sul-marketplace-di-cursor
+  È stata recentemente rilevata la distribuzione di versioni malevole dell'estensione Anthropic.claude-code all'interno del "Cursor VS Code Extension Marketplace", che ha comportato la raccolta e l'esfiltrazione di informazioni di sistema e sull'ambiente di lavoro degli host e il tentativo di installazione di una backdoor SSH persistente sui dispositivi degli sviluppatori.
+- [FNT-10] 2026-11-04 | Rilevate vulnerabilità nei chipset Qualcomm
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-nei-chipset-qualcomm-1
+  Rilevate molteplici vulnerabilità di sicurezza, di cui 2 con gravità "critica" e 13 con gravita "alta", nei chipset Qualcomm, componenti hardware impiegati in dispositivi mobili, sistemi embedded, apparati di rete, piattaforme automotive e altri sistemi basati sulle tecnologie Qualcomm Snapdragon e FastConnect.
+- [FNT-10] 2026-11-04 | Aggiornamenti di sicurezza per prodotti MongoDB
+  https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-per-prodotti-mongodb-4
+  MongoDB ha rilasciato aggiornamenti di sicurezza per sanare 15 vulnerabilità, di cui 6 con gravità "alta" in Database Tools e nei driver C, Atlas SQL ODBC e Node.js.
+- [FNT-10] 2026-11-04 | Risolte vulnerabilità in prodotti Elastic
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-elastic-4
+  Elastic ha rilasciato aggiornamenti di sicurezza per sanare molteplici vulnerabilità, di cui 2 con gravità “alta”, nei prodotti Elasticsearch e Kibana. Tali vulnerabilità potrebbero consentire a un utente malintenzionato remoto di causare la cancellazione di risorse senza autorizzazione o di compromettere la disponibilità del servizio sui sistemi interessati.
+- [FNT-10] 2026-11-04 | Risolte vulnerabilità in Github Enterprise server
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-github-enterprise-server-1
+  GitHub ha rilasciato aggiornamenti di sicurezza che risolvono diverse vulnerabilità, di cui due con gravità “alta”, in GitHub Enterprise Server, edizione on‑premises della piattaforma GitHub, progettata per ambienti aziendali con requisiti avanzati di sicurezza e conformità.
+- [FNT-10] 2026-11-04 | Rilevate vulnerabilità in prodotti HPE
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-prodotti-hpe
+  Rilevate molteplici vulnerabilità, di cui 3 con gravità “critica” e 27 con gravità “alta”, nei prodotti HPE Fabric Composer e Virtual Intranet Access (VIA). Tali vulnerabilità potrebbero consentire a un attaccante, in alcuni casi non autenticato, di eludere i meccanismi di autenticazione, eseguire codice arbitrario, accedere a informazioni sensibili, ottenere privilegi elevati o compromettere la d
+- [FNT-10] 2026-11-04 | Vulnerabilità in prodotti ASUS
+  https://www.acn.gov.it/portale/w/vulnerabilita-in-prodotti-asus-5
+  Rilevate 4 nuove vulnerabilità, di cui 3 con gravità “alta”, in alcuni prodotti ASUS. Tali vulnerabilità potrebbero consentire a un attaccante, in alcuni casi non autenticato, di elevare i propri privilegi, eseguire codice arbitrario o compromettere la disponibilità del servizio sui sistemi interessati.
+- [FNT-10] 2026-11-04 | Rilevate vulnerabilità in prodotti CompuGroup Medical
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-prodotti-compugroup-medical
+  Nell’ambito del processo di divulgazione coordinata delle vulnerabilità (Coordinated Vulnerability Disclosure – CVD), si rendono note le vulnerabilità individuate da ricercatori di sicurezza, e coordinate da questo CSIRT in collaborazione con il vendor interessato, presenti in diverse soluzioni software di CompuGroup Medical per la gestione e l'efficienza operativa dei processi relativi a professi
+- [FNT-10] 2026-11-04 | Risolte vulnerabilità in prodotti Docker
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-docker
+  Rilasciati aggiornamenti di sicurezza per sanare alcune vulnerabilità, di cui una con gravità “critica” e 3 con gravità “alta”, nei prodotti Docker Sandboxes, Docker Buildx e Docker Desktop. Tali vulnerabilità potrebbero consentire a un utente malintenzionato locale di eseguire codice arbitrario sul sistema host al di fuori dell'ambiente isolato ed eludere le restrizioni applicate ai container per
+- [FNT-10] 2026-11-04 | Risolte vulnerabilità in SolarWinds Dameware
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-solarwinds-dameware
+  Aggiornamenti di sicurezza risolvono tre vulnerabilità, di cui una con gravità "critica" e due con gravità "alta", presenti in SolarWinds Dameware, nota soluzione di amministrazione remota e supporto IT utilizzata per la gestione, il controllo e l'assistenza di sistemi informatici. Tali vulnerabilità, qualora sfruttate, potrebbero consentire ad un utente autenticato malintenzionato, anche da remot
+- [FNT-10] 2026-11-04 | Risolta vulnerabilità in Mozilla Firefox
+  https://www.acn.gov.it/portale/w/risolta-vulnerabilita-in-mozilla-firefox
+  Aggiornamenti di sicurezza risolvono una vulnerabilità con gravità “alta” in Mozilla Firefox. Tale vulnerabilità, qualora sfruttata, potrebbe consentire ad un utente malintenzionato di eseguire codice arbitrario, compromettere la disponibilità del servizio e/o accedere ad informazioni sensibili sui sistemi interessati.
+- [FNT-10] 2026-11-04 | Risolte vulnerabilità in Google Chrome
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-google-chrome-84
+  Google ha rilasciato un aggiornamento per il browser Chrome al fine di correggere 213 nuove vulnerabilità di sicurezza, di cui 21 con gravità “critica” e 63 con gravità “alta”.
+- [FNT-10] 2026-11-03 | Risolta vulnerabilità in prodotti Grafana
+  https://www.acn.gov.it/portale/w/risolta-vulnerabilita-in-prodotti-grafana
+  Rilasciati aggiornamenti di sicurezza per risolvere una vulnerabilità con gravità “alta” presente in Grafana Enterprise Metrics (GEM) e Mimir, piattaforme impiegate per l'archiviazione e la gestione di metriche di monitoraggio. Tale vulnerabilità, qualora sfruttata, potrebbe consentire a un attaccante autenticato e dotato di specifici permessi di leggere file arbitrari e accedere a informazioni se
+- [FNT-10] 2026-11-03 | Risolte vulnerabilità in prodotti PostgreSQL
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-postgresql
+  Rilasciati aggiornamenti di sicurezza per sanare alcune vulnerabilità, di cui 6 con gravità “alta”, in PostgreSQL psqlODBC. Tali vulnerabilità, qualora sfruttate, potrebbero consentire a un attaccante remoto, in alcuni casi non autenticato, di modificare dati o di eseguire codice arbitrario sui sistemi interessati.
+- [FNT-10] 2026-11-03 | Risolte vulnerabilità in cPanel
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-cpanel
+  Aggiornamenti di sicurezza sanano 2 vulnerabilità con gravità “alta” nel prodotto cPanel & WHM, nota piattaforma per la gestione di server e hosting. Tali vulnerabilità, qualora sfruttate, potrebbero consentire a un utente malintenzionato di leggere gli eventi in calendario e la rubrica di account arbitrari senza autenticazione, o di scrivere file arbitrari sui sistemi interessati con privilegi el
+- [FNT-10] 2026-11-03 | Risolte vulnerabilità in prodotti Zyxel
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-prodotti-zyxel-1
+  Zyxel ha rilasciato aggiornamenti di sicurezza per risolvere due vulnerabilità con gravità “alta” presenti nei firmware di alcuni Access Point (AP), dispositivi FWA7, Security Router e switch della serie GS1900. Tali vulnerabilità, qualora sfruttate, potrebbero consentire ad un attaccante, presente sulla rete locale o su una rete adiacente, di elevare i propri privilegi e, in determinate condizion
+- [FNT-10] 2026-11-03 | Risolte vulnerabilità nei chipset MediaTek
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-nei-chipset-mediatek-2
+  MediaTek ha pubblicato il bollettino di sicurezza di novembre 2026 contenente correzioni per 56 vulnerabilità, di cui 6 con gravità "critica" e 16 con gravità "alta", nei chipset MediaTek, componenti hardware impiegati in numerosi dispositivi mobili e sistemi embedded.
+- [FNT-10] 2026-11-03 | Aggiornamenti di sicurezza per dispositivi Android
+  https://www.acn.gov.it/portale/w/aggiornamenti-di-sicurezza-per-dispositivi-android-1
+  Google ha pubblicato il bollettino di sicurezza Android di novembre, contenente correzioni per 149 vulnerabilità, di cui 12 con gravità “critica” e 137 con gravità “alta”. Tra queste si evidenzia la CVE-2026-58882 per la quale risulta disponibile un Proof of Concept (PoC) in rete.
+- [FNT-10] 2026-11-03 | Rilevate vulnerabilità in Magistra
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-magistra
+  Nell’ambito del processo di divulgazione coordinata delle vulnerabilità (Coordinated Vulnerability Disclosure – CVD), si rendono note le vulnerabilità individuate da ricercatori di sicurezza, e coordinate da questo CSIRT in collaborazione con il vendor interessato, relative al prodotto di Galeno Sistemi Magistra, software per la gestione del laboratorio galenico di farmacia.
+- [FNT-10] 2026-11-02 | Zohocorp: sanate vulnerabilità in prodotti ManageEngine
+  https://www.acn.gov.it/portale/w/zohocorp-sanate-vulnerabilita-in-prodotti-manageengine
+  Aggiornamenti di sicurezza sanano 13 vulnerabilità, di cui una con gravità "critica" e 12 con gravità “alta”, che interessano i prodotti ManageEngine SharePoint Manager Plus, Password Manager Pro, PAM360, Eventlog Analyzer, Log360 e Key Manager Plus.
+- [FNT-10] 2026-11-02 | Rilevate vulnerabilità in SQLite
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-sqlite
+  Rilevate alcune vulnerabilità, di cui 4 con gravità "alta", in SQLite, libreria open source per la gestione di basi di dati relazionali incorporata in numerose applicazioni. Tali vulnerabilità potrebbero consentire a un attaccante di iniettare comandi di sistema, alterare la memoria dei processi interessati e compromettere la disponibilità del servizio sui sistemi coinvolti.
+- [FNT-10] 2026-11-02 | Risolte vulnerabilità in Chamilo LMS
+  https://www.acn.gov.it/portale/w/risolte-vulnerabilita-in-chamilo-lms
+  Rilevate quattro vulnerabilità di sicurezza, di cui 2 con gravità “alta”, in Chamilo LMS, sistema di e-learning e gestione dei contenuti. Tali vulnerabilità potrebbero consentire a un attaccante remoto, in determinate condizioni, di eseguire codice arbitrario o di compromettere un account esistente, anche amministrativo.
+- [FNT-10] 2026-11-02 | Rilevate vulnerabilità in n8n
+  https://www.acn.gov.it/portale/w/rilevate-vulnerabilita-in-n8n-10
+  Risolte due vulnerabilità con gravità "alta" in n8n, piattaforma open source per l'automazione dei flussi di lavoro.
+
+== FNT-13 NCSC Regno Unito, notizie e guide ==
+- [FNT-13] 2026-11-03 | Cyber chief: UK facing AI-powered attacks on critical infrastructure within two years
+  https://www.ncsc.gov.uk/news/cyber-chief-uk-facing-ai-powered-attacks-on-critical-infrastructure-in-two-years
+  The NCSC warns that ‘tech on the cheap’ has left UK organisations exposed to AI uncovering and exploiting longstanding cyber security weaknesses and calls for urgent investment in resilience.
+- [FNT-13] 2026-11-03 | Artificial intelligence and cyber intrusion
+  https://www.ncsc.gov.uk/report/artificial-intelligence-and-cyber-intrusion
+  An NCSC assessment that examines current AI-enabled threat trends and projections of the threat landscape to 2028.
+
+== FNT-15 BleepingComputer, stampa specializzata cyber ==
+- [FNT-15] 2026-11-04 | Vercel rolls out new protection against stolen session cookie attacks
+  https://www.bleepingcomputer.com/news/security/vercel-rolls-out-new-protection-against-stolen-session-cookie-attacks/
+  Vercel is gradually rolling out Device Bound Session Credentials (DBSC) on its platform as a key defense against information stealer malware. [...]
+- [FNT-15] 2026-11-04 | Zyxel fixes zero-day exploited to hack nearly 1,000 network switches
+  https://www.bleepingcomputer.com/news/security/zyxel-fixes-zero-day-exploited-to-hack-nearly-1-000-network-switches/
+  Zyxel has patched a zero-day vulnerability in its GS1900 series network switches that hackers exploited to compromise nearly 1,000 devices worldwide and steal configuration files and credentials. [...]
+- [FNT-15] 2026-11-04 | DreamHost confirms data breach exposed FTP logins and webmail sessions
+  https://www.bleepingcomputer.com/news/security/dreamhost-confirms-data-breach-exposed-ftp-logins-and-webmail-sessions/
+  DreamHost is warning of a data breach after attackers gained access to its File Manager platform for two months and stole customers' FTP/SFTP usernames and passwords. [...]
+- [FNT-15] 2026-11-04 | Cyberattack disrupts blood storage refrigeration systems in France
+  https://www.bleepingcomputer.com/news/security/cyberattack-disrupts-blood-storage-refrigeration-systems-in-france/
+  France's national blood service has confirmed that a cyberattack targeting a refrigeration equipment provider raised temperature and defrost settings at three of its facilities, threatening stored blood products. [...]
+- [FNT-15] 2026-11-04 | NIKKE PC game launcher hacked to spread remote access, data-stealing malware
+  https://www.bleepingcomputer.com/news/security/nikke-pc-game-launcher-hacked-to-spread-remote-access-data-stealing-malware/
+  The developers of Goddess of Victory: NIKKE have confirmed that hackers tampered with the game's PC launcher scripts in a supply-chain attack, distributing malware capable of stealing credentials and cryptocurrency wallet data. [...]
+- [FNT-15] 2026-11-04 | mSecure password manager hack prompts password reset warnings
+  https://www.bleepingcomputer.com/news/security/msecure-password-manager-hack-prompts-password-reset-warnings/
+  mSeven Software is warning current and former mSecure password manager customers to change passwords, reset two-factor authentication, and remove passkeys following a cyberattack that reportedly exposed an encrypted customer database. [...]
+- [FNT-15] 2026-11-04 | Google Calendar phishing campaign hijacks sessions, bypasses MFA
+  https://www.bleepingcomputer.com/news/security/google-calendar-phishing-campaign-hijacks-sessions-bypasses-mfa/
+  A phishing campaign used Google Calendar invites, trusted redirects, and fake login pages to hijack corporate Google sessions and bypass MFA protections. Material Security examines how Operation CloudFire tracked the attacks, blocked malicious messages, and helped take down nearly 900 domains used by the attackers. [...]
+- [FNT-15] 2026-11-04 | SonicWall warns of unpatched flaws in end-of-life GMS software
+  https://www.bleepingcomputer.com/news/security/sonicwall-warns-of-unpatched-flaws-in-end-of-life-gms-software/
+  SonicWall warned customers of two security flaws affecting end-of-life Global Management System (GMS) systems that will not be patched. [...]
+- [FNT-15] 2026-11-04 | US charges two Canadians accused of hacking US universities
+  https://www.bleepingcomputer.com/news/security/us-charges-two-canadians-accused-of-hacking-us-universities/
+  A federal grand jury indicted two Canadians suspected of hacking multiple US universities and using the compromised systems to mine for cryptocurrency. [...]
+- [FNT-15] 2026-11-04 | CISA flags WordPress RCE flaw as actively exploited in attacks
+  https://www.bleepingcomputer.com/news/security/cisa-flags-wordpress-rce-flaw-as-actively-exploited-in-attacks/
+  The US Cybersecurity and Infrastructure Security Agency (CISA) warned federal agencies that attackers have started exploiting a recently patched high-severity WordPress vulnerability in the wild. [...]
+- [FNT-15] 2026-11-04 | Hackers use n-day exploits in zero-click attacks on iOS, Android devices
+  https://www.bleepingcomputer.com/news/security/hackers-use-n-day-exploits-in-zero-click-attacks-on-ios-android-devices/
+  A large-scale watering hole attack associated with Russian hackers has been targeting iOS and Android users visiting compromised sites or fake ones impersonating legitimate portals. [...]
+- [FNT-15] 2026-11-03 | Hackers hijack cPGuard autoupdate to deploy backdoor, steal data
+  https://www.bleepingcomputer.com/news/security/hackers-hijack-cpguard-autoupdate-to-deploy-backdoor-steal-data/
+  Attackers have compromised the update infrastructure for the cPGuard web security suite to distribute a backdoor and a data-stealing script. [...]
+- [FNT-15] 2026-11-03 | WorkOS says attacker used ARTEX AI to breach internal sales app
+  https://www.bleepingcomputer.com/news/security/workos-says-attacker-used-artex-ai-to-breach-internal-sales-app/
+  Developer platform WorkOS suffered a data breach after a threat actor accessed business contact records and summaries of customer communications. [...]
+- [FNT-15] 2026-11-03 | Binance says fake job interview led to $6.3 billion crypto heist
+  https://www.bleepingcomputer.com/news/security/binance-says-fake-job-interview-led-to-63-billion-crypto-heist/
+  Cryptocurrency exchange Binance says North Korean hackers used a fake job interview to trick an employee into installing malware that ultimately let them compromise the company's wallet infrastructure and steal about $6.34 billion in digital assets. [...]
+- [FNT-15] 2026-11-03 | Google: LLMjacking attacks rack up $1 million in cloud AI charges
+  https://www.bleepingcomputer.com/news/security/google-llmjacking-attacks-rack-up-1-million-in-cloud-ai-charges/
+  Large language model hijacking attacks, also known as LLMjacking, are generating large fraudulent cloud charges, with some organizations losing more than $100,000 per day. [...]
+
+== FNT-16 Aeronautica Militare, notizie meteo e clima ==
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Quando la meteorologia entra nella storia: il meteo come regista degli eventi umani
+  https://www.meteoam.it/it/in-primo-piano/quando-la-meteorologia-entra-nella-storia--il-meteo-come-regista-degli-eventi-umani
+  Le condizioni climatologiche e meteorologiche hanno spesso avuto un impatto significativo sui grandi eventi della Storia, segnando le sorti di guerre e rivoluzioni. Scopriamo insieme qualche esempio del passato con uno sguardo alle sfide meteorologiche del presente.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | COSMO General Meeting: la meteorologia numerica internazionale si incontra a Roma
+  https://www.meteoam.it/it/in-primo-piano/cosmo-general-meeting--la-meteorologia-numerica-internazionale-si-incontra-a-roma
+  La 28^ edizione dell’annuale appuntamento della comunità internazionale sulla modellistica numerica per la previsione meteorologica, è stata ospitata a Palazzo Salviati sede del Centro Alti Studi per la Difesa
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | L’estate 2026 è la più calda della serie storica per la rete osservativa AM
+  https://www.meteoam.it/it/in-primo-piano/l-estate-2026---la-pi--calda-della-serie-storica-per-la-rete-osservativa-am
+  La stagione che si sta concludendo ha superato anche il record del 2003, vediamolo nel dettaglio.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Pubblicati i nomi delle tempeste per la stagione 2026-2027
+  https://www.meteoam.it/it/in-primo-piano/pubblicati-i-nomi-delle-tempeste-per-la-stagione-2026-2027
+  La nuova stagione delle tempeste inizia nominalmente il 1° settembre 2026. Scopri i nomi che saranno utilizzati quest'anno per le perturbazioni più intense
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Nuova veste per il Meteo Museo Edmondo Bernacca
+  https://www.meteoam.it/it/in-primo-piano/nuova-veste-per-il-meteo-museo-edmondo-bernacca
+  Veste rinnovata per il Meteo Museo Edmondo Bernacca (MMEB) di Fivizzano (MS) che, nato nel 2018, inaugura un nuovo percorso museale all’insegna dell’interattività, della tecnologia e della passione per il mondo meteorologico.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Tra gli effetti del caldo: come nascono i temporali estivi
+  https://www.meteoam.it/it/in-primo-piano/tra-gli-effetti-del-caldo--come-nascono-i-temporali-estivi
+  Non solo temperature elevate. Una costante degli ultimi giorni sono stati anche i temporali intensi che, nelle ore più calde della giornata, si sono sviluppati nelle zone montuose o più interne del nostro territorio. Scopriamo insieme gli ingredienti alla base della loro formazione.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | 80 anni di storia: l'anniversario della stazione meteorologica di Gioia del Colle
+  https://www.meteoam.it/it/in-primo-piano/80-anni-di-storia--l-anniversario-della-stazione-meteorologica-di-gioia-del-colle
+  Ha tagliato un traguardo storico la stazione meteorologica di Gioia del Colle. Fondata il 15 maggio 1946, la struttura ha infatti da poco celebrato l’ottantesimo anniversario dalla sua costituzione.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | EUMETNET celebra 30 anni di cooperazione meteorologica europea
+  https://www.meteoam.it/it/in-primo-piano/eumetnet-celebra-30-anni-di-cooperazione-meteorologica-europea
+  Nel 2026 EUMETNET taglia il traguardo dei 30 anni di cooperazione tra i servizi meteorologici nazionali europei.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Il ritorno dell'Osservatorio di Montevergine nella rete osservativa AM
+  https://www.meteoam.it/it/in-primo-piano/il-ritorno-dell-osservatorio-di-montevergine-nella-rete-osservativa-am
+  Dopo 74 anni torna a far parte della rete osservativa del Servizio Meteorologico dell’Aeronautica Militare lo storico Osservatorio meteorologico di Montevergine.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Il Servizio Meteorologico dell’Aeronautica Militare al Salone Internazionale del Libro di Torino 2026
+  https://www.meteoam.it/it/in-primo-piano/il-servizio-meteorologico-dell-aeronautica-militare-al-salone-internazionale-del-libro-di-torino-2026
+  Non perdere la presentazione del nuovo libro sulla meteorologia
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Disponibile su meteoam.it la nuova mappa interattiva con le osservazioni della rete MeteoNetwork
+  https://www.meteoam.it/it/in-primo-piano/disponibile-su-meteoam-it-la-nuova-mappa-interattiva-con-le-osservazioni-della-rete-meteonetwork-
+  I dati della rete osservativa MeteoNetwork arrivano su meteoam.it: scopri la nuova mappa interattiva.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Il folding della tropopausa: formazione ed effetti sul volo
+  https://www.meteoam.it/it/in-primo-piano/il-folding-della-tropopausa--formazione-ed-effetti-sul-volo
+  Il fenomeno del folding della tropopausa rappresenta un interessante esempio di interazione tra stratosfera e troposfera con impatti significativi per l'attività di volo.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Giornata Meteorologica Mondiale 2026: l'Aeronautica Militare celebra al MUSAM. "Osservare oggi, proteggere domani"
+  https://www.meteoam.it/it/in-primo-piano/giornata-meteorologica-mondiale-2026--l-aeronautica-militare-celebra-al-musam---osservare-oggi--proteggere-domani-
+  L'Aeronautica Militare celebra a Vigna di Valle, nella suggestiva cornice del Museo Storico dell'Aeronautica Militare, la Giornata Meteorologica Mondiale 2026: una preziosa occasione di incontro e riflessione tra illustri relatori e studenti.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | El Niño: cosa succede quando oceano e atmosfera si parlano
+  https://www.meteoam.it/it/in-primo-piano/el-ni-o--cosa-succede-quando-oceano-e-atmosfera-si-parlano
+  Fenomeno osservato da centinaia di anni dai pescatori peruviani, El Niño rappresenta uno degli esempi più significativi di interazione tra atmosfera ed oceano inserendosi all’interno del più ampio fenomeno climatico ENSO.
+- [FNT-16] 2026-11-04 (data non indicata dalla fonte: prima raccolta) | Il ruolo dell’Aeronautica Militare nel National Collaboration Programme del progetto Copernicus
+  https://www.meteoam.it/it/in-primo-piano/il-ruolo-dell-aeronautica-militare-nel-national-collaboration-programme-del-progetto-copernicus
+  L’Aeronautica Militare tra i protagonisti nell’elaborazione e diffusione dei prodotti sviluppati nell’ambito del programma europeo Copernicus per il monitoraggio dello stato del nostro pianeta.
+
+== FNT-17 ANSA, Economia ==
+- [FNT-17] 2026-11-04 | Stellantis, Pablo Di Si guiderà il Nord America e i brand americani
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/stellantis-pablo-di-si-guidera-il-nord-america-e-i-brand-americani_85ea57b9-e288-42e2-9968-f31468edf097.html
+  Subentra a Filosa che aveva finora mantenuto la supervisione
+- [FNT-17] 2026-11-04 | I mercati brindano dopo il voto Usa, giù la difesa e rally di banche e tech
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/i-mercati-brindano-dopo-il-voto-usa-giu-la-difesa-e-rally-di-banche-e-tech_e4cb0902-0e68-4d16-9575-cc40d4484c1a.html
+  Dollaro perde su tutte le valute. Crollo di petrolio e gas. Scendono i rendimenti
+- [FNT-17] 2026-11-04 | ++ Il petrolio chiude con un tonfo a New York, -8,26% con la vittoria dem alle midterm ++
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/il-petrolio-chiude-con-un-tonfo-a-new-york-826-con-la-vittoria-dem_46c021cf-0020-4e46-a625-05fed45ecad3.html
+  Il Wti crolla a 88,15 dollari, il Brent giù dell'8,59% a quota 94,70
+- [FNT-17] 2026-11-04 | Gli industriali elettrici all'attacco, 'il governo ci usa come cassa'
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/gli-industriali-elettrici-allattacco-il-governo-ci-usa-come-cassa_e7bceef6-31a1-478f-b3d7-abf5d3d0ac5e.html
+  'Contributi per 6-7 miliardi'. Pichetto prova a ricucire. Orsini va a Palazzo Chigi
+- [FNT-17] 2026-11-04 | I futures su gas naturale crollano a 85,32 euro
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/i-futures-su-gas-naturale-crollano-a-8532-euro_952ff938-0dc4-44a6-904d-9d8e63ba41fd.html
+  Ttf in calo del 6,7%
+- [FNT-17] 2026-11-04 | Lo spread Btp-Bund si stringe a 104,2 punti
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/lo-spread-btp-bund-si-stringe-a-1042-punti_267446e3-23a5-4453-baa9-21654148678c.html
+  Il titolo italiano rende il 4,3% e quello tedesco il 3,2%
+- [FNT-17] 2026-11-04 | Borsa: Milano chiude in rialzo, Ftse Mib +2,18%
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/borsa-milano-chiude-in-rialzo-ftse-mib-218_e222bcc8-1a86-42c6-b6a3-ca910a01ef3c.html
+  Sugli scudi le banche, tonfo di Technoprobe -7%
+- [FNT-17] 2026-11-04 | Petrolio in calo del 4%, Brent scende sotto 100 dollari
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/petrolio-in-calo-del-4-brent-scende-sotto-100-dollari_30ef4d4d-a132-4db0-a42f-c915b0ed38de.html
+  Dopo le elezioni di midterm giù anche il Wti a 92,2 dollari
+- [FNT-17] 2026-11-04 | Electrolux, Acquaroli 'con intesa nuovo percorso tutela lavoratori e sito Cerreto'
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/electrolux-acquaroli-con-intesa-nuovo-percorso-tutela-lavoratori-e-sito-cerreto_45817c1b-5dbd-4bbc-928a-565098b50315.html
+  Stabilimento mantiene la produzione. Consoli, "lavorare perché impegni diventino realtà"
+- [FNT-17] 2026-11-04 | Electrolux, 'investimenti oltre 100 milioni euro per le attività italiane'
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/electrolux-investimenti-oltre-100-milioni-euro-per-le-attivita-italiane_c4f96bf1-2c1e-44f9-a9c4-fe2dc61762bd.html
+  Azienda evidenzia punti fondamentali accordo e auspica al referendum via libera lavoratori
+- [FNT-17] 2026-11-04 | Ce Industries non parteciperà alla gara per l'ex Ilva
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/ce-industries-non-partecipera-alla-gara-per-lex-ilva_d1b66b57-cdea-4382-beac-cf570a847e9d.html
+  Azienda ceca aveva accesso alla dataroom da agosto, senza mai formalizzare partecipazione
+- [FNT-17] 2026-11-04 | I big di Musk in calo a Wall Street, Tesla -4,13%, SpaceX -2,70%
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/i-big-di-musk-in-calo-a-wall-street-tesla-413-spacex-270_b4a6c6b4-8e40-452f-a46e-9288cac47991.html
+  Pesa la vittoria dei democratici alle midterm
+- [FNT-17] 2026-11-04 | Zecca dello Stato, una nuova 10 euro celebra Collodi
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/zecca-dello-stato-una-nuova-10-euro-celebra-collodi_3b634788-6d57-4e23-8061-5ebde2b130d4.html
+  Due le monete celebrative dedicate all'autore di Pinocchio
+- [FNT-17] 2026-11-04 | I fratelli Capitaneo portano l'alta cucina in Stazione Centrale a Milano
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/i-fratelli-capitaneo-portano-lalta-cucina-in-stazione-centrale-a-milano_b66a5e88-5679-4f31-a4ad-eab994bb2f55.html
+  Nella Galleria dei Mosaici ha aperto Ora, 'qualità anche quando il tempo è limitato'
+- [FNT-17] 2026-11-04 | Unioncamere, 1,5 miliardi di danni l'anno da interruzioni valichi alpini
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/unioncamere-15-miliardi-di-danni-lanno-da-interruzioni-valichi-alpini_ed27d556-af59-46c6-9460-2304671bdc9e.html
+  Transiti per 200 milioni di tonnellate merci l'anno. Siano riconosciuti strategici
+- [FNT-17] 2026-11-04 | Domanda boom per primo bond in euro di Meta, record a 53 miliardi
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/domanda-boom-per-primo-bond-in-euro-di-meta-record-a-53-miliardi_8313d106-82fe-4cfa-90a1-8d2ca90dd649.html
+  Obiettivo sostenere massicci investimenti nell'AI
+- [FNT-17] 2026-11-04 | L'Italia è tra Paesi Ue con l'elettricità più cara per le imprese
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/litalia-e-tra-paesi-ue-con-lelettricita-piu-cara-per-le-imprese_a1a89842-fa8d-45c2-8360-3ce5a28509cd.html
+  Dati Eurostat sui prezzi per i consumatori non domestici nella prima metà del 2026
+- [FNT-17] 2026-11-04 | Il Lazio cresce più dell'Italia, spinta da opere pubbliche, prende fiato il turismo
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/il-lazio-cresce-piu-dellitalia-spinta-da-opere-pubbliche-prende-fiato-il-turismo_5e5c1ba6-5028-45ed-8651-dcfbc88a59b9.html
+  Bankitalia, Pil +1% nel semestre. Bene consumi, l'export non eguaglia balzo 2025
+- [FNT-17] 2026-11-04 | Mcc, chiude nove mesi con utile a 67 milioni di euro
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/mcc-chiude-nove-mesi-con-utile-a-67-milioni-di-euro_10cc14b6-eba8-4ff0-8ade-f436f3d2bdd6.html
+  In calo margine di intermediazione a 395 milioni di euro
+- [FNT-17] 2026-11-04 | Ocse, il patrimonio pensionistico cresce a 78mila miliardi di dollari nel 2025, +11,3%
+  https://www.ansa.it/sito/notizie/economia/2026/11/04/ocse-il-patrimonio-pensionistico-cresce-a-78mila-miliardi-di-dollari-nel-2025-113_9080dfd5-9e64-4725-9a95-c29e4f4c0a06.html
+  Trainato dalla crescita dei contributi e dai rendimenti positivi degli investimenti
+
+== FNT-18 Il Sole 24 Ore, Finanza ==
+- [FNT-18] 2026-11-04 | Wall Street e borse europee in rally dopo l’onda Dem Usa: volano le banche, frena il petrolio
+  https://www.ilsole24ore.com/art/borse-cinesi-positive-shanghai-11percento-e-shenzhen-22percento-AJLS843B
+  L'onda blu ha travolto il Congresso Usa e il presidente Trump ha affermato di accettare i risultati. A Piazza Affari acquisti su Intesa dopo la trimestrale record. Il Brent sotto i 100 $ per la prima volta in due mesi, l'euro torna sopra 1,12 dollari
+- [FNT-18] 2026-11-03 | Intesa Sanpaolo: nei nove mesi l’utile sale a 8,2 miliardi (+8,2%), rivista al rialzo la guidance. Messina: «Con Siena utili a 16 miliardi nel 2029»
+  https://www.ilsole24ore.com/art/intesa-sanpaolo-nove-mesi-l-utile-sale-82-miliardi-82percento-rivista-rialzo-guidance-AJ5uh02B
+  Intesa Sanpaolo chiude i primi nove mesi dell’anno con un utile di 8,2 miliardi, in crescita dell’8,1% rispetto allo stesso periodo del 2025. Nel solo terzo trimestre l’utile raggiunge 2,65...
+- [FNT-18] 2026-11-03 | Bayer corre a Francoforte dopo la trimestrale e il rialzo stime 2026
+  https://www.ilsole24ore.com/art/bayer-corre-francoforte-la-trimestrale-e-rialzo-stime-2026-AJiExw2B
+  Il gruppo si è avvantaggiato nel terzo trimestre della ripresa della sua divisione farmaceutica, grazie alla forte domanda dei suoi farmaci principali che ha compensato le pressioni del mercato sulla divisione agricola e sul segmento Consumer Health
+- [FNT-18] 2026-11-03 | Dalla sanità all’AI, Borse in attesa dell’esito della tornata elettorale Usa
+  https://www.ilsole24ore.com/art/dalla-sanita-all-ai-borse-attesa-dell-esito-tornata-elettorale-usa-AJ4KNr2B
+  I mercati si preparano alla tornata elettorale americana. A prescindere dall’esito che queste elezioni avranno, le implicazioni a livello fiscale, politico e normativo, condizioneranno l’andamento dei mercati per i prossimi...
+- [FNT-18] 2026-11-03 | Lufthansa aumenta gli utili e il fatturato nel terzo trimestre. Pesano i costi del jet fuel
+  https://www.ilsole24ore.com/art/lufthansa-aumenta-utili-e-fatturato-pesano-costi-jet-fuel-AJ0YHm2B
+  Il gruppo Lufthansa chiude il terzo trimestre 2026 con un utile operativo rettificato a 1,4 miliardi di euro in aumento del 6% rispetto agli 1,3 miliardi del terzo trimestre del...
+- [FNT-18] 2026-11-03 | Vendite su Stellantis, pesa il calo delle immatricolazioni di ottobre in Francia e in Italia
+  https://www.ilsole24ore.com/art/vendite-stellantis-pesa-calo-immatricolazioni-ottobre-francia-e-italia-AJmirx2B
+  In Francia, a fronte di una crescita di mercato del 3%, la casa automobilistica ha registrato un calo del 5% a 46mila veicoli, mentre in Italia è calata del 9,5%, a fronte di un mercato auto in crescita del 5%
+- [FNT-18] 2026-10-30 | Sanofi vola in Borsa a Parigi dopo conti oltre le attese
+  https://www.ilsole24ore.com/art/sanofi-vola-borsa-parigi-conti-oltre-attese-AJVWiCzB
+  Sanofi vola in Borsa dopo un terzo trimestre con risultati decisamente positivi. Il colosso farmaceutico francese ha registrato un incremento del fatturato netto del 15,2% da inizio anno e un...
+- [FNT-18] 2026-10-29 | Airbus accelera sul caccia europeo di nuova generazione: Berlino guarda anche al GCAP
+  https://www.ilsole24ore.com/art/airbus-accelera-caccia-europeo-nuova-generazione-berlino-guarda-anche-gcap-AJXcpFxB
+  Airbus rafforza il proprio impegno nello sviluppo di un caccia di nuova generazione per l’Europa e conferma il dialogo con i governi di Germania e Spagna. A indicarlo è stato...

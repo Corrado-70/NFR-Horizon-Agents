@@ -173,8 +173,16 @@ def test_controlli_a5(e):
             lambda p: rischio(p, "NFR-01")["kri_proposti"][0].update(soglia_allerta=None), gravita=DM)
     difetto("C9", "KRI in vigore sostituito da uno nuovo dello stesso tipo: il vecchio esce di vigore",
             lambda p: rischio(p, "NFR-01")["kri_proposti"][0].update(kri_id=None), gravita="Osservazione")
-    difetto("C9", "un solo KRI per un rischio del radar (due per rischio, D-64; lo schema lo ammette dal D-79)",
-            lambda p: rischio(p, "NFR-01")["kri_proposti"].pop(), gravita=DM)
+    # P17: un solo KRI proposto per un rischio con i KRI in vigore = l'altro resta (eredita_testi); il difetto c'e' solo
+    # se manca anche nella baseline.
+    p = copy.deepcopy(RUN1)
+    tolto = rischio(p, "NFR-01")["kri_proposti"].pop()
+    base = copy.deepcopy(BASE_Q3)
+    base["kri_in_vigore"] = [k for k in base["kri_in_vigore"] if k["kri_id"] != tolto["kri_id"]]
+    esito = controlli_a5.controlla(p, base)
+    e.verifica([r for r in esito["rilievi"] if r["controllo"] == "C9" and r["gravita"] == DM and r["id_rischio"] == "NFR-01"],
+               "A5 C9 (Da motivare): un solo KRI per un rischio del radar senza l'altro in vigore (due per rischio, D-64)",
+               "\n".join(f"{r['controllo']} {r['gravita']} {r['descrizione']}" for r in esito["rilievi"]) or "nessun rilievo")
     difetto("C9", "due KRI dello stesso tipo (uno di Esposizione e uno di Evoluzione, D-64)",
             lambda p: [k.update(tipo="Esposizione") for k in rischio(p, "NFR-01")["kri_proposti"]], gravita=DM)
     difetto("C9", "tipo cambiato su un KRI in vigore (resta quello della baseline)",
@@ -239,6 +247,7 @@ def test_dati_esempio(e):
         per_ciclo.setdefault(r["Ciclo"], []).append({
             "id_rischio": r["ID_Rischio"], "impatto": r["Impatto"], "velocity": r["Velocity"],
             "prossimita": r["Prossimita"], "probabilita": r["Probabilita"],
+            "descrizione": r["Descrizione"], "razionale": r["Razionale"],
             "variazioni": [{k: v for k, v in z.items() if k not in ("da", "a")} for z in json.loads(r["Variazioni"])],
             "fonti": json.loads(r["Fonti"]), "event_type": r["Event_Type"],
             "azioni_mitigazione": [], "kri_proposti": []})
@@ -1234,24 +1243,29 @@ def test_lunghezze(e):
         return [r for r in controlli_a5.controlla(p, b)["rilievi"] if r["controllo"] == "C10"]
     r = c10(lambda p: rischio(p, "NFR-01").update(descrizione="Frodi con voce sintetica sui bonifici istantanei."))
     e.verifica(len(r) == 1 and r[0]["id_rischio"] == "NFR-01" and r[0]["gravita"] == "Osservazione"
-               and "descrizione 49 caratteri (minimo 500)" in r[0]["descrizione"],
+               and "descrizione 49 caratteri (minimo 350)" in r[0]["descrizione"],
                "C10: descrizione corta = un'Osservazione sul rischio, con lunghezza e minimo", r)
     r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"].replace(
         "IMPATTO: grave.", "IMPATTO: grave. FINE.", 1).split("FINE.")[0] + "PROBABILITA:" +
         rischio(p, "NFR-01")["razionale"].split("PROBABILITA:", 1)[1]))
-    e.verifica(len(r) == 1 and "razionale IMPATTO 6 caratteri (minimo 300)" in r[0]["descrizione"],
+    e.verifica(len(r) == 1 and "razionale IMPATTO 6 caratteri (minimo 150)" in r[0]["descrizione"],
                "C10: una parte del razionale corta (IMPATTO) e' segnalata con il suo nome", r)
     r = c10(lambda p: [a.update(descrizione="Formare il personale.") for a in rischio(p, "NFR-01")["azioni_mitigazione"]]
             + [k.update(razionale="Misura il fenomeno.") for k in rischio(p, "NFR-01")["kri_proposti"]])
     e.verifica(len(r) == 1 and "azione 1, descrizione 21 caratteri" in r[0]["descrizione"]
-               and "KRI di Evoluzione, razionale 19 caratteri (minimo 300)" in r[0]["descrizione"],
+               and "KRI di Evoluzione, razionale 19 caratteri (minimo 150)" in r[0]["descrizione"],
                "C10: azioni e KRI corti in un solo rilievo per rischio", r)
     senza_velocity = next(x for x in run3["rischi"] if x.get("velocity") is None and "VELOCITY:" in x["razionale"])
     e.verifica(not controlli_a5.testi_corti(dict(senza_velocity, razionale=senza_velocity["razionale"].split("VELOCITY:")[0]
-                                                  + "VELOCITY: nessuna fonte documenta i tempi.")),
+                                                  + "VELOCITY: nessuna fonte documenta i tempi. QUINDI:"
+                                                  + senza_velocity["razionale"].split("QUINDI:", 1)[1])),
                "C10: con Velocity non valutata la parte VELOCITY puo' essere breve")
-    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"][:1200]), RUN1, BASE_Q3)
-    e.verifica(len(r) == 1 and "razionale (senza le parti) 1200 caratteri (minimo 1500)" in r[0]["descrizione"],
+    senza_quindi = rischio(run3, "NFR-02")["razionale"].split("QUINDI:")[0]
+    e.verifica(controlli_a5.testi_corti(dict(rischio(run3, "NFR-02"), razionale=senza_quindi))
+               == [("razionale QUINDI", 0, 120)],
+               "C10 (P14, D-96): un razionale senza QUINDI: e' un testo troppo corto, con il minimo della guida")
+    r = c10(lambda p: rischio(p, "NFR-01").update(razionale=rischio(p, "NFR-01")["razionale"][:650]), RUN1, BASE_Q3)
+    e.verifica(len(r) == 1 and "razionale (senza le parti) 650 caratteri (minimo 800)" in r[0]["descrizione"],
                "C10: un razionale senza etichette si misura intero, contro la somma dei minimi delle parti", r)
     a5 = {"rilievi": [{"controllo": "C10", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Testi corti"},
                       {"controllo": "C3", "id_rischio": "NFR-01", "gravita": "Bloccante", "descrizione": "Evidenza vaga"}]}
@@ -1285,6 +1299,277 @@ def test_lunghezze(e):
                "C10: l'allegato di A5 ha la tabella delle lunghezze (parte 3) e si rilegge come prima")
 
 
+def test_testi_ereditati(e):
+    """P17 (03/11/2026): un rischio esistente riprende dalla baseline i testi che A1 non riscrive; dopo una riapertura
+    l'elenco dei testi da rileggere."""
+    import esegui_ciclo_locale as campo
+    import precontrollo
+    lungo = lambda testo, n: (testo + " ") * (n // len(testo) + 1)
+    vecchio = {"rischio": lungo("Le frodi sui bonifici corporate colpiscono la Banca.", 220),
+               "impatto": lungo("Quattro, grave, per il Documento B del trimestre.", 170),
+               "probabilita": lungo("Quattro: ESPOSIZIONE NON NOTA: con l'esposizione documentata sarebbe 5.", 170),
+               "prossimita": lungo("Quattro, casi in banche comparabili.", 170),
+               "velocity": lungo("Cinque, il danno si produce in un giorno.", 170),
+               "quindi": lungo("Per la Banca perdite sui clienti corporate; decidere la richiamata.", 140)}
+    base = copy.deepcopy(BASE_Q3)
+    b1 = rischio({"rischi": base["rischi"]}, "NFR-01")
+    b1["descrizione"] = lungo("Descrizione validata del meccanismo di perdita.", 400)
+    b1["razionale"] = " ".join(f"{controlli_a5.ETICHETTE_PARTI[k]}: {v}" for k, v in vecchio.items())
+    for k in base["kri_in_vigore"]:
+        k["razionale"] = lungo(f"Razionale validato di {k['kri_id']}. EFFETTO: atteso in calo.", 160)
+
+    # 1. Rischio confermato: niente descrizione, solo la parte IMPATTO, nessun KRI.
+    p = copy.deepcopy(RUN1)
+    x = rischio(p, "NFR-01")
+    x.pop("descrizione")
+    nuovo_impatto = lungo("Quattro, resta grave per i casi nuovi del Documento D.", 170)
+    x["razionale"] = f"IMPATTO: {nuovo_impatto}"
+    x["kri_proposti"] = []
+    e.verifica(not valida(p, S_A1), "schema: un rischio esistente senza descrizione e con il solo IMPATTO: e' valido")
+    completo = controlli_a5.eredita_testi(copy.deepcopy(p), base)
+    c = rischio(completo, "NFR-01")
+    parti = controlli_a5._segmenti(c["razionale"])
+    e.verifica(c["descrizione"] == b1["descrizione"] and parti["impatto"] == nuovo_impatto.strip()
+               and parti["rischio"] == vecchio["rischio"].strip() and parti["velocity"] == vecchio["velocity"].strip()
+               and list(parti) == ["rischio", "impatto", "probabilita", "prossimita", "velocity", "quindi"],
+               "eredita_testi: descrizione validata e parti del razionale non scritte dalla baseline, IMPATTO di A1, in ordine",
+               str(list(parti)))
+    e.verifica(sorted(k["kri_id"] for k in c["kri_proposti"]) == ["NFR-01-K1", "NFR-01-K3"]
+               and all(k["_ereditato"] for k in c["kri_proposti"]),
+               "eredita_testi: senza KRI proposti restano i due KRI in vigore, con il loro razionale")
+    e.verifica(c["_ereditati"] == ["descrizione", "razionale.rischio", "razionale.probabilita", "razionale.prossimita",
+                                   "razionale.velocity", "razionale.quindi", "kri.NFR-01-K1", "kri.NFR-01-K3"],
+               "eredita_testi: _ereditati dice che cosa viene dalla baseline", str(c["_ereditati"]))
+    e.verifica(controlli_a5.eredita_testi(copy.deepcopy(completo), base) == completo, "eredita_testi e' idempotente")
+    rilievi = [r for r in controlli_a5.controlla(p, base)["rilievi"] if r["id_rischio"] == "NFR-01"]
+    e.verifica(not rilievi, "controlli: nessun rilievo su un rischio confermato che non riscrive i testi (C1, C5 sulla "
+                            "frase ESPOSIZIONE NON NOTA ereditata, C9, C10)",
+               "\n".join(f"{r['controllo']} {r['gravita']} {r['descrizione']}" for r in rilievi))
+    e.verifica(rischio(p, "NFR-01")["razionale"] == f"IMPATTO: {nuovo_impatto}" and "_ereditati" not in rischio(p, "NFR-01"),
+               "controlli: il payload di A1 non cambia (completano una copia)")
+
+    # 2. Un valore cambia ma la sua parte resta quella vecchia: C2 da motivare. Una parte corta scritta da A1: C10.
+    p2 = copy.deepcopy(p)
+    x2 = rischio(p2, "NFR-01")
+    x2["prossimita"] = 3
+    x2["variazioni"] = [{"dimensione": "prossimita", "data_evidenza": "2026-09-01",
+                         "evidenza": lungo("Nessun caso nuovo in banche comparabili nel trimestre, Documento E.", 160)}]
+    rilievi = [r for r in controlli_a5.controlla(p2, base)["rilievi"] if r["id_rischio"] == "NFR-01"]
+    e.verifica([r for r in rilievi if r["controllo"] == "C2" and r["gravita"] == DM and "PROSSIMITA" in r["descrizione"]],
+               "C2 (Da motivare): valore cambiato con la parte del razionale ripresa dalla baseline",
+               "\n".join(f"{r['controllo']} {r['gravita']} {r['descrizione']}" for r in rilievi))
+    e.verifica([r for r in rilievi if r["controllo"] == "C2" and r["gravita"] == "Osservazione" and "QUINDI" in r["descrizione"]],
+               "C2 (Osservazione, P14): valore cambiato con la parte QUINDI: ripresa dalla baseline")
+    x2["razionale"] += " PROSSIMITA: Tre."
+    rilievi = [r for r in controlli_a5.controlla(p2, base)["rilievi"] if r["id_rischio"] == "NFR-01"]
+    e.verifica(not [r for r in rilievi if r["controllo"] == "C2" and r["gravita"] == DM]
+               and [r for r in rilievi if r["controllo"] == "C10" and "PROSSIMITA" in r["descrizione"]
+                    and "descrizione" not in r["descrizione"].split(":")[0]],
+               "C10 misura la parte scritta da A1 (troppo corta), non i testi ripresi dalla baseline",
+               "\n".join(f"{r['controllo']} {r['gravita']} {r['descrizione']}" for r in rilievi))
+
+    # 3. Un KRI nuovo dello stesso tipo prende il posto di quello in vigore; l'altro resta.
+    p3 = copy.deepcopy(p)
+    nuovo = dict(rischio(RUN1, "NFR-01")["kri_proposti"][0], kri_id=None)
+    rischio(p3, "NFR-01")["kri_proposti"] = [nuovo]
+    c3 = rischio(controlli_a5.eredita_testi(copy.deepcopy(p3), base), "NFR-01")
+    tipo_k1 = next(k["tipo"] for k in base["kri_in_vigore"] if k["kri_id"] == "NFR-01-K1")
+    e.verifica(nuovo["tipo"] == tipo_k1 and [k.get("kri_id") for k in c3["kri_proposti"]] == [None, "NFR-01-K3"],
+               "KRI: uno nuovo sostituisce quello in vigore dello stesso tipo, l'altro resta in vigore",
+               str([k.get("kri_id") for k in c3["kri_proposti"]]))
+
+    # 4. Un rischio nuovo scrive tutto: senza descrizione e' un Bloccante.
+    p4 = copy.deepcopy(RUN1)
+    rischio(p4, "NFR-16").pop("descrizione")
+    rilievi = [r for r in controlli_a5.controlla(p4, base)["rilievi"] if r["id_rischio"] == "NFR-16"]
+    e.verifica([r for r in rilievi if r["controllo"] == "C1" and r["gravita"] == "Bloccante"],
+               "C1 (Bloccante): un rischio nuovo senza descrizione", "\n".join(r["descrizione"] for r in rilievi))
+
+    # 5. Precontrollo: la forma si guarda sul rischio completo; l'impronta e' quella dell'output di A1.
+    impronta = precontrollo.impronta(p)
+    esito = precontrollo.precontrolla(p, base, S_A1)
+    e.verifica(not [x for x in esito["formato"] if x["id_rischio"] == "NFR-01" and "razionale senza" in x["descrizione"]]
+               and precontrollo.impronta(p) == impronta,
+               "precontrollo: niente 'parti mancanti' per le parti riprese dalla baseline; l'output di A1 non cambia",
+               str(esito["formato"]))
+
+    # 6. Scrittura: completa_payload + eredita_testi danno i testi interi; la griglia dice che cosa ha aggiornato A1
+    #    (dal confronto con la riga del ciclo prima; non nella colonna Rilievi, che le viste contano come segnalazioni).
+    scritto = controlli_a5.eredita_testi(campo.completa_payload(copy.deepcopy(p), base), base)
+    r1 = rischio(scritto, "NFR-01")
+    e.verifica(r1["descrizione"] == b1["descrizione"] and campo.DERIVATI["rilievi_rischio"]({"rischi[]": r1}, {"controlli": None}) is None,
+               "scrittura: descrizione validata nel registro; la colonna Rilievi resta solo per le segnalazioni")
+    riga = {"Descrizione": r1["descrizione"], "Razionale": r1["razionale"]}
+    prima = {"Descrizione": b1["descrizione"], "Razionale": b1["razionale"]}
+    kri = [{"KRI_ID": "NFR-01-K1", "Ciclo_Aggiornamento": "2026Q2"}, {"KRI_ID": "NFR-01-K4", "Ciclo_Aggiornamento": "2026Q3"}]
+    testo = campo.riga_testi_p17(riga, prima, kri, "2026Q3")
+    e.verifica(testo == "Testi (P17) · aggiornati da A1: IMPATTO:, KRI NFR-01-K4; validati del ciclo prima: descrizione, "
+                       "RISCHIO:, PROBABILITA:, PROSSIMITA:, VELOCITY:, QUINDI:, KRI NFR-01-K1."
+               and campo.riga_testi_p17(riga, None, kri, "2026Q3") is None,
+               "griglia: testi aggiornati da A1 e testi validati del ciclo prima; niente per un rischio nuovo", str(testo))
+
+    # 7. Riapertura: l'elenco dei testi da rileggere dalle decisioni della validazione.
+    dec = [{"Oggetto": "Rischio", "ID": "NFR-03", "Nome": "x", "Campo": "Impatto", "Proposta_Agente": 3,
+            "Valore_Validato": 4, "Motivazione": "Esposizione documentata", "Decisione": "Rettificato (riapertura)"},
+           {"Oggetto": "Rischio", "ID": "NFR-03", "Nome": "x", "Campo": "Decisione_Stato", "Proposta_Agente": "Automatico",
+            "Valore_Validato": "Radar", "Motivazione": "Tema del comitato", "Decisione": "Rettificato (riapertura)"},
+           {"Oggetto": "Rischio", "ID": "NFR-04", "Nome": "y", "Campo": "Impatto", "Proposta_Agente": 3,
+            "Valore_Validato": 3, "Motivazione": None, "Decisione": "Invariato (riapertura)"},
+           *[{"Oggetto": "KRI", "ID": "NFR-03-K1", "Nome": "k", "Campo": c, "Proposta_Agente": 1, "Valore_Validato": None,
+              "Motivazione": "Indicatore non disponibile", "Decisione": "Respinto (riapertura)"}
+             for c in ("Valore_Corrente", "Soglia_Attenzione", "Soglia_Allerta")],
+           {"Oggetto": "Rischio", "ID": "NFR-05", "Nome": "z", "Campo": "Impatto", "Proposta_Agente": 2,
+            "Valore_Validato": 3, "Motivazione": "Proposta di A1 rettificata", "Decisione": "Rettificato"}]
+    voci = campo.testi_da_rileggere(dec)
+    e.verifica([(v["id"], v["campo"]) for v in voci] == [("NFR-03", "Impatto"), ("NFR-03-K1", None)]
+               and "parte IMPATTO:" in voci[0]["testi"],
+               "riapertura: elenco dei testi da rileggere (rettifiche e respinti della riapertura; non lo stato, non le "
+               "righe invariate, non una validazione normale)", str(voci))
+    riga = campo.riga_testo_da_rileggere(voci[0])
+    e.verifica(riga.startswith("Rischio NFR-03 Impatto 3 -> 4 (motivazione: Esposizione documentata): rileggere RiskRegister"),
+               "riapertura: riga dell'elenco per chi corregge", riga)
+
+
+def test_collegati_e_temi(e):
+    """04/11/2026: parte QUINDI: nelle schede (P14, D-96), rischi collegati nella parte COLLEGATI: del primario (D-97, al
+    posto di P5), temi da verificare dell'analista (P9, D-98): file, baseline, risposte, controllo."""
+    import json
+    import tempfile
+    from pathlib import Path
+    import esegui_ciclo_locale as campo
+    import schede
+    import temi
+    from openpyxl import load_workbook
+    run3, base4 = carica(DATI / "run3_A1_2026Q4.json"), carica(DATI / "baseline_2026Q4.json")
+
+    # Collegati: lettura, controlli, verso opposto
+    raz = rischio(run3, "NFR-01")["razionale"]
+    e.verifica(schede.collegati(raz) == [("NFR-10", "stessa causa: la diffusione dell'AI generativa"),
+                                         ("NFR-06", "stessa causa: strumenti di AI generativa fuori controllo")]
+               and schede.collegati("RISCHIO: x. COLLEGATI: NFR-07, NFR-12 (stesso evento).") == [
+                   ("NFR-07", "stesso evento"), ("NFR-12", "stesso evento")] and schede.collegati("RISCHIO: x.") == [],
+               "collegati: gli id della parte COLLEGATI: con il motivo, nell'ordine scritto", str(schede.collegati(raz)))
+    parti = schede.parti_razionale(raz)
+    e.verifica(parti.get("quindi", "").startswith("Per la Banca") and "NFR-10" not in parti.get("quindi", "")
+               and "QUINDI" not in parti.get("velocity", ""),
+               "schede: QUINDI: e COLLEGATI: sono parti a se', non finiscono nella parte prima")
+    c1 = [r for r in controlli_a5.controlla(run3, base4)["rilievi"] if r["controllo"] == "C1" and "COLLEGATI" in r["descrizione"]]
+    e.verifica(not c1, "controlli: i collegati di run3 esistono, nessun rilievo", str(c1))
+
+    def coll(testo_01, testo_10=None):
+        p = copy.deepcopy(run3)
+        rischio(p, "NFR-01")["razionale"] = raz.split("COLLEGATI:")[0] + "COLLEGATI: " + testo_01
+        if testo_10:
+            rischio(p, "NFR-10")["razionale"] += " COLLEGATI: " + testo_10
+        return [r for r in controlli_a5.controlla(p, base4)["rilievi"] if "COLLEGATI" in r["descrizione"]]
+    r = coll("NFR-01 (se stesso); NFR-77 (inesistente).")
+    e.verifica(len(r) == 2 and all(x["gravita"] == "Osservazione" and x["controllo"] == "C1" for x in r)
+               and any("stesso" in x["descrizione"] for x in r) and any("NFR-77" in x["descrizione"] for x in r),
+               "controlli (D-97): COLLEGATI con il rischio stesso o un id inesistente = Osservazioni di C1", str(r))
+    r = coll("NFR-10 (stessa causa).", "NFR-01 (stessa causa).")
+    e.verifica(len(r) == 1 and "a vicenda" in r[0]["descrizione"], "controlli (D-97): un collegamento dichiarato dai due "
+               "lati = un'Osservazione", str(r))
+    righe = {"NFR-01": {"Nome": "Frodi", "Razionale": raz, "Score_Composito": 4.1, "Stato": "Radar"},
+             "NFR-10": {"Nome": "Assistenti AI", "Razionale": "RISCHIO: x.", "Score_Composito": 3.2, "Stato": "Radar"},
+             "NFR-06": {"Nome": "Dati e AI", "Razionale": "RISCHIO: y.", "Score_Composito": 2.4, "Stato": "Osservazione"}}
+    leg = schede.legami_collegati(righe)
+    e.verifica([c["id_rischio"] for c in leg["NFR-01"]["collegati"]] == ["NFR-10", "NFR-06"]
+               and leg["NFR-01"]["collegati"][1]["stato"] == "Osservazione"
+               and [c["id_rischio"] for c in leg["NFR-10"]["collegato_a"]] == ["NFR-01"] and not leg["NFR-10"]["collegati"],
+               "schede (D-97): il primario elenca i collegati con score e stato; il collegato riceve 'Collegato a'", str(leg))
+    e.verifica(schede.numeri("Vedi NFR-07 e TEMA-03, KRI NFR-07-K2: 4,2") == {4.2},
+               "schede: gli identificativi citati da A6 (rischi collegati, temi) non sono numeri inventati")
+    ingresso = ingresso_schede()
+    ingresso["rischi"][0].update(quindi="Per la Banca perdite sui clienti corporate; decidere la richiamata.",
+                                 collegati=[{"id_rischio": "NFR-12", "nome": "Errori nei pagamenti istantanei",
+                                             "motivo": "stesso evento", "score": 3.5, "stato": "Radar"}], collegato_a=[])
+    ingresso["rischi"][1].update(quindi=None, collegati=[], collegato_a=[{"id_rischio": "NFR-01", "nome": "Frodi con voce "
+                                                                          "sintetica", "motivo": "stesso evento"}])
+    # P6 (D-101): temi per driver, dagli stessi dati; nessuno score del tema; l'allegato di A6 senza temi.
+    righe["NFR-10"]["Driver"] = "DRV-AI, DRV-CON"
+    righe["NFR-01"]["Driver"] = "DRV-AI, DRV-CYB"
+    righe["NFR-06"]["Driver"] = "DRV-AI"
+    righe["NFR-99"] = {"Nome": "Dismesso", "Razionale": "", "Score_Composito": 2, "Stato": "Dismesso", "Driver": "DRV-CYB"}
+    temi_calc = schede.temi_per_driver(righe, {"NFR-01": {"Score_Composito": 3.8}},
+                                       {"NFR-01": [("2026Q3", 3.8), ("2026Q4", 4.1)]}, {"DRV-AI": "Intelligenza artificiale"},
+                                       schede.legami_collegati({k: v for k, v in righe.items() if k != "NFR-99"}))
+    e.verifica([t["driver"] for t in temi_calc] == ["DRV-AI"] and [x["id_rischio"] for x in temi_calc[0]["rischi"]] == ["NFR-01", "NFR-10", "NFR-06"]
+               and temi_calc[0]["collegati"] == ["NFR-01 con NFR-10, NFR-06"] and "score" not in temi_calc[0]
+               and temi_calc[0]["rischi"][0]["andamento"] == [["2026Q3", 3.8], ["2026Q4", 4.1]],
+               "schede per tema (P6): un tema per driver con almeno due rischi attivi (DRV-CYB ha un solo rischio attivo, "
+               "l'altro e' dismesso), dal piu' alto per score, con andamento e collegati; nessuno score del tema", str(temi_calc))
+    ingresso["temi"] = temi_calc
+    e.verifica("temi" not in schede.per_a6(ingresso) and "rischi" in schede.per_a6(ingresso),
+               "schede per tema: l'allegato di A6 non porta i temi (li scrive lo script)")
+    with tempfile.TemporaryDirectory() as tmp:
+        wb = load_workbook(schede.scrivi_file_schede(ingresso, None, Path(tmp) / "Schede_2026Q2.xlsx"))
+        e.verifica(wb.sheetnames == ["Indice", "NFR-01", "NFR-12", "Tema DRV-AI"]
+                   and "NFR-06" in " ".join(str(c.value) for c in wb["Tema DRV-AI"]["A"] if c.value)
+                   and "Schede per tema" in " ".join(str(c.value) for c in wb["Indice"]["A"] if c.value),
+                   "schede per tema: un foglio per tema dopo le schede dei rischi, anche con i rischi in osservazione; "
+                   "nell'indice l'elenco dei temi", str(wb.sheetnames))
+        t1 = " ".join(str(c.value) for c in wb["NFR-01"]["A"] if c.value)
+        t12 = " ".join(str(c.value) for c in wb["NFR-12"]["A"] if c.value)
+        e.verifica("Che cosa significa per la Banca" in t1 and "decidere la richiamata" in t1
+                   and "Rischi collegati" in t1 and "NFR-12 Errori nei pagamenti istantanei — score 3,50, Radar" in t1
+                   and "Collegato a NFR-01" in t12 and "Che cosa significa per la Banca" not in t12,
+                   "schede: 'Che cosa significa per la Banca' (QUINDI) e 'Rischi collegati', con 'Collegato a' sul secondario")
+
+    # Temi da verificare: file, baseline, risposte, controllo
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        conf = {"kernel": tmp / "Kernel", "cartella_uscita": tmp / "Uscita"}
+        conf["kernel"].mkdir()
+        f = temi.file_temi(conf)
+        e.verifica(f == tmp / "Kernel" / temi.NOME_FILE and temi.leggi(f) == [] and temi.impronta(f) == ""
+                   and temi.file_temi({"kernel": KERNEL, "cartella_uscita": tmp}) == tmp / temi.NOME_FILE,
+                   "temi: il file e' nella library Kernel (nella cartella di uscita se il kernel e' quello del pacchetto)")
+        elenco = temi.normalizza([{"tema": "Frodi con | QR code sui parcheggi", "chiesto_da": "Analista", "perche": "notizia"},
+                                  {"tema": "Agenti AI che pagano", "chiesto_da": "Comitato"}, {"tema": "  "}], "2026-11-04")
+        e.verifica([t["codice"] for t in elenco] == ["TEMA-01", "TEMA-02"] and elenco[0]["tema"] == "Frodi con / QR code sui parcheggi"
+                   and elenco[1]["data"] == "2026-11-04" and all(t["stato"] == temi.APERTO for t in elenco),
+                   "temi: codici progressivi, data di oggi, stato aperto, niente '|' nei testi, temi vuoti tolti", str(elenco))
+        temi.scrivi(f, elenco)
+        e.verifica(temi.leggi(f) == elenco, "temi: il file si rilegge uguale")
+        impronta = temi.impronta(f)
+        elenco[1]["stato"] = "chiuso"
+        temi.scrivi(f, temi.normalizza(elenco + [{"tema": "Terzo tema"}]), impronta)
+        dopo = temi.leggi(f)
+        e.verifica([t["codice"] for t in dopo] == ["TEMA-01", "TEMA-02", "TEMA-03"] and dopo[1]["stato"] == temi.CHIUSO
+                   and [t["codice"] for t in temi.per_baseline(dopo)] == ["TEMA-01", "TEMA-03"],
+                   "temi: un tema chiuso resta nel file ma non va nella baseline; il nuovo prende il primo codice libero")
+        try:
+            temi.scrivi(f, dopo, impronta)
+            fermato = False
+        except RuntimeError:
+            fermato = True
+        e.verifica(fermato, "temi: se un collega ha cambiato il file dopo che l'hai aperto, il salvataggio si ferma")
+        b = campo.con_temi(conf, {"ciclo_da_valutare": "2026Q4"})
+        e.verifica([t["codice"] for t in b["temi_da_verificare"]] == ["TEMA-01", "TEMA-03"]
+                   and campo.con_temi(conf, {"straordinario": {}}) == {"straordinario": {}},
+                   "baseline (P9): i temi aperti entrano in quella del trimestre, non in quella dello straordinario")
+        conf["cartella_uscita"].mkdir()
+        (conf["cartella_uscita"] / "Baseline_corrente.json").write_text(json.dumps(b), encoding="utf-8")
+        e.verifica(campo.temi_ricevuti(conf, "2026Q4") == b["temi_da_verificare"] and campo.temi_ricevuti(conf, "2027Q1") == [],
+                   "trimestrale: i temi da controllare sono quelli che A1 ha ricevuto per quel ciclo")
+        p = copy.deepcopy(run3)
+        rischio(p, "NFR-01")["razionale"] = rischio(p, "NFR-01")["razionale"].replace("RISCHIO:", "RISCHIO: (TEMA-01)", 1)
+        p["fenomeni_non_censiti"] = [{"fenomeno": "Agenti di AI che pagano", "event_type": None, "fonti": [],
+                                      "motivo": "fonte_non_specifica", "spiegazione": "TEMA-02: nessuna fonte specifica."}]
+        e.verifica(controlli_a5.risposte_temi(p, ["TEMA-01", "TEMA-02", "TEMA-03"]) == {
+                       "TEMA-01": ["NFR-01"], "TEMA-02": ["non censito: Agenti di AI che pagano (fonte_non_specifica)"],
+                       "TEMA-03": []},
+                   "temi: le risposte di A1, in un rischio o fra i fenomeni non censiti")
+        base = dict(base4, temi_da_verificare=b["temi_da_verificare"])
+        r = [x for x in controlli_a5.controlla(p, base)["rilievi"] if "Tema da verificare" in x["descrizione"]]
+        e.verifica(len(r) == 1 and r[0]["id_rischio"] is None and r[0]["gravita"] == "Osservazione" and "TEMA-03" in r[0]["descrizione"],
+                   "controlli (P9): un tema senza risposta e' un'Osservazione sul ciclo", str(r))
+        riga = campo.scrivi_risposte_temi(conf, "2026Q4", p, b["temi_da_verificare"])
+        archivio = json.loads((conf["cartella_uscita"] / "Cicli" / "2026Q4" / "Temi_2026Q4.json").read_text(encoding="utf-8"))
+        e.verifica(riga == "TEMA-01 -> NFR-01; TEMA-03 -> SENZA RISPOSTA" and archivio[0]["risposte"] == ["NFR-01"],
+                   "trimestrale: le risposte ai temi archiviate nella cartella del ciclo e stampate", riga)
+
+
 def main():
     e = Esito("Validatore, controlli A5, dati di esempio, consistenza")
     test_validatore(e)
@@ -1304,6 +1589,8 @@ def main():
     test_diagnosi(e)
     test_esposizione(e)
     test_lunghezze(e)
+    test_testi_ereditati(e)
+    test_collegati_e_temi(e)
     return 0 if e.stampa() else 1
 
 

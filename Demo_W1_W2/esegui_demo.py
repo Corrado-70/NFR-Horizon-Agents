@@ -7,11 +7,13 @@ Esegue, come farebbe un analista, sulla copia del template NFR_Registro.xlsx:
              A1; il precontrollo e il ciclo con quello buono, con A5; D-69, D-71)
   Validazione del 2026Q3 (prima un tentativo di Q4 fermato perche' non validato)
   W2 settimana del 12/10/2026, e validazione delle notizie
+  Prima del 2026Q4 un tema da verificare (P9, D-98), a cui A1 risponde fra i fenomeni non censiti
   W1 2026Q4 senza A5 (facoltativo, D-71), validazione e riapertura della
   validazione per NFR-02 (D-76)
   Schede dei rischi del 2026Q4 (senza A6: testi del registro) e PDF del report
   (comando report), poi una correzione manuale del validatore e il PDF rigenerato
   W2 settimana del 16/11/2026 con la proposta di ciclo straordinario di A3, e il
+  riepilogo mensile di ottobre (P7), e il
   ciclo straordinario 2026Q4-S1 su NFR-01 (D-75), fatto da A8 con l'analisi
   dell'evento (D-77), validato
 Registro unico (D-79): nel 2026Q3 NFR-16 nasce in osservazione (con i tre rischi
@@ -197,6 +199,19 @@ def correzione_manuale():
     print("=== Correzione manuale del validatore: presidio dei controlli di NFR-02 da Non verificato a Parziale")
 
 
+def temi_da_verificare():
+    """P9 (D-98): l'analista chiede ad A1 di verificare un tema prima del 2026Q4 (nell'app: finestra Temi da verificare).
+    Qui il kernel e' 01_Kernel del pacchetto, quindi il file va nell'archivio; la baseline rifatta lo porta ad A1."""
+    sys.path.insert(0, str(PACCHETTO / "07_Senza_Studio"))
+    import temi
+    conf = {"kernel": PACCHETTO / "01_Kernel", "cartella_uscita": ARCHIVIO}
+    temi.scrivi(temi.file_temi(conf), temi.normalizza([{
+        "tema": "Truffe con QR code falsi sui parcometri: e' un rischio per la Banca?", "chiesto_da": "Analista NFR",
+        "perche": "notizie della settimana del 12/10 e comunicato della Banca d'Italia"}], "2026-10-16"))
+    print("=== Prima di A1 2026Q4: un tema da verificare (TEMA-01) e la baseline rifatta con i temi aperti")
+    strumento("baseline")
+
+
 def main():
     prepara()
     print("=== W0 reale: raccolta dai feed dell'elenco fonti, oggi")
@@ -220,6 +235,7 @@ def main():
     strumento("settimanale", "--payload", AGENTI / "A3_2026-10-12.json")
     valida("2026-10-12")
     esporta_grafico("Notizie", "Notizie_settimana_2026-10-12")   # 9.11: solo NFR-16, in osservazione (D-79)
+    temi_da_verificare()
     shutil.copy2(ARCHIVIO / "Baseline_corrente.json", AGENTI / "Baseline_per_2026Q4.json")
     shutil.copy2(ARCHIVIO / "Input_A1_2026Q4.txt", AGENTI / "Input_A1_2026Q4.txt")
     print("=== W1 2026Q4, precontrollo dell'output di A1 (razionale in parti, azioni nuove)")
@@ -242,6 +258,8 @@ def main():
     grafici()
     print("=== W2 settimana del 16/11/2026: A3 propone un ciclo straordinario su NFR-01 (D-75)")
     strumento("settimanale", "--payload", AGENTI / "A3_2026-11-16.json")
+    print("=== Riepilogo mensile (P7): l'ultimo mese completo, ottobre 2026, in Excel e HTML")
+    strumento("mensile")
     print("=== La funzione di rischio decide il ciclo straordinario 2026Q4-S1 su NFR-01")
     strumento("baseline", "--straordinario", "--rischi", "NFR-01", "--motivo",
               "Primo caso di frode con voce clonata presso un cliente corporate della Banca (12/01/2027).",

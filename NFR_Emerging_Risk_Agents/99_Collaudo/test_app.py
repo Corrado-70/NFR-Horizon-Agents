@@ -254,11 +254,13 @@ class AmbienteFinto:
     """L'Ambiente dei flussi senza persona ne' Excel: risposte degli agenti, conferme e moduli da code preparate; il
     motore simulato scrive nell'archivio i file che scriverebbe quello vero (baseline, correzione, validazione)."""
 
-    def __init__(self, uscita, risposte=(), conferme=(), moduli=(), esiti=None):
+    def __init__(self, uscita, risposte=(), conferme=(), moduli=(), esiti=None, temi=()):
         self.uscita = Path(uscita)
         self.risposte, self.conferme, self.moduli = list(risposte), list(conferme), list(moduli)
+        self.temi = list(temi)                       # P9: le liste dei temi confermate, in ordine (vuota = Annulla)
         self.esiti = esiti or {}                     # comando -> lista di (codice, uscita), consumata in ordine
         self.comandi, self.appunti, self.aperti, self.messaggi, self.chiusure, self.richiesti = [], [], [], [], [], []
+        self.temi_mostrati = []
 
     def esegui(self, argomenti, script=None):
         comando = argomenti[0] if not script else Path(script).stem
@@ -291,6 +293,10 @@ class AmbienteFinto:
 
     def mostra(self, testo, tipo="info"):
         self.messaggi.append((tipo, testo))
+
+    def modifica_temi(self, titolo, temi, risposte):
+        self.temi_mostrati.append((titolo, [dict(t) for t in temi], dict(risposte)))
+        return self.temi.pop(0) if self.temi else None
 
 
 def _scrivi(p, dati):
@@ -336,6 +342,75 @@ def test_flussi(e):
                    amb.appunti)
         e.verifica(amb.comandi[3][2].endswith("A1_2026Q4.json") and (u / ingresso.CARTELLA / "A1_2026Q4.json").exists(),
                    "flusso trimestrale: trimestrale sul file salvato da ingresso", amb.comandi[3])
+        e.verifica(len(amb.temi_mostrati) == 1 and amb.temi_mostrati[0][0].startswith("Prima di A1")
+                   and not (u / "temi_da_verificare.md").exists(),
+                   "flusso trimestrale (P9): prima della baseline propone i temi da verificare; Annulla non scrive niente",
+                   str(amb.temi_mostrati))
+
+        # P9: temi da verificare dall'app (menu Altro): salvati nel file, con l'ultima risposta di A1
+        import temi
+        amb = AmbienteFinto(u, temi=[[{"tema": "Frodi con QR code falsi sui parcheggi", "chiesto_da": "Analista",
+                                       "perche": "notizia della settimana"}]])
+        salvati = flussi.Flussi(amb, conf).temi_da_verificare()
+        e.verifica([t["codice"] for t in salvati] == ["TEMA-01"] and temi.leggi(u / "temi_da_verificare.md") == salvati
+                   and amb.messaggi[-1][0] == "ok",
+                   "temi (P9): la finestra salva la lista nel file, con il codice al tema nuovo", str(amb.messaggi))
+        _scrivi(u / "Cicli" / "2026Q4" / "Temi_2026Q4.json", [{**salvati[0], "risposte": ["NFR-01"]}])
+        amb = AmbienteFinto(u, temi=[salvati])
+        flussi.Flussi(amb, conf).temi_da_verificare(prima_di_a1=True)
+        e.verifica(amb.temi_mostrati[0][1] == salvati and amb.temi_mostrati[0][2] == {"TEMA-01": "2026Q4: NFR-01"}
+                   and "senza modifiche" in amb.messaggi[-1][1],
+                   "temi (P9): la finestra mostra i temi con l'ultima risposta di A1; Conferma senza modifiche non riscrive",
+                   str(amb.temi_mostrati))
+        (u / "temi_da_verificare.md").unlink()
+
+        # P7: riepilogo mensile, il mese dal modulo (vuoto = l'ultimo), poi la cartella Mensili
+        amb = AmbienteFinto(u, moduli=[{"mese": "2026-10"}, {"mese": ""}], esiti={"mensile": [(0, "Riepilogo mensile")]})
+        f = flussi.Flussi(amb, conf)
+        f.mensile()
+        f.mensile()
+        e.verifica(amb.comandi == [["mensile", "--mese", "2026-10"], ["mensile"]] and str(u / "Mensili") in amb.aperti,
+                   "flusso mensile (P7): il mese scelto, o nessuno per l'ultimo; poi la cartella Mensili", f"{amb.comandi} {amb.aperti}")
+
+        # AU8: Approva sul periodo in attesa (chiede quale se sono due); Aggiungi un rischio = straordinario di solo
+        # censimento; i nomi dei pulsanti di "Approvazioni e report" dicono il periodo.
+        import app_nfr
+        import stato as st
+        f = flussi.Flussi(AmbienteFinto(u), conf)
+        e.verifica(f.da_approvare() == [] or all(len(x) == 2 for x in f.da_approvare()),
+                   "AU8: da_approvare elenca (periodo, come lo dice il pulsante)", str(f.da_approvare()))
+        orig = st.leggi
+        try:
+            st.leggi = lambda conf, oggi=None: {"ciclo_corrente": "2026Q4", "validato": False, "riapertura": None,
+                                                "settimana": {"lunedi": "2026-11-02", "scritta": True, "validata": False}}
+            amb = AmbienteFinto(u, moduli=[{"periodo": "2026-11-02 (le notizie del 02/11)"}, None])
+            f = flussi.Flussi(amb, conf)
+            chiamato = []
+            f.validazione = lambda periodo=None: chiamato.append(periodo)
+            f.approva()
+            e.verifica(f.da_approvare() == [("2026Q4", "il trimestre 2026Q4"), ("2026-11-02", "le notizie del 02/11")]
+                       and chiamato == ["2026-11-02"] and amb.richiesti[0][0] == "Che cosa approvi?",
+                       "AU8: Approva con due periodi in attesa chiede quale e approva quello scelto", f"{chiamato} {amb.richiesti}")
+            st.leggi = lambda conf, oggi=None: {"ciclo_corrente": "2026Q4-S1", "validato": True, "riapertura": None,
+                                                "settimana": {"lunedi": "2026-11-02", "scritta": False, "validata": False}}
+            amb = AmbienteFinto(u)
+            flussi.Flussi(amb, conf).approva()
+            e.verifica(any("Niente da approvare" in m for _, m in amb.messaggi), "AU8: Approva senza niente in attesa lo dice")
+        finally:
+            st.leggi = orig
+        etich = app_nfr.etichette_uscite({"ciclo_corrente": "2026Q4", "validato": True, "riapertura": None},
+                                         [("2026-11-02", "le notizie del 02/11")], dt.date(2026, 11, 4))
+        e.verifica(etich == {"Approva": "Approva le notizie del 02/11", "Prepara le schede (A6)": "Prepara le schede (A6) del 2026Q4",
+                             "Genera report": "Genera report del 2026Q4", "Report mensile notizie": "Report mensile notizie (2026-10)"}
+                   and app_nfr.etichette_uscite({"ciclo_corrente": "2026Q4", "validato": False}, [("2026Q4", "il trimestre 2026Q4")],
+                                                dt.date(2026, 11, 4))["Genera report"] == "Genera report: dopo l'approvazione",
+                   "AU8: i pulsanti di Approvazioni e report dicono il periodo (il report mensile: l'ultimo mese completo)", str(etich))
+        amb = AmbienteFinto(u, moduli=[None])
+        flussi.Flussi(amb, conf).aggiungi_rischio()
+        e.verifica(amb.richiesti and "solo censimento" in amb.richiesti[0][0] and "rischi" not in [c[0] for c in amb.richiesti[0][1]],
+                   "AU8: Aggiungi un rischio (A8) e' uno straordinario di solo censimento (nessun rischio da rivalutare)",
+                   str(amb.richiesti))
+        e.verifica("Diagnosi" in flussi.OPERAZIONI_ADMIN, "AU8: la diagnosi delle valutazioni e' fra le operazioni di Admin")
 
         # ripresa: la risposta di A1 e' gia' in In_arrivo (processo interrotto), si usa senza richiederla
         _scrivi(u / "Cicli" / "2026Q4" / "Validazione_2026Q4.json", {})
@@ -411,6 +486,22 @@ def test_flussi(e):
         flussi.Flussi(amb, conf).validazione()
         e.verifica(amb.chiusure == [str(conf["workbook"])] and amb.comandi == [["valida", "--periodo", "2026Q4", "--validatore", "Comitato Rischi"]],
                    "flusso validazione: registro aperto e atteso chiuso, valida del ciclo corrente con chi valida", amb.comandi)
+        # P17: validata una riapertura con rettifiche, l'app propone Testi a mano (anche fuori da Admin) con il motivo
+        # gia' scritto; poi le schede
+        validato = u / "Cicli" / "2026Q4" / "Validazione_2026Q4.json"
+        gia = validato.exists()
+        if not gia:
+            _scrivi(validato, {})
+        amb = AmbienteFinto(u, moduli=[{"validatore": "Comitato Rischi"}, {"motivo": "testi dopo la riapertura"}],
+                            conferme=[True, False], esiti={"valida": [(0, "Validazione applicata.\nTESTI DA RILEGGERE (1, P17): ...")]})
+        flussi.Flussi(amb, conf).validazione()
+        e.verifica(amb.comandi[1:] == [["amministrazione", "--admin", "testi", "--motivo", "testi dopo la riapertura"],
+                                       ["amministrazione", "--admin", "testi-fine"]]
+                   and "riapertura del ciclo 2026Q4" in amb.richiesti[1][1][0][2],
+                   "flusso validazione dopo una riapertura con rettifiche: Testi a mano proposto, motivo precompilato (P17)",
+                   f"{amb.comandi}\n{amb.richiesti}")
+        if not gia:
+            validato.unlink()
 
         # schede con A6 troppo sintetico (D-88): si' -> elenco ad A6 nella stessa chat, schede rilanciate
         a6 = {"ciclo": "2026Q4", "schede": [{"id_rischio": "NFR-01", "descrizione_estesa": "Testo della scheda. " * 20,
@@ -544,11 +635,11 @@ def test_aiuto(e):
     voci = sorgente.split("voci = [", 1)[1].split("]\n", 1)[0]
     nomi = re.findall(r'\("([^"]+)", (?:self\.flussi|lambda)', voci)
     righe_guida = aiuto.pulsanti()
-    e.verifica(len(nomi) == 11 and set(nomi) == set(righe_guida),
+    e.verifica(len(nomi) == 12 and set(nomi) == set(righe_guida),           # 04/11: Mensile (P7)
                "aiuto: ogni pulsante dei processi dell'app ha la sua riga nella tabella 'I processi' della guida, e viceversa",
                f"app {nomi}\nguida {sorgente and sorted(righe_guida)}")
-    t = aiuto.suggerimento("Trimestre")
-    e.verifica(t.startswith("Trimestre\nChe cosa fa l'app: ") and "Che cosa fai tu: " in t and "**" not in t and "`" not in t,
+    t = aiuto.suggerimento("Analizza il trimestre (A1)")
+    e.verifica(t.startswith("Analizza il trimestre (A1)\nChe cosa fa l'app: ") and "Che cosa fai tu: " in t and "**" not in t and "`" not in t,
                "aiuto: il suggerimento del pulsante e' la riga della guida, senza i segni del markdown", t)
     e.verifica("guida" in aiuto.suggerimento("Inesistente", voci={}), "aiuto: un pulsante senza riga rimanda alla guida")
     argomenti = aiuto.argomenti()

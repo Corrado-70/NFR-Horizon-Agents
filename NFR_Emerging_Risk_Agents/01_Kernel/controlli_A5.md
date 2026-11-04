@@ -21,18 +21,27 @@
 > validazione come "Da motivare", con i due valori: decide il validatore. Il testo di C5 qui sotto non cambia (il
 > prompt di A5 e' a 7.990 caratteri).
 
+> P17 (03/11/2026, D-93): i testi di un rischio esistente si aggiornano, non si riscrivono: C1, C2, C9 e C10 qui sotto lo
+> dicono; la regola intera e' nella guida di scrittura (sezione "Rischi esistenti").
+
+> 04/11/2026 (D-96, D-97, D-98): C10 misura anche la parte QUINDI: del razionale (che cosa significa il rischio per la
+> Banca), che quindi manca = troppo corta; una QUINDI: ripresa dalla baseline mentre un valore cambia e' un'Osservazione
+> di C2. La parte meccanizzata di C1 controlla anche la parte COLLEGATI: del rischio primario (id esistenti, non il
+> rischio stesso, non dichiarata dai due lati) e i temi da verificare della baseline (ognuno con una risposta): tutte
+> Osservazioni, fuori dal testo qui sotto (il prompt di A5 e' al limite).
+
 > D-86 (29/10/2026): C10 Testi. I minimi delle lunghezze sono nella guida di scrittura (parte 3 dell'allegato di A1,
 > sezione "Lunghezze dei testi") e nella parte 3 dell'allegato di A5; lo script li prende da controlli_a5.LUNGHEZZE (il
 > collaudo verifica che la tabella della guida sia la stessa). Nel precontrollo un testo troppo corto va corretto da A1
 > (si puo' saltare dall'app); alla scrittura e in validazione e' un'Osservazione, anche quando lo segnala A5.
 
-- C1 Completezza: ogni rischio di "rischi" della baseline (il radar) e' valutato, con la stessa categoria; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline.
-- C2 Variazioni: una voce per ogni valore cambiato rispetto alla baseline e solo per quelli; nessuna per un rischio nuovo.
+- C1 Completezza: ogni rischio di "rischi" della baseline (il radar) e' valutato, con la stessa categoria; nessun id_rischio ripetuto; un rischio nuovo ha un id non presente in baseline e scrive descrizione e razionale; uno esistente scrive solo i testi che cambiano (gli altri restano quelli della baseline).
+- C2 Variazioni: una voce per ogni valore cambiato rispetto alla baseline e solo per quelli; nessuna per un rischio nuovo; la parte del razionale di un valore cambiato e' riscritta.
 - C3 Evidenza delle variazioni: data_evidenza dopo data_riferimento_precedente e non dopo data_riferimento; evidenza specifica, non una frase generica; nessun valore cambiato di piu' di un punto (una velocity prima null puo' entrare con qualunque valore).
 - C4 Plausibilita': gli score corrispondono ai descrittori della rubrica, dati razionale e fonti (Probabilita 4-5 con la Banca esposta); categoria coerente con la tassonomia; un rischio = un meccanismo di perdita; velocity solo se le fonti documentano i tempi; la deroga alla Prossimita 4-5 e' dichiarata e riguarda un fenomeno ad altissimo impatto; anni_adeguamento motivati; una riduzione ha lo stesso onere di un aumento; un numero senza fonte non dichiarato come valutazione e' un'Osservazione.
 - C5 Fonti: rilevanza coerente con i descrittori della rubrica; Probabilita 5 o Prossimita 4-5 con almeno una fonte di rilevanza 3, salvo deroga dichiarata; nessuna fonte datata dopo data_riferimento; un rischio confermato con meno fonti della baseline rivede i valori.
 - C6 Deriva: aumenti sostenuti solo dallo stesso fatto ripetuto o da copertura mediatica; aumenti su piu' della meta' dei rischi senza fonti nuove (inflazione progressiva).
 - C7 Rilettura KRI: ogni kri_id riletto e' in vigore nella baseline e compare una sola volta.
 - C8 Azioni (sempre Osservazione): owner e' una funzione, mai una persona; l'azione e' pertinente al meccanismo di perdita e non ripete un'azione aperta della baseline.
-- C9 KRI: due per rischio del radar, uno di Esposizione e uno di Evoluzione, coerenti con cio' che misurano; fonte_dati identificabile; soglie entrambe o nessuna, soglia_allerta >= soglia_attenzione; valore crescente = peggio; un kri_id valorizzato esiste in baseline ed e' dello stesso rischio; nessun kri_id ripetuto.
-- C10 Testi: nessun testo sotto il minimo della parte 3 dell'allegato (descrizione, parti del razionale, evidenze, segnale, azioni, KRI, analisi dell'evento); piu' corto = Bloccante, troppo sintetico.
+- C9 KRI: due per rischio del radar, uno di Esposizione e uno di Evoluzione (un KRI in vigore non riproposto resta; uno nuovo sostituisce quello dello stesso tipo), coerenti con cio' che misurano; fonte_dati identificabile; soglie entrambe o nessuna, soglia_allerta >= soglia_attenzione; valore crescente = peggio; un kri_id valorizzato esiste in baseline ed e' dello stesso rischio; nessun kri_id ripetuto.
+- C10 Testi: nessun testo scritto sotto il minimo della parte 3 dell'allegato (descrizione, parti del razionale con QUINDI:, evidenze, segnale, azioni, KRI, analisi dell'evento); piu' corto = Bloccante, troppo sintetico.

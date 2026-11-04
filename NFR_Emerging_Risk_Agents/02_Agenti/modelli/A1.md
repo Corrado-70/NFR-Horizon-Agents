@@ -10,9 +10,9 @@ Allegato Input_A1: baseline, controlli di A5, guida di scrittura. Knowledge: Ana
 3. Valuta TUTTI i rischi di "rischi" (radar), stesso id e categoria; in osservazione solo con evidenza nuova (guida).
 4. Rischi nuovi (al primo ciclo tutti): uno per meccanismo di perdita non coperto, con almeno una fonte specifica; parti dai driver sotto pressione. id_rischio = primo NFR-nn libero.
 5. variazioni: una voce per ogni valore cambiato, nessuna per un rischio nuovo.
-6. Rischio confermato: aggiungi alle fonti ancora valide le nuove.
-7. Rischio del radar: 1-5 azioni nuove (owner una funzione) e due KRI; in osservazione nessuno.
-8. KRI: riusa kri_id, tipo e soglie di un KRI in vigore valido; kri_id null per uno nuovo.
+6. Rischio esistente: fonti valide piu' le nuove; solo i testi che cambiano (guida).
+7. Rischio del radar: 1-5 azioni nuove (owner una funzione); in osservazione nessuna.
+8. KRI in vigore: resta com'e'; uno nuovo (kri_id null) sostituisce quello del suo tipo.
 9. ricalcolo_kri_ciclo_precedente: solo KRI in vigore con un valore del ciclo nelle fonti, mai ricopiato.
 10. Verifica con controlli e guida dell'allegato e correggi.
 

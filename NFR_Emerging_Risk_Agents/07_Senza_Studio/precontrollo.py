@@ -7,6 +7,7 @@ skill per Copilot Studio, che 09_Copilot_Studio/prepara_kit.py compone copiando 
 che importa. Un solo codice: quello che il precontrollo trova in Copilot Studio, il comando lo trova sul PC.
 """
 
+import copy
 import hashlib
 import json
 import re
@@ -25,13 +26,16 @@ def precontrolla(payload, baseline, schema):
     if errori:
         return {"schema": errori, "rilievi": [], "formato": []}
     formato = []                                     # una riga per rischio: il messaggio resta corto anche con A1 vecchio
-    for x in payload["rischi"]:
+    # P17: la forma si guarda sul rischio completo dei testi validati che A1 non riscrive (su una copia: l'impronta e
+    # l'allegato di A5 restano quelli dell'output di A1).
+    for x in controlli_a5.eredita_testi(copy.deepcopy(payload), baseline)["rischi"]:
         parti = schede.parti_razionale(x["razionale"])
-        attese = [e for e, k in schede.ETICHETTE_RAZIONALE.items()
-                  if k != "adeguamento" or x.get("anni_adeguamento") is not None]
+        # QUINDI: manca = testo troppo corto (C10, D-96); COLLEGATI: e' facoltativa (D-97)
+        attese = [e for e, k in schede.ETICHETTE_RAZIONALE.items() if k not in ("quindi", "collegati")
+                  and (k != "adeguamento" or x.get("anni_adeguamento") is not None)]
         mancano = [e for e in attese if not parti.get(schede.ETICHETTE_RAZIONALE[e])]
         azioni = [str(n) for n, a in enumerate(x["azioni_mitigazione"], start=1) if schede.parti_effetto(a["razionale"])[1] is None]
-        kri = [k["tipo"] for k in x["kri_proposti"] if schede.parti_effetto(k["razionale"])[1] is None]
+        kri = [k["tipo"] for k in x["kri_proposti"] if not k.get("_ereditato") and schede.parti_effetto(k["razionale"])[1] is None]
         senza = ([("azione " if len(azioni) == 1 else "azioni ") + ", ".join(azioni)] if azioni else []) + \
                 (["KRI di " + " e di ".join(kri)] if kri else [])
         problemi = ((["razionale senza le parti " + ", ".join(e + ":" for e in mancano)] if mancano else [])

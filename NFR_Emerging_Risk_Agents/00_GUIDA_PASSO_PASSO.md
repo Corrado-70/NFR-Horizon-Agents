@@ -176,10 +176,11 @@ agenti. Se la finestra non si apre: sezione 7.
 |---|---|
 | **Stato** (due righe) | il ciclo corrente (scritto, DA VALIDARE, VALIDATO, RIAPERTO; report e schede pronti o da fare), il prossimo periodo, la settimana (raccolta, A3, scritta, validata), il registro (libero o in uso da chi). Si aggiorna da solo ogni mezzo minuto; e' lo stesso per tutti i colleghi, perche' si legge dall'archivio condiviso |
 | **▶ Prossimo passo** | il passo che lo stato propone, con chi lo deve fare (analista o validatore) e perche'. Un clic e parte |
-| **Pulsanti dei processi** | Settimana, Trimestre, Straordinario, Validazione, Schede, Report, Riapri un ciclo, Parere di A4, Chiedi ad A7, Diagnosi, Dismetti (i testi a mano sono in **Admin**) |
-| **Con A5 Challenger** | casella: il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71). Se non e' spuntata, l'app lo chiede comunque a precontrollo superato, prima di scrivere il ciclo (`chiedi_a5`, sezione 0.3) |
+| **Pulsanti dei processi** | in riquadri (AU8): **Ogni settimana** Analizza le notizie (A3); **Ogni trimestre** Analizza il trimestre (A1), con la casella di A5; **All'occorrenza** Ciclo straordinario (A8), Aggiungi un rischio (A8), Parere su una notizia (A4), Apri chat (A7), Riapri un ciclo validato, Rimuovi rischio; in fondo **Approvazioni e report**: Approva, Prepara le schede (A6), Genera report, Report mensile notizie, con il periodo su cui lavorano nel nome (i testi a mano e la diagnosi sono in **Admin**) |
+| **Riga sotto i riquadri** | passando con il mouse su un pulsante dice che cosa fa (dalla tabella "I processi") |
+| **Con A5 Challenger** | casella accanto ad Analizza il trimestre (A1): il trimestre e lo straordinario passano anche da A5 (facoltativo, D-71). Se non e' spuntata, l'app lo chiede comunque a precontrollo superato, prima di scrivere il ciclo (`chiedi_a5`, sezione 0.3) |
 | **Agenti** | Agent Builder o Copilot Studio: da quale versione degli agenti vengono le risposte. Cambiano solo il link aperto e l'annotazione dell'origine; nomi dei file, cartelle e registro sono gli stessi |
-| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC**, togli il lucchetto rimasto, ricostruisci la griglia di validazione (sezione "Menu Altro") |
+| **Altro** | apri il registro (solo consultazione), apri l'archivio, aggiorna lo stato, **Verifica del PC**, **Temi da verificare** (per A1), togli il lucchetto rimasto, ricostruisci la griglia di validazione (sezione "Menu Altro") |
 | **Passo in corso** | le istruzioni del passo, il **riquadro "Risposta dell'agente"** dove incollare (Ctrl+V; il testo resta visibile e un nuovo Ctrl+V lo sostituisce), sotto la **riga dell'esito** (in verde "Ricevuto: A1, … caratteri, salvato in In_arrivo\\A1_<ciclo>.json", in arancio una risposta tagliata, di un altro agente o fuori formato), e i pulsanti Usa il testo incollato, Leggi gli appunti adesso, Scegli file..., Ho chiuso Excel: controlla ora, Annulla il passo. Il passo in corso dice sempre che cosa sta facendo l'app: "Esecuzione del comando trimestrale in corso da 1:25 (Excel in background, di solito qualche minuto)", "In attesa della risposta di A1", "In attesa che tu chiuda il registro in Excel", "In attesa della tua risposta alla domanda: ..." |
 | **Admin...** | pulsante accanto ad Altro: apre la finestra delle funzioni amministrative (nuovo registro, pulizia dell'archivio, ritorno a un ciclo validato, annullamento, ripartenza da zero, parcheggi, svuotamento), ognuna spiegata e con il suo pulsante (sezione "Pulsante Admin", D-85). Aprirla chiede conferma e lascia la traccia; finche' e' aperta il titolo della finestra dice ADMIN |
 | **Aiuto (F1)** | una finestra con un argomento per pulsante dell'app (le sezioni "Pulsante ..." di questo capitolo), piu' leggere i risultati e dove sono i file, e il pulsante per aprire la guida completa. Passando con il mouse su un pulsante (anche Prossimo passo, la casella A5, Agenti, Altro) compare che cosa fa, con le righe della tabella "I processi" qui sotto. L'aiuto legge questa guida: non c'e' una copia da tenere allineata |
@@ -220,21 +221,26 @@ Casi particolari:
 ### I processi
 
 Ogni pulsante fa un processo intero: l'app lancia da sola, nell'ordine giusto, quello che serve; tu fai solo i gesti
-della colonna di destra. Passando con il mouse su un pulsante compare la sua riga di questa tabella.
+della colonna di destra. Dal 04/11/2026 (AU8) i pulsanti stanno in riquadri: **Ogni settimana**, **Ogni trimestre**,
+**All'occorrenza** (il lavoro che produce proposte) e, in fondo, **Approvazioni e report**, i cui pulsanti dicono su
+quale periodo lavorano (per esempio "Approva il trimestre 2026Q4", "Genera report del 2026Q3"). Fra parentesi l'agente
+che il pulsante usa. Passando con il mouse su un pulsante la riga sotto i riquadri dice che cosa fa (la prima colonna
+qui sotto), e una finestrella mostra la riga intera di questa tabella.
 
 | Pulsante | Che cosa fa l'app | Che cosa fai tu |
 |---|---|---|
-| **Settimana** | raccoglie le notizie se mancano (solo sul PC della raccolta); apre la cartella Manuali della settimana; prepara A3 con il suo allegato; scrive la settimana nel registro; se A3 va corretto mette il messaggio negli appunti; propone di validare le notizie | metti in Manuali i file a mano; i tre gesti con A3; decidi se validare |
-| **Trimestre** | controlla che il ciclo prima sia validato; prepara l'allegato di A1; controlla la risposta di A1 (pochi secondi, senza Excel) e, se serve, prepara il messaggio di correzione per la stessa chat; propone A5 se la casella non e' spuntata; scrive il ciclo nel registro; propone la validazione | i tre gesti con A1 (e A5); se il controllo trova solo punti "da verificare", scegli se farli rivedere ad A1 o lasciarli al validatore; se trova testi troppo corti (C10), scegli se farli allungare ad A1 (consigliato) o proseguire |
-| **Straordinario** | chiede rischi, motivo, chi decide e data; prepara l'allegato di A8; controlla la risposta; scrive il ciclo straordinario; propone la validazione | compili il modulo (decide la funzione di rischio); allega ad A8 anche i documenti dell'evento |
-| **Validazione** | chiede chi valida; apre il registro in Excel sul foglio Validazione; quando lo chiudi applica le decisioni e rifa' il report al comitato (PDF e HTML). Se qualcosa non va, lo dice e propone di riaprire il registro; poi propone le schede | lavori nelle celle gialle del foglio Validazione, salvi e chiudi Excel |
-| **Schede** | prepara i dati validati; chiede se usare A6 per i testi; fa le schede dei rischi (Excel e PDF) e il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
-| **Report** | rifa' il report al comitato (PDF e, se i numeri tornano con Excel, HTML) e apre la cartella del ciclo | niente; serve dopo una correzione a mano delle celle gialle del registro |
-| **Riapri un ciclo** | chiede quali rischi riaprire (vuoto = tutti); riapre la validazione del ciclo; poi la Validazione | come nella validazione |
-| **Parere di A4** | prepara A4 con il suo allegato; archivia il parere; se A4 propone uno straordinario, lo dice | incolli la notizia dopo il messaggio base; copi e incolli il parere |
-| **Chiedi ad A7** | apre A7 | fai le tue domande in chat |
-| **Diagnosi** | misura se le valutazioni pendono da una parte (solo lettura) e scrive l'esito nell'uscita e nella cartella del ciclo | leggi le misure |
-| **Dismetti** | chiede rischio, motivazione e chi decide; toglie il rischio dal registro attivo (la storia resta) | compili il modulo (decide la funzione di rischio) |
+| **Analizza le notizie (A3)** | raccoglie le notizie se mancano (solo sul PC della raccolta); apre la cartella Manuali della settimana; prepara A3 con il suo allegato; scrive la settimana nel registro; se A3 va corretto mette il messaggio negli appunti; propone di approvare le notizie | metti in Manuali i file a mano; i tre gesti con A3; decidi se approvare subito |
+| **Analizza il trimestre (A1)** | rivede con te i temi da verificare; controlla che il ciclo prima sia approvato; prepara l'allegato di A1; controlla la risposta di A1 (pochi secondi, senza Excel) e, se serve, prepara il messaggio di correzione per la stessa chat; propone A5 se la casella non e' spuntata; scrive il ciclo nel registro; propone l'approvazione | i tre gesti con A1 (e A5); se il controllo trova solo punti "da verificare", scegli se farli rivedere ad A1 o lasciarli al validatore; se trova testi troppo corti (C10), scegli se farli allungare ad A1 (consigliato) o proseguire |
+| **Ciclo straordinario (A8)** | chiede rischi, motivo, chi decide e data; prepara l'allegato di A8; controlla la risposta; scrive il ciclo straordinario; propone l'approvazione | compili il modulo (decide la funzione di rischio); allega ad A8 anche i documenti dell'evento |
+| **Aggiungi un rischio (A8)** | uno straordinario di solo censimento: chiede il fatto che fa nascere il rischio, chi decide e la data; A8 censisce i rischi nuovi; poi controlli e approvazione come sempre | compili il modulo (decide la funzione di rischio); allega ad A8 i documenti |
+| **Parere su una notizia (A4)** | prepara A4 con il suo allegato; archivia il parere; se A4 propone uno straordinario, lo dice | incolli la notizia dopo il messaggio base; copi e incolli il parere |
+| **Apri chat (A7)** | apre A7, che spiega il perche' delle valutazioni | fai le tue domande in chat |
+| **Riapri un ciclo validato** | chiede quali rischi riaprire (vuoto = tutti); riapre l'approvazione del ciclo; poi l'approvazione | come nell'approvazione |
+| **Rimuovi rischio** | chiede rischio, motivazione e chi decide; toglie il rischio dal registro attivo (la storia resta) | compili il modulo (decide la funzione di rischio) |
+| **Approva** | approva cio' che e' in attesa: il ciclo scritto (trimestre, straordinario, riapertura) o le notizie della settimana; se sono due chiede quale. Chiede chi approva, apre il registro sul foglio Validazione; quando lo chiudi applica le decisioni e rifa' il report al comitato (PDF e HTML), anche dopo le notizie; con le notizie dell'ultima settimana del mese anche il report mensile. Se qualcosa non va, lo dice e propone di riaprire il registro; dopo un ciclo propone le schede | lavori nelle celle gialle del foglio Validazione, salvi e chiudi Excel |
+| **Prepara le schede (A6)** | sul ciclo corrente approvato: prepara i dati; chiede se usare A6 per i testi; fa le schede dei rischi e per tema (Excel e PDF) e il report se manca; apre la cartella del ciclo | i tre gesti con A6, se lo usi |
+| **Genera report** | rifa' il report al comitato del ciclo corrente approvato (PDF e, se i numeri tornano con Excel, HTML) e apre la cartella del ciclo | niente; serve dopo una correzione a mano delle celle gialle del registro (dopo ogni approvazione il report si rifa' da solo) |
+| **Report mensile notizie** | sull'ultimo mese completo (lo dice il nome del pulsante; si puo' scegliere un altro mese): legge le settimane del mese dal registro, senza scrivere niente; fa il riepilogo in Excel e in HTML (segnali per rischio, pressione per categoria, notizie senza rischio, notizie forti su rischi gravi, flag, proposte e cicli straordinari) e apre la cartella Mensili | scegli il mese o lasci vuoto; leggi o inoltri il riepilogo |
 
 ### I pulsanti del passo in corso
 
@@ -251,31 +257,34 @@ questi pulsanti (gli altri restano grigi):
 
 ### Pulsante Prossimo passo
 
-Il pulsante grande in alto dice che cosa c'e' da fare adesso, chi lo deve fare e perche' (per esempio "Validare il
+Il pulsante grande in alto dice che cosa c'e' da fare adesso, chi lo deve fare e perche' (per esempio "Approvare il
 ciclo 2026Q3", "Settimana del 26/10: A3", "Report al comitato del ciclo 2026Q3"). Premerlo fa partire quel processo,
 come il pulsante del processo corrispondente. Se un collega sta scrivendo nel registro dice "Attendere".
 
-### Pulsante Settimana
+### Pulsante Analizza le notizie (A3)
 
-Ogni lunedi', per le notizie della settimana.
+Ogni lunedi', per le notizie della settimana (riquadro **Ogni settimana**).
 
-1. Premi **Settimana** (o **Prossimo passo**, se lo propone).
+1. Premi **Analizza le notizie (A3)** (o **Prossimo passo**, se lo propone).
 2. Sul PC della raccolta l'app raccoglie le notizie, se non l'ha gia' fatto l'attivita' del lunedi'. Poi apre la
    cartella **Manuali** della settimana: mettici i file che non arrivano dai feed (circolari, rapporti) e rispondi Si'.
    Si possono mettere anche durante la settimana: tasto destro sul file -> **Invia a -> NFR notizie manuali**.
 3. I tre gesti con **A3**: chat nuova, trascini l'allegato, incolli il messaggio, poi copi la risposta nell'app.
 4. L'app scrive la settimana. Se si ferma, il messaggio di correzione per A3 e' negli appunti: incollalo nella stessa
    chat e ricopia la risposta.
-5. Alla domanda "Validare adesso le notizie?" puoi rispondere No: e' facoltativo (poi lo propone **Prossimo passo**).
+5. Alla domanda "Validare adesso le notizie?" puoi rispondere No: e' facoltativo (poi lo propongono **Prossimo passo** e
+   il pulsante **Approva** in fondo).
 
-### Pulsante Trimestre
+### Pulsante Analizza il trimestre (A1)
 
-Dopo la fine del trimestre, per il ciclo trimestrale.
+Dopo la fine del trimestre, per il ciclo trimestrale (riquadro **Ogni trimestre**).
 
-1. Premi **Trimestre** (o **Prossimo passo**, che lo propone dopo la fine del trimestre). Il ciclo prima deve essere
-   validato.
-2. Se vuoi il parere di **A5**, spunta "Con A5 Challenger" prima di premere; se non la spunti, l'app te lo chiede dopo
-   il controllo della risposta di A1.
+1. Premi **Analizza il trimestre (A1)** (o **Prossimo passo**, che lo propone dopo la fine del trimestre). Il ciclo
+   prima deve essere approvato. Si apre prima la finestra **Temi da verificare** (dal 04/11/2026, D-98): i temi che
+   chiedi ad A1 di verificare, con l'ultima risposta di A1. Aggiungi, modifica o chiudi i temi e premi **Conferma**
+   (anche senza modifiche): i temi aperti vanno nella baseline di A1. **Annulla** lascia la lista com'era e prosegue.
+2. Se vuoi il parere di **A5**, spunta "Con A5 Challenger" (accanto al pulsante) prima di premere; se non la spunti,
+   l'app te lo chiede dopo il controllo della risposta di A1.
 3. I tre gesti con **A1**. L'app controlla la risposta in pochi secondi: se trova errori mette negli appunti il
    messaggio di correzione, che incolli nella **stessa chat** di A1; poi ricopi la risposta. Si ripete finche' il
    controllo e' superato. Se A1 e' stato **troppo sintetico** (testi sotto le lunghezze minime, controllo C10), l'app
@@ -283,14 +292,63 @@ Dopo la fine del trimestre, per il ciclo trimestrale.
    e in validazione quei testi restano osservazioni.
 4. Con A5: i tre gesti con A5, con il suo allegato.
 5. L'app scrive il ciclo nel registro (Excel lavora in background per qualche minuto: il passo in corso dice da quanto).
-6. Alla domanda "Passare alla validazione adesso?": Si' per validare subito (come il pulsante **Validazione**), No per
+6. Alla domanda "Passare alla validazione adesso?": Si' per approvare subito (come il pulsante **Approva**), No per
    farlo dopo.
 
-### Pulsante Validazione
+### Pulsante Ciclo straordinario (A8)
 
-Per validare il ciclo scritto (il validatore).
+Solo su decisione della funzione di rischio, per un evento che non puo' aspettare il trimestre (per esempio quando A3
+o A4 lo propongono). Riquadro **All'occorrenza**.
 
-1. Premi **Validazione** (o **Prossimo passo**). Scrivi chi valida e **Conferma**.
+1. Premi **Ciclo straordinario (A8)** e compila il modulo: i rischi da rivalutare (vuoto = solo rischi nuovi creati
+   dall'evento), il motivo, chi decide, la data di riferimento (vuota = oggi).
+2. I tre gesti con **A8**: oltre all'allegato, trascina nella chat anche i documenti dell'evento.
+3. Come nel trimestre: controllo, correzioni nella stessa chat, A5 se vuoi, scrittura, poi l'approvazione.
+
+### Pulsante Aggiungi un rischio (A8)
+
+Per aggiungere subito un rischio nuovo, senza aspettare il trimestre: e' un ciclo straordinario **di solo censimento**,
+fatto da A8 (D-77). Un rischio entra nel registro solo con una valutazione e le sue fonti: per questo non si scrive a
+mano. Se puo' aspettare il trimestre, basta un **tema da verificare** (menu Altro): A1 lo cerca nelle fonti.
+
+1. Premi **Aggiungi un rischio (A8)** e compila: il fatto o il documento che fa nascere il rischio (almeno 20
+   caratteri), chi decide, la data di riferimento.
+2. I tre gesti con **A8**, con i documenti: A8 censisce i rischi nuovi, nel radar o in osservazione.
+3. Controllo, scrittura e approvazione come per lo straordinario.
+
+### Pulsante Parere su una notizia (A4)
+
+Per il parere su una notizia singola. I tre gesti con **A4**: dopo il messaggio base incolla la notizia (testo o
+link). Il parere si archivia; se A4 propone un ciclo straordinario l'app lo dice (decide la funzione di rischio; poi
+**Ciclo straordinario (A8)**).
+
+### Pulsante Apri chat (A7)
+
+Apre A7, che spiega in chat il perche' delle valutazioni (valori, urgenza, livello di allerta, decisioni del
+validatore), in prima persona, come chi le ha proposte. Non scrive niente nel registro.
+
+### Pulsante Riapri un ciclo validato
+
+Per cambiare un valore gia' validato (un punteggio, una soglia, l'owner di un'azione). Scrivi i rischi da riaprire
+(vuoto = tutti) e **Conferma**; poi l'app passa all'approvazione, come **Approva**. Il ciclo dopo aspetta finche'
+la riapertura non e' approvata. Per correggere solo la forma di un testo, senza cambiare valori: **Admin** -> **Testi a
+mano**, a riapertura approvata. Se nella riapertura hai cambiato dei valori, approvata la riapertura l'app mostra
+l'elenco dei **testi da rileggere** (i razionali e le note che motivano ancora il valore di prima) e propone subito
+Testi a mano, con il motivo gia' scritto (D-93): rispondi Si' e correggi in Excel; No = si correggono dopo da Admin.
+
+### Pulsante Rimuovi rischio
+
+Compila rischio (NFR-nn), motivazione e chi decide e **Conferma**: il rischio esce dal registro attivo e dai prossimi
+cicli, i suoi KRI escono di vigore, le azioni aperte si annullano; la storia resta (comando `dismetti`). Solo su
+decisione della funzione di rischio. Non cancellare mai a mano una riga dell'anagrafica.
+
+### Pulsante Approva
+
+Nel riquadro **Approvazioni e report**, in fondo. Il nome dice che cosa e' in attesa: "Approva il trimestre 2026Q4",
+"Approva lo straordinario 2026Q4-S1", "Approva le notizie del 02/11"; con due cose in attesa l'app chiede quale; senza,
+"niente in attesa". Lo fa il validatore.
+
+1. Premi **Approva** (o **Prossimo passo**). Scrivi chi approva e **Conferma**.
 2. Si apre il registro sul foglio **Validazione**: una riga per rischio, KRI, azione e notizia. Lavora solo nelle
    **celle gialle**:
    - lasciare il valore proposto = accettare;
@@ -298,66 +356,45 @@ Per validare il ciclo scritto (il validatore).
    - **Respingi** = Si' per una proposta da non applicare;
    - le righe con **⚑** hanno una segnalazione dei controlli: chiedono sempre la Motivazione, anche se accetti.
 3. **Salva e chiudi Excel**. L'app se ne accorge da sola; se resta in attesa premi **Ho chiuso Excel: controlla ora**.
-4. Se la validazione non passa, l'uscita dice quali righe sistemare e l'app propone di riaprire il registro.
-5. A validazione riuscita il report al comitato (PDF e HTML) si rifa' da solo; poi l'app propone le schede (come il
-   pulsante **Schede**).
+4. Se l'approvazione non passa, l'uscita dice quali righe sistemare e l'app propone di riaprire il registro.
+5. Ad approvazione riuscita il report al comitato (PDF e HTML) del ciclo corrente si rifa' da solo, **anche dopo le
+   notizie** (cambiano il livello di allerta e i rischi segnalati); con le notizie dell'ultima settimana di un mese
+   anche il **report mensile notizie**. Dopo un ciclo l'app propone le schede (come **Prepara le schede (A6)**).
 
-I criteri per decidere sono nella sezione 3 di questa guida. La validazione delle notizie della settimana la propone
-**Prossimo passo** dopo la settimana.
+I criteri per decidere sono nella sezione 3 di questa guida.
 
-### Pulsante Straordinario
+### Pulsante Prepara le schede (A6)
 
-Solo su decisione della funzione di rischio, per un evento che non puo' aspettare il trimestre (per esempio quando A3
-o A4 lo propongono).
-
-1. Premi **Straordinario** e compila il modulo: i rischi da rivalutare (vuoto = solo rischi nuovi creati
-   dall'evento), il motivo, chi decide, la data di riferimento (vuota = oggi).
-2. I tre gesti con **A8**: oltre all'allegato, trascina nella chat anche i documenti dell'evento.
-3. Come nel trimestre: controllo, correzioni nella stessa chat, A5 se vuoi, scrittura, poi la validazione.
-
-### Pulsante Schede
-
-Dopo la validazione (l'app le propone alla fine di **Validazione**). L'app chiede se usare **A6**: con A6 i testi delle
+Sul ciclo corrente approvato (trimestre o straordinario: il nome del pulsante dice quale; prima dell'approvazione dice
+"dopo l'approvazione"). L'app le propone alla fine di **Approva**. L'app chiede se usare **A6**: con A6 i testi delle
 schede sono piu' estesi (i tre gesti con A6), senza l'app usa i testi di A1 dal registro. Se A6 e' stato **troppo
 sintetico** (testi sotto le lunghezze minime), le schede sono gia' scritte e l'app chiede se farglieli allungare: Si'
 (consigliato) mette negli appunti l'elenco per la stessa chat e rifa' le schede con la nuova risposta; No le tiene come
-sono. Le schede (Excel e PDF) sono nella cartella del ciclo, che l'app apre; se il report al comitato manca, lo fa.
+sono. Le schede (Excel e PDF, con in fondo le schede per tema) sono nella cartella del ciclo, che l'app apre; se il
+report al comitato manca, lo fa.
 
-### Pulsante Report
+### Pulsante Genera report
 
-Il report al comitato si rifa' da solo dopo ogni validazione: **Report** serve dopo una correzione a mano delle celle
-gialle del registro (presidio, anni di adeguamento, attenzione del supervisore, stato delle azioni). Escono il PDF e
-l'HTML, nella cartella del ciclo che l'app apre: l'HTML si apre con un doppio clic e ha le schede di tutti i rischi. Se
-l'uscita dice che l'HTML non e' uscito, il PDF c'e' lo stesso e il messaggio va a chi mantiene il pacchetto.
+Sul ciclo corrente approvato (il nome del pulsante dice quale). Il report al comitato si rifa' da solo dopo ogni
+approvazione, anche delle notizie: **Genera report** serve dopo una correzione a mano delle celle gialle del registro
+(presidio, anni di adeguamento, attenzione del supervisore, stato delle azioni). Escono il PDF e l'HTML, nella
+cartella del ciclo che l'app apre: l'HTML si apre con un doppio clic e ha le schede di tutti i rischi. Se l'uscita dice
+che l'HTML non e' uscito, il PDF c'e' lo stesso e il messaggio va a chi mantiene il pacchetto.
 
-### Pulsante Riapri un ciclo
+### Pulsante Report mensile notizie
 
-Per cambiare un valore gia' validato (un punteggio, una soglia, l'owner di un'azione). Scrivi i rischi da riaprire
-(vuoto = tutti) e **Conferma**; poi l'app passa alla validazione, come **Validazione**. Il ciclo dopo aspetta finche'
-la riapertura non e' validata. Per correggere solo la forma di un testo, senza cambiare valori: **Admin** -> **Testi a
-mano**, a riapertura validata.
+Una volta al mese (dal 04/11/2026, P7, D-100), per la funzione di rischio: il riepilogo delle settimane del mese. Il
+nome del pulsante dice il mese su cui gira: l'ultimo mese completo. Si fa anche da solo con l'approvazione delle
+notizie dell'ultima settimana del mese.
 
-### Pulsante Parere di A4
-
-Per il parere su una notizia singola. I tre gesti con **A4**: dopo il messaggio base incolla la notizia (testo o
-link). Il parere si archivia; se A4 propone un ciclo straordinario l'app lo dice (decide la funzione di rischio; poi
-**Straordinario**).
-
-### Pulsante Chiedi ad A7
-
-Apre A7, che spiega in chat il perche' delle valutazioni (valori, urgenza, livello di allerta, decisioni del
-validatore), in prima persona, come chi le ha proposte. Non scrive niente nel registro.
-
-### Pulsante Diagnosi
-
-Dopo una validazione, per vedere se le valutazioni pendono da una parte (con quali valori entrano i rischi nuovi, in
-che verso il validatore corregge, i rischi lontani). Solo lettura: l'esito e' nell'uscita e nella cartella del ciclo.
-
-### Pulsante Dismetti
-
-Compila rischio (NFR-nn), motivazione e chi decide e **Conferma**: il rischio esce dal registro attivo e dai prossimi
-cicli, i suoi KRI escono di vigore, le azioni aperte si annullano; la storia resta. Solo su decisione della funzione
-di rischio. Non cancellare mai a mano una riga dell'anagrafica.
+1. Premi **Report mensile notizie** e lascia vuoto (l'ultimo mese completo) o scrivi un altro mese come AAAA-MM.
+2. L'app legge il registro senza scrivere niente (non serve il lucchetto) e prepara due file uguali nei contenuti,
+   nella cartella `Archivio_Cicli\Mensili`: `Riepilogo_<AAAA-MM>.xlsx` da stampare o modificare e
+   `Riepilogo_<AAAA-MM>.html` da aprire nel browser.
+3. Il riepilogo dice: le notizie del mese per segnale; i segnali netti per rischio, anche quelli in osservazione; la
+   pressione per categoria con le **aree non presidiate**; le notizie senza un rischio collegato; le **notizie forti su
+   rischi gravi** (intensita' 3 su un rischio con Impatto 4-5); i flag e le proposte di ciclo straordinario di A3; i
+   cicli straordinari del mese. Nessun numero nuovo: niente score, niente stime.
 
 ### Pulsante Admin
 
@@ -369,18 +406,19 @@ finestra ogni operazione ha la sua spiegazione e il suo pulsante; il modulo che 
 | Operazione | A che cosa serve | Che cosa chiede |
 |---|---|---|
 | **Nuovo registro** | il primo registro, vuoto, quando non ce n'e' ancora uno (primo uso, o un ambiente di prova) | il trimestre prima del primo da valutare (per esempio 2025Q4 per cominciare dal 2026Q1) e il lunedi' della settimana corrente del registro |
-| **Testi a mano** | corregge la forma dei testi di un ciclo validato (descrizioni, razionali, nomi e note dei KRI, descrizioni delle azioni), senza cambiare valori: prima una copia del registro va nel parcheggio con l'atto, poi si apre il registro; quando lo chiudi l'app rifa' l'allegato di A1, la knowledge di A7 e il report. Si annulla con **Annulla** finche' nessuno scrive nel registro. Con una riapertura aperta o un ciclo da validare non apre Excel: propone prima la Validazione | che cosa correggi e perche'; poi correggi in Excel SOLO le colonne di testo, salvi e chiudi |
+| **Testi a mano** | corregge la forma dei testi di un ciclo validato (descrizioni, razionali, nomi e note dei KRI, descrizioni delle azioni), senza cambiare valori: prima una copia del registro va nel parcheggio con l'atto, poi si apre il registro; quando lo chiudi l'app rifa' l'allegato di A1, la knowledge di A7 e il report. Si annulla con **Annulla** finche' nessuno scrive nel registro. Con una riapertura aperta o un ciclo da validare non apre Excel: propone prima la Validazione. Dopo una riapertura con rettifiche mostra l'elenco dei testi da rileggere e lo mette nell'atto (D-93) | che cosa correggi e perche'; poi correggi in Excel SOLO le colonne di testo, salvi e chiudi |
 | **Pulizia** | toglie dall'archivio cio' che non serve piu': tentativi e versioni vecchie dei report dei cicli validati, backup oltre gli ultimi 10, risposte incollate dei periodi chiusi, log vecchi | niente: mostra prima l'elenco e lo spazio, poi chiede se spostarli nel parcheggio |
 | **Ritorno** | torna a un ciclo validato: il registro torna com'era alla sua validazione; i cicli dopo e le settimane scritte dopo vanno nel parcheggio, e l'app riparte da quel ciclo | il ciclo (fra quelli validati prima del corrente), il motivo, chi ha deciso e il ciclo riscritto per conferma |
 | **Annulla** | rimette a posto un parcheggio; un ritorno, una ripartenza o dei testi a mano solo se nel frattempo nessuno ha scritto nel registro | il parcheggio (dall'elenco) e il motivo |
 | **Ripartenza** | registro nuovo vuoto; il vecchio e tutto l'archivio dei cicli nel parcheggio (per esempio dopo i cicli di prova, per ricominciare da inizio anno) | il motivo, chi ha deciso, il trimestre prima del primo da valutare, il lunedi' della settimana corrente e il nome del registro riscritto per conferma |
 | **Parcheggi** | l'elenco dei parcheggi: operazione, quando, chi, quanto spazio, stato | niente |
 | **Svuota** | cancella per sempre i parcheggi piu' vecchi di 30 giorni | niente: mostra prima l'elenco, poi chiede conferma |
+| **Diagnosi** | dopo un'approvazione, misura se le valutazioni pendono da una parte (con quali valori entrano i rischi nuovi, in che verso il validatore corregge, i rischi lontani); solo lettura, l'esito e' nell'uscita e nella cartella del ciclo (dal 04/11/2026 qui, AU8) | niente |
 
 Niente si cancella subito, tranne con **Svuota**: tutto va nel parcheggio con l'atto e si puo' annullare. **Ritorno** e
 **Ripartenza** cambiano la storia del registro: solo su decisione della funzione di rischio (sezione 3-quater).
 Per provare piu' giri di cicli da inizio anno, in un ambiente di prova: **Ripartenza** (o **Nuovo registro**) con il
-trimestre 2025Q4, i cicli con **Trimestre** e **Validazione**, poi di nuovo **Ripartenza**, oppure **Ritorno** a un
+trimestre 2025Q4, i cicli con **Analizza il trimestre (A1)** e **Approva**, poi di nuovo **Ripartenza**, oppure **Ritorno** a un
 ciclo per rifare solo quelli dopo.
 
 ### Menu Altro
@@ -390,6 +428,7 @@ ciclo per rifare solo quelli dopo.
 | **Apri il registro (sola consultazione)** | per guardare il registro; non cambia niente |
 | **Apri l'archivio** | la cartella Archivio_Cicli |
 | **Aggiorna lo stato** | rilegge subito a che punto e' il lavoro (lo fa da sola ogni mezzo minuto) |
+| **Temi da verificare (per A1)** | la lista dei temi che chiedi ad A1 di verificare nel prossimo trimestre (P9, D-98): codice TEMA-nn, tema, chi lo chiede, perche', stato, con l'ultima risposta di A1 (il rischio o il fenomeno non censito che lo cita). Aggiungi un tema (scrivilo e premi "Aggiungi come tema nuovo"), modificane uno (sceglilo nella tabella, cambia i campi e premi "Modifica il tema scelto"), chiudilo quando la risposta basta (stato chiuso: resta come traccia ma non va piu' ad A1). Conferma salva `temi_da_verificare.md` nella library Kernel; se un collega lo ha cambiato nel frattempo, il salvataggio si ferma: riapri e rifai. Il processo Trimestre la apre da solo prima di A1 |
 | **Verifica del PC** | una riga per voce (Python, moduli, cartelle, registro ed Excel, collegamenti, attivita' della raccolta) con OK, ATTENZIONE o NO e che cosa fare; il file resta nell'archivio, da mandare a chi mantiene il pacchetto se qualcosa e' NO |
 | **Togli il lucchetto rimasto (sblocca)** | solo se l'app dice "Il registro e' in uso" da parte di un collega che non sta lavorando (PC spento a meta' lavoro); sentirlo prima. Il lucchetto scade comunque dopo 2 ore |
 | **Ricostruisci la griglia di validazione** | solo se il foglio Validazione e' stato rovinato a mano e la validazione non passa per questo |
@@ -596,7 +635,10 @@ tempi): qui i comandi e gli esiti attesi, una sola volta.
 4. (analisti) Creare in `Analisi_Interne` le sottocartelle indicate dagli
    indirizzi delle fonti `share` di `01_Kernel/fonti.md` e caricarvi i documenti
    interni recenti (audit, incidenti, report di funzione); in `Analisi_Esterne`
-   i report di settore e di consorzio.
+   i report di settore e di consorzio, e nella sottocartella
+   `Analisi_Esterne/Rapporti_Scenario/<anno>` i rapporti di scenario e di
+   foresight dell'anno (ORX, EBA, BCE, ENISA, WEF...; D-95), solo se la licenza ne
+   permette l'uso in un agente di AI. A1 li legge per primi a ogni trimestre.
 
 **Verifica**: le sette library esistono nel sito, ciascuna con il controllo
 versione attivo.
@@ -1053,7 +1095,7 @@ proposito.
 
 ## 1. Ogni lunedi' — aggiornamento settimanale (circa 20 minuti)
 
-> **Dall'app**: pulsante **Settimana** (capitolo "L'app NFR", sezione "Pulsante Settimana"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Analizza le notizie (A3)** (capitolo "L'app NFR", sezione "Pulsante Analizza le notizie (A3)"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 | # | Chi | Cosa fare | Cosa si deve vedere |
 |---|---|---|---|
@@ -1067,7 +1109,7 @@ proposito.
 
 ## 2. Ogni trimestre — ciclo trimestrale (mezza giornata, piu' la validazione)
 
-> **Dall'app**: pulsante **Trimestre** (capitolo "L'app NFR", sezione "Pulsante Trimestre"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Analizza il trimestre (A1)** (capitolo "L'app NFR", sezione "Pulsante Analizza il trimestre (A1)"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 Si fa nei primi giorni dopo la fine del trimestre. Esempio per il `2026Q3`.
 
@@ -1127,7 +1169,7 @@ intero, come prima.
 
 ## 2-bis. Ciclo straordinario — un evento critico non aspetta il trimestre (D-75)
 
-> **Dall'app**: pulsante **Straordinario** (capitolo "L'app NFR", sezione "Pulsante Straordinario"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Ciclo straordinario (A8)** (capitolo "L'app NFR", sezione "Pulsante Ciclo straordinario (A8)"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 Si fa solo su decisione della funzione di rischio, quando un evento rende superata la
 valutazione di uno o piu' rischi e non si puo' aspettare il trimestre. La proposta puo'
@@ -1162,7 +1204,7 @@ stato valutato (colonna Periodo_Valutazione del RiskRegister).
 
 ## 3. Validare — accettare, correggere, respingere (validatore)
 
-> **Dall'app**: pulsante **Validazione** (capitolo "L'app NFR", sezione "Pulsante Validazione"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Approva** (capitolo "L'app NFR", sezione "Pulsante Approva"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 La validazione e' il momento in cui la Banca fa proprie (o no) le proposte
 degli agenti. Si fa nel foglio **Validazione**, **una riga per rischio (nel radar o
@@ -1203,6 +1245,12 @@ sono la raccolta che servira' per insegnare agli agenti.
      sulle sue azioni; sopra la colonna, quelle che riguardano il ciclo intero.
      **⚑ davanti al nome** = almeno una segnalazione DA MOTIVARE: la Motivazione e'
      obbligatoria anche se non cambi nulla.
+     In fondo, per un rischio gia' nel registro, la riga **Testi (P17)** (D-93): quali
+     testi A1 ha aggiornato in questo ciclo (descrizione, parti del razionale, KRI nuovi)
+     e quali restano quelli validati del ciclo prima. A1 non riscrive cio' che non cambia:
+     lo script riprende dalla baseline la descrizione, le parti del razionale e i KRI in
+     vigore. Se un valore cambia e la sua parte del razionale e' rimasta quella vecchia,
+     c'e' una segnalazione C2 da motivare.
    - **Esposizione non nota** (segnalazione C5, D-81): A1 non sa se la Banca ha il
      prodotto, il processo o il fornitore colpito, e ha proposto la Probabilita senza
      l'esposizione; la segnalazione dice anche il valore "se esposta". Tu lo sai, o lo
@@ -1273,7 +1321,7 @@ validati.
 
 ## 3-bis. Dismettere un rischio (solo su decisione della funzione di rischio)
 
-> **Dall'app**: pulsante **Dismetti** (capitolo "L'app NFR", sezione "Pulsante Dismetti"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Rimuovi rischio** (capitolo "L'app NFR", sezione "Pulsante Rimuovi rischio"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 Quando un rischio non va piu' seguito (per esempio e' venuta meno la causa), che sia
 nel radar o in osservazione:
@@ -1291,7 +1339,7 @@ vuota in mezzo fa sparire dalle viste l'ultimo rischio.
 
 ## 3-ter. Cambiare un ciclo gia' validato: riaprire la validazione, correggere i testi (D-76)
 
-> **Dall'app**: pulsante **Riapri un ciclo**; per i testi **Admin** -> **Testi a mano** (capitolo "L'app NFR", sezioni "Pulsante Riapri un ciclo" e "Pulsante Admin"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
+> **Dall'app**: pulsante **Riapri un ciclo validato**; per i testi **Admin** -> **Testi a mano** (capitolo "L'app NFR", sezioni "Pulsante Riapri un ciclo" e "Pulsante Admin"). Qui sotto il dettaglio: cio' che l'app fa per te e i comandi per chi lavora dal Prompt dei comandi.
 
 Fra un ciclo e l'altro la funzione di rischio puo' dover cambiare qualcosa gia'
 validato: un punteggio, una soglia, l'owner di un'azione, la decisione sullo stato
@@ -1327,6 +1375,18 @@ con la stessa griglia della sezione 3, **quante volte serve**.
    (PDF rigenerato da `valida`) seguono da soli. `riapri` lascia nella cartella
    del ciclo `Riapertura_<ciclo>.json` (chi ha riaperto, quando, che cosa);
    `valida` lo chiude con la data e chi ha validato.
+4. **Testi da rileggere** (D-93, 03/11/2026). La riapertura cambia i valori, non i testi
+   che li motivano: dopo una rettifica il razionale dice ancora il valore di prima. Se la
+   riapertura ha rettifiche (o KRI e azioni respinti), `valida` stampa l'elenco
+   **TESTI DA RILEGGERE**: per ogni voce oggetto, ID, campo, da -> a, la motivazione e i
+   testi da rileggere (per un punteggio la parte del razionale con la sua etichetta, e la
+   descrizione se il valore cambia il quadro; per un KRI la nota della rilevazione o il
+   razionale; per un'azione il razionale). Lo stesso elenco e' in
+   `Cicli/<ciclo>/Testi_da_rileggere_<ciclo>.json` e nella traccia della riapertura.
+   L'app propone subito **Testi a mano** con il motivo gia' scritto e mostra l'elenco
+   mentre correggi; dal Prompt dei comandi si lancia `amministrazione.py --admin testi`
+   (qui sotto), che lo stampa e lo mette nell'atto. Niente si corregge da solo: decidi
+   tu, testo per testo.
 
 Finche' la riapertura non e' validata il ciclo risulta "da validare": `trimestrale`,
 `report` e `schede` aspettano. Per chiuderla senza cambiare niente basta lanciare
@@ -1408,16 +1468,16 @@ sono i fogli del registro; nell'HTML hanno lo stesso nome e lo stesso contenuto.
 
 | Dove | Cosa guardare |
 |---|---|
-| **Quadro** | la prima pagina per il comitato: cinque numeri (rischi valutati, **livello di allerta** — quanti in attivazione e in attenzione —, variati e nuovi fra i rischi del radar, con sotto entrati, usciti e in osservazione, KRI in rosso, validazione), i primi cinque rischi, la matrice di gravita', il radar di Mosca; a pagina 2 il **commento di A1** (messaggio e decisioni), i controlli (con la sintesi di A5, se usato), quante **segnalazioni da motivare** sono andate in validazione e **i rischi segnalati con il perche'**, calcolato dal foglio. |
+| **Quadro** | la prima pagina per il comitato: cinque numeri (rischi valutati, **livello di allerta** — quanti in attivazione e in attenzione —, variati e nuovi fra i rischi del radar, con sotto entrati, usciti e in osservazione, KRI in rosso, validazione), subito sotto il **commento di A1** (messaggio chiave, decisioni richieste e, se il validatore ha rettificato, l'avviso; dal 04/11/2026 in prima pagina), i primi cinque rischi con la **traiettoria degli ultimi quattro trimestri**, la matrice di gravita', il radar di Mosca; a pagina 2 i controlli (con la sintesi di A5, se usato), quante **segnalazioni da motivare** sono andate in validazione e **i rischi segnalati con il perche'**, calcolato dal foglio. Il Quadro sta sempre in due pagine: se i rischi segnalati sono troppi anche alla scala minima, gli ultimi per score non si stampano e la nota della sezione li elenca (sono nella Classifica e nelle schede). |
 | **Classifica** | i rischi dal piu' alto per score composito; colore della barra = urgenza (rosso = agire ora). A destra, la **lente di Mosca**: per ogni rischio, dal piu' in ritardo, la colonna e' il tempo necessario (X + Y), il rombo il tempo disponibile (Z); la parte rossa sfora. |
 | **Matrice** | ogni rischio nella cella della sua probabilita' e del suo impatto; verde, ambra, rosso secondo P x I. Dice la gravita', non l'urgenza. |
 | **Delta** | cosa e' cambiato dal trimestre prima: una barra per rischio e, a fianco, il motivo con l'evidenza; sotto, quanto vale un punto di ogni dimensione (con e senza Velocity). |
 | **Fenomeni** | i **rischi in osservazione** (D-79): in testa quanti nel radar e quanti fuori; poi dal piu' alto per score, con le quattro dimensioni, il **perche' sono fuori dal radar** (quale soglia manca, o la capienza), l'orizzonte e il segnale che li porterebbe nel radar; in fondo chi e' **entrato o uscito** dal radar nel ciclo. |
 | **Metodologia** | pesi e parametri in vigore, scale della rubrica, come si leggono i grafici. |
-| Schede (file a parte) | una scheda per rischio, nell'ordine della Classifica: il rischio e il razionale in termini di rischio, perche' di ogni punteggio con i documenti, urgenza, cosa e' cambiato, andamento negli ultimi trimestri, fonti e a cosa servono, azioni e KRI con perche' ed effetto atteso (D-68). |
+| Schede (file a parte) | dal 04/11/2026 (P6) in fondo anche una **scheda per tema**: un foglio per ogni driver con almeno due rischi, nel radar e in osservazione, con score, variazione, andamento e i rischi collegati (nessuno score del tema). Prima, una scheda per rischio, nell'ordine della Classifica: il rischio e il razionale in termini di rischio, "Che cosa significa per la Banca" (la parte QUINDI di A1, D-96), i rischi collegati con score e stato (o "Collegato a" il rischio primario, D-97), perche' di ogni punteggio con i documenti, urgenza, cosa e' cambiato, andamento negli ultimi trimestri, fonti e a cosa servono, azioni e KRI con perche' ed effetto atteso (D-68). |
 | Registro, righe 4 e 5 | "Ciclo validato" o quante righe restano da validare; "Ciclo completo". Se dice CICLO INCOMPLETO, i numeri non sono affidabili. |
 | Registro, tabella | un rischio per riga, dal piu' alto per score; il **fondo dell'ID** e' il colore del livello di allerta: le dimensioni (Vel "n.v." = non valutata), score, variazione sul trimestre prima e su 6 mesi, urgenza, ◆ (attenzione del supervisore), KRI rossi/ambra/verdi, segnali netti delle notizie, **presidio** dei controlli (giudizio della Banca), **rilievi** di A5 e dei controlli (⚑ = da motivare in validazione), owner. |
-| **Radar_Mosca** | **quanto presto bisogna agire**: piu' il cerchio di un rischio e' vicino al centro, prima bisogna agire; dentro il cerchio rosso "Mosca" si e' gia' in ritardo (colonna Urgenza = "AGIRE ORA"); i cerchi grigi indicano 1, 2 e 3 anni di margine. **Area del cerchio del rischio** = probabilita' x impatto; **colore** = livello di allerta: **rosso Attivazione** (almeno due fra AGIRE ORA, un KRI in rosso, notizie in peggioramento: al comitato con un piano), **giallo Attenzione** (uno di questi, oppure margine sotto l'anno con P x I alta, presidio assente o KRI in ambra: l'owner verifica azioni e KRI), **verde Monitoraggio**; il motivo e' nelle colonne U-AB. **◆** accanto all'ID = tema all'attenzione del supervisore (BCE, EBA, Banca d'Italia). Il settore dice la **categoria di rischio** della tassonomia interna della Banca (nove, D-74); un rischio fuori perimetro (FP) o non ancora riclassificato non compare. |
+| **Radar_Mosca** | **quanto presto bisogna agire**: piu' il cerchio di un rischio e' vicino al centro, prima bisogna agire; dentro il cerchio rosso "Mosca" si e' gia' in ritardo (colonna Urgenza = "AGIRE ORA"); i cerchi grigi indicano 1, 2 e 3 anni di margine. **Area del cerchio del rischio** = probabilita' x impatto; **colore** = livello di allerta: **rosso Attivazione** (almeno due fra AGIRE ORA, un KRI in rosso, notizie in peggioramento: al comitato con un piano), **giallo Attenzione** (uno di questi, oppure margine sotto l'anno con P x I alta, presidio assente o KRI in ambra: l'owner verifica azioni e KRI), **verde Monitoraggio**; il motivo e' nelle colonne U-AB. **Punto grigio e freccia** (dal 04/11/2026, P2): da dove viene il rischio, la sua posizione nel trimestre prima (Parametri, riga 28), solo se era gia' nel radar e il cerchio si e' spostato; un rischio che cambia solo grandezza (Probabilita o Impatto) non ha scia. **◆** accanto all'ID = tema all'attenzione del supervisore (BCE, EBA, Banca d'Italia). Il settore dice la **categoria di rischio** della tassonomia interna della Banca (nove, D-74); un rischio fuori perimetro (FP) o non ancora riclassificato non compare. |
 | Storico | score di ogni rischio negli ultimi otto trimestri. |
 | Indicatori | a sinistra gli indicatori in vigore, con il **tipo** (esposizione: quanto la Banca e' esposta; evoluzione: quanto cresce il fenomeno), lo stato (Verde/Ambra/Rosso, "Soglie da definire" finche' la Banca non le fissa) e tendenza; a destra la storia di un indicatore: sceglierlo in N4. |
 | Notizie | pressione delle notizie per categoria di rischio; "AREA NON PRESIDIATA" (nessun rischio nel registro) o "In osservazione" (nessuno nel radar, almeno uno in osservazione); a destra la sintesi di A3 della settimana corrente, i flag proposti (anche sui rischi in osservazione) e quante notizie toccano i rischi in osservazione (la storia di tutte le settimane e' nel foglio Sintesi_Settimane). |
@@ -1471,7 +1531,9 @@ A7 che legge i file di testo e una copia di prova che legge solo il registro Exc
 |---|---|
 | Registro vivo | `Report_Trimestrali\NFR_Registro.xlsx` |
 | Excel di ogni trimestre (congelato) | `Archivio_Cicli\Cicli\<ciclo>\NFR_Registro_<ciclo>.xlsx` e `..._validato.xlsx` |
-| Schede dei rischi del trimestre | `Archivio_Cicli\Cicli\<ciclo>\Schede_<ciclo>.xlsx` (con `Input_A6_<ciclo>.json` e `A6_<ciclo>.json`) |
+| Schede dei rischi del trimestre | `Archivio_Cicli\Cicli\<ciclo>\Schede_<ciclo>.xlsx` (con `Input_A6_<ciclo>.json` e `A6_<ciclo>.json`; in fondo le schede per tema, P6) |
+| Riepilogo mensile delle notizie | `Archivio_Cicli\Mensili\Riepilogo_<AAAA-MM>.xlsx` e `.html` (P7) |
+| Temi da verificare per A1 e risposte | `temi_da_verificare.md` nella library Kernel; risposte in `Archivio_Cicli\Cicli\<ciclo>\Temi_<ciclo>.json` (P9) |
 | Excel di ogni settimana | `Archivio_Cicli\Settimane\<lunedi'>\NFR_Registro_<lunedi'>.xlsx` |
 | Output degli agenti, esiti dei controlli, decisioni di validazione | nella stessa cartella del ciclo o della settimana |
 | Ogni tentativo fermato | `Archivio_Cicli\Cicli\<ciclo>\tentativo_<data_ora>\` |
@@ -1624,7 +1686,10 @@ Variazioni:
   > Esegui il ciclo analizzando in particolare, in Analisi_Esterne, il file
   > "[nome del file]" e, in Analisi_Interne, il file "[nome del file]".
 
-- **Tema da verificare**, per chiedere di valutare un rischio preciso:
+- **Tema da verificare**: dal 04/11/2026 (D-98) si scrive nella finestra **Temi da verificare** dell'app (menu Altro,
+  e la propone il processo Trimestre prima di A1), non piu' nel messaggio: resta tracciato, arriva ad A1 nella
+  baseline e lo script controlla che A1 risponda (un tema senza risposta e' un'Osservazione in validazione). Il
+  messaggio qui sotto resta per una richiesta occasionale, fuori dall'app:
 
   > Esegui il ciclo. Verifica in particolare se le fonti sostengono il rischio
   > "[descrizione del meccanismo di perdita]": se c'e' almeno una fonte specifica,
@@ -1658,7 +1723,7 @@ Variazioni:
 
 Cosa un messaggio non puo' cambiare: la regola del punto fra un ciclo e l'altro,
 la fonte datata per ogni variazione, i due KRI per rischio, il formato del
-razionale in parti.
+razionale in parti, i testi validati dei rischi esistenti (A1 scrive solo cio' che cambia, D-93).
 
 ### A3 Interim Update
 
@@ -1863,7 +1928,8 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 
 - Cosa fa: scrive `Baseline_corrente.json` (e la copia `.txt`), l'allegato di A1
   `Input_A1_<ciclo>.txt` e l'allegato di A3 e A4 `Input_A3_A4.txt`
-  (AU7) nella cartella di uscita. Sola lettura del registro. Con
+  (AU7) nella cartella di uscita. Dal 04/11/2026 (D-98) la baseline di un trimestre porta i temi aperti di
+  `temi_da_verificare.md` (`temi_da_verificare`): l'uscita li elenca. Sola lettura del registro. Con
   `--straordinario` (D-75) la baseline e l'allegato sono per il periodo `AAAAQn-Sk`
   (l'allegato `Input_A8_<periodo>.txt` lo usa A8, D-77, D-84) e la decisione si archivia in
   `Cicli\<AAAAQn-Sk>\Straordinario_<AAAAQn-Sk>.json`.
@@ -2036,6 +2102,20 @@ Esempio: `python esegui_ciclo_locale.py --workbook "C:\NFR_Prova\Registro.xlsx" 
 - Quando: dopo la validazione di un ciclo, quando si vuole capire se le valutazioni pendono da una parte; utile da
   portare alla taratura di descrittori e soglie (A-12).
 - Errori tipici: "Nessun ciclo nel registro" (prima del primo trimestrale).
+
+### esegui_ciclo_locale.py mensile
+
+`python esegui_ciclo_locale.py mensile [--mese AAAA-MM]`
+
+- Cosa fa (P7, D-100): solo lettura del registro, nessun dato cambia e niente lucchetto. Riepiloga le settimane del
+  mese (i lunedi' che cadono nel mese) in due file con gli stessi contenuti, nella cartella `Archivio_Cicli\Mensili`:
+  `Riepilogo_<AAAA-MM>.xlsx` e `Riepilogo_<AAAA-MM>.html`: notizie per segnale, segnali netti per rischio (anche in
+  osservazione), pressione per categoria con le aree non presidiate, notizie senza rischio collegato, notizie forti su
+  rischi gravi (intensita' 3 su un rischio con Impatto 4-5), flag e proposte di ciclo straordinario di A3, cicli
+  straordinari del mese.
+- Opzioni: `--mese`; senza, l'ultimo mese completo (gia' finito alla settimana corrente) con settimane nel registro.
+- Quando: una volta al mese, per la funzione di rischio.
+- Errori tipici: "Nessuna settimana nel registro"; "Mese ... non valido: AAAA-MM".
 
 ### esegui_ciclo_locale.py dismetti
 

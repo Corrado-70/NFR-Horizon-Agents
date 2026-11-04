@@ -62,6 +62,32 @@ gli scrive subito KRI e azioni. Perche' nella guida e non nel prompt: lo
 spazio (una voce pesa circa 0,5 KB nella risposta, un rischio circa 4 KB) e il
 fatto che l'allegato arriva sempre per intero.
 
+Dal 04/11/2026 la guida di scrittura porta altre cinque regole, sempre senza
+toccare il prompt (A1 a 7.986 caratteri, la sua versione Copilot Studio a 7.938):
+- **meccanismi anche solo potenziali** (P16, D-94): un meccanismo plausibile ma
+  non ancora avvenuto e' un rischio (in osservazione se lontano), non un
+  fenomeno `nessun_meccanismo`; per un rischio nuovo in osservazione basta una
+  fonte anche precedente alla finestra; una riga chiede i segnali deboli. Il
+  passo 4 del prompt ("parti dai driver sotto pressione") resta, ma la guida
+  allarga la ricerca;
+- **rapporti di scenario** (P4, D-95): nella cartella
+  `Analisi_Esterne/Rapporti_Scenario/<anno>` della knowledge, letti per primi e
+  citati con `tipo` "Rapporto" (lo schema lo accetta; lo scheletro del prompt
+  dice ancora "Interna|Esterna" per non superare il limite);
+- **QUINDI:** (P14, D-96): l'ultima parte del razionale dice che cosa significa
+  il rischio per la Banca e che cosa va deciso; C10 la misura, le schede la
+  mostrano come "Che cosa significa per la Banca"; piu' una sezione "Stile";
+- **COLLEGATI:** (D-97, al posto del campo `collegati` di P5): nel solo rischio
+  primario, gli id dei rischi dello stesso evento o della stessa causa; il verso
+  opposto lo ricava lo script;
+- **temi da verificare** (P9, D-98): richieste dell'analista, curate nell'app e
+  passate nella baseline (`temi_da_verificare`): A1 risponde a ognuna citandone
+  il codice in un rischio o fra i fenomeni non censiti; un tema senza risposta e'
+  un'Osservazione in validazione.
+Perche' tutto nella guida: il prompt di A1 e quello di A8 hanno 14 e 13
+caratteri liberi, e le stringhe dello scheletro sono ancore per `genera_A1_CS.py`
+(e, sul ramo Copilot Studio, per `genera_CS.py`).
+
 ## Procedura
 
 Il 30/09/2026 (semplificazione dello scoring, `Analisi_Architettura/Archivio/11`,
@@ -110,7 +136,8 @@ lista di ambiti "attesi" nel prompt: l'analisi confermerebbe cio' che le si
 chiede di trovare (D-37); la prevalenza (per esempio del cyber) deve venire
 dalle fonti. Una categoria rimasta scoperta resta visibile: la `sintesi` la
 dichiara e le notizie su quella categoria escono come "AREA NON PRESIDIATA" nel
-settimanale. "Primo NFR-nn libero": gli id sono stabili e non si riusano. Il
+settimanale. Dal 04/11/2026 (D-94) la guida aggiunge ai driver sotto pressione i segnali
+deboli dei rapporti di scenario: l'horizon scan cerca anche cio' che e' solo potenziale. "Primo NFR-nn libero": gli id sono stabili e non si riusano. Il
 metro di qualita' del primo ciclo e' la **validazione umana** (foglio
 Validazione) insieme al doppio run.
 
@@ -135,11 +162,21 @@ dalle sue conoscenze e li decide il validatore: il valore validato va
 nell'anagrafica e allunga la Y dell'urgenza. Sono nella rubrica (sezione 1),
 non in un passo, per stare nel limite di caratteri.
 
-### Passo 6 — Fonti di un rischio confermato
+### Passo 6 — Rischio esistente: fonti e testi
 Regola 5 della rubrica: confermare non cancella le fonti. Senza questo passo il
 modello tende a citare solo le fonti nuove, e una conferma diventa una
 rivalutazione con meno evidenza e gli stessi valori. C5 lo segnala contando
 le fonti rispetto alla baseline.
+
+"Solo i testi che cambiano" (03/11, D-93, P17): fino ad allora A1 riscriveva da
+capo descrizione, razionale e KRI di ogni rischio a ogni ciclo; il testo
+validato si perdeva anche senza cambiamenti e l'output cresceva con il
+registro. La regola intera e' nella guida di scrittura (sezione "Rischi
+esistenti"): descrizione una sola, scritta solo se cambia e allora raccontando
+l'evoluzione; solo le parti del razionale che cambiano. Lo script riprende il
+resto dalla baseline (`controlli_a5.eredita_testi`). Il passo era "Rischio
+confermato: aggiungi alle fonti ancora valide le nuove"; e' stato riscritto
+nello stesso spazio (prompt a 7.986 caratteri).
 
 ### Passo 7 — Azioni
 Owner = funzione: una persona cambia ruolo, la funzione resta; e nominare
@@ -157,14 +194,19 @@ la guida chiede di richiamarla nel razionale e di proporre il passo successivo
 o un'azione complementare; C8 segnala come Osservazione un'azione con la
 stessa descrizione di un'azione aperta dello stesso rischio.
 
-### Passo 8 — KRI, id, tipo e soglie stabili
+### Passo 8 — KRI in vigore stabili
 Due per rischio (D-64; prima da 1 a 3, D-53): uno di **esposizione** (quanto
 la Banca e' esposta: di solito un dato che fornisce la Banca) e uno di
 **evoluzione** (quanto cresce il fenomeno: A1 puo' trovarne il valore nelle
 fonti). Il tipo dice chi fornisce il valore e lo legge C9; un KRI in vigore
 conserva il tipo come il kri_id e le soglie. Il riuso del kri_id tiene insieme la serie
 storica: lo storico KRI ha una riga per KRI per ciclo, e il foglio Indicatori
-la ricompone per KRI_ID. Un KRI nuovo ha `kri_id` null perche' l'id lo
+la ricompone per KRI_ID. Dal 03/11 (D-93) un KRI in vigore valido non si
+riscrive: se A1 non lo ripropone resta in vigore com'era (lo script lo
+riprende dalla baseline, che porta anche il suo razionale); un KRI nuovo prende
+il posto di quello in vigore dello stesso tipo. Prima il passo diceva "riusa
+kri_id, tipo e soglie di un KRI in vigore valido", e A1 riscriveva ogni volta
+nome, fonte e razionale dei due KRI. Un KRI nuovo ha `kri_id` null perche' l'id lo
 assegna la scrittura (primo progressivo libero), mai l'agente. Le soglie A1 le
 propone solo se una fonte le sostiene, entrambe; altrimenti null e le fissa la
 Banca in validazione (stato "Soglie da definire"). Se A1 ripropone un KRI

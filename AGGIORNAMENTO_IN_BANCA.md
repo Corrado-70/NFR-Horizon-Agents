@@ -1,4 +1,4 @@
-# Aggiornamento sul PC della Banca — pacchetto del 30/10/2026
+# Aggiornamento sul PC della Banca — pacchetto del 04/11/2026
 
 Per chi installa il pacchetto in Banca. Il commit esatto e' nel nome dello zip
 (`NFR-Horizon-Agents_<data>_<commit>.zip`) e nel file `VERSIONE.txt` della cartella del pacchetto; `installa.cmd` lo
@@ -7,8 +7,75 @@ scrive in testa, accanto alla versione gia' installata. I riferimenti fra parent
 installato; se il PC non ha ancora il pacchetto del 23/10, anche i passi dell'appendice in fondo che `installa.cmd`
 non fa (sono indicati li').
 
+## Aggiornamento rapido: il PC ha gia' il pacchetto del 30/10 (o uno del 03/11)
+
+Vale se `installa.cmd` e' gia' stato lanciato con lo zip del 30/10 (commit `7d689ae` o `aa7aea9`) o con uno zip del
+03/11 (commit `4642593`): lo dice la riga `Pacchetto:` in testa a `installa.cmd`, oppure `VERSIONE.txt` nella cartella
+del pacchetto. Altrimenti si segue tutto il documento, dai passi in giu'.
+
+Che cosa cambia rispetto al 30/10:
+- **testi di A1** (D-92...D-98): lunghezze a fascia intermedia; i testi dei rischi esistenti si aggiornano e non si
+  riscrivono; nel razionale la parte **QUINDI:** (che cosa significa per la Banca) e, nel rischio primario, **COLLEGATI:**;
+  meccanismi anche solo potenziali; **rapporti di scenario** con tipo di fonte Rapporto; **temi da verificare** chiesti
+  dall'analista, nella finestra dell'app e nella baseline;
+- **report e schede** (D-99...D-101): sul Radar_Mosca la **scia** (da dove viene un rischio rispetto al trimestre
+  prima); nel Quadro il **commento di A1 in prima pagina** e la traiettoria dei primi cinque; il Quadro sta sempre in due
+  pagine; le **schede per tema**; il **report mensile notizie** (Excel e HTML);
+- **finestra dell'app per processo** (D-102): riquadri Ogni settimana, Ogni trimestre, All'occorrenza e, in fondo,
+  Approvazioni e report, con nomi nuovi (Analizza, Approva, Genera report, Apri chat, Rimuovi rischio, Aggiungi un
+  rischio); approvare le notizie rifa' anche il report; Diagnosi in Admin;
+- **template nuovo `2026-11-04`**: il registro va aggiornato con `aggiorna-registro` (passo 4 qui sotto);
+- nel kernel cambiano **`guida_scrittura_A1.md`, `schema_output_A1.json`, `controlli_A5.md`, `fonti.md` e
+  `mappatura_campi.json`**; da reincollare **A1, A5 e A8** (installa.cmd li elenca dalle impronte).
+
+Passi:
+1. Chiudere l'app, Excel e il registro; copiare per sicurezza la cartella del pacchetto com'e' adesso **e il registro**
+   (`NFR_Registro.xlsx`).
+2. Estrarre lo zip nella cartella del pacchetto, sostituendo i file. Zip per la posta (`..._posta.zip`): rinominare
+   `07_Senza_Studio\installa.cmd.txt` in `installa.cmd` (sostituendo quello che c'e'); gli altri due `.cmd.txt` li
+   rinomina `installa.cmd`.
+3. Doppio clic su `07_Senza_Studio\installa.cmd`:
+   - in testa: `Pacchetto: <commit> 2026-11-04` accanto alla versione installata;
+   - configurazione: controllare e premere **Salva** (non cambia niente);
+   - file dei pacchetti precedenti: nessuno nuovo; se ne elenca, **S**;
+   - **Kernel**: deve elencare come cambiati i cinque file sopra; rispondere **S** (i file di prima restano in
+     `Kernel\_precedenti\<data>`). Il file dei temi da verificare non e' nel pacchetto: lo crea l'app al primo
+     salvataggio, nella library Kernel;
+   - agenti: deve elencare **A1, A5 e A8** da reincollare: per ognuno aprire l'agente in Agent Builder, Configura,
+     sostituire le istruzioni con il contenuto del file indicato (`02_Agenti\A1_Horizon_Scanner.md`,
+     `A5_Challenger.md`, `A8_Evento_critico.md`) e salvare; poi rispondere che sono reincollati;
+   - riepilogo e Verifica del PC: la Verifica dira' che il registro e' di un template precedente: e' il passo 4.
+4. **Aggiornare il registro al template `2026-11-04`** (0-bis): prima su una copia, poi sul registro vero, da riga di
+   comando nella cartella `07_Senza_Studio`:
+   `python esegui_ciclo_locale.py aggiorna-registro`
+   Il comando copia i dati nel template nuovo, verifica righe, formule e baseline e lascia il registro di prima in
+   `Archivio_Cicli\Backup`. Poi aprire l'app: lo stato deve leggersi come prima.
+5. **SharePoint**: in `Analisi_Esterne` creare la sottocartella `Rapporti_Scenario\<anno>` e salvarvi i rapporti di
+   scenario e di foresight dell'anno (ORX, EBA, BCE, ENISA, WEF...), solo se la licenza ne permette l'uso in un agente
+   di AI (D-95). La knowledge di A1 non cambia: legge gia' tutta `Analisi_Esterne`.
+6. Verifica, al primo trimestre di prova (B7, B9):
+   - la finestra dell'app ha i riquadri e i nomi nuovi, leggibili con la scala di Windows al 125-150%; passando sui
+     pulsanti la riga sotto i riquadri dice che cosa fanno; "Approva" dice che cosa e' in attesa;
+   - prima di A1 si apre la finestra **Temi da verificare**: scrivere un tema di prova; in `Input_A1_<ciclo>.txt` la
+     baseline ha `temi_da_verificare`; dopo il ciclo la finestra mostra la risposta di A1;
+   - ogni rischio di A1 ha la parte **QUINDI:**; le schede mostrano "Che cosa significa per la Banca"; un rischio con
+     COLLEGATI: mostra i collegati, e i collegati "Collegato a";
+   - almeno un **rapporto di scenario** citato (tipo Rapporto) per ogni rischio variato;
+   - la risposta di A1 arriva intera? Se l'app dice "Risposta tagliata", annotare quante volte e che cosa fa A1 al
+     "continua" (TODO AU9);
+   - dal secondo ciclo: A1 lascia fuori i testi che non cambiano; nel foglio Validazione la colonna Segnalazioni finisce
+     con "Testi (P17) · aggiornati da A1: ...";
+   - dopo l'approvazione: Radar_Mosca con la **scia** per i rischi che si sono spostati; Quadro in due pagine con il
+     commento in prima; schede con i fogli "Tema DRV-..."; **Report mensile notizie** dall'app (cartella
+     `Archivio_Cicli\Mensili`); approvando le notizie di una settimana il report del ciclo si rifa'.
+
+Esiti da annotare nel registro vivo (`NFR_Emerging_Risk_Agents/TODO_possibili_sviluppi.md`, sezione 2, B1-B9).
+
 ## Che cosa porta questo pacchetto
 
+- **Passo 3 e passo 7 dell'ordine di lavoro, finestra per processo** (04/11, D-94...D-102): meccanismi potenziali, rapporti di scenario, QUINDI e COLLEGATI, temi da verificare nell'app; scia sul radar, commento di A1 in prima pagina del Quadro, Quadro sempre in due pagine, schede per tema, report mensile notizie; pulsanti in riquadri con i nomi nuovi. **Template nuovo `2026-11-04`: `aggiorna-registro`**. Da reincollare A1, A5 e A8.
+- **Testi dei rischi esistenti aggiornati, non riscritti** (D-93): A1 e A8 scrivono solo i testi che cambiano, lo script riprende il resto dai testi validati; la colonna Segnalazioni della Validazione dice che cosa A1 ha aggiornato; dopo una riapertura con rettifiche l'elenco dei testi da rileggere e Testi a mano. Da reincollare A1, A5 e A8.
+- **Lunghezze dei testi di A1 a fascia intermedia** (D-92).
 - **`installa.cmd` fa anche l'aggiornamento** (D-89): dopo l'estrazione dello zip rinomina i `.cmd.txt` arrivati per
   posta, aggiunge le voci nuove della configurazione, copia il kernel nella library Kernel (dopo una conferma; i file
   sostituiti restano in `Kernel\_precedenti\<data>`, e toglie `Baseline_corrente.txt` e `Tassonomia dei Rischi.csv`),
@@ -31,18 +98,24 @@ non fa (sono indicati li').
 - **Amministrazione** (tappa M5, pulsante **Admin...** della finestra, D-85): pulizia dell'archivio,
   ritorno a un ciclo validato, ripartenza da zero, annullamento; niente si cancella subito, tutto va nel parcheggio
   con l'atto (3-quater).
-- **Testi di A1 piu' lunghi e controllo C10** (D-86): la guida di scrittura fissa per ogni testo un minimo e un
-  consigliato (descrizione 500-900 caratteri, ogni parte del razionale 300-400, azioni e KRI 300-600...); un testo
-  piu' corto e' il rilievo **C10**: per A5 un Bloccante, nel precontrollo l'app chiede se farlo allungare ad A1 nella
-  stessa chat (si puo' dire di no), in validazione un'Osservazione. Le risposte di A1 diventano circa il doppio: piu'
-  spesso servira' "continua".
+- **Testi di A1 piu' lunghi e controllo C10** (D-86, lunghezze riviste dalla D-92 del 03/11): la guida di scrittura
+  fissa per ogni testo un minimo e un consigliato (descrizione 350-600 caratteri, ogni parte del razionale 150-250,
+  azioni e KRI 150-300...); un testo piu' corto e' il rilievo **C10**: per A5 un Bloccante, nel precontrollo l'app
+  chiede se farlo allungare ad A1 nella stessa chat (si puo' dire di no), in validazione un'Osservazione. Con la
+  fascia alta del 29/10 l'output di A1 non stava nelle risposte di Copilot e il "continua" non funzionava (A1
+  ricominciava da capo o diceva di non avere altro): la D-92 lo riduce di circa il 40%.
 - **A7 risponde in prima persona** (D-87), come chi ha proposto le valutazioni e le difende, senza nominare gli
   altri agenti e senza cautele di rito; dopo una rettifica: "avevo proposto..., il validatore ha deciso...".
 - **Schede di A6, analisi dell'evento di A8 e pareri di A4 piu' estesi** (D-88): A6 ha lunghezze minime (descrizione
   1000-2000 caratteri, 400-800 per ogni valore) e l'app propone di fargli allungare i testi corti; l'analisi dell'evento
   di A8 entra nelle lunghezze di C10; A4 scrive un parere piu' disteso.
-- **Da reincollare: A4, A5, A6 e A7**; nella library Kernel quattro file aggiornati (passo 3-bis). Struttura del registro invariata
-  (versione `2026-10-09`): nessun `aggiorna-registro`.
+- **Testi a mano in Admin** (D-90): il pulsante esce dai processi e diventa un'operazione della finestra Admin, con la
+  copia del registro nel parcheggio, l'atto e il report rifatto a fine correzione. Con una riapertura aperta o un ciclo
+  da validare non apre Excel e propone la Validazione.
+- **Variante Power Automate archiviata** (D-91): `04_Riferimenti\workflow.md` non serve piu', `installa.cmd` lo sposta
+  fra gli obsoleti. I processi non cambiano.
+- **Da reincollare: A4, A5, A6 e A7**; nella library Kernel cinque file aggiornati (passo 3-bis). Con il pacchetto del 30/10 la struttura del
+  registro restava `2026-10-09`; dal 04/11 e' `2026-11-04`: `aggiorna-registro` (passo 4-bis).
 
 ## Passi
 
@@ -79,14 +152,20 @@ tre lanciatori finiscono con `.txt`. A mano si rinomina solo **`07_Senza_Studio\
 la finestra delle operazioni, ognuna spiegata e con il suo pulsante (Aiuto -> "Pulsante Admin", D-85).
 
 **3-bis. Kernel, A4, A5, A6 e A7** (D-86, D-87, D-88)
-- Il kernel lo copia `installa.cmd` (passo 2). Cambiano quattro file di `NFR_Emerging_Risk_Agents\01_Kernel`:
-  `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`, `schema_output_A6.json`. Lo script li mette
-  negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze. Se si e' risposto N, rilanciare
+- Il kernel lo copia `installa.cmd` (passo 2). Cambiano cinque file di `NFR_Emerging_Risk_Agents\01_Kernel`:
+  `controlli_A5.md`, `guida_scrittura_A1.md`, `schema_output_A5.json`, `schema_output_A6.json` e, solo in una nota,
+  `mappatura_campi.json`. Lo script mette i primi negli allegati di A1 e di A5: senza la copia A1 non vede le lunghezze. Se si e' risposto N, rilanciare
   `installa.cmd` o copiarli a mano nella library **Kernel** (la cartella della voce `kernel` di `configurazione.json`).
 - Agent Builder: **reincollare le istruzioni di A4, A5, A6 e A7** (`NFR_Emerging_Risk_Agents\02_Agenti\A4_News_Assessor.md`,
   `A5_Challenger.md`, `A6_Schede.md`, `A7_Assistente_registro.md`). A1, A3 e A8 non cambiano.
 
 **4. L'app.** Doppio clic sul collegamento **NFR Horizon Scan** del Desktop (o su `NFR.cmd`).
+
+**4-bis. Registro al template `2026-11-04`** (D-99, 0-bis): prima su una copia, poi sul registro vero, dalla cartella
+`07_Senza_Studio`: `python esegui_ciclo_locale.py aggiorna-registro`. Il registro di prima resta in
+`Archivio_Cicli\Backup`. Senza, ogni comando si ferma dicendo che il registro e' di un template precedente.
+
+**4-ter. SharePoint**: in `Analisi_Esterne` la sottocartella `Rapporti_Scenario\<anno>` per i rapporti di scenario (D-95).
 
 ## Verifiche da fare (TODO B5-bis; esiti da annotare in `Analisi_Architettura/18_App_orchestrazione.md`, 18.6)
 
@@ -104,7 +183,8 @@ Nuove:
 - **lunghezze dei testi (C10)**: nel trimestre di prova `Input_A1_<ciclo>.txt` ha nella parte 3 la tabella "Lunghezze
   dei testi"; se A1 risponde corto, l'app dice quanti rischi hanno testi troppo corti e propone il messaggio per
   allungarli; dopo la correzione il precontrollo non li segnala piu'; A5 (reincollato) segnala C10 come Bloccante e in
-  validazione compare come osservazione; annotare se le risposte di A1 si tagliano piu' spesso (V-B);
+  validazione compare come osservazione; annotare se la risposta di A1 arriva intera e, se si taglia, quante volte
+  e che cosa fa A1 al "continua" (D-92, TODO AU9);
 - **A7 in prima persona**: le domande 2, 5 e 9 del copione `04_Riferimenti\Prove\Prova_A7.md`; A7 risponde "ho dato...",
   dopo una rettifica "avevo proposto..., il validatore ha deciso...", senza nominare A1 o A5 e senza cautele di rito;
 - **schede di A6 (D-88)**: dopo la validazione di prova, Schede con A6: se A6 scrive corto, l'app lo dice e propone
@@ -126,6 +206,9 @@ Nuove:
   ADMIN, traccia in `Archivio_Cicli\Amministrazione`), poi nella finestra Admin ->
   pulizia (anteprima e poi spostamento), parcheggi, annulla della pulizia; poi un ritorno al ciclo validato prima
   di quello corrente e il suo annullamento (lo stato dell'app torna com'era).
+- **testi a mano in Admin (D-90), sul registro di prova**: a ciclo validato, Admin -> Testi a mano chiede il motivo e
+  apre il registro; chiuso Excel rifa' baseline e report; Annulla lo disfa. Con un ciclo da validare non apre Excel e
+  propone la Validazione;
 - **collaudo completo sul PC** (chi mantiene il pacchetto): `python NFR_Emerging_Risk_Agents\99_Collaudo\esegui_collaudo.py`
   (catena con Excel compresa: report HTML via COM, cancello, ritorno e annullamento); poi la presentazione con
   `python Presentazione\genera_presentazione.py`.

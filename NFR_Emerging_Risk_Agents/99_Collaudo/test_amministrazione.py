@@ -274,9 +274,19 @@ def test_testi(e):
             annullabile = False
         e.verifica(not cambiato and atto["stato"] == "senza modifiche" and not rigenerati and not annullabile,
                    "testi a mano: registro non cambiato -> 'senza modifiche', niente rifatto, niente da annullare")
-        cartella, _ = amm.testi_inizio(conf, grezza, "razionale di NFR-05 riscritto", stato.leggi(conf))
+        # P17: l'elenco dei testi da rileggere dopo le rettifiche di una riapertura (scritto da valida) va nell'atto e, a
+        # testi finiti, non si ripropone.
+        import esegui_ciclo_locale as motore
+        voce = {"oggetto": "Rischio", "id": "NFR-05", "nome": "x", "campo": "Impatto", "da": 3, "a": 4,
+                "motivazione": "esposizione documentata", "testi": "RiskRegister, Razionale: parte IMPATTO:"}
+        elenco, _ = motore.scrivi_testi_da_rileggere(conf, "2026Q4", [voce])
+        cartella, atto = amm.testi_inizio(conf, grezza, "razionale di NFR-05 riscritto", stato.leggi(conf))
+        e.verifica(atto["testi_da_rileggere"] == [voce] and elenco.exists(),
+                   "testi a mano: l'elenco dei testi da rileggere dopo la riapertura entra nell'atto (P17)")
         reg.write_text("registro di adesso, testi corretti", encoding="utf-8")
         cartella2, atto, cambiato = amm.testi_fine(conf, grezza, rigenera=lambda c: rigenerati.append(True))
+        e.verifica(not elenco.exists() and amm.testi_da_rileggere(conf, "2026Q4") == [],
+                   "testi a mano finiti: l'elenco dei testi da rileggere resta solo nell'atto (P17)")
         try:
             amm.testi_fine(conf, grezza)
             ancora = True
