@@ -21,6 +21,7 @@
       "prossimita": 4,
       "probabilita": 4,
       "esito_precedente": "Variato",
+      "descrizione": "Frodi a danno dei clienti tramite voci o video sintetici che inducono bonifici istantanei irrevocabili verso conti di terzi.",
       "razionale": "Impatto 4 per importi medi in forte crescita su pagamenti irrevocabili; velocity 5 perche' i fondi escono dal conto del beneficiario entro un'ora; prossimita' 4 per casi gia' osservati in banche comparabili.",
       "fonti": [
         {
@@ -84,6 +85,7 @@
       "prossimita": 3,
       "probabilita": 2,
       "esito_precedente": "Confermato",
+      "descrizione": "Indisponibilita' prolungata del fornitore cloud che ospita servizi critici, senza alternativa attivabile nei tempi di ripristino.",
       "razionale": "Impatto 4 per servizi critici ospitati su un solo fornitore; velocity 4 perche' un'interruzione e' immediata; prossimita' 3 senza incidenti gravi recenti.",
       "fonti": [
         {
@@ -141,6 +143,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Confermato",
+      "descrizione": "Claim ambientali non sostanziati nella documentazione di prodotti di investimento ESG, con rischio di sanzioni e rimborsi.",
       "razionale": "Impatto 3 per sanzioni e rimborsi possibili su una clientela ampia; velocity 2 perche' l'esposizione emerge con ispezioni o reclami; prossimita' 3 per orientamenti europei gia' in vigore.",
       "fonti": [
         {
@@ -191,6 +194,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Variato",
+      "descrizione": "Alluvioni o ondate di calore che rendono inagibili sedi operative o degradano il data center secondario.",
       "razionale": "Impatto 3 per degrado di sedi e del sito secondario; velocity 2; prossimita' 3 dopo l'alluvione di maggio su filiali della Banca.",
       "fonti": [
         {
@@ -241,6 +245,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Variato",
+      "descrizione": "Errori di conversione dati e controlli di processo non ridisegnati durante la migrazione a ondate del sistema core.",
       "razionale": "Impatto 3 per errori contabili e disservizi limitati nel tempo; velocity 3; prossimita' 3 perche' la wave 2 e' nel 2027.",
       "fonti": [
         {
@@ -298,6 +303,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Confermato",
+      "descrizione": "Dipendenti che trasferiscono intenzionalmente dati riservati su servizi di AI generativa esterni per uso personale o a favore di terzi.",
       "razionale": "Impatto 3 per possibile perdita di dati riservati; velocity 3; prossimita' 3 per tentativi rilevati dal DLP.",
       "fonti": [
         {
@@ -342,6 +348,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Confermato",
+      "descrizione": "Blocco prolungato dei pagamenti per un attacco ransomware al fornitore esterno che gestisce il gateway di pagamento della Banca.",
       "razionale": "Impatto 4 perche' i pagamenti si fermano; velocity 5 perche' il blocco e' immediato; prossimita' 3 per attacchi a processori europei.",
       "fonti": [
         {
@@ -393,6 +400,7 @@
       "prossimita": 3,
       "probabilita": 2,
       "esito_precedente": "Confermato",
+      "descrizione": "Dipendenti che consultano o estraggono dati di clienti senza motivo di servizio, per curiosita' o a favore di terzi.",
       "razionale": "Impatto 3 per violazione di dati di clientela ampia; velocity 3; prossimita' 3 per casi sanzionati nel settore.",
       "fonti": [
         {
@@ -443,6 +451,7 @@
       "prossimita": 2,
       "probabilita": 2,
       "esito_precedente": "Confermato",
+      "descrizione": "Pagamenti di clientela corporate verso controparti sanzionate interposte in paesi terzi, non intercettati dal filtro sanzioni.",
       "razionale": "Impatto 4 per sanzioni e danno reputazionale nazionale; velocity 3; prossimita' 2 per precursori solo in altri paesi.",
       "fonti": [
         {
@@ -487,6 +496,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Confermato",
+      "descrizione": "Chatbot di assistenza basati su AI generativa che danno ai clienti informazioni errate su condizioni, costi o diritti, con reclami e rimborsi.",
       "razionale": "Impatto 3 per reclami e rimborsi su clientela ampia; velocity non valutata: nessuna fonte documenta i tempi fra una risposta errata e il danno; prossimita' 3 per casi nel settore europeo.",
       "fonti": [
         {
@@ -530,6 +540,7 @@
       "prossimita": 3,
       "probabilita": 3,
       "esito_precedente": "Confermato",
+      "descrizione": "Componenti del sistema di pagamento fuori supporto del produttore, senza patch di sicurezza e con competenze interne in riduzione.",
       "razionale": "Impatto 3 per disservizi sui pagamenti; velocity 2; prossimita' 3 per fine supporto annunciata.",
       "fonti": [
         {
@@ -580,6 +591,7 @@
       "prossimita": 4,
       "probabilita": 4,
       "esito_precedente": "Variato",
+      "descrizione": "Errori di riconciliazione e rimborsi indebiti dopo l'obbligo di offrire i bonifici istantanei a tutta la clientela.",
       "razionale": "Impatto 3 per rimborsi indebiti e disservizi; velocity 4 perche' gli errori si propagano in giornata; prossimita' 4 dopo i primi casi interni di maggio.",
       "fonti": [
         {
@@ -743,7 +755,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 6,
       "valore_corrente": 4.2,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-01: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-01-K3",
@@ -755,7 +768,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": 2.5,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-01: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-02-K1",
@@ -767,7 +781,8 @@
       "soglia_attenzione": 60,
       "soglia_allerta": 75,
       "valore_corrente": 78,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-02: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-02-K2",
@@ -779,7 +794,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 4,
       "valore_corrente": 1,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-02: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-03-K1",
@@ -791,7 +807,8 @@
       "soglia_attenzione": 1.5,
       "soglia_allerta": 3,
       "valore_corrente": 0.8,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-03: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-03-K2",
@@ -803,7 +820,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 40,
       "valore_corrente": null,
-      "data_rilevazione": null
+      "data_rilevazione": null,
+      "razionale": "KRI di esposizione del rischio NFR-03: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-04-K1",
@@ -815,7 +833,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 3,
       "valore_corrente": 2,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-04: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-04-K2",
@@ -827,7 +846,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": 3,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-04: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-05-K2",
@@ -839,7 +859,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 6,
       "valore_corrente": 7,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-05: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-05-K3",
@@ -851,7 +872,8 @@
       "soglia_attenzione": 30,
       "soglia_allerta": 60,
       "valore_corrente": 25,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-05: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-06-K1",
@@ -863,7 +885,8 @@
       "soglia_attenzione": 10,
       "soglia_allerta": 30,
       "valore_corrente": 14,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-06: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-06-K2",
@@ -875,7 +898,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 40,
       "valore_corrente": 35,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-06: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-07-K1",
@@ -887,7 +911,8 @@
       "soglia_attenzione": 1,
       "soglia_allerta": 2,
       "valore_corrente": 1,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-07: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-07-K2",
@@ -899,7 +924,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": 3,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-07: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-08-K1",
@@ -911,7 +937,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 50,
       "valore_corrente": 24,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-08: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-08-K2",
@@ -923,7 +950,8 @@
       "soglia_attenzione": 5,
       "soglia_allerta": 15,
       "valore_corrente": 6,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-08: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-09-K1",
@@ -935,7 +963,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 5,
       "valore_corrente": 3.8,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-09: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-09-K2",
@@ -947,7 +976,8 @@
       "soglia_attenzione": 5,
       "soglia_allerta": 15,
       "valore_corrente": 11,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-09: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-10-K1",
@@ -959,7 +989,8 @@
       "soglia_attenzione": null,
       "soglia_allerta": null,
       "valore_corrente": 1.4,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-10: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-10-K3",
@@ -971,7 +1002,8 @@
       "soglia_attenzione": 20,
       "soglia_allerta": 50,
       "valore_corrente": 60,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-10: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-11-K1",
@@ -983,7 +1015,8 @@
       "soglia_attenzione": 3,
       "soglia_allerta": 8,
       "valore_corrente": 7,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-11: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-11-K2",
@@ -995,7 +1028,8 @@
       "soglia_attenzione": 2,
       "soglia_allerta": 6,
       "valore_corrente": 5,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-11: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-12-K1",
@@ -1007,7 +1041,8 @@
       "soglia_attenzione": 10,
       "soglia_allerta": 30,
       "valore_corrente": 14,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di evoluzione del rischio NFR-12: quanto cresce il fenomeno; valori crescenti indicano peggioramento."
     },
     {
       "kri_id": "NFR-12-K3",
@@ -1019,7 +1054,8 @@
       "soglia_attenzione": 4,
       "soglia_allerta": 12,
       "valore_corrente": 5,
-      "data_rilevazione": "2026-06-30"
+      "data_rilevazione": "2026-06-30",
+      "razionale": "KRI di esposizione del rischio NFR-12: quanto la Banca e' esposta; valori crescenti indicano peggioramento."
     }
   ],
   "azioni_aperte": [

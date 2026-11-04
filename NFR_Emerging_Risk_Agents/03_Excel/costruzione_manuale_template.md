@@ -89,6 +89,16 @@ stato "In osservazione" del presidio e, in L15:S19, quante notizie toccano i ris
 in osservazione. I dati di esempio hanno tre rischi in osservazione (NFR-13, 14,
 15: le tre voci della vecchia lista, rivalutate con la rubrica).
 
+Con la 2026-11-04 (04/11): **la scia sul radar e il commento in prima pagina** (P2 e richiesta dell'utente). In
+Parametri `cicloScia` (B28, il trimestre da cui parte la scia) e `cicliTraiettoria` (C20:C23, gli ultimi quattro
+trimestri, ognuno con il suo ultimo ciclo), scritti dallo script. Nel Radar_Mosca le colonne nascoste CV-DF (da
+`SCIA` = 100, dopo l'appoggio del grafico): Prossimita, stato, periodo di valutazione e anni di adeguamento del rischio
+nel trimestre della scia, Y e raggio di allora, "spostato" (1 se era nel radar e il cerchio si e' spostato), gli estremi
+della freccia; nel grafico, sotto i cerchi, il punto grigio di allora e una freccia per rischio fino al bordo del cerchio
+di oggi, e una voce di legenda. Nel Quadro il commento di A1 (righe 9-11) sale in prima pagina sotto i riquadri, i primi
+cinque hanno la colonna "Ultimi 4 trimestri", il radar piccolo e' alto 7,7 cm; in seconda pagina controlli e
+segnalazioni da motivare (`quadroControlli`, nome nuovo) e i rischi segnalati (righe 52-71).
+
 ## 1. Fogli, in quest'ordine
 
 | Gruppo (colore della linguetta) | Fogli |
@@ -228,9 +238,9 @@ tassonomia interna, D-74: il nome resta quello di prima), `codiciDriver` E15:E22
 `posScorePrec`, `posScore2`, `posNetti`, `posBadge`, `posLivello`
 (Registro!AA9:AK28 e AN9:AN28, una colonna ciascuno); `rmID`, `rmPxI`, `rmZ`, `rmX`,
 `rmY`, `rmMargine`, `rmUrgenza`, `rmLivello`, `rmMotivoLivello` (Radar_Mosca
-A, F, H, I, J, K, L, AA, AB, righe 5-24);
+A, F, H, I, J, K, L, AA, AB, righe 5-24); `rmRaggioScia` e `rmScia` (Radar_Mosca DA e DB, righe 5-24: la scia, P2);
 `presidioCodici` e `presidioStato` (Notizie!A5:A13 e F5:F13); `quadroCommento`
-(Quadro!A41:O45), `quadroSegnalati` (Quadro!A50:O69), `deltaMotivi`
+(Quadro!A9:O11), `quadroControlli` (Quadro!A46:O47), `quadroNote` (Quadro!C21), `quadroSegnalati` (Quadro!A52:O71), `deltaMotivi`
 (Delta!K6:Q25), `fenomeniLista` (Fenomeni!A7:K26), `fenomeniUscite`
 (Fenomeni!A30:K35): righe con testi calcolati, di cui lo script adatta l'altezza
 (dal 08/10 anche `fenomeniUscite`: con l'altezza del template, 3 punti, entrati e usciti non si vedevano).
@@ -616,41 +626,41 @@ M-O) con didascalia, numero grande e riga sotto:
 (A5, A6, D5, D6, G5, J5, M5). Il secondo riquadro e' il **livello di
 allerta** (D-63): T4 nascosta = `COUNTIF(Radar_Mosca!$AA$5:$AA$24,"Attivazione")`,
 T5:T24 = ID dei rischi in Attivazione; grigio se T4 = 0.
-Righe 8-15: a sinistra i primi cinque della Classifica (score con barra, Δ,
-urgenza come etichetta), a destra la matrice in piccolo (J-O) con i soli numeri
-dei rischi:
-
-```excel
-=IF(Classifica!$B$5="","",IF(LEFT(Classifica!$H$5,9)="AGIRE ORA","AGIRE ORA",IF(LEFT(Classifica!$H$5,11)="Agire entro","Entro l'anno",Classifica!$H$5)))
-=SUBSTITUTE(SUBSTITUTE(Matrice!C5," ◆",""),"NFR-","")
-```
-
-(H10, K10). Righe 17-38: il radar di Mosca in piccolo (8,5 cm; stesso grafico
-del Radar_Mosca con appoggio nel foglio stesso, colonne nascoste da BH) e a
-destra l'elenco dei rischi del ciclo (J-O, righe alte 12 punti: venti righe
-stanno nella prima pagina). Interruzione di pagina alla riga 38.
-
-Pagina 2. Righe 41-45 (`quadroCommento`): messaggio chiave, decisioni
-richieste, controlli (sintesi di A5, se usato), avviso dopo le rettifiche,
-segnalazioni da motivare. A1 scrive il commento nella forma "MESSAGGIO: ... DECISIONI: ...";
-T41 e T42 (nascoste) lo leggono e trovano il marcatore:
+Righe 8-11 (dalla 2026-11-04, richiesta dell'utente: il commento di A1 in prima pagina): la sezione del commento e
+le righe 9-11 (`quadroCommento`): messaggio chiave, decisioni richieste, avviso dopo le rettifiche. A1 scrive il
+commento nella forma "MESSAGGIO: ... DECISIONI: ..."; AB9 e AB10 (nascoste) lo leggono e trovano il marcatore:
 
 ```excel
 =IFERROR(INDEX(SI_Sintesi_A1,MATCH(cicloCorrente,SI_Ciclo,0))&"","")
-=IFERROR(SEARCH("DECISIONI:",T41),0)
-=IF(T41="","Nessun commento registrato per il ciclo corrente.",TRIM(SUBSTITUTE(SUBSTITUTE(IF(T42>0,LEFT(T41,T42-1),T41),"MESSAGGIO:",""),"Messaggio:","")))
-=IF(T42>0,TRIM(MID(T41,T42+10,4000)),"—")
+=IFERROR(SEARCH("DECISIONI:",AB9),0)
+=IF(AB9="","Nessun commento registrato per il ciclo corrente.",TRIM(SUBSTITUTE(SUBSTITUTE(IF(AB10>0,LEFT(AB9,AB10-1),AB9),"MESSAGGIO:",""),"Messaggio:","")))
+=IF(AB10>0,TRIM(MID(AB9,AB10+10,4000)),"—")
 ```
 
-(T41, T42, D41, D42). Senza marcatore tutto il testo va nel messaggio. D44 e'
-l'avviso "Il validatore ha applicato n rettifiche o respingimenti..." (valori
-rettificati dello storico piu' oggetti respinti, contati sul primo campo: un'azione
-respinta conta una volta, D-67); D45 legge
-`SI_Rilievi_Superati` del ciclo (quante segnalazioni sono da motivare in
-validazione, dai controlli e da A5: D-71). Entrambe con fondo ambra se
-non vuote.
+(AB9, AB10, D9, D10). Senza marcatore tutto il testo va nel messaggio. D11 e' l'avviso "Il validatore ha applicato n
+rettifiche o respingimenti..." (valori rettificati dello storico piu' oggetti respinti, contati sul primo campo:
+un'azione respinta conta una volta, D-67), con fondo ambra se non vuoto.
 
-Righe 50-69 (`quadroSegnalati`): i rischi segnalati e perche'. In U, per
+Righe 13-20: a sinistra i primi cinque della Classifica (B-D rischio; E **ultimi 4 trimestri**, P2: lo score alla
+fine di ognuno degli ultimi quattro trimestri, dai cicli di `cicliTraiettoria` in Parametri C20:C23, con le colonne
+nascoste X-AA; score con barra, Δ, urgenza come etichetta), a destra la matrice in piccolo (J-O) con i soli numeri dei
+rischi:
+
+```excel
+=TEXTJOIN(" → ",TRUE,X15:AA15)
+=IF(Classifica!$B$5="","",IF(LEFT(Classifica!$H$5,9)="AGIRE ORA","AGIRE ORA",IF(LEFT(Classifica!$H$5,11)="Agire entro","Entro l'anno",Classifica!$H$5)))
+=IF((LEN(Matrice!C5)-LEN(SUBSTITUTE(Matrice!C5,"NFR-","")))/4>5,(LEN(Matrice!C5)-LEN(SUBSTITUTE(Matrice!C5,"NFR-","")))/4&" rischi",SUBSTITUTE(SUBSTITUTE(Matrice!C5," ◆",""),"NFR-",""))
+```
+
+(E15, H15, K15; dalla 2026-11-04 la cella della matrice piccola dice "n rischi" quando sono sei o piu', G5). Riga 21: le Note dell'analista (`quadroNote`, C21). Righe 22-43: il radar di Mosca in piccolo (7,7 cm;
+stesso grafico del Radar_Mosca, senza la scia, con appoggio nel foglio stesso, colonne nascoste da BH) e a destra
+l'elenco dei rischi del ciclo (J-O, righe alte 11 punti: venti righe stanno nella prima pagina). Interruzione di
+pagina alla riga 43.
+
+Pagina 2. Righe 46-47 (`quadroControlli`): controlli (sintesi di A5, se usato) e, in D47, `SI_Rilievi_Superati` del
+ciclo (quante segnalazioni sono da motivare in validazione, dai controlli e da A5: D-71), con fondo ambra se non vuota.
+
+Righe 52-71 (`quadroSegnalati`): i rischi segnalati e perche'. In U, per
 posizione di classifica, il numero se il rischio e' fra i primi tre, in
 Attivazione o in Attenzione (livello di allerta del Radar_Mosca, colonna AA,
 D-63), Variato o Nuovo; in V il k-esimo segnalato; in W il perche' (primi tre
@@ -659,16 +669,16 @@ l'anno, variato o nuovo, attenzione del supervisore, presidio assente, KRI
 rossi, notizie oltre la soglia):
 
 ```excel
-=IFERROR(AGGREGATE(15,6,$U$50:$U$69,1),"")
-=IF($W50="","",LEFT($W50,LEN($W50)-2)&".")
+=IFERROR(AGGREGATE(15,6,$U$52:$U$71,1),"")
+=IF($W52="","",LEFT($W52,LEN($W52)-2)&".")
 ```
 
-(V50, E50). Colonne visibili: A-C rischio (ID, nome, ◆), D **livello di
+(V52, E52). Colonne visibili: A-C rischio (ID, nome, ◆), D **livello di
 allerta** come etichetta (INDEX della colonna AA del Radar_Mosca per la
 posizione in anagrafica; colori del radar), E-H perche', I-O cosa e' cambiato (le variazioni leggibili, come nel
 Delta). Bordo solo sulle righe con un rischio (formattazione condizionale).
 Sotto: i limiti (04_Riferimenti/controlli_e_model_risk.md, sezione 5) e la legenda delle abbreviazioni.
-Stampa: A4 orizzontale, scala 74% (dalla 2026-10-07; prima 78%), margini superiore e inferiore 1,27 cm; con molti rischi segnalati lo script (`prepara_report`) riduce la scala, fino al 60%, perche' il Quadro resti in due pagine.
+Stampa: A4 orizzontale, scala 74% (dalla 2026-10-07; prima 78%), margini superiore e inferiore 1,27 cm; con molti rischi segnalati lo script (`prepara_report`) riduce la scala, fino al 60%, perche' il Quadro resti in due pagine; se non basta, nasconde gli ultimi rischi segnalati per score e li elenca nella nota della sezione (04/11/2026).
 
 ### Fenomeni (rischi in osservazione, D-79)
 

@@ -1,8 +1,20 @@
 # Demo W1 e W2 — cosa produce ogni agente, e cosa decide il validatore
 
-Sequenza eseguita la prima volta il 23/09/2026 e **rilanciata l'08/10/2026 sera** sul pacchetto con la struttura
-2026-10-09. Novita' rispetto al rilancio precedente: il **registro unico** (D-79), al posto della lista di
-osservazione della D-73.
+Sequenza eseguita la prima volta il 23/09/2026 e **rilanciata il 04/11/2026** sul pacchetto con la struttura
+2026-10-09. Novita' rispetto al rilancio dell'08/10:
+- testi di A1 piu' lunghi e completi (D-86, D-92) e, per i rischi esistenti, aggiornati e non riscritti (D-93): dopo la
+  riapertura del 2026Q4 la validazione elenca i **testi da rileggere**;
+- nel razionale di ogni rischio la parte **QUINDI:** (che cosa significa per la Banca, D-96), che le schede mostrano a
+  parte; nel rischio primario la parte **COLLEGATI:** (D-97): NFR-01 cita NFR-10 e NFR-06, che nelle loro schede
+  mostrano "Collegato a NFR-01";
+- un **tema da verificare** (TEMA-01, P9, D-98) prima del 2026Q4, a cui A1 risponde fra i fenomeni non censiti;
+- il Quadro resta in due pagine anche con molti rischi segnalati;
+- (passo 7 e finestra, D-99...D-102, template 2026-11-04) sul Radar_Mosca la **scia** rispetto al 2026Q3 per i
+  rischi che si sono spostati (NFR-01, NFR-02, NFR-08; NFR-16 no, perche' nel 2026Q3 era in osservazione); nel Quadro
+  il **commento di A1 in prima pagina** e gli ultimi 4 trimestri dei primi cinque; le **schede per tema** (8 temi); il
+  **riepilogo mensile** di ottobre in Excel e HTML.
+
+Dall'08/10 il **registro unico** (D-79), al posto della lista di osservazione della D-73.
 - Un solo registro di rischi `NFR-nn`, con la stessa scala. I primi sono **nel radar** di Mosca: Prossimita e
   Probabilita almeno 2, fino a 15 posti, piu' le eccezioni. Gli altri sono **in osservazione**: niente KRI ne' azioni,
   con l'orizzonte e il segnale che li porterebbe nel radar.
@@ -26,23 +38,24 @@ Si rilancia con `python esegui_demo.py` (circa 15 minuti).
 
 | # | Passo | Periodo | Esito |
 |---|---|---|---|
-| 0 | W0 raccolta notizie, **reale** (rete vera, feed di oggi) | settimana del 05/10/2026 | 135 notizie da 13 delle 18 fonti interrogate; 3 non raggiungibili da questa rete |
+| 0 | W0 raccolta notizie, **reale** (rete vera, feed di oggi) | settimana del 02/11/2026 | 145 notizie da 14 delle 18 fonti interrogate |
 | 1 | Precontrollo e W1 con un output di A1 difettoso | 2026Q3 | **fermato** dal precontrollo (2 punti da correggere: un KRI con l'identificativo di un altro rischio), poi anche da `trimestrale`, con lo stesso messaggio per A1; registro intatto |
 | 2 | Precontrollo e W1 con l'output corretto | 2026Q3 | precontrollo: 0 da correggere, 14 da verificare; scritto: **12 rischi nel radar, 4 in osservazione** (NFR-16 nuovo, piu' i tre del template) |
 | 3 | W1 del trimestre dopo, **prima** di validare | 2026Q4 | **fermato**: 53 righe ancora da validare |
 | 4 | Validazione nella griglia | 2026Q3 | 53 righe: 48 accettate, 4 rettificate (5 valori), 1 respinta |
 | 5 | W2 + validazione delle notizie | settimana del 12/10/2026 | 5 notizie, 1 segnale rettificato; lo sciopero va su **NFR-16, in osservazione**, con un flag di A3 |
 | 6 | W3 su richiesta (A4) | 12/10/2026 | parere su una notizia |
-| 7 | Precontrollo, W1 **senza A5** + validazione | 2026Q4 | nessun rilievo; **NFR-16 entra nel radar** (13 rischi), 3 restano in osservazione; 55 righe accettate senza toccarle |
-| 8 | **Riapertura** della validazione per NFR-02 | 2026Q4 | 7 righe in griglia; Probabilita da 2 a 4 (nessun limite in riapertura) e un KRI rettificato |
-| 9 | Schede dei rischi | 2026Q4 | `Schede_2026Q4.xlsx` e il suo PDF, 13 schede (i rischi del radar), senza A6 |
+| 7 | Tema da verificare, precontrollo, W1 **senza A5** + validazione | 2026Q4 | TEMA-01 nella baseline e con la sua risposta; nessun rilievo; **NFR-16 entra nel radar** (13 rischi), 3 restano in osservazione; 55 righe accettate senza toccarle |
+| 8 | **Riapertura** della validazione per NFR-02 | 2026Q4 | 7 righe in griglia; Probabilita da 2 a 4 (nessun limite in riapertura) e un KRI rettificato; 2 testi da rileggere |
+| 9 | Schede dei rischi | 2026Q4 | `Schede_2026Q4.xlsx` e il suo PDF, 13 schede (i rischi del radar) e 8 schede per tema, senza A6 |
 | 10 | Report al comitato: da `valida` (dal 23/10, D-83), poi `report` dopo una correzione manuale | 2026Q4 | PDF di 13 pagine con la pagina Fenomeni (i rischi in osservazione), rigenerato da ogni validazione del ciclo; dopo la correzione del presidio di NFR-02, 16 pagine con Registro e Parametri |
 | 11 | Settimana con la **proposta di ciclo straordinario** di A3 | settimana del 16/11/2026 | "PROPOSTA DI CICLO STRAORDINARIO di A3 per NFR-01" a video e nel foglio Notizie |
+| 11-bis | **Riepilogo mensile** (P7) | ottobre 2026 | 2 settimane, 5 notizie: peggiorative 4, migliorative 1, una notizia forte su un rischio grave, 2 flag di A3; `Mensili/Riepilogo_2026-10.xlsx` e `.html` |
 | 12 | **Ciclo straordinario** deciso e fatto da **A8** | 2026Q4-S1 | NFR-01 rivalutato (Probabilita da 4 a 5), gli altri 12 rischi del radar e i 3 in osservazione riportati gia' validati; validato |
 
 > **Chi ha fatto cosa.** Gli output degli agenti (A1, A3, A4, A5, A8, cartella `1_Input_agenti`) e le decisioni del
 > validatore (`Decisioni_validatore_*.json`) li ho scritti io, Claude, seguendo prompt e regole: sono **simulati**. Lo
-> script, i controlli e l'Excel girano **davvero**. La raccolta W0 ha scaricato davvero i feed dell'08/10/2026. Le
+> script, i controlli e l'Excel girano **davvero**. La raccolta W0 ha scaricato davvero i feed del 04/11/2026. Le
 > notizie delle settimane del 12/10 e del 16/11 restano simulate: la demo si svolge nel futuro (2026Q3-2027Q1).
 > L'output di **A6 non e' simulato**: le schede escono con i testi di A1 dal registro; i controlli su A6 li prova il
 > collaudo (`run_catena.py`, passo 2c).
@@ -72,15 +85,14 @@ NFR-06, 11; gli altri Non verificato. NFR-10 ha la Velocity non valutata e NFR-1
 
 ## W0 — raccolta notizie (reale)
 
-`raccogli_notizie.py --anche-da-validare` ha scritto `News_Inbox/2026-10-05/Raccolta_2026-10-08.txt`, una voce per
+`raccogli_notizie.py --anche-da-validare` ha scritto `News_Inbox/2026-11-02/Raccolta_2026-11-04.txt`, una voce per
 notizia con il **codice fonte** che A3 riporta:
 
 ```text
-Finestra: dal 2026-10-01 al 2026-10-08. Fonti interrogate: 18; con notizie: 13; notizie: 135.
+Finestra: dal 2026-10-28 al 2026-11-04. Fonti interrogate: 18; con notizie: 14; notizie: 145.
 ```
 
-Tre fonti (FSB, NCSC del Regno Unito, Europol) non erano raggiungibili da questa rete in quel momento: la raccolta lo
-dice e prosegue.
+Una fonte non raggiungibile da questa rete non ferma la raccolta: la raccolta lo dice e prosegue.
 
 ---
 
@@ -104,7 +116,7 @@ scrive il messaggio da incollare nella chat di A1:
 
 ```
 Precontrollo dell'output di A1 (2026Q3): 2 punti da correggere, 16 da verificare.
-Impronta dell'output di A1: a31c229d6da1
+Impronta dell'output di A1: c4a230173025
 Da correggere (fermerebbero il ciclo):
 1. NFR-01 · C9: KRI NFR-02-K1 appartiene a un altro rischio.
 2. ciclo · C9: kri_id NFR-02-K1 usato piu' di una volta.
@@ -114,7 +126,7 @@ Lanciato comunque, anche `trimestrale` si ferma, solo per il difetto di integrit
 L'evidenza generica da sola non avrebbe fermato il ciclo (D-71): sarebbe arrivata al validatore come segnalazione da
 motivare.
 
-**Con l'A1 corretto**: il precontrollo dice `0 punti da correggere, 14 da verificare` (impronta `c18315d71dbc`), poi:
+**Con l'A1 corretto**: il precontrollo dice `0 punti da correggere, 14 da verificare` (impronta `67004372dda6`), poi:
 
 ```
 Ciclo 2026Q3 scritto: 12/12 rischi, zero errori di formula.
@@ -187,13 +199,25 @@ nominata, nessuna scrittura.
 
 ## W1 — ciclo 2026Q4
 
-Il precontrollo dice "nessun rilievo" (impronta `79e6cb648606`). A1 fa quattro cose:
+Prima di A1 l'analista scrive un **tema da verificare** (nell'app: finestra Temi da verificare; qui lo scrive la demo):
+TEMA-01, "Truffe con QR code falsi sui parcometri: e' un rischio per la Banca?". `baseline` lo mette nella baseline
+("Temi da verificare per A1 (P9): 1 aperti, nella baseline (TEMA-01).").
+
+Il precontrollo dice "nessun rilievo" (impronta `98f9a97666e6`). A1 fa quattro cose:
 - **NFR-16 sale**: Probabilita da 2 a 3 (piano di successione della Banca a meta'), Prossimita da 1 a 2 (vertenza in
   corso dal 6 ottobre), Velocity valutata (3), ciascuna con l'evidenza datata. Scrive subito **due KRI e due azioni**;
 - alza la Prossimita di NFR-01 da 4 a 5;
 - aggiorna NFR-14 in osservazione (Probabilita da 2 a 3, un cavo danneggiato nel Mediterraneo orientale; Prossimita
   ancora 1) e conferma NFR-13 con il rapporto ENISA (orizzonte da 10 a 8 anni);
-- registra un fenomeno non censito (truffe con QR code falsi, gia' coperto da NFR-01).
+- registra un fenomeno non censito (truffe con QR code falsi, gia' coperto da NFR-01), che e' la risposta a TEMA-01.
+
+In ogni razionale l'ultima parte e' **QUINDI:** (che cosa significa il rischio per la Banca); NFR-01 chiude con
+**COLLEGATI: NFR-10 (stessa causa: la diffusione dell'AI generativa); NFR-06 (...)**.
+
+```
+TEMI DA VERIFICARE (P9): TEMA-01 -> non censito: Truffe con QR code falsi sui parcometri (gia_coperto).
+```
+Le risposte restano in `Cicli/2026Q4/Temi_2026Q4.json`; l'app le mostra accanto al tema.
 
 ```
 Ciclo 2026Q4 scritto: 13/13 rischi, zero errori di formula.
@@ -221,6 +245,9 @@ Nella griglia c'e' il valore validato. Il validatore cambia due celle:
 `valida`: `7 righe — accettate 5, rettificate 2`. Lo score di NFR-02 passa da 3,30 a **3,80**, NFR-02-K1 diventa
 Rosso, il livello di allerta passa ad **Attenzione**. Lo stato si ricalcola: NFR-02 resta nel radar.
 
+La riapertura cambia i valori, non i testi che li motivano (D-93): `valida` elenca i **testi da rileggere** (la parte
+PROBABILITA: del razionale di NFR-02, la nota del valore di NFR-02-K1) e l'app propone Testi a mano.
+
 ### Quadro d'insieme (prima pagina del report)
 
 | Numero | Valore |
@@ -231,7 +258,11 @@ Rosso, il livello di allerta passa ad **Attenzione**. Lo stato si ricalcola: NFR
 | KRI in rosso | **3** su 26 in vigore |
 | Validazione | ✓ |
 
-Priorita' per score: NFR-01 4,40; NFR-02 3,80; NFR-07 3,75; NFR-12 3,65; NFR-03 3,00.
+Subito sotto i riquadri (dal 04/11, D-99) il **commento di A1**: messaggio chiave e decisioni richieste.
+
+Priorita' per score, con gli ultimi 4 trimestri (2026Q1 → 2026Q4): NFR-01 3,65 → 4,2 → 4,2 → 4,4; NFR-02 3,3 → 3,3 →
+3,3 → 3,8; NFR-07 3,75 stabile; NFR-12 3,45 → 3,65 → 3,65 → 3,65; NFR-03 2,8 → 2,8 → 3 → 3.
+In pagina 2 i controlli e le segnalazioni da motivare, poi i rischi segnalati.
 
 ![Radar di Mosca nel Quadro: colore = livello di allerta, ◆ = supervisore](Grafici/Quadro_radar.png)
 
@@ -284,6 +315,12 @@ la regola usa le soglie e non solo la classifica.
 ![Classifica](Grafici/Classifica.png)
 ![Lente di Mosca](Grafici/Lente_Mosca.png)
 ![Radar di Mosca: vicino al centro = agire prima; area = probabilita x impatto; colore = livello di allerta; ◆ = supervisore](Grafici/Radar_Mosca.png)
+
+Sul Radar_Mosca il punto grigio e la freccia (la **scia**, D-99) dicono da dove viene il rischio rispetto al 2026Q3:
+NFR-01 si avvicina al centro (Prossimita da 4 a 5); NFR-02 e NFR-08 si allontanano perche' le azioni del 2026Q4 hanno
+un orizzonte di 3 mesi (nel 2026Q3 NFR-02 aveva un'azione a 12 mesi, NFR-08 l'azione respinta); NFR-16 e' entrato nel
+radar e non ha scia.
+
 ![Delta 2026Q4 contro 2026Q3: NFR-01 +0,20, NFR-02 +0,50, NFR-16 +0,61](Grafici/Delta.png)
 ![Storico su otto cicli](Grafici/Storico.png)
 ![Storia di NFR-01-K1](Grafici/Indicatori_KRI_NFR-01-K1.png)
@@ -293,8 +330,11 @@ la regola usa le soglie e non solo la classifica.
 ### Schede dei rischi e report al comitato
 
 `schede-input` e `schede` (senza A6) producono `Schede_2026Q4.xlsx`, un indice e 13 schede (i rischi del radar) con
-il razionale in parti, il perche' di ogni valore, azioni e KRI con "Perche'" ed "Effetto atteso"; accanto,
-`Schede_2026Q4.pdf` (dal 23/10/2026).
+il razionale in parti, "Che cosa significa per la Banca" (QUINDI), i rischi collegati (NFR-01 con NFR-10 e NFR-06;
+nelle loro schede "Collegato a NFR-01"), il perche' di ogni valore, azioni e KRI con "Perche'" ed "Effetto atteso"; accanto,
+`Schede_2026Q4.pdf` (dal 23/10/2026). In fondo, dal 04/11 (D-101), **8 schede per tema** ("Tema DRV-..."): un foglio per
+ogni driver con almeno due rischi, con stato, score e andamento dei rischi figli e i gruppi COLLEGATI, senza uno score
+del tema.
 
 Il report al comitato:
 1. dal 23/10/2026 (D-83) lo scrive gia' `valida` a ogni validazione del ciclo, anche dopo la riapertura:
@@ -331,7 +371,7 @@ Il **precontrollo** parla ad A8 e non ferma:
 
 ```
 Precontrollo dell'output di A8 (2026Q4-S1): 0 punti da correggere, 1 da verificare.
-Impronta dell'output di A8: 778f10489ca4
+Impronta dell'output di A8: 145ac135a3a6
 1. NFR-07 · C1: analisi_evento: rischio toccato dall'evento ma non indicato per lo straordinario: la funzione di rischio valuti se rivalutarlo (un altro straordinario o il trimestre).
 ```
 
@@ -401,6 +441,7 @@ Demo_W1_W2/
     Cicli/2026Q4-S1/                    lo straordinario: Straordinario_2026Q4-S1.json (la decisione), registro scritto
                                         e validato, output di A8 (archiviato come A1_2026Q4-S1.json)
     Settimane/2026-10-12/, 2026-11-16/  Excel della settimana, validato, output di A3
+    Mensili/                            Riepilogo_2026-10.xlsx e .html, il riepilogo mensile delle notizie (P7, D-100)
     Backup/                             il registro vivo prima di ogni scrittura
   Grafici/                              immagini dell'Excel del 2026Q4, Radar_Mosca e Storico dello straordinario,
                                         Validazione_2026Q3.pdf

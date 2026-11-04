@@ -48,7 +48,7 @@ from openpyxl.chart.series import SeriesLabel
 from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.chart.text import RichText, Text
 from openpyxl.chart.title import Title
-from openpyxl.drawing.line import LineProperties
+from openpyxl.drawing.line import LineEndProperties, LineProperties
 from openpyxl.drawing.text import CharacterProperties, Paragraph, ParagraphProperties
 from openpyxl.formatting.rule import DataBarRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -82,7 +82,7 @@ PREFISSI = {"tblRegister": "RR", "tblAzioni": "AZ", "tblKRI": "KRI", "tblNews": 
 # con un template piu' vecchio e indica il comando aggiorna-registro. Va alzata a
 # ogni modifica di struttura (non per un cambio di soli dati di esempio), insieme a
 # VERSIONE_TEMPLATE in 07_Senza_Studio/esegui_ciclo_locale.py.
-VERSIONE_TEMPLATE = "2026-10-09"
+VERSIONE_TEMPLATE = "2026-11-04"
 # Tabelle dati: riga 1 titolo, riga 2 guida, riga 3 gruppi di colonne per chi le
 # scrive, riga 4 significato delle colonne, riga 5 intestazione, dati dalla riga 6
 # (i nomi definiti delle colonne partono da qui).
@@ -171,10 +171,11 @@ GUIDE = {
     "Quadro": ("trimestrale", [
         "CICLO TRIMESTRALE — A1 valuta i rischi, lo script la controlla (e A5, se usato), il validatore la conferma o la "
         "rettifica.",
-        "Come si legge: i cinque riquadri in alto dicono se il ciclo e' completo e validato; poi le priorita' per score, la "
-        "gravita' (matrice) e l'urgenza (radar). A pagina 2 il commento di A1 (scritto prima della validazione: se dopo ci "
-        "sono state rettifiche lo dice la riga \"Dopo il commento\" e valgono i numeri validati), le segnalazioni portate "
-        "in validazione e i rischi segnalati, con il perche' calcolato dal foglio. Metodo e scale: Metodologia; ogni dato: "
+        "Come si legge: i cinque riquadri in alto dicono se il ciclo e' completo e validato; subito sotto il "
+        "commento di A1 (scritto prima della validazione: se dopo ci sono state rettifiche lo dice la riga \"Dopo il "
+        "commento\" e valgono i numeri validati); poi le priorita' per score con gli ultimi 4 trimestri, la gravita' "
+        "(matrice) e l'urgenza (radar). A pagina 2 i controlli, le segnalazioni portate in validazione e i rischi "
+        "segnalati, con il perche' calcolato dal foglio. Metodo e scale: Metodologia; ogni dato: "
         "Dizionario. Note dell'analista (cella gialla in prima pagina): testo libero scritto a mano, per esempio la "
         "sintesi delle spiegazioni chieste ad A7; a un ciclo nuovo passa nel foglio Sintesi_Cicli."]),
     "Classifica": ("trimestrale", [
@@ -187,7 +188,8 @@ GUIDE = {
         "Come si legge: piu' vicino al centro = agire prima. Dentro il cerchio rosso (X + Y > Z) si e' gia' in ritardo "
         "anche se l'evento non e' imminente. Area del cerchio = Probabilita x Impatto; colore = livello di allerta "
         "(rosso attivazione, giallo attenzione, verde monitoraggio: colonne U-AB); ◆ = tema all'attenzione del "
-        "supervisore; settore = categoria di rischio. Parametri: foglio Parametri, righe 47-63."]),
+        "supervisore; settore = categoria di rischio; punto grigio e freccia = da dove viene il rischio rispetto al "
+        "trimestre prima (cicloScia), solo se il cerchio si e' spostato. Parametri: foglio Parametri, righe 47-63."]),
     "Matrice": ("trimestrale", [
         "CICLO TRIMESTRALE — calcolata dal foglio sui valori validati di Probabilita e Impatto.",
         "Come si legge: ogni rischio nella cella della sua Probabilita (righe) e Impatto (colonne); colore = P x I (verde "
@@ -994,6 +996,15 @@ def foglio_parametri(wb):
         ws.cell(row=r, column=1, value=f"T-{7 - i}" if i < 7 else "T (corrente)")
         ws.cell(row=r, column=2, value=c)
     nome_definito(wb, "cicliTrend", "Parametri!$B$20:$B$27")
+    # P2 (04/11/2026): il trimestre da cui parte la scia del radar (l'ultimo trimestrale prima del trimestre corrente) e
+    # i cicli della traiettoria del Quadro (gli ultimi quattro trimestri, ognuno con il suo ultimo ciclo, straordinario
+    # compreso). Li scrive lo script (imposta_ciclo).
+    ws["A28"] = "Trimestre della scia del radar (scritto dallo script)"; ws["B28"] = trimestri_prima(CICLO_CORRENTE, 1)[0]
+    nome_definito(wb, "cicloScia", "Parametri!$B$28")
+    ws["C19"] = "Traiettoria del Quadro (dallo script)"; ws["C19"].font = GRASSETTO
+    for i, c in enumerate(trimestri_prima(CICLO_CORRENTE, 3)[::-1] + [CICLO_CORRENTE]):   # righe 20..23
+        ws.cell(row=20 + i, column=3, value=c)
+    nome_definito(wb, "cicliTraiettoria", "Parametri!$C$20:$C$23")
 
     ws["A29"] = "Settimane"; ws["A29"].font = GRASSETTO
     ws["A30"] = "Settimana corrente (lunedi', scritta dalla scrittura A3)"
@@ -1926,13 +1937,14 @@ def _etichetta_serie(serie, solo_primo=False, posizione="r", indice=0, sz=800, b
     serie.dLbls.txPr = rich(sz, b, colore)
 
 
-def grafico_radar(ws, base, piccolo=False):
+def grafico_radar(ws, base, piccolo=False, scia=False):
     """Scrive in ws, da colonna 'base' (nascoste), l'appoggio del radar di Mosca e restituisce il grafico.
     I valori per rischio vengono dal foglio Radar_Mosca (righe 5..): cosi' il radar del Quadro d'insieme e
     quello del Radar_Mosca sono lo stesso grafico, e ciascuno legge celle del proprio foglio.
     Colonne (da base): 0 angolo; 1-8 anelli (x, y); 10-11 raggi dei settori; 13-15 etichette dei settori;
     17.. classi di P x I per livello di allerta (riga 3 = livello, D-63); poi x e ID di ogni rischio (con ◆ se
-    il tema e' all'attenzione del supervisore), e i campioni della legenda."""
+    il tema e' all'attenzione del supervisore), e i campioni della legenda. Con 'scia' (solo nel Radar_Mosca, P2) anche
+    il punto del trimestre prima e la freccia verso il cerchio di oggi, dalle colonne di colonne_scia."""
     C = lambda n: base + n
     Lx = lambda n: get_column_letter(base + n)
     rm = "" if ws.title == "Radar_Mosca" else "Radar_Mosca!"
@@ -1988,6 +2000,8 @@ def grafico_radar(ws, base, piccolo=False):
         campioni += [("dentro il cerchio rosso: AGIRE ORA (X + Y > Z)", -7.35, y0 - 1.8), ("", -6.45, y0 - 1.8)]
     campioni += [("Area del cerchio = P x I", 4.4, y0), ("4", 3.5, y0 - 1.05), ("12", 4.8, y0 - 1.05),
                  ("25", 6.5, y0 - 1.05)]
+    if scia:                                              # P2: riga 14 dell'appoggio
+        campioni += [("punto grigio e freccia: posizione nel trimestre prima", -6.9, y0 - 2.35)]
     for k, (testo, x, y) in enumerate(campioni):
         ws.cell(row=5 + k, column=cl, value=testo)
         ws.cell(row=5 + k, column=cl + 1, value=x)
@@ -2026,6 +2040,26 @@ def grafico_radar(ws, base, piccolo=False):
         s.graphicalProperties.line.noFill = True
         _etichetta_serie(s, posizione="ctr", sz=sz[1], colore=BLU_NOTTE)
         ch.series.append(s)
+    if scia:                                           # P2: sotto i cerchi, cosi' la freccia arriva al loro bordo
+        xs, xe, ys, ye = SCIA + 7, SCIA + 8, SCIA + 9, SCIA + 10
+        s = _punti(ws, (5, ultima), xs, ys, titolo_testo="Posizione nel trimestre della scia")
+        s.marker.symbol = "circle"
+        s.marker.size = 6
+        s.marker.graphicalProperties = GraphicalProperties(solidFill="A6A6A6")
+        s.marker.graphicalProperties.line.solidFill = "7F7F7F"
+        s.graphicalProperties.line.noFill = True
+        ch.series.append(s)
+        for i in range(MAX_RISCHI):
+            r = 5 + i
+            s = Series(Reference(ws, min_col=ys, max_col=ye, min_row=r, max_row=r),
+                       xvalues=Reference(ws, min_col=xs, max_col=xe, min_row=r, max_row=r))
+            s.tx = SeriesLabel(v=f"Scia {i + 1}")
+            s.marker.symbol = "none"
+            s.smooth = False
+            s.graphicalProperties.line.solidFill = "7F7F7F"
+            s.graphicalProperties.line.width = 15875
+            s.graphicalProperties.line.tailEnd = LineEndProperties(type="triangle", w="med", len="med")
+            ch.series.append(s)
     lato = lambda v: max(2, round(LATO_PER_RADICE * scala * v ** 0.5))
     colore_livello = {livello: colore for livello, colore, _ in LIVELLI}
     for n, (v, livello) in enumerate(classi):
@@ -2079,6 +2113,15 @@ def grafico_radar(ws, base, piccolo=False):
             s.graphicalProperties.line.noFill = True
             _etichetta_serie(s, posizione="b", sz=800, b=False, colore=TESTO_TENUE)
             ch.series.append(s)
+    if scia and not piccolo:
+        s = _punti(ws, (14, 14), cl + 1, cl + 2, titolo_cella=f"${get_column_letter(cl)}$14")
+        s.marker.symbol = "circle"
+        s.marker.size = 6
+        s.marker.graphicalProperties = GraphicalProperties(solidFill="A6A6A6")
+        s.marker.graphicalProperties.line.solidFill = "7F7F7F"
+        s.graphicalProperties.line.noFill = True
+        _etichetta_serie(s, posizione="r", sz=sz[0], colore=TESTO_TENUE)
+        ch.series.append(s)
     for asse in (ch.x_axis, ch.y_axis):
         asse.scaling.min, asse.scaling.max = -LIMITE_ASSI, LIMITE_ASSI
         asse.delete = True
@@ -2091,6 +2134,53 @@ def grafico_radar(ws, base, piccolo=False):
     ch.width = 8.5 if piccolo else 17
     ch.height = ch.width * (2 * LIMITE_ASSI + sotto) / (2 * LIMITE_ASSI)    # stessa scala sui due assi: cerchi rotondi
     return ch
+
+
+# P2 (04/11/2026): la scia del radar. Colonne nascoste del Radar_Mosca da SCIA (dopo l'appoggio del grafico, che
+# finisce alla colonna 94; nessun nome di livello in riga 3, la legge il collaudo): la posizione di ogni rischio nel
+# trimestre della scia (cicloScia), con la stessa regola di oggi (Z dalla Prossimita di allora, Y dalle azioni del suo
+# periodo di valutazione o dagli anni di adeguamento di quella riga) e l'angolo di oggi; la scia si disegna solo se il
+# rischio era nel radar allora e il cerchio si e' spostato. La freccia finisce sul bordo del cerchio di oggi.
+SCIA = 100
+COLONNE_SCIA = ["Prossimita nel trimestre della scia", "Stato allora", "Periodo di valutazione allora",
+                "Anni di adeguamento allora", "Y allora", "Raggio allora", "Spostato (1 = scia)", "Scia: x da", "Scia: x a",
+                "Scia: y da", "Scia: y a"]
+
+
+def colonne_scia(wb, ws):
+    L = lambda n: get_column_letter(SCIA + n)
+    ultima = 4 + MAX_RISCHI
+    for j, testo in enumerate(COLONNE_SCIA):
+        c = ws.cell(row=4, column=SCIA + j, value=testo); c.font = Font(size=9, bold=True); c.alignment = A_CAPO
+    for i in range(MAX_RISCHI):
+        r = 5 + i
+        riga = f'MATCH(cicloScia&"|"&$A{r},RR_Chiave,0)'
+        c = lambda n: f"{L(n)}{r}"
+        ws[c(0)] = (f'=IF(OR($A{r}="",cicloScia=""),NA(),IF(COUNTIFS(RR_ID_Rischio,$A{r},RR_Ciclo,cicloScia)=0,NA(),'
+                    f'SUMIFS(RR_Prossimita,RR_ID_Rischio,$A{r},RR_Ciclo,cicloScia)))')
+        ws[c(1)] = f'=IF(ISNUMBER({c(0)}),IFERROR(INDEX(RR_Stato,{riga})&"",""),"")'
+        ws[c(2)] = f'=IF(ISNUMBER({c(0)}),IFERROR(IF(INDEX(RR_Periodo_Valutazione,{riga})="",cicloScia,INDEX(RR_Periodo_Valutazione,{riga})&""),cicloScia),"")'
+        ws[c(3)] = f'=IF(ISNUMBER({c(0)}),IFERROR(N(INDEX(RR_Anni_Adeguamento,{riga})),0),0)'
+        ws[c(4)] = (f'=IF(ISNUMBER({c(0)}),MAX(IF(COUNTIFS(AZ_ID_Rischio,$A{r},AZ_Ciclo,{c(2)},AZ_Stato,"<>Respinta",'
+                    f'AZ_Mesi_Orizzonte,">0")=0,moscaYDefault,_xlfn.MAXIFS(AZ_Mesi_Orizzonte,AZ_ID_Rischio,$A{r},AZ_Ciclo,'
+                    f'{c(2)},AZ_Stato,"<>Respinta")/12),{c(3)}),NA())')
+        ws[c(5)] = (f'=IF(ISNUMBER({c(4)}),MAX({RAGGIO_MIN},MIN({RAGGIO_MAX},INDEX(anniProssimita,{c(0)})-(moscaX+{c(4)})'
+                    f'+{SCOSTAMENTO_RAGGIO})),NA())')
+        ws[c(6)] = (f'=IF(AND(ISNUMBER({c(5)}),ISNUMBER($Q{r}),ISNUMBER($P{r}),LEFT({c(1)},5)="Radar"),'
+                    f'IF(ABS({c(5)}-$Q{r})>0.001,1,0),0)')
+        # Fine della freccia: sul bordo del cerchio di oggi (raggio del marcatore in unita' degli assi, circa 0,16 per
+        # unita' di radice di P x I), mai oltre meta' del tratto.
+        fine = (f'($Q{r}-SIGN($Q{r}-{c(5)})*MIN(0.16*SQRT(N($F{r}))+0.1,ABS($Q{r}-{c(5)})*0.6))')
+        ws[c(7)] = f'=IF({c(6)}=1,{c(5)}*SIN($P{r}),NA())'
+        ws[c(8)] = f'=IF({c(6)}=1,{fine}*SIN($P{r}),NA())'
+        ws[c(9)] = f'=IF({c(6)}=1,{c(5)}*COS($P{r}),NA())'
+        ws[c(10)] = f'=IF({c(6)}=1,{fine}*COS($P{r}),NA())'
+        for n in (3, 4, 5, 7, 8, 9, 10):
+            ws[c(n)].number_format = "0.00"
+    for n in range(len(COLONNE_SCIA)):
+        ws.column_dimensions[L(n)].hidden = True
+    nome_definito(wb, "rmRaggioScia", f"Radar_Mosca!${L(5)}$5:${L(5)}${ultima}")
+    nome_definito(wb, "rmScia", f"Radar_Mosca!${L(6)}$5:${L(6)}${ultima}")
 
 
 def foglio_radar_mosca(wb):
@@ -2177,13 +2267,16 @@ def foglio_radar_mosca(wb):
     for nome, col in (("rmID", "A"), ("rmZ", "H"), ("rmX", "I"), ("rmY", "J"), ("rmMargine", "K"), ("rmUrgenza", "L"),
                       ("rmPxI", "F"), ("rmLivello", COL_LIVELLO), ("rmMotivoLivello", "AB")):
         nome_definito(wb, nome, f"Radar_Mosca!${col}$5:${col}${ultima}")
-    ch = grafico_radar(ws, 30)      # appoggio da AD (le colonne U-AB sono il livello di allerta)
+    colonne_scia(wb, ws)
+    ch = grafico_radar(ws, 30, scia=True)      # appoggio da AD (le colonne U-AB sono il livello di allerta)
     ws.add_chart(ch, f"A{ultima + 3}")
     legenda(ws, ultima + 2, 12, f"{LEG_PXI}. {LEG_MOSCA}. Cerchi grigi = 1 anno (tratteggiato), 2 e 3 anni di margine. "
                                 f"Colore = livello di allerta: rosso Attivazione (almeno due fra AGIRE ORA, KRI in rosso, "
                                 f"notizie in peggioramento), giallo Attenzione (uno di questi, o margine sotto l'anno con P x I "
                                 f"alta, presidio assente o KRI in ambra), verde Monitoraggio (colonne U-AB). "
-                                f"Settori = categorie della tassonomia interna (9.1 ... 9.13; un rischio FP, fuori perimetro, non compare). {LEG_RISCHIO}.")
+                                f"Settori = categorie della tassonomia interna (9.1 ... 9.13; un rischio FP, fuori perimetro, non compare). "
+                                f"Punto grigio e freccia = da dove viene il rischio: la sua posizione nel trimestre prima "
+                                f"(Parametri, riga 28), solo se era gia' nel radar e il cerchio si e' spostato. {LEG_RISCHIO}.")
 
 
 # ---------------------------------------------------------------- KRI: indicatori correnti e storia di uno
@@ -2709,17 +2802,63 @@ def foglio_quadro(wb):
     ws.conditional_formatting.add("J4:L6", FormulaRule(formula=["$J$5=0"], fill=fill(FONDO_TENUE)))
     ws.conditional_formatting.add("M4:O6", FormulaRule(formula=["decisioniDaPrendere>0"], fill=fill(AMBRA_TENUE)))
 
-    sezione(ws, 8, 1, 8, "Priorita' — primi cinque per score composito")
-    sezione(ws, 8, 10, 15, "Gravita': Probabilita x Impatto")
-    for j, t in [(1, "#"), (2, "Rischio"), (6, "Score"), (7, "Variazione"), (8, "Urgenza")]:
-        ws.cell(row=9, column=j, value=t).font = Font(size=9, bold=True, color=TESTO_TENUE)
-    ws.merge_cells("B9:E9")
+    # Richiesta dell'utente del 04/11/2026: il commento di A1 (messaggio, decisioni e "dopo il commento") in prima
+    # pagina, sotto i riquadri; controlli e segnalazioni da motivare restano in seconda, con i rischi segnalati.
+    rc = 8
+    sezione(ws, rc, 1, 15, "Il commento dell'analisi (agente A1, scritto prima della validazione)")
+    uno = "MATCH(cicloCorrente,SI_Ciclo,0)"
+    ws["AB9"] = f'=IFERROR(INDEX(SI_Sintesi_A1,{uno})&"","")'
+    ws["AB10"] = '=IFERROR(SEARCH("DECISIONI:",AB9),0)'
+    t, d = "AB9", "AB10"
+    # Valori rettificati piu' oggetti respinti (un'azione respinta conta una volta, non per ogni suo campo: D-67).
+    rettifiche = ('(COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Applicata",VAL_Decisione,"Rettificato")'
+                  + "".join(f'+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Applicata",VAL_Decisione,"Respinto",'
+                            f'VAL_Oggetto,"{o}",VAL_Campo,"{s["campi"][0]}")'
+                            for o, s in MAPPA["validazione"]["oggetti"].items() if s["respingibile"] and s["periodo"])
+                  + ")")
+
+    def righe_testo(prima_riga, righe, altezze):
+        for k, (etichetta, formula) in enumerate(righe):
+            r = prima_riga + k
+            ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=3)
+            ws.merge_cells(start_row=r, start_column=4, end_row=r, end_column=15)
+            c = ws.cell(row=r, column=1, value=etichetta); c.font = Font(size=10, bold=True, color=BLU_NOTTE)
+            c.alignment = Alignment(vertical="top")
+            c = ws.cell(row=r, column=4, value=formula); c.font = Font(size=10)
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+            ws.row_dimensions[r].height = altezze[k]          # adattate dallo script al testo del ciclo (prepara_report)
+    righe_testo(rc + 1, [
+        ("Messaggio chiave", f'=IF({t}="","Nessun commento registrato per il ciclo corrente.",'
+                             f'TRIM(SUBSTITUTE(SUBSTITUTE(IF({d}>0,LEFT({t},{d}-1),{t}),"MESSAGGIO:",""),"Messaggio:","")))'),
+        ("Decisioni richieste", f'=IF({d}>0,TRIM(MID({t},{d}+10,4000)),"—")'),
+        ("Dopo il commento", f'=IF({rettifiche}>0,"Il validatore ha applicato "&{rettifiche}&" rettifiche o respingimenti: numeri e '
+                             f'grafici del report sono quelli validati e prevalgono sul commento.","")'),
+    ], [44, 30, 15])
+    ws.conditional_formatting.add(f"D{rc + 3}:O{rc + 3}", FormulaRule(formula=[f'$D${rc + 3}<>""'], fill=fill(AMBRA_TENUE)))
+    nome_definito(wb, "quadroCommento", f"Quadro!$A${rc + 1}:$O${rc + 3}")
+    ws.column_dimensions["AB"].hidden = True
+
+    rp = rc + 5                                          # 13: priorita' e gravita'
+    sezione(ws, rp, 1, 8, "Priorita' — primi cinque per score composito")
+    sezione(ws, rp, 10, 15, "Gravita': Probabilita x Impatto")
+    for j, testo in [(1, "#"), (2, "Rischio"), (5, "Ultimi 4 trimestri"), (6, "Score"), (7, "Variazione"), (8, "Urgenza")]:
+        c = ws.cell(row=rp + 1, column=j, value=testo); c.font = Font(size=9, bold=True, color=TESTO_TENUE)
+        c.alignment = Alignment(wrap_text=True)
+    ws.merge_cells(f"B{rp + 1}:D{rp + 1}")
     for k in range(5):
-        r, cr = 10 + k, 5 + k
+        r, cr = rp + 2 + k, 5 + k
         ws[f"A{r}"] = f"=Classifica!$A${cr}"
-        ws.merge_cells(f"B{r}:E{r}")
+        ws.merge_cells(f"B{r}:D{r}")
         ws[f"B{r}"] = (f'=IF(Classifica!$B${cr}="","",Classifica!$B${cr}&"  "&Classifica!$C${cr}'
                        f'&IFERROR(IF(INDEX(ANA_Attenzione_Supervisore,Classifica!$U${cr})="Sì","  ◆",""),""))')
+        # P2: la traiettoria, score composito alla fine di ognuno degli ultimi quattro trimestri (cicliTraiettoria),
+        # dalle colonne nascoste X-AA.
+        for n, col in enumerate(["X", "Y", "Z", "AA"], start=1):
+            ciclo = f"INDEX(cicliTraiettoria,{n})"
+            ws[f"{col}{r}"] = (f'=IF(Classifica!$B${cr}="","",IFERROR(IF(COUNTIFS(RR_ID_Rischio,Classifica!$B${cr},'
+                               f'RR_Ciclo,{ciclo})=0,"",FIXED(SUMIFS(RR_Score_Composito,RR_ID_Rischio,Classifica!$B${cr},'
+                               f'RR_Ciclo,{ciclo}),1)),""))')
+        ws[f"E{r}"] = f'=_xlfn.TEXTJOIN(" → ",TRUE,X{r}:AA{r})'
         ws[f"F{r}"] = f'=IF(Classifica!$B${cr}="","",Classifica!$D${cr})'
         ws[f"G{r}"] = f'=IF(Classifica!$B${cr}="","",IF(ISNUMBER(Classifica!$F${cr}),Classifica!$F${cr},"nuovo"))'
         ws[f"H{r}"] = (f'=IF(Classifica!$B${cr}="","",IF(LEFT(Classifica!$H${cr},9)="AGIRE ORA","AGIRE ORA",'
@@ -2728,6 +2867,8 @@ def foglio_quadro(wb):
         ws[f"A{r}"].alignment = Alignment(horizontal="center", vertical="center")
         ws[f"B{r}"].font = Font(size=9)
         ws[f"B{r}"].alignment = Alignment(wrap_text=True, vertical="center")
+        ws[f"E{r}"].font = Font(size=8, color=TESTO_TENUE)
+        ws[f"E{r}"].alignment = Alignment(horizontal="center", vertical="center", shrink_to_fit=True)
         ws[f"F{r}"].number_format = "0.00"; ws[f"F{r}"].font = Font(bold=True)
         ws[f"G{r}"].number_format = FORMATO_DELTA
         for col in "FG":
@@ -2737,103 +2878,90 @@ def foglio_quadro(wb):
         for j in range(1, 9):
             ws.cell(row=r, column=j).border = BORDO_SOTTILE
         ws.row_dimensions[r].height = 25
-    ws.conditional_formatting.add("F10:F14", DataBarRule(start_type="num", start_value=0, end_type="num", end_value=5, color="8EA9DB"))
-    colora_delta(ws, "G10:G14", "G10")
-    chip_urgenza(ws, "H10:H14", "H10")
-    ws["A15"] = "Score 1-5, 5 = peggiore; barra su scala fissa 0-5. Variazione sul ciclo precedente."
-    ws["A15"].font = Font(size=8, italic=True, color=TESTO_TENUE)
+    for col in ("X", "Y", "Z", "AA"):
+        ws.column_dimensions[col].hidden = True
+    p5, u5 = rp + 2, rp + 6
+    ws.conditional_formatting.add(f"F{p5}:F{u5}", DataBarRule(start_type="num", start_value=0, end_type="num", end_value=5, color="8EA9DB"))
+    colora_delta(ws, f"G{p5}:G{u5}", f"G{p5}")
+    chip_urgenza(ws, f"H{p5}:H{u5}", f"H{p5}")
+    ws[f"A{u5 + 1}"] = ("Score 1-5 (5 = peggiore), barra 0-5; variazione sul ciclo prima; ultimi 4 trimestri = score "
+                        "alla fine di ciascuno.")
+    ws[f"A{u5 + 1}"].font = Font(size=8, italic=True, color=TESTO_TENUE)
     # Mini matrice (legge il foglio Matrice).
-    ws["J9"] = "P \\ S"; ws["J9"].font = Font(size=8, bold=True, color=TESTO_TENUE)
+    ws[f"J{rp + 1}"] = "P \\ S"; ws[f"J{rp + 1}"].font = Font(size=8, bold=True, color=TESTO_TENUE)
     bianco = Side(style="thin", color="FFFFFF")
     for s in range(1, 6):
-        c = ws.cell(row=9, column=10 + s, value=s); c.font = Font(size=8, bold=True, color=TESTO_TENUE)
+        c = ws.cell(row=rp + 1, column=10 + s, value=s); c.font = Font(size=8, bold=True, color=TESTO_TENUE)
         c.alignment = Alignment(horizontal="center")
     for i, p in enumerate(range(5, 0, -1)):
-        r = 10 + i
+        r = rp + 2 + i
         c = ws.cell(row=r, column=10, value=p); c.font = Font(size=8, bold=True, color=TESTO_TENUE)
         c.alignment = Alignment(horizontal="center", vertical="center")
         for s in range(1, 6):
+            m = f"Matrice!{get_column_letter(2 + s)}{5 + i}"
+            # G5 (04/11/2026): con sei o piu' rischi nella cella, "n rischi" (l'elenco e' nella Matrice): niente tagli.
+            n = f'(LEN({m})-LEN(SUBSTITUTE({m},"NFR-","")))/4'
             c = ws.cell(row=r, column=10 + s,
-                        value=f'=SUBSTITUTE(SUBSTITUTE(Matrice!{get_column_letter(2 + s)}{5 + i}," ◆",""),"NFR-","")')
+                        value=f'=IF({n}>5,{n}&" rischi",SUBSTITUTE(SUBSTITUTE({m}," ◆",""),"NFR-",""))')
             c.fill = fill(fascia_pxi(p * s))
             c.font = Font(size=7, bold=True)
             c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
             c.border = Border(left=bianco, right=bianco, top=bianco, bottom=bianco)
-    ws["J15"] = "Numeri = NFR-nn. Verde P x I fino a 6, ambra 8-12, rosso da 15."; ws["J15"].font = Font(size=8, italic=True, color=TESTO_TENUE)
+    ws[f"J{u5 + 1}"] = "Numeri = NFR-nn (da sei in su quanti sono, elenco nella Matrice). Verde P x I fino a 6, ambra 8-12, rosso da 15."
+    ws[f"J{u5 + 1}"].font = Font(size=8, italic=True, color=TESTO_TENUE)
 
     # D-72: Note dell'analista, unica cella del report scritta a mano (per esempio la sintesi delle spiegazioni
     # discusse con A7). trimestrale la archivia nel ciclo precedente di tblSintesi e la svuota.
-    ws.merge_cells("A16:B16")
-    ws["A16"] = "Note dell'analista"
-    ws["A16"].font = Font(size=9, bold=True, color=BLU_NOTTE)
-    ws["A16"].alignment = Alignment(vertical="top", wrap_text=True)
-    ws.merge_cells("C16:O16")
-    ws["C16"].font = Font(size=8.5)
-    ws["C16"].alignment = Alignment(vertical="top", wrap_text=True)
+    rn = u5 + 2                                          # 21
+    ws.merge_cells(f"A{rn}:B{rn}")
+    ws[f"A{rn}"] = "Note dell'analista"
+    ws[f"A{rn}"].font = Font(size=9, bold=True, color=BLU_NOTTE)
+    ws[f"A{rn}"].alignment = Alignment(vertical="top", wrap_text=True)
+    ws.merge_cells(f"C{rn}:O{rn}")
+    ws[f"C{rn}"].font = Font(size=8.5)
+    ws[f"C{rn}"].alignment = Alignment(vertical="top", wrap_text=True)
     for x in range(3, 16):
-        ws.cell(row=16, column=x).fill = fill("FFF2CC")
-    ws.row_dimensions[16].height = 34
-    nome_definito(wb, "quadroNote", "'Quadro'!$C$16")
+        ws.cell(row=rn, column=x).fill = fill("FFF2CC")
+    ws.row_dimensions[rn].height = 34                  # lo script la abbassa quando e' vuota (prepara_report)
+    nome_definito(wb, "quadroNote", f"'Quadro'!$C${rn}")
 
     # Radar di Mosca (appoggio nel foglio stesso) e legenda dei rischi.
-    sezione(ws, 17, 1, 8, "Urgenza: radar di Mosca")
-    sezione(ws, 17, 10, 15, "I rischi del ciclo")
-    ws.add_chart(grafico_radar(ws, 60, piccolo=True), "B18")
+    rr = rn + 1                                          # 22
+    sezione(ws, rr, 1, 8, "Urgenza: radar di Mosca")
+    sezione(ws, rr, 10, 15, "I rischi del ciclo")
+    ch = grafico_radar(ws, 60, piccolo=True)
+    ch.width = ch.height = 7.7                           # 04/11: un po' piu' basso, per fare posto al commento
+    ws.add_chart(ch, f"B{rr + 1}")
     for i in range(MAX_RISCHI):
-        r = 18 + i
+        r = rr + 1 + i
         ws.merge_cells(f"K{r}:O{r}")
         ws[f"J{r}"] = f"=INDEX(posID,{i + 1})&\"\""
         ws[f"K{r}"] = f'=IF(J{r}="","",INDEX(posNome,{i + 1})&IF(INDEX(ANA_Attenzione_Supervisore,{i + 1})="Sì","  ◆",""))'
         ws[f"J{r}"].font = Font(size=8, bold=True, color=BLU_NOTTE)
         ws[f"K{r}"].font = Font(size=8)
-        ws.row_dimensions[r].height = 12          # 20 righe nello spazio che ne teneva 15 da 16 punti
-    fine_radar = 18 + MAX_RISCHI
+        ws.row_dimensions[r].height = 11          # 20 righe accanto al radar
+    fine_radar = rr + 1 + MAX_RISCHI
     ws[f"A{fine_radar}"] = ("Radar: piu' vicino al centro = agire prima; area del cerchio = P x I; colore = livello di allerta "
                             "(rosso attivazione, giallo attenzione, verde monitoraggio); ◆ = attenzione del supervisore. "
                             "Numeri nel radar = NFR-nn.")
     ws[f"A{fine_radar}"].font = Font(size=8, italic=True, color=TESTO_TENUE)
     ws.row_breaks.append(Break(id=fine_radar))
 
-    # Pagina 2: il commento di A1 (messaggio e decisioni), A5, avviso; poi i rischi segnalati.
-    r0 = fine_radar + 2                                 # 35
-    sezione(ws, r0, 1, 15, "Il commento dell'analisi (agente A1, scritto prima della validazione)")
-    uno = "MATCH(cicloCorrente,SI_Ciclo,0)"
-    ws[f"T{r0 + 1}"] = f'=IFERROR(INDEX(SI_Sintesi_A1,{uno})&"","")'
-    ws[f"T{r0 + 2}"] = f'=IFERROR(SEARCH("DECISIONI:",T{r0 + 1}),0)'
-    t, d = f"T{r0 + 1}", f"T{r0 + 2}"
-    # Valori rettificati piu' oggetti respinti (un'azione respinta conta una volta, non per ogni suo campo: D-67).
-    rettifiche = ('(COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Applicata",VAL_Decisione,"Rettificato")'
-                  + "".join(f'+COUNTIFS(VAL_Periodo,cicloCorrente,VAL_Stato,"Applicata",VAL_Decisione,"Respinto",'
-                            f'VAL_Oggetto,"{o}",VAL_Campo,"{s["campi"][0]}")'
-                            for o, s in MAPPA["validazione"]["oggetti"].items() if s["respingibile"] and s["periodo"])
-                  + ")")
-    righe = [
-        ("Messaggio chiave", f'=IF({t}="","Nessun commento registrato per il ciclo corrente.",'
-                             f'TRIM(SUBSTITUTE(SUBSTITUTE(IF({d}>0,LEFT({t},{d}-1),{t}),"MESSAGGIO:",""),"Messaggio:","")))'),
-        ("Decisioni richieste", f'=IF({d}>0,TRIM(MID({t},{d}+10,4000)),"—")'),
+    # Pagina 2: controlli (A5 se usato) e segnalazioni da motivare; poi i rischi segnalati.
+    r0 = fine_radar + 2
+    sezione(ws, r0, 1, 15, "Controlli e segnalazioni da motivare")
+    righe_testo(r0 + 1, [
         ("Controlli (A5 se usato)", f'=IFERROR(INDEX(SI_Sintesi_A5,{uno})&"","")&IFERROR(" Osservazioni: "&INDEX(SI_Osservazioni_Controlli,{uno})&".","")'),
-        ("Dopo il commento", f'=IF({rettifiche}>0,"Il validatore ha applicato "&{rettifiche}&" rettifiche o respingimenti: numeri e '
-                             f'grafici del report sono quelli validati e prevalgono sul commento.","")'),
         # D-71: segnalazioni da motivare (controlli dello script e Bloccanti di A5) portate in validazione.
         ("Segnalazioni da motivare", f'=IFERROR(IF(INDEX(SI_Rilievi_Superati,{uno})="","",INDEX(SI_Rilievi_Superati,{uno})&'
                                      f'" In validazione ogni rischio interessato chiede una motivazione (colonna Segnalazioni)."),"")'),
-    ]
-    altezze = [44, 30, 30, 30, 30]            # adattate dallo script al testo del ciclo (prepara_report)
-    for k, (etichetta, formula) in enumerate(righe):
-        r = r0 + 1 + k
-        ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=3)
-        ws.merge_cells(start_row=r, start_column=4, end_row=r, end_column=15)
-        c = ws.cell(row=r, column=1, value=etichetta); c.font = Font(size=10, bold=True, color=BLU_NOTTE)
-        c.alignment = Alignment(vertical="top")
-        c = ws.cell(row=r, column=4, value=formula); c.font = Font(size=10)
-        c.alignment = Alignment(wrap_text=True, vertical="top")
-        ws.row_dimensions[r].height = altezze[k]
-    for avviso in (r0 + 4, r0 + 5):                    # "Dopo il commento" e segnalazioni da motivare: evidenziati se presenti
-        ws.conditional_formatting.add(f"D{avviso}:O{avviso}", FormulaRule(formula=[f'$D${avviso}<>""'], fill=fill(AMBRA_TENUE)))
+    ], [30, 30])
+    ws.conditional_formatting.add(f"D{r0 + 2}:O{r0 + 2}", FormulaRule(formula=[f'$D${r0 + 2}<>""'], fill=fill(AMBRA_TENUE)))
+    nome_definito(wb, "quadroControlli", f"Quadro!$A${r0 + 1}:$O${r0 + 2}")
     for col in "T":
         ws.column_dimensions[col].hidden = True
 
-    rs = r0 + 7                                          # 42
+    rs = r0 + 4
     sezione(ws, rs, 1, 15, "Rischi segnalati e perche'")
     ws[f"A{rs + 1}"] = ("Rischi fra i primi tre per score, in attivazione o in attenzione, variati o nuovi nel ciclo. Tutto "
                         "calcolato dai dati validati del registro.")
@@ -2903,7 +3031,6 @@ def foglio_quadro(wb):
     for col in "UVW":
         ws.column_dimensions[col].hidden = True
     nome_definito(wb, "quadroSegnalati", f"Quadro!$A${prima}:$O${ultima}")
-    nome_definito(wb, "quadroCommento", f"Quadro!$A${r0 + 1}:$O${r0 + 5}")
     lim = ultima + 2
     ws.merge_cells(start_row=lim, start_column=1, end_row=lim, end_column=15)
     c = ws.cell(row=lim, column=1, value="Limiti: " + leggi_limiti())

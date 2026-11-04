@@ -484,13 +484,14 @@ def slide_agente(nome, sotto, cosa_fa, quando, python, limiti, colore=BLU):
 def agenti():
     slide_agente("A1 Horizon Scanner", "Il cuore del trimestre: la valutazione dei rischi, con le fonti e il perché di ogni numero.", [
         "- Valuta **ogni rischio del radar**: Impatto, Probabilità, Prossimità (1-5) e Velocity solo se le fonti ne documentano i tempi; stima gli **anni di adeguamento** strutturale quando servono.",
-        "- Rivaluta i **rischi in osservazione** quando trova evidenza nuova; **censisce i rischi nuovi**, anche lontani (con orizzonte e segnale di avvicinamento).",
-        "- Per ogni valore cita le **fonti** (data, tipo Interna/Esterna, rilevanza 1-3) e scrive il **razionale in parti**: RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO.",
-        "- Per i rischi del radar propone **1-5 azioni** (owner = funzione, orizzonte 3/6/12 mesi) e **due KRI** (esposizione ed evoluzione), con il perché e l'EFFETTO atteso; **rilegge i valori** dei KRI del ciclo prima.",
+        "- Rivaluta i **rischi in osservazione** quando trova evidenza nuova; **censisce i rischi nuovi**, anche lontani o solo potenziali (con orizzonte e segnale di avvicinamento), partendo dai **rapporti di scenario** e dai segnali deboli; risponde ai **temi da verificare** dell'analista.",
+        "- Per ogni valore cita le **fonti** (data, tipo Interna/Esterna/Rapporto, rilevanza 1-3) e scrive il **razionale in parti**: RISCHIO, IMPATTO, PROBABILITA, PROSSIMITA, VELOCITY, ADEGUAMENTO e **QUINDI** (che cosa significa per la Banca); nel rischio primario di un gruppo, **COLLEGATI**.",
+        "- Per i rischi del radar propone **1-5 azioni nuove** (owner = funzione, orizzonte 3/6/12 mesi) e tiene **due KRI** (esposizione ed evoluzione), con il perché e l'EFFETTO atteso; **rilegge i valori** dei KRI del ciclo prima.",
+        "- Sui rischi già nel registro **aggiorna, non riscrive**: scrive solo i testi che cambiano (una descrizione che racconta l'evoluzione, le parti del razionale dei valori che cambiano, un KRI nuovo); il resto lo riprende lo script dai testi validati.",
         "- Registra i **fenomeni considerati e non censiti**, con il motivo; scrive il **commento per il comitato** (MESSAGGIO / DECISIONI).",
         "- Prima di rispondere verifica il proprio output con i controlli C1-C10 e la guida di scrittura contenuti nell'allegato."],
         ["Chat nuova, allegato **Input_A1_<ciclo>.txt**, messaggio «Esegui il ciclo».",
-         "Variazioni: rinforzato (leggere tutte le cartelle), documenti precisi, tema da verificare, fenomeno da osservare, simulazione di un ciclo passato, correzione."],
+         "Prima di A1 l'app propone la finestra dei **temi da verificare** (nella baseline). Variazioni: rinforzato, documenti precisi, fenomeno da osservare, simulazione di un ciclo passato, correzione."],
         ["- **Prima: baseline** → Baseline_corrente.json e allegato (baseline + controlli + guida di scrittura).",
          "- **Dopo: precontrollo** (facoltativo, senza Excel) → **trimestrale**: controlli, backup, scrittura, ricalcolo, regola del radar, archivio, knowledge di A7.",
          "- Se FERMATO: si incolla ad A1 il file **Correzione_A1_<ciclo>.txt** e si rilancia.",
@@ -613,14 +614,15 @@ def comandi():
         ["precontrollo", "dopo A1, facoltativo", "controlli senza Excel, messaggio di correzione per A1"],
         ["trimestrale", "dopo A1 (e A5)", "controlla, scrive il ciclo, regola del radar, archivio, knowledge di A7"],
         ["settimanale", "dopo A3", "scrive le notizie, segnali netti, sintesi della settimana"],
-        ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni; rigenera il report al comitato"],
+        ["valida", "dopo la griglia", "applica le decisioni del validatore, Storico_Validazioni; rigenera il report al comitato (anche dopo le notizie; a fine mese il report mensile)"],
         ["griglia · riapri", "quando serve", "ricostruisce il foglio Validazione · riapre un ciclo già validato"],
         ["schede-input · schede", "dopo la validazione", "dati per A6 · controlli su A6 e Schede_<ciclo>.xlsx"],
         ["report [--con-lavoro]", "dopo la validazione", "PDF e HTML del report al comitato dall'Excel com'è ora"],
         ["dismetti · sblocca", "decisione della funzione di rischio · lucchetto rimasto", "toglie un rischio, la storia resta · toglie il lucchetto e lo registra"],
         ["inizializza · aggiorna-registro", "primo uso · pacchetto nuovo", "registro vuoto · porta il registro sul template nuovo"],
-        ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"]],
-        [2.7, 2.7, 6.9], 12, 0.36)
+        ["diagnosi", "dopo la validazione, quando serve", "solo lettura: valori dei rischi nuovi, verso delle rettifiche, rischi lontani senza anni di adeguamento"],
+        ["mensile [--mese]", "una volta al mese", "solo lettura: riepilogo delle settimane del mese in Excel e HTML (segnali, pressione, notizie forti, proposte)"]],
+        [2.7, 2.7, 6.9], 11.5, 0.33)
     nota_fondo(s, ["Ogni scrittura: lucchetto (più analisti), controlli, copia di lavoro, ricalcolo e verifica in Excel, "
                    "registro sostituito solo se nessuno l'ha cambiato nel frattempo; backup e archivio."], fondo + 0.1)
 
@@ -633,8 +635,9 @@ def app_nfr():
     _, _, hh = immagine(s, "app_finestra", 0.5, 1.35, 7.9, 3.3, taglio=(0, 0, 1, 0.75))
     scheda(s, 0.5, 1.35 + hh + 0.15, 7.9, 5.95 - hh - 0.15, "Che cosa fa (e che cosa no)", [
         "- **Stato e prossimo passo** letti dall'archivio condiviso: uguali per tutti i colleghi.",
-        "- Un pulsante per processo: settimana, trimestre, straordinario, validazione, schede, report, riapertura…",
+        "- Pulsanti in riquadri: **Ogni settimana** (Analizza le notizie, A3), **Ogni trimestre** (Analizza il trimestre, A1), **All'occorrenza** (straordinario, aggiungi o rimuovi un rischio, parere A4, chat A7, riapri); in fondo **Approvazioni e report**, con il periodo nel nome.",
         "- Lancia i comandi Python nell'ordine giusto e mostra l'esito (OK, FERMATO, ERRORE TECNICO).",
+        "- **Temi da verificare**: la lista che l'analista chiede ad A1, con l'ultima risposta; il trimestre la propone prima di A1.",
         "- **Non decide niente**: controlli e scrittura restano allo script, le decisioni al validatore."], NAVY, 11.5)
     scheda(s, 8.65, 1.35, 4.18, 5.95, "Con un agente: tre gesti", [
         "L'app prepara gli allegati, apre l'agente e mette la richiesta negli appunti. Tu:",
@@ -651,7 +654,7 @@ def app_nfr():
 def cicli():
     s = nuova("Il trimestre passo per passo: chi fa che cosa")
     tabella(s, 0.5, 1.35, 7.7, ["#", "Chi", "Passo"], [
-        ["1", "analista", "Registro, riga 4: il trimestre prima è «Ciclo validato»"],
+        ["1", "analista", "Registro, riga 4: il trimestre prima è «Ciclo validato»; rivede i temi da verificare (finestra dell'app)"],
         ["2", "Python", "baseline → Input_A1_<ciclo>.txt, Input_A3_A4.txt"],
         ["3", "—", "niente da copiare nel Kernel: A3 e A4 hanno l'allegato (AU7)"],
         ["4", "A1", "«Esegui il ciclo» con l'allegato → A1_<ciclo>.json"],
@@ -696,7 +699,7 @@ def schede_rischi():
         "- **schede-input** → dati validati per A6.",
         "- **A6** scrive i testi (facoltativo).",
         "- **schede** controlla e produce **Schede_<ciclo>.xlsx** in Archivio_Cicli\\Cicli\\<ciclo>.",
-        "- Un foglio **Indice** e un foglio per rischio, nell'ordine della classifica (score composito).",
+        "- Un foglio **Indice** e un foglio per rischio, nell'ordine della classifica (score composito); in fondo una **scheda per tema** (driver con almeno due rischi, nessuno score del tema).",
         "- Pronte per la stampa: A4 verticale, intestazione «Uso interno», pagine numerate.",
         "- Senza A6: testi di A1 dal registro."], VERDE, 12.5)
 
@@ -725,14 +728,14 @@ def schede_rischi():
         "- **1** Intestazione: posizione, ID, nome, score, variazione, urgenza, livello.",
         "- **2** Classificazione: categoria, driver, owner, presidio, ◆, esito.",
         "- **3** Il rischio · **4** Razionale.",
-        "- **5** Valutazione dimensione per dimensione, con la formula dello score.",
-        "- **6** Urgenza e livello di allerta.",
-        "- **7** Cosa è cambiato nel ciclo.",
-        "- **8** Andamento negli ultimi trimestri.",
-        "- **9** Fonti.",
+        "- **5** Che cosa significa per la Banca · **6** Rischi collegati.",
+        "- **7** Valutazione dimensione per dimensione, con la formula dello score.",
+        "- **8** Urgenza e livello di allerta.",
+        "- **9** Cosa è cambiato nel ciclo.",
+        "- **10** Andamento negli ultimi trimestri.",
         "## Pagina 2",
-        "- **10** Azioni · **11** KRI in vigore, ognuno con perché ed effetto atteso.",
-        "- **12** Legenda."], 12)
+        "- **11** Fonti · **12** Azioni · **13** KRI in vigore, ognuno con perché ed effetto atteso.",
+        "- **14** Legenda."], 12)
     testo(s, 5.0, 4.55, 4.2, 2.4, [
         "> Esempio: NFR-01 «Frodi su pagamenti istantanei abilitate da AI generativa», ciclo straordinario 2026Q4-S1, "
         "testi di A1 (senza A6). Lo stesso ordine vale per tutte le schede: chi legge sa sempre dove trovare un'informazione."], 12)
@@ -751,19 +754,21 @@ def schede_rischi():
         [2.4, 5.2, 4.7], 12, 0.55)
 
     s = nuova("Il rischio, il razionale e la valutazione dimensione per dimensione")
-    immagine(s, "Scheda_NFR01_1", 0.5, 1.35, 6.2, 5.55, taglio=(0, 0.08, 1, 0.48), allinea="sx")
+    immagine(s, "Scheda_NFR01_1", 0.5, 1.35, 6.2, 5.55, taglio=(0, 0.08, 1, 0.57), allinea="sx")
     testo(s, 6.95, 1.3, 5.9, 5.7, [
         "## Il rischio",
         "- Il **meccanismo di perdita**: che cosa succede, a chi, con quale danno. Con A6 diventa la descrizione estesa.",
         "## Razionale: il fenomeno in termini di rischio",
         "- La parte **RISCHIO** del razionale di A1: causa → evento → danno per la Banca. Fa capire perché è un rischio della Banca e non solo una notizia.",
+        "## Che cosa significa per la Banca · Rischi collegati",
+        "- La parte **QUINDI** di A1: che cosa tocca nella Banca e che cosa va deciso o osservato. Poi i **rischi collegati** (stesso evento o stessa causa) con score e stato; su un rischio collegato, «Collegato a» il primario.",
         "## Valutazione, dimensione per dimensione",
         "- Una riga per **Impatto, Probabilità, Prossimità, Velocity**: il valore validato (colore più scuro = peggiore; n.v. = non valutata) e, accanto, **perché quel valore**, con i fatti e i documenti.",
         "- Sotto, in corsivo, **la formula dello score** con i pesi in vigore (es. 4,65 = (0,35×4 + 0,25×5 + 0,20×5 + 0,20×5) / 1,00); senza Velocity i pesi si ridistribuiscono.",
         "> Importanza: chi legge può verificare ogni numero contro la rubrica e i documenti, senza fidarsi dell'agente."], 12.5)
 
     s = nuova("Urgenza, livello di allerta, cambiamenti e andamento")
-    immagine(s, "Scheda_NFR01_1", 0.5, 1.35, 6.2, 5.55, taglio=(0, 0.36, 1, 0.78), allinea="sx")
+    immagine(s, "Scheda_NFR01_1", 0.5, 1.35, 6.2, 5.55, taglio=(0, 0.58, 1, 1), allinea="sx")
     testo(s, 6.95, 1.3, 5.9, 5.7, [
         "## Urgenza (Mosca) e livello di allerta",
         "- **Livello** con il **motivo** (es. «AGIRE ORA; KRI in rosso»): fondo rosso, giallo o verde.",
@@ -777,7 +782,7 @@ def schede_rischi():
     s = nuova("Fonti, azioni e KRI")
     immagine(s, "Scheda_NFR01_2", 0.5, 1.35, 6.0, 5.55, allinea="sx")
     fondo = tabella(s, 6.75, 1.35, 6.08, ["Blocco", "Informazioni e significato"], [
-        ["Fonti", "riferimento, data, tipo (Interna/Esterna), rilevanza per la previsione (Alta, Media, Bassa); con A6 anche «a sostegno di» quale valore"],
+        ["Fonti", "riferimento, data, tipo (Interna, Esterna o Rapporto di scenario), rilevanza per la previsione (Alta, Media, Bassa); con A6 anche «a sostegno di» quale valore"],
         ["Azioni", "che cosa fare, owner (una funzione), orizzonte 3/6/12 mesi, stato (Proposta, Approvata, In corso, Completata…) e ciclo; sotto, **perché** e **effetto atteso**"],
         ["KRI in vigore", "[tipo] nome (unità), valore del ciclo, soglie attenzione / allerta, valore del ciclo prima, stato Verde/Ambra/Rosso; sotto, **perché lo misuriamo** ed **effetto atteso**"]],
         [1.3, 4.8], 11.5, 0.5)
@@ -848,7 +853,7 @@ def report_intro():
 
 
 def report_fogli():
-    s = nuova("Quadro d'insieme (1/3): i cinque riquadri", "4 · Il report trimestrale")
+    s = nuova("Quadro d'insieme (1/3): i cinque riquadri e il commento di A1", "4 · Il report trimestrale")
     immagine(s, "Quadro_1", 0.5, 1.35, 7.1, 5.55, allinea="sx")
     testo(s, 7.85, 1.3, 5.0, 5.7, [
         "La prima pagina per il comitato. **Prima di leggere i numeri: sono definitivi?**",
@@ -857,30 +862,42 @@ def report_fogli():
         "- **Variati · nuovi (radar)** — quanti hanno cambiato valore e quanti sono nuovi rispetto al ciclo prima; sotto, entrati e usciti dal radar e quanti in osservazione.",
         "- **KRI in rosso** — su quanti in vigore: i segnali misurati, non stimati.",
         "- **Validazione** — ✓ ciclo validato, oppure quante righe restano: se non è validato, i numeri non valgono.",
-        "> Colori: rosso = qualcosa chiede attenzione, verde = a posto."], 12.5)
+        "- **Il commento dell'analisi (A1)**, subito sotto: **messaggio chiave**, **decisioni richieste** e, se il validatore ha rettificato, l'avviso che valgono i numeri validati.",
+        "> Colori: rosso = qualcosa chiede attenzione, verde = a posto."], 12)
 
     s = nuova("Quadro d'insieme (2/3): priorità, gravità, urgenza")
     immagine(s, "Quadro_1", 0.5, 1.35, 7.1, 5.55, taglio=(0, 0.27, 1, 1), allinea="sx")
     testo(s, 7.85, 1.3, 5.0, 5.7, [
-        "- **Priorità — primi cinque per score composito**: posizione, rischio (◆ supervisore), score con la barra su scala fissa 0-5, variazione (▲ ▼ ●) e urgenza colorata.",
-        "- **Gravità: Probabilità × Impatto**: la matrice in piccolo, con i numeri dei rischi (01 = NFR-01) nelle celle verdi, ambra, rosse.",
+        "- **Priorità — primi cinque per score composito**: posizione, rischio (◆ supervisore), **ultimi 4 trimestri** (lo score alla fine di ciascuno), score con la barra su scala fissa 0-5, variazione (▲ ▼ ●) e urgenza colorata.",
+        "- **Gravità: Probabilità × Impatto**: la matrice in piccolo, con i numeri dei rischi (01 = NFR-01) nelle celle verdi, ambra, rosse; da sei rischi in una cella, «n rischi».",
         "- **Note dell'analista** (cella gialla): testo libero, per esempio la sintesi di A7; al ciclo dopo va in Sintesi_Cicli.",
         "- **Urgenza: radar di Mosca**: lo stesso grafico del foglio Radar_Mosca, in piccolo.",
         "- **I rischi del ciclo**: la legenda dei codici, con ◆.",
         "> Uso: in un colpo d'occhio, i rischi più grandi (priorità), i più gravi (matrice) e i più urgenti (radar) — tre misure diverse che non sempre coincidono."], 12.5)
 
-    s = nuova("Quadro d'insieme (3/3): il commento di A1 e i rischi segnalati")
+    s = nuova("Quadro d'insieme (3/3): controlli e rischi segnalati")
     immagine(s, "Quadro_2", 0.5, 1.35, 7.1, 5.55, allinea="sx")
     testo(s, 7.85, 1.3, 5.0, 5.7, [
-        "## Il commento dell'analisi (A1)",
-        "- **Messaggio chiave** e **Decisioni richieste**: il commento per il comitato, scritto **prima** della validazione.",
+        "## Controlli e segnalazioni da motivare",
         "- **Controlli**: la sintesi di A5 o «A5 non usato», con le osservazioni.",
-        "- **Dopo il commento**: compilata se il validatore ha rettificato qualcosa dopo — valgono i numeri validati.",
         "- **Segnalazioni da motivare**: quante ⚑ sono andate in validazione.",
         "## Rischi segnalati e perché",
         "- Chi: i primi tre per score, quelli in attivazione o attenzione, i variati o nuovi.",
         "- **Livello** · **Perché lo segnaliamo** (calcolato: posizione, AGIRE ORA con X + Y e Z, supervisore, presidio, KRI rossi, notizie) · **Cosa è cambiato, e su quale evidenza**.",
+        "- Il Quadro sta sempre in due pagine: con troppi segnalati, gli ultimi per score sono elencati nella nota (sono nella Classifica e nelle schede).",
         "- In fondo i **limiti** della valutazione e la **legenda**."], 12)
+
+    s = nuova("Report mensile notizie: le settimane di un mese")
+    testo(s, 0.5, 1.3, 12.3, 5.7, [
+        "Dal pulsante **Report mensile notizie** (riquadro Approvazioni e report) o dal comando **mensile**; si fa anche da solo quando si approvano le notizie dell'ultima settimana del mese. Solo lettura: nessun numero nuovo, nessuno score.",
+        "## Che cosa dice",
+        "- Le notizie del mese per segnale e i **segnali netti per rischio** (peggiorative meno migliorative), anche per i rischi in osservazione.",
+        "- La **pressione per categoria** (notizie, intensità massima, intensità 2 o più) con il presidio: dove nessun rischio copre il tema, **AREA NON PRESIDIATA**.",
+        "- Le notizie senza un rischio collegato e le **notizie forti su rischi gravi** (intensità 3 su un rischio con Impatto 4-5).",
+        "- I **flag** e le **proposte di ciclo straordinario** di A3; i cicli straordinari del mese.",
+        "## Dove",
+        "- Archivio_Cicli\\Mensili: **Riepilogo_<AAAA-MM>.xlsx** (da stampare) e **.html** (da aprire nel browser), con gli stessi contenuti.",
+        "> Uso: la funzione di rischio vede ogni mese dove si accumula la pressione, senza aspettare il trimestre e senza un agente in più."], 13)
 
     foglio("Classifica e lente di Mosca", "Classifica", [
         "## Tabella",
@@ -901,6 +918,7 @@ def report_fogli():
         "- **Area del cerchio** = Probabilità × Impatto (la grandezza).",
         "- **Colore** = livello di allerta: rosso Attivazione, giallo Attenzione, verde Monitoraggio.",
         "- **Settore** = categoria della tassonomia interna (nove spicchi); rischi dello stesso settore a distanze angolari uguali.",
+        "- **Punto grigio e freccia** = da dove viene il rischio: la posizione nel trimestre prima, solo se il cerchio si è spostato.",
         "- **◆** = tema all'attenzione del supervisore.",
         "> Uso: unisce in un'immagine urgenza (posizione), grandezza (area) e decisione (colore). Nessun agente stima l'urgenza: la calcola il foglio."], 12.5)
 

@@ -116,6 +116,11 @@ RR_TEMPLATE = 38                 # righe del RiskRegister del template: 33 del r
 PRESIDIO_911_Q3 = "In osservazione"   # 9.11 nel 2026Q3: nessun rischio nel radar, NFR-16 in osservazione (D-79)
 
 
+def senza_p17(testo):
+    """Il testo della colonna Segnalazioni della griglia senza la riga 'Testi (P17)' (D-93), che il registro non ha."""
+    return "\n".join(r for r in str(testo or "").split("\n") if not r.startswith("Testi (P17)"))
+
+
 def uguale_ai_dati(nome, prodotto):
     """Il file prodotto e' uguale (come JSON) al file atteso dati/<nome>. Con NFR_RIGENERA_ATTESI=1 lo copia al posto
     dell'atteso e risponde si': solo dopo una modifica voluta del formato, poi si guarda il diff."""
@@ -217,8 +222,15 @@ class Banco:
                 "riquadro_settimana": (s.foglio("Notizie").Range("L5").Value, s.foglio("Notizie").Range("L11").Value),
                 "messaggio": commento.Cells(1, 4).Value,
                 "decisioni": commento.Cells(2, 4).Value,
-                "avviso": commento.Cells(4, 4).Value,
-                "rilievi_superati": commento.Cells(5, 4).Value,
+                "avviso": commento.Cells(3, 4).Value,
+                "rilievi_superati": s.intervallo_nome("quadroControlli").Cells(2, 4).Value,
+                # 04/11/2026: il commento di A1 in prima pagina (prima dell'interruzione manuale del Quadro)
+                "commento_pagina_1": commento.Row < min(q.Location.Row for q in s.foglio("Quadro").HPageBreaks
+                                                        if q.Type == -4135),
+                # P2: la scia del radar, {ID: (spostato 0/1, raggio nel trimestre della scia)}
+                "scia": {i: (sp, rg) for i, sp, rg in zip(campo.colonna_nome(s, "rmID"), campo.colonna_nome(s, "rmScia"),
+                                                         campo.colonna_nome(s, "rmRaggioScia")) if i},
+                "ciclo_scia": s.intervallo_nome("cicloScia").Value,
                 "segnalati": [str(c.Value).split("\n")[0] for c in segnalati.Columns(1).Cells if c.Value],
                 "delta_motivi": [(c.Value, c.GetOffset(0, 2).Value) for c in s.intervallo_nome("deltaMotivi").Columns(1).Cells
                                  if c.Value],
@@ -268,13 +280,26 @@ def rischi_nei_posti(cartella):
 
 
 def pagine_quadro(s):
-    """Pagine del Quadro in PDF, con l'impaginazione salvata dallo script (prepara_report)."""
+    """(pagine del Quadro in PDF con l'impaginazione salvata dallo script, prepara_report; come e' impaginato: scala,
+    altezza delle due parti in punti, salti di pagina), per capire un Quadro che non sta in due pagine."""
     import re
     import tempfile as tf
+    ws = s.foglio("Quadro")
+    ps = ws.PageSetup
+    area = ws.Range(ps.PrintArea)
+    ultima = area.Row + area.Rows.Count - 1
+    salti = [ws.HPageBreaks(i).Location.Row for i in range(1, ws.HPageBreaks.Count + 1)]
+    salto = salti[0] if salti else ultima + 1
+    altezza = lambda da, a: round(sum(ws.Rows(r).RowHeight for r in range(da, a + 1)))
     with tf.TemporaryDirectory() as d:
         pdf = Path(d) / "quadro.pdf"
-        s.foglio("Quadro").ExportAsFixedFormat(0, str(pdf))
-        return len(re.findall(rb"/Type\s*/Page[^s]", pdf.read_bytes()))
+        ws.ExportAsFixedFormat(0, str(pdf))
+        pagine = len(re.findall(rb"/Type\s*/Page[^s]", pdf.read_bytes()))
+    seg = s.intervallo_nome("quadroSegnalati")
+    nascosti = [str(r.Cells(1, 1).Value).split("\n")[0] for r in seg.Rows if r.EntireRow.Hidden and r.Cells(1, 1).Value]
+    nota = str(ws.Cells(seg.Row - 2, 1).Value or "")
+    return pagine, (f"scala {ps.Zoom}%, pagina 1 {altezza(1, salto - 1)} pt, pagina 2 {altezza(salto, ultima)} pt (righe "
+                    f"{salto}-{ultima}), salti {salti}, spazio {595.3 - ps.TopMargin - ps.BottomMargin:.0f} pt"), nascosti, nota
 
 
 def spazio_delta(s):
@@ -407,8 +432,13 @@ def verifica_report(e, stato, etichetta, commento=None):
                f"foglio {stato['segnalati']}\natteso {attesi_seg}")
     e.verifica(len(stato["delta_motivi"]) == len(righe) and all(m for _, m in stato["delta_motivi"]),
                f"{etichetta}: Delta, un motivo (o 'invariato') per ciascuno dei {len(righe)} rischi", str(stato["delta_motivi"])[:500])
-    e.verifica(stato["quadro_pagine"] == 2, f"{etichetta}: Quadro in due pagine (scala adattata da prepara_report)",
-               f"{stato['quadro_pagine']} pagine")
+    e.verifica(stato["commento_pagina_1"], f"{etichetta}: Quadro, il commento di A1 e' in prima pagina (richiesta del 04/11)")
+    e.verifica(stato["quadro_pagine"][0] == 2, f"{etichetta}: Quadro in due pagine (scala adattata da prepara_report)",
+               f"{stato['quadro_pagine'][0]} pagine; {stato['quadro_pagine'][1]}")
+    _, _, nascosti, nota = stato["quadro_pagine"]
+    e.verifica(all(i in nota for i in nascosti) and (("qui mancano" in nota) == bool(nascosti)),
+               f"{etichetta}: Quadro, i rischi segnalati che non stanno in due pagine ({len(nascosti)}) sono elencati nella "
+               "nota della sezione, con il rimando a Classifica e schede", f"nascosti {nascosti}; nota: {nota}")
     fondo, nota = stato["delta_spazio"]
     e.verifica(fondo <= nota, f"{etichetta}: Delta, il grafico non copre la nota sulla scala dopo l'adattamento delle "
                               "altezze (prepara_report)", f"fondo del grafico {fondo:.0f} pt, nota a {nota:.0f} pt")
@@ -508,10 +538,14 @@ def schede_a6(e, b, s):
     codice, out = b.esegui("schede", "--payload", b.scrivi_json("a6_buono.json", buono))
     file = b.uscita / "Cicli" / "2026Q3" / "Schede_2026Q3.xlsx"
     fogli = load_workbook(file).sheetnames if file.exists() else []
-    e.verifica(codice == 0 and fogli == ["Indice"] + ordine and (b.uscita / "Cicli" / "2026Q3" / "A6_2026Q3.json").exists()
+    temi = [f for f in fogli if f.startswith("Tema ")]
+    e.verifica(codice == 0 and fogli == ["Indice"] + ordine + temi and (b.uscita / "Cicli" / "2026Q3" / "A6_2026Q3.json").exists()
                and sha(b.wb) == prima,
-               "2c. schede con i testi di A6: indice e una scheda per rischio in ordine di classifica; A6 archiviato; "
-               "registro intatto", out + str(fogli))
+               "2c. schede con i testi di A6: indice e una scheda per rischio in ordine di classifica, poi le schede per "
+               "tema; A6 archiviato; registro intatto", out + str(fogli))
+    e.verifica(len(temi) >= 2 and "Tema DRV-AI" in temi and "temi" not in ingresso,
+               "2c. schede per tema (P6): un foglio per driver con almeno due rischi; l'allegato di A6 non porta i temi",
+               str(temi))
     wb = load_workbook(file) if file.exists() else None
     testo = [c.value for c in wb[ordine[0]]["A"] if c.value] if wb else []
     e.verifica(wb is not None and buono["schede"][0]["descrizione_estesa"] in testo,
@@ -824,9 +858,14 @@ def segnalazioni_in_validazione(e):
         e.verifica(con_bandiera == {"NFR-01", "NFR-03", "NFR-12"}
                    and all(campo.DA_MOTIVARE in str(seg.get(k)) for k in con_bandiera)
                    and "soglie invertite" in str(seg["NFR-01"]) and "C4" in str(seg["NFR-12"])
-                   and all(str(seg.get(k) or "") == reg[k] for k in seg),
+                   and all(senza_p17(seg.get(k)) == reg[k] for k in seg),
                    "12. griglia: ⚑ sui soli rischi con segnalazioni da motivare; la colonna Segnalazioni riporta il testo "
                    "del registro (anche il KRI con le soglie invertite, sotto il suo rischio)", f"{con_bandiera}\n{seg}")
+        # P17 (D-93): in fondo, per i rischi esistenti, la riga dei testi; il rischio nuovo NFR-16 non l'ha; la colonna
+        # Rilievi del registro non la contiene (le viste la conterebbero come una segnalazione).
+        e.verifica(all("Testi (P17) · aggiornati da A1:" in str(seg.get(k)) for k in seg if k != "NFR-16")
+                   and "Testi (P17)" not in str(seg.get("NFR-16")) and not any("Testi (P17)" in v for v in reg.values()),
+                   "12. griglia: riga 'Testi (P17)' sui rischi esistenti, non sul rischio nuovo, mai nel registro", str(seg)[:600])
         prima = sha(b.wb)
         codice, out = b.esegui("valida", "--periodo", "2026Q3", "--validatore", "Comitato Rischi")
         e.verifica(codice == 1 and "NFR-12" in out and "segnalazioni da motivare" in out and "non accettabile" in out
@@ -2078,6 +2117,13 @@ def catena(e):
                    str(trovati["NFR-11"]))
         e.verifica(all((m[2] < 0) == m[3].startswith("AGIRE ORA") for m in s["mosca"]),
                    "5b. Radar_Mosca: 'AGIRE ORA' esattamente quando X + Y > Z")
+        # P2: scia rispetto al 2026Q3. NFR-01 si avvicina al centro (Prossimita da 4 a 5); NFR-16 era in osservazione:
+        # niente scia; un rischio fermo non ha scia.
+        sp = {i: v[0] for i, v in s["scia"].items()}
+        e.verifica(s["ciclo_scia"] == "2026Q3" and sp.get("NFR-01") == 1 and sp.get("NFR-16") == 0
+                   and all(v in (0, 1) for v in sp.values()) and s["scia"]["NFR-01"][1] > trovati["NFR-01"][1] + 2 - 1e-6,
+                   "5b. scia del radar (P2): parte dal 2026Q3; NFR-01 si e' avvicinato al centro e ha la scia, NFR-16 (entrato "
+                   "dall'osservazione) no", f"{s['ciclo_scia']} {s['scia']}")
         e.verifica(len(s["registro"]) == 13 and set(s["registro"]) == {a["ID"] for a in s["anagrafica"]},
                    "5b. il Registro ha esattamente una riga per rischio dell'anagrafica (13)", str(s["registro"]))
         vigilati = {a["ID"] for a in s["anagrafica"] if a.get("Attenzione_Supervisore") == "Sì"}

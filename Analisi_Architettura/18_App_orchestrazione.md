@@ -114,6 +114,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | Ripresa di un processo interrotto dalla risposta gia' in `In_arrivo` | `test_app.py` |
 | [x] | Validazione: registro aperto, attesa della chiusura, `valida` | `test_app.py` |
 | [x] | Settimanale: raccolta, Manuali, A3 con l'allegato, fermo e correzione | `test_app.py` |
+| [x] | Temi da verificare (P9, D-98, 04/11): finestra dal menu Altro e all'inizio del Trimestre, prima della baseline; salvataggio con il controllo dell'impronta; ultima risposta di A1 da `Cicli/<ciclo>/Temi_<ciclo>.json` | `test_app.py` (Ambiente finto con `modifica_temi`) |
 | [~] | Straordinario, schede (con e senza A6), report, riapertura, testi a mano (in Admin dal 30/10, D-90), dismissione, parere di A4, A7, diagnosi, sblocca | scritti; da coprire nel collaudo e nella demo |
 | [ ] | Demo (`Demo_W1_W2/esegui_demo.py`) attraverso i flussi, con appunti simulati: A1 con i recinti, A1 in due parti, correzione dopo un fermo | — |
 
@@ -128,6 +129,7 @@ L'app non contiene regole di metodo; nel registro scrive solo il motore (D-10).
 | [x] | `NFR.cmd`: ASCII, cartella dello script, UTF-8, `pyw`/`pythonw`/`python` | `test_app.py` |
 | [x] | Aiuto nell'app dalla guida (richiesta dell'utente del 29/10): pulsante "Aiuto (F1)" con gli argomenti principali e "Apri la guida completa"; suggerimenti sui pulsanti dalla tabella "I processi"; nessuna copia dei testi (`aiuto.py`) | `test_app.py` (test_aiuto); prova della finestra con Xvfb |
 | [x] | Che cosa sta facendo l'app, sempre detto (richiesta dell'utente del 29/10, dopo la prima prova in Banca): nella fascia il processo e la fase; nel passo in corso il comando in esecuzione con il tempo trascorso e la durata attesa, la domanda o il modulo in attesa, l'attesa della chiusura di Excel; domande e moduli in primo piano con un suono; "Ho chiuso Excel: controlla ora" controlla davvero il file; a fine processo quale processo e' finito e quando | prova della finestra con Xvfb (testi di ogni fase); in Banca |
+| [x] | Finestra per processo (AU8, D-102, 04/11): riquadri Ogni settimana, Ogni trimestre, All'occorrenza; in fondo "Approvazioni e report" con il periodo nel nome dei pulsanti; riga di descrizione sotto i riquadri; Diagnosi in Admin; Aggiungi un rischio (A8) | `test_app.py` (nomi, guida, etichette, Approva con due periodi, solo censimento); prova di avvio con l'immagine `Presentazione/app_finestra.png` |
 | [~] | Uso vero: un trimestre di prova dall'app, con gli agenti in Agent Builder e il registro di prova | in Banca, B5-bis |
 | [~] | Link degli agenti da "Copia collegamento" che aprono la chat (V-A) | in Banca, B5-bis |
 
@@ -212,3 +214,5 @@ rimettendo a posto il parcheggio. In `amministrazione.py` e nella finestra del p
 | [ ] | M4: `Report_comitato_<ciclo>.html` dopo `valida` sul registro di prova, schede collegate, "Cancello: N numeri uguali" |
 | [ ] | M5 sul registro di prova: pulizia e annullamento, ritorno e annullamento; ripartenza da zero |
 | [ ] | Collaudo completo sul PC con Excel (`esegui_collaudo.py`, catena compresa) e presentazione rigenerata |
+| [ ] | Finestra AU8 (D-102) con la scala di Windows al 125 e 150%: i nomi lunghi dei pulsanti di "Approvazioni e report" stanno senza tagli; Approva le notizie rifa' il report |
+| [ ] | Temi da verificare (D-98): la finestra dal menu Altro e prima di A1; un tema di prova salvato in `temi_da_verificare.md` della library Kernel; dopo il ciclo di prova, la risposta di A1 nella finestra |

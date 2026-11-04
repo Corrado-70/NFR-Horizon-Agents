@@ -28,7 +28,9 @@
 >   29/07/2026); il collaudo lo verifica. Gli altri li consulta l'analista, che
 >   salva cio' che serve in `News_Inbox/<lunedi'>/Manuali/`.
 > - `share`: documenti interni o a licenza, gia' in SharePoint
->   (`Analisi_Interne`) o caricati a mano in `News_Inbox/<lunedi'>/Manuali/`.
+>   (`Analisi_Interne`, `Analisi_Esterne` con i rapporti di scenario in
+>   `Analisi_Esterne/Rapporti_Scenario/<anno>`, D-95) o caricati a mano in
+>   `News_Inbox/<lunedi'>/Manuali/`.
 >
 > Una notizia portata da un analista da una fonte fuori elenco ha codice
 > `MAN`: e' ammessa, ma la sua fonte va scritta per esteso nel campo `fonte`.
@@ -313,7 +315,9 @@
 - licenza: pubblico
 - sito_agente: no
 > Threat Landscape annuale e rapporti settoriali: scaricarli in
-> `Analisi_Interne` quando escono. Nessun feed RSS trovato.
+> `Analisi_Esterne/Rapporti_Scenario/<anno>` quando escono (FNT-35, D-95; non in
+> `Analisi_Interne`, che e' solo per i documenti della Banca, D-45). Nessun feed
+> RSS trovato.
 
 ## Documenti interni e a licenza (SharePoint)
 
@@ -374,6 +378,14 @@
 > un documento esterno non deve mai essere scambiabile con uno della Banca in
 > fonti[].tipo (vedi Input di A1). Prova anche di prossimita' "banca
 > comparabile" quando descrive eventi presso altre banche.
+> **Rapporti di scenario** (P4, D-95, 04/11/2026): nella sottocartella
+> `Analisi_Esterne/Rapporti_Scenario/<anno>` i rapporti di scenario e di foresight
+> da leggere per intero a ogni trimestre (ORX Emerging Risks e Horizon, EBA Risk
+> Assessment Report, priorita' di vigilanza della BCE, ENISA Threat Landscape, WEF
+> Global Risks, Allianz Risk Barometer, rapporti delle societa' di consulenza).
+> A1 li legge per primi e li cita con `tipo` "Rapporto" (guida di scrittura,
+> "Fonti e rapporti di scenario"). Prima di salvarne uno, verificare che la
+> licenza ne permetta l'uso in un agente di AI (governance, sezione 4).
 
 ### FNT-36 Newsletter e alert in abbonamento
 - canale: share

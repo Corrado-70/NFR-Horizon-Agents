@@ -10,7 +10,9 @@ dismissione, parere di A4...) e' una funzione che parla con il mondo solo attrav
   - chiedi(titolo, campi)           un modulo da compilare (dict) o None; un campo e' (chiave, etichetta,
                                     predefinito[, scelte[, solo_scelte]]): con le scelte un elenco a discesa;
   - conferma(domanda)               si' o no;
-  - mostra(testo, tipo)             un messaggio (info, avviso, errore, ok).
+  - mostra(testo, tipo)             un messaggio (info, avviso, errore, ok);
+  - modifica_temi(titolo, temi, risposte)  la lista dei temi da verificare da rivedere (P9): la lista confermata, o
+                                    None se l'analista annulla.
 La finestra (app_nfr.py) realizza l'Ambiente con tkinter; il collaudo con un Ambiente finto, senza persona ne' Excel.
 Le regole restano nel motore: qui c'e' solo l'ordine dei passi, i nomi dei file e i testi da dare agli agenti.
 
@@ -29,6 +31,7 @@ from pathlib import Path
 import esecutore
 import ingresso
 import stato
+import temi
 
 QUI = Path(__file__).resolve().parent
 AMMINISTRAZIONE = QUI / "amministrazione.py"
@@ -41,7 +44,8 @@ NOMI = {"A1": "A1 Horizon Scanner", "A3": "A3 Interim Update", "A4": "A4 News As
 
 
 # Le operazioni della finestra Admin (D-85), nell'ordine della tabella "Pulsante Admin" della guida.
-OPERAZIONI_ADMIN = ["Nuovo registro", "Testi a mano", "Pulizia", "Ritorno", "Annulla", "Ripartenza", "Parcheggi", "Svuota"]
+OPERAZIONI_ADMIN = ["Nuovo registro", "Testi a mano", "Pulizia", "Ritorno", "Annulla", "Ripartenza", "Parcheggi", "Svuota",
+                    "Diagnosi"]                 # AU8 (04/11/2026): la diagnosi delle valutazioni passa in Admin
 
 
 def trimestri_recenti(oggi, quanti=12):
@@ -230,11 +234,47 @@ class Flussi:
             if a5:
                 a5 = self.chiedi_ad_agente("A5", [self.uscita / f"Input_A5_{periodo}.txt"], MESSAGGI["A5"], periodo)
 
+    def temi_da_verificare(self, prima_di_a1=False):
+        """P9 (D-98): la lista dei temi che l'analista chiede ad A1 di verificare, da vedere e modificare; prima di ogni
+        ciclo trimestrale l'app la propone (Conferma = va bene cosi', anche senza modifiche). Il file e' condiviso: se un
+        collega lo ha cambiato nel frattempo, il salvataggio si ferma."""
+        file = temi.file_temi(self.conf)
+        elenco, impronta = temi.leggi(file), temi.impronta(file)
+        titolo = ("Prima di A1: rivedi i temi da verificare (Conferma per proseguire)" if prima_di_a1
+                  else "Temi da verificare")
+        nuovi = self.amb.modifica_temi(titolo, elenco, self.risposte_temi())
+        if nuovi is None:
+            return None
+        try:
+            nuovi = temi.normalizza(nuovi)
+            if nuovi != elenco:
+                temi.scrivi(file, nuovi, impronta)
+        except (ValueError, RuntimeError) as ex:
+            self.amb.mostra(f"Temi da verificare non salvati: {ex}", "errore")
+            return None
+        self.amb.mostra(f"Temi da verificare: {len(temi.aperti(nuovi))} aperti" + (f", salvati in {file}" if nuovi != elenco
+                                                                                    else ", senza modifiche") + ".", "ok")
+        return nuovi
+
+    def risposte_temi(self):
+        """Le risposte di A1 ai temi nell'ultimo ciclo che li aveva: {codice: "2026Q4: NFR-07, ..."}."""
+        cartella = self.uscita / "Cicli"
+        file = sorted(cartella.glob("*/Temi_*.json")) if cartella.is_dir() else []
+        out = {}
+        for f in file:                               # dal piu' vecchio: vince l'ultima risposta
+            try:
+                for t in json.loads(f.read_text(encoding="utf-8")):
+                    out[t["codice"]] = f"{f.parent.name}: {', '.join(t.get('risposte') or ['senza risposta'])}"
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+        return out
+
     def trimestrale(self, con_a5=False):
         s = stato.leggi(self.conf)
         if s["ciclo_corrente"] and (not s["validato"] or s["riapertura"]):
             self.amb.mostra(f"Il ciclo {s['ciclo_corrente']} non e' validato: prima la validazione.", "avviso")
             return None
+        self.temi_da_verificare(prima_di_a1=True)    # P9: entrano nella baseline qui sotto
         if self.motore("baseline")["fascia"] != "OK":
             return None
         ciclo = stato.leggi(self.conf)["da_valutare"]
@@ -243,12 +283,17 @@ class Flussi:
             return self.validazione()
         return es
 
-    def straordinario(self, con_a5=False):
-        dati = self.amb.chiedi("Ciclo straordinario (decide la funzione di rischio)", [
-            ("rischi", "Rischi da rivalutare, separati da virgole (vuoto = solo censimento di rischi nuovi)", ""),
-            ("motivo", "L'evento e perche' non puo' aspettare il trimestre (almeno 20 caratteri)", ""),
-            ("decisore", "Chi decide (funzione o comitato)", self.conf.get("validatore_predefinito") or ""),
-            ("data", "Data di riferimento AAAA-MM-GG (vuoto = oggi)", "")])
+    def straordinario(self, con_a5=False, solo_censimento=False):
+        """Ciclo straordinario (D-75, D-77). Con solo_censimento (AU8, pulsante "Aggiungi un rischio (A8)") nessun rischio
+        da rivalutare: A8 censisce i rischi nuovi che l'evento o il fatto crea, poi controlli e approvazione come sempre."""
+        campi = [("motivo", "L'evento e perche' non puo' aspettare il trimestre (almeno 20 caratteri)" if not solo_censimento
+                  else "Il rischio da aggiungere: il fatto o il documento che lo fa nascere (almeno 20 caratteri)", ""),
+                 ("decisore", "Chi decide (funzione o comitato)", self.conf.get("validatore_predefinito") or ""),
+                 ("data", "Data di riferimento AAAA-MM-GG (vuoto = oggi)", "")]
+        if not solo_censimento:
+            campi.insert(0, ("rischi", "Rischi da rivalutare, separati da virgole (vuoto = solo censimento di rischi nuovi)", ""))
+        dati = self.amb.chiedi("Aggiungi un rischio: ciclo straordinario di solo censimento con A8 (decide la funzione di "
+                               "rischio)" if solo_censimento else "Ciclo straordinario (decide la funzione di rischio)", campi)
         if not dati:
             return None
         argomenti = ["baseline", "--straordinario", "--motivo", dati["motivo"], "--decisore", dati["decisore"]]
@@ -261,6 +306,38 @@ class Flussi:
         if es["fascia"] == "OK" and self.amb.conferma(f"Straordinario {periodo} scritto. Passare alla validazione adesso?"):
             return self.validazione()
         return es
+
+    def da_approvare(self):
+        """AU8: che cosa aspetta l'approvazione, [(periodo, come lo dice il pulsante)]: il ciclo scritto o riaperto e la
+        settimana scritta e non ancora approvata."""
+        s = stato.leggi(self.conf)
+        out = []
+        c = s["ciclo_corrente"]
+        if c and (not s["validato"] or s["riapertura"]):
+            out.append((c, f"lo straordinario {c}" if "-S" in c else f"il trimestre {c}"))
+        w = s["settimana"]
+        if w["scritta"] and not w["validata"]:
+            out.append((w["lunedi"], f"le notizie del {dt.date.fromisoformat(w['lunedi']):%d/%m}"))
+        return out
+
+    def approva(self):
+        """AU8: il pulsante "Approva": il periodo in attesa; se sono due, chiede quale."""
+        attesa = self.da_approvare()
+        if not attesa:
+            self.amb.mostra("Niente da approvare: nessun ciclo ne' settimana scritti in attesa.", "info")
+            return None
+        periodo = attesa[0][0]
+        if len(attesa) > 1:
+            scelte = [f"{p} ({etichetta})" for p, etichetta in attesa]
+            dati = self.amb.chiedi("Che cosa approvi?", [("periodo", "Periodo da approvare", scelte[0], scelte, True)])
+            if not dati:
+                return None
+            periodo = dati["periodo"].split(" ", 1)[0]
+        return self.validazione(periodo)
+
+    def aggiungi_rischio(self, con_a5=False):
+        """AU8: "Aggiungi un rischio (A8)" = ciclo straordinario di solo censimento."""
+        return self.straordinario(con_a5, solo_censimento=True)
 
     def validazione(self, periodo=None):
         s = stato.leggi(self.conf)
@@ -280,6 +357,13 @@ class Flussi:
             if es["fascia"] != "FERMATO" or not self.amb.conferma("La validazione non e' applicata (motivi qui sopra). "
                                                                    "Riaprire il registro per correggere la griglia?"):
                 break
+        # P17: le rettifiche di una riapertura cambiano i valori, non i testi che li motivano: l'elenco e Testi a mano.
+        if es["fascia"] == "OK" and "Q" in periodo and "TESTI DA RILEGGERE" in es["uscita"] and self.amb.conferma(
+                "Le rettifiche della riapertura hanno cambiato dei valori: i testi che li motivano (razionali, note dei "
+                "KRI) sono quelli di prima. L'elenco e' qui sopra. Correggerli adesso con Testi a mano? (Si annulla con "
+                "Admin -> Annulla; No = si possono correggere dopo da Admin -> Testi a mano.)"):
+            self.testi_a_mano(lambda *a: self.motore("--admin", *a, script=AMMINISTRAZIONE),
+                              motivo=f"Testi da rileggere dopo le rettifiche della riapertura del ciclo {periodo}")
         if es["fascia"] == "OK" and "Q" in periodo and self.amb.conferma("Validato. Fare adesso le schede dei rischi?"):
             self.schede()
         return es
@@ -358,24 +442,29 @@ class Flussi:
         es = self.motore("riapri", *(["--rischi", dati["rischi"]] if dati.get("rischi") else []))
         return self.validazione() if es["fascia"] == "OK" else es
 
-    def testi_a_mano(self, m):
+    def testi_a_mano(self, m, motivo=""):
         """Admin -> Testi a mano (D-90): prima i controlli (una riapertura aperta o un ciclo da validare portano alla
-        Validazione, non a un report che si ferma), poi la copia del registro nel parcheggio, Excel, e la fine."""
+        Validazione, non a un report che si ferma), poi la copia del registro nel parcheggio, Excel, e la fine. La propone
+        anche la Validazione dopo le rettifiche di una riapertura (P17), con l'elenco dei testi da rileggere."""
         import amministrazione as amm
         try:
-            amm.controlli_testi(stato.leggi(self.conf))
+            ciclo = amm.controlli_testi(stato.leggi(self.conf))
         except amm.Fermo as ex:
             self.amb.mostra(str(ex), "avviso")
             return self.validazione() if self.amb.conferma("Passare alla Validazione adesso?") else None
         d = self.amb.chiedi("Testi a mano: correggere solo le colonne di testo di un ciclo validato", [
-            ("motivo", "Che cosa correggi e perche' (almeno 10 caratteri; resta nell'atto)", "")])
+            ("motivo", "Che cosa correggi e perche' (almeno 10 caratteri; resta nell'atto)", motivo)])
         if not d:
             return None
         es = m("testi", "--motivo", d["motivo"])
         if es["fascia"] != "OK":
             return es
+        from esegui_ciclo_locale import riga_testo_da_rileggere
+        voci = amm.testi_da_rileggere(self.conf, ciclo)
         self.amb.mostra("Si apre il registro: correggi SOLO le colonne di testo (descrizioni, razionali, KRI, azioni), mai "
-                        "ID, numeri, date o righe; poi salva e chiudi Excel.", "info")
+                        "ID, numeri, date o righe; poi salva e chiudi Excel."
+                        + ("\n\nTesti da rileggere dopo le rettifiche della riapertura (P17):\n"
+                           + "\n".join(f"- {riga_testo_da_rileggere(v)}" for v in voci) if voci else ""), "info")
         self.registro_in_excel()
         return m("testi-fine")
 
@@ -405,6 +494,16 @@ class Flussi:
     def diagnosi(self):
         return self.motore("diagnosi")
 
+    def mensile(self):
+        """P7 (D-100): il riepilogo delle settimane di un mese, in Excel e in HTML (solo lettura del registro)."""
+        dati = self.amb.chiedi("Riepilogo mensile", [("mese", "Mese AAAA-MM (vuoto = l'ultimo mese con settimane nel registro)", "")])
+        if dati is None:
+            return None
+        es = self.motore("mensile", *(["--mese", dati["mese"]] if dati.get("mese") else []))
+        if es["fascia"] == "OK":
+            self.amb.apri(self.uscita / "Mensili")
+        return es
+
     def amministrazione(self, operazione=None):
         """Tappa M5 (solo in modalita' Admin, D-85): un'operazione della finestra Admin (OPERAZIONI_ADMIN). Niente si
         cancella subito (tranne svuota, dopo il tempo minimo): tutto va nel parcheggio con l'atto. Le operazioni le fa
@@ -427,6 +526,8 @@ class Flussi:
         trimestri = trimestri_recenti(dt.date.today())
         if op == "parcheggi":
             return m("parcheggi")
+        if op == "diagnosi":
+            return self.diagnosi()
         if op == "testi a mano":
             return self.testi_a_mano(m)
         if op in ("pulizia", "svuota"):

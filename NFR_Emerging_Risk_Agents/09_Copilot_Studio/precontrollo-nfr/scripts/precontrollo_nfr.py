@@ -20,7 +20,7 @@ import sys
 import types
 from pathlib import Path
 
-VERSIONE = "9c3483eeea03"
+VERSIONE = "4169d1ebf4fc"
 
 SCHEMA_A1 = r'''{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -120,9 +120,9 @@ SCHEMA_A1 = r'''{
     "rischio": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id_rischio", "nome", "event_type", "driver", "descrizione",
+      "required": ["id_rischio", "nome", "event_type", "driver",
                    "impatto", "velocity", "prossimita", "probabilita", "anni_adeguamento",
-                   "variazioni", "fonti", "razionale",
+                   "variazioni", "fonti",
                    "azioni_mitigazione", "kri_proposti"],
       "properties": {
         "id_rischio": {"type": "string", "pattern": "^NFR-[0-9]{2}$"},
@@ -132,7 +132,7 @@ SCHEMA_A1 = r'''{
           "type": "array", "minItems": 1, "uniqueItems": true,
           "items": {"type": "string", "enum": ["DRV-CYB", "DRV-TPR", "DRV-AI", "DRV-CLI", "DRV-CON", "DRV-GEO", "DRV-TEC", "DRV-HUM"]}
         },
-        "descrizione": {"type": "string", "minLength": 20, "maxLength": 1000},
+        "descrizione": {"type": "string", "maxLength": 1000},
         "impatto": {"$ref": "#/$defs/punteggio"},
         "velocity": {"type": ["integer", "null"], "minimum": 1, "maximum": 5},
         "prossimita": {"$ref": "#/$defs/punteggio"},
@@ -163,12 +163,12 @@ SCHEMA_A1 = r'''{
             "properties": {
               "riferimento": {"type": "string", "minLength": 5, "maxLength": 300},
               "data": {"$ref": "#/$defs/data"},
-              "tipo": {"type": "string", "enum": ["Interna", "Esterna"]},
+              "tipo": {"type": "string", "enum": ["Interna", "Esterna", "Rapporto"]},
               "rilevanza": {"type": "integer", "minimum": 1, "maximum": 3}
             }
           }
         },
-        "razionale": {"type": "string", "minLength": 50, "maxLength": 2500},
+        "razionale": {"type": "string", "maxLength": 2500},
         "azioni_mitigazione": {
           "type": "array",
           "maxItems": 5,
@@ -588,8 +588,20 @@ della baseline (radar.stati, la stessa dello script). Completezza (C1) solo per 
 chi sara' nel radar: mancano a un rischio che entra dall'osservazione = da motivare, a un altro rischio del radar =
 Bloccante; scritti per un rischio in osservazione = Osservazione (lo script non li registra). Piu' di 20 rischi in
 osservazione = C1 Bloccante. Le regole le legge A1 nella guida di scrittura (allegato).
+
+Dal 03/11/2026 (P17) un rischio esistente riprende dalla baseline i testi che A1 non riscrive (eredita_testi): i
+controlli lavorano sul rischio completo, C10 misura solo i testi scritti da A1 e C2 chiede di riscrivere la parte del
+razionale di un valore che cambia (da motivare).
+
+Dal 04/11/2026 il razionale ha due parti in piu' (guida di scrittura): QUINDI: (P14, D-96: che cosa significa per la
+Banca; misurata da C10, quindi richiesta come gli altri testi; ripresa dalla baseline mentre i valori cambiano =
+Osservazione di C2) e COLLEGATI: (D-97, al posto di P5: nel rischio primario gli id dei rischi collegati, facoltativa;
+id inesistenti, il rischio stesso e i collegamenti reciproci = Osservazioni di C1). I temi da verificare della baseline
+(P9, D-98) senza risposta nell'output sono Osservazioni di C1 sul ciclo. Nessun codice nuovo: il testo dei controlli
+(controlli_A5.md, nel prompt di A5) resta a C1-C10.
 """
 
+import copy
 import re
 
 import radar
@@ -614,6 +626,7 @@ LUNGHEZZE = [
     ("rischio", "razionale, parte RISCHIO:", 200, 300),
     ("dimensione", "razionale, ogni parte IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: (VELOCITY null esclusa)", 150, 250),
     ("adeguamento", "razionale, parte ADEGUAMENTO: (se anni_adeguamento non e' null)", 100, 200),
+    ("quindi", "razionale, parte QUINDI: (che cosa significa per la Banca)", 120, 250),            # P14, D-96
     ("evidenza", "evidenza di una variazione", 150, 300),
     ("segnale", "segnale di avvicinamento (se lo scrivi)", 100, 200),
     ("azione", "azione: descrizione", 120, 250),
@@ -627,7 +640,7 @@ LUNGHEZZE = [
 ]
 MINIMO = {chiave: minimo for chiave, _, minimo, _ in LUNGHEZZE}
 ETICHETTE_PARTI = {"rischio": "RISCHIO", "impatto": "IMPATTO", "probabilita": "PROBABILITA", "prossimita": "PROSSIMITA",
-                   "velocity": "VELOCITY", "adeguamento": "ADEGUAMENTO"}
+                   "velocity": "VELOCITY", "adeguamento": "ADEGUAMENTO", "quindi": "QUINDI", "collegati": "COLLEGATI"}
 
 
 def tabella_lunghezze():
@@ -642,15 +655,110 @@ def _parti(razionale):
     return schede.parti_razionale(razionale)
 
 
+# P17 (03/11/2026, scelte dell'utente): i testi di un rischio esistente si aggiornano, non si riscrivono. A1 (e A8, stesse
+# regole) scrive solo cio' che cambia: la descrizione (una sola, che racconta l'evoluzione), le parti del razionale delle
+# dimensioni che cambiano, un KRI nuovo al posto di quello in vigore dello stesso tipo. Il resto lo riprende lo script
+# dalla baseline (eredita_testi), prima dei controlli e della scrittura: il registro ha sempre i testi interi.
+ORDINE_PARTI = ["rischio", "impatto", "probabilita", "prossimita", "velocity", "adeguamento", "quindi", "collegati"]
+CAMPI_KRI_EREDITATI = ["kri_id", "tipo", "nome", "unita", "fonte_dati", "soglia_attenzione", "soglia_allerta", "razionale"]
+
+
+def _vuoto_testo(testo):
+    return not str(testo or "").strip()
+
+
+def _segmenti(razionale):
+    """Le parti del razionale per etichetta, con il testo com'e' scritto (schede.parti_razionale lo ripulisce per le
+    schede): {"altro": testo prima della prima etichetta, "rischio": ..., ...}; {} senza etichette."""
+    import schede
+    testo = str(razionale or "")
+    trovate = list(schede._ETICHETTA.finditer(testo))
+    if not trovate:
+        return {}
+    out = {"altro": testo[:trovate[0].start()].strip()} if testo[:trovate[0].start()].strip() else {}
+    for i, m in enumerate(trovate):
+        chiave = schede.ETICHETTE_RAZIONALE[(m.group(1) or m.group(2)).upper().replace("À", "A").replace("'", "")]
+        valore = testo[m.end():trovate[i + 1].start() if i + 1 < len(trovate) else len(testo)].strip().strip(";").strip()
+        if valore:
+            out[chiave] = f"{out[chiave]} {valore}" if chiave in out else valore
+    return out
+
+
+def _eredita_razionale(x, prec):
+    """Le parti del razionale che A1 non scrive vengono dal razionale validato (baseline). Un razionale scritto intero
+    senza etichette resta com'e'; anche uno della baseline senza etichette non si puo' dividere: niente da ereditare."""
+    proprie = _segmenti(x.get("razionale"))
+    if not _vuoto_testo(x.get("razionale")) and not proprie:
+        return []
+    vecchie = _segmenti(prec.get("razionale"))
+    parti, ereditate = {}, []
+    for chiave in ORDINE_PARTI:
+        if proprie.get(chiave):
+            parti[chiave] = proprie[chiave]
+        elif vecchie.get(chiave) and (chiave != "adeguamento" or x.get("anni_adeguamento") is not None):
+            parti[chiave] = vecchie[chiave]
+            ereditate.append(f"razionale.{chiave}")
+    if ereditate:
+        x["razionale"] = " ".join(([proprie["altro"]] if proprie.get("altro") else [])
+                                  + [f"{ETICHETTE_PARTI[k]}: {v}" for k, v in parti.items()])
+    return ereditate
+
+
+def _eredita_kri(x, in_vigore):
+    """I KRI in vigore del rischio restano se A1 non li ripropone; un KRI nuovo prende il posto di quello in vigore dello
+    stesso tipo (un KRI in vigore senza tipo, di prima della D-64, resta solo se A1 non propone KRI)."""
+    proposti = list(x.get("kri_proposti") or [])
+    ids = {k.get("kri_id") for k in proposti if k.get("kri_id")}
+    tipi = {k.get("tipo") for k in proposti}
+    ereditati = []
+    for k in in_vigore:
+        if k["kri_id"] in ids or (proposti and (not k.get("tipo") or k.get("tipo") in tipi)):
+            continue
+        proposti.append({**{c: k.get(c) for c in CAMPI_KRI_EREDITATI}, "razionale": k.get("razionale") or "",
+                         "_ereditato": True})
+        ereditati.append(f"kri.{k['kri_id']}")
+    if ereditati:
+        x["kri_proposti"] = proposti
+    return ereditati
+
+
+def eredita_testi(payload, baseline):
+    """P17: completa i rischi esistenti con i testi validati che A1 non ha scritto (descrizione, segnale di
+    avvicinamento, parti del razionale, KRI in vigore). In ogni rischio: '_ereditati' (che cosa viene dalla baseline:
+    "descrizione", "razionale.impatto", "kri.NFR-01-K1"...), '_razionale_a1' (il razionale come l'ha scritto A1) e
+    '_esistente' (il rischio e' nella baseline). Modifica il payload e lo restituisce; idempotente."""
+    base = {r["id_rischio"]: r for r in baseline.get("rischi", []) + baseline.get("rischi_in_osservazione", [])}
+    kri_base = {}
+    for k in baseline.get("kri_in_vigore", []):
+        kri_base.setdefault(k.get("id_rischio"), []).append(k)
+    for x in payload.get("rischi") or []:
+        if not isinstance(x, dict) or "_ereditati" in x:
+            continue
+        x["_razionale_a1"] = x.get("razionale") or ""
+        prec, ereditati = base.get(x.get("id_rischio")), []
+        if prec is not None:
+            for campo in ("descrizione", "segnale_avvicinamento"):
+                if _vuoto_testo(x.get(campo)) and not _vuoto_testo(prec.get(campo)):
+                    x[campo] = prec[campo]
+                    ereditati.append(campo)
+            ereditati += _eredita_razionale(x, prec)
+            ereditati += _eredita_kri(x, kri_base.get(x["id_rischio"], []))
+        x["_ereditati"], x["_esistente"] = ereditati, prec is not None
+    return payload
+
+
 def testi_corti(x):
-    """I testi di un rischio sotto il minimo di LUNGHEZZE: [(che cosa, lunghezza, minimo)]."""
+    """I testi di un rischio sotto il minimo di LUNGHEZZE: [(che cosa, lunghezza, minimo)]. Solo quelli scritti da A1:
+    un testo ripreso dalla baseline (P17, '_ereditati') e' gia' stato validato."""
     corti = []
+    ereditati = set(x.get("_ereditati") or [])
 
     def misura(cosa, testo, chiave):
         n = len(str(testo or "").strip())
         if n < MINIMO[chiave]:
             corti.append((cosa, n, MINIMO[chiave]))
-    misura("descrizione", x.get("descrizione"), "descrizione")
+    if "descrizione" not in ereditati:
+        misura("descrizione", x.get("descrizione"), "descrizione")
     parti = _parti(x.get("razionale"))
     valutate = [d for d in DIMENSIONI if not (d == "velocity" and x.get("velocity") is None)]
     if not parti:
@@ -662,20 +770,21 @@ def testi_corti(x):
         if n < minimo:
             corti.append(("razionale (senza le parti)", n, minimo))
     else:
-        misura("razionale RISCHIO", parti.get("rischio"), "rischio")
-        for dim in valutate:                         # "VELOCITY: nessuna fonte documenta i tempi." basta, se null
-            misura(f"razionale {ETICHETTE_PARTI[dim]}", parti.get(dim), "dimensione")
-        if x.get("anni_adeguamento") is not None:
-            misura("razionale ADEGUAMENTO", parti.get("adeguamento"), "adeguamento")
+        da_misurare = [("rischio", "rischio")] + [(d, "dimensione") for d in valutate] + \
+            ([("adeguamento", "adeguamento")] if x.get("anni_adeguamento") is not None else []) + [("quindi", "quindi")]
+        for parte, chiave in da_misurare:            # "VELOCITY: nessuna fonte documenta i tempi." basta, se null
+            if f"razionale.{parte}" not in ereditati:
+                misura(f"razionale {ETICHETTE_PARTI[parte]}", parti.get(parte), chiave)
     for n, v in enumerate(x.get("variazioni") or [], start=1):
         misura(f"evidenza della variazione {n} ({v.get('dimensione')})", v.get("evidenza"), "evidenza")
-    if str(x.get("segnale_avvicinamento") or "").strip():
+    if str(x.get("segnale_avvicinamento") or "").strip() and "segnale_avvicinamento" not in ereditati:
         misura("segnale di avvicinamento", x.get("segnale_avvicinamento"), "segnale")
     for n, a in enumerate(x.get("azioni_mitigazione") or [], start=1):
         misura(f"azione {n}, descrizione", a.get("descrizione"), "azione")
         misura(f"azione {n}, razionale", a.get("razionale"), "azione_razionale")
     for k in x.get("kri_proposti") or []:
-        misura(f"KRI di {k.get('tipo') or 'tipo mancante'}, razionale", k.get("razionale"), "kri_razionale")
+        if not k.get("_ereditato"):
+            misura(f"KRI di {k.get('tipo') or 'tipo mancante'}, razionale", k.get("razionale"), "kri_razionale")
     return corti
 
 
@@ -834,8 +943,60 @@ def stati_previsti(payload, baseline):
     return radar.stati(ingressi, regola)
 
 
+def controlla_collegati(rischi, noti):
+    """D-97: la parte COLLEGATI: del rischio primario cita rischi che esistono (nel registro o nuovi del ciclo), non il
+    rischio stesso, e un collegamento non e' dichiarato dai due lati. Osservazioni: il collegamento non entra nei valori."""
+    import schede
+    r = []
+    citati = {x["id_rischio"]: [i for i, _ in schede.collegati(x.get("razionale"))] for x in rischi}
+    for rid, ids in citati.items():
+        for c in ids:
+            if c == rid:
+                r.append(_rilievo("C1", rid, OSSERVAZIONE, "COLLEGATI: cita il rischio stesso; vanno citati solo gli altri "
+                                                           "rischi dello stesso evento o della stessa causa."))
+            elif c not in noti:
+                r.append(_rilievo("C1", rid, OSSERVAZIONE, f"COLLEGATI: {c} non e' nel registro ne' fra i rischi nuovi del "
+                                                           "ciclo (o e' stato dismesso): toglierlo o correggere l'id."))
+            elif rid in citati.get(c, []) and rid < c:
+                r.append(_rilievo("C1", rid, OSSERVAZIONE, f"COLLEGATI: {rid} e {c} si citano a vicenda; il collegamento "
+                                                           "lo dichiara solo il rischio primario (guida di scrittura)."))
+    return r
+
+
+CODICE_TEMA = re.compile(r"\bTEMA-\d{2,3}\b")
+
+
+def risposte_temi(payload, codici):
+    """P9 (D-98): dove l'output cita ogni tema da verificare, {codice: ["NFR-07", "non censito: fenomeno (motivo)"]}.
+    Si cercano i testi scritti da A1 nel ciclo (non quelli ripresi dalla baseline)."""
+    trovati = {c: [] for c in codici}
+    for x in payload.get("rischi") or []:
+        testi = [x.get("nome"), x.get("descrizione"), x.get("_razionale_a1", x.get("razionale")),
+                 x.get("segnale_avvicinamento")] + [v.get("evidenza") for v in x.get("variazioni") or []]
+        for c in set(CODICE_TEMA.findall(" ".join(str(t or "") for t in testi))) & set(codici):
+            trovati[c].append(x.get("id_rischio"))
+    for f in payload.get("fenomeni_non_censiti") or []:
+        for c in set(CODICE_TEMA.findall(f"{f.get('fenomeno')} {f.get('spiegazione')}")) & set(codici):
+            trovati[c].append(f"non censito: {f.get('fenomeno')} ({f.get('motivo')})")
+    return trovati
+
+
+def controlla_temi(payload, baseline):
+    """P9 (D-98): ogni tema da verificare della baseline ha una risposta, cioe' il suo codice in un rischio o fra i
+    fenomeni non censiti. Osservazione sul ciclo: chi valida vede quale richiesta dell'analista e' rimasta senza esito."""
+    temi = baseline.get("temi_da_verificare") or []
+    risposte = risposte_temi(payload, [t["codice"] for t in temi])
+    return [_rilievo("C1", None, OSSERVAZIONE, f"Tema da verificare {t['codice']} senza risposta ({str(t.get('tema'))[:90]}): "
+                                               "citarne il codice in un rischio (nel radar o in osservazione) o fra i "
+                                               "fenomeni non censiti, con il motivo (guida di scrittura).")
+            for t in temi if not risposte.get(t["codice"])]
+
+
 def controlla(payload, baseline):
-    """Applica i controlli meccanizzabili. Restituisce un dict conforme allo schema A5."""
+    """Applica i controlli meccanizzabili. Restituisce un dict conforme allo schema A5. I controlli guardano il rischio
+    completo dei testi validati che A1 non ha riscritto (P17, eredita_testi su una copia: il payload non cambia)."""
+    scritto = payload                                # i temi da verificare si cercano in cio' che A1 ha scritto
+    payload = eredita_testi(copy.deepcopy(payload), baseline)
     r = []
     B, M, O = BLOCCANTE, DA_MOTIVARE, OSSERVAZIONE
     base = {x["id_rischio"]: x for x in baseline.get("rischi", [])}          # il radar (D-79)
@@ -876,6 +1037,12 @@ def controlla(payload, baseline):
         r.append(_rilievo("C1", rid, B, "id_rischio ripetuto nel payload."))
     for x in rischi:
         prec = tutti.get(x["id_rischio"])
+        if prec is None:                             # P17: un rischio esistente puo' ometterli, uno nuovo no
+            mancano = [c for c in ("descrizione", "razionale") if _vuoto_testo(x.get(c))]
+            if mancano:
+                r.append(_rilievo("C1", x["id_rischio"], B, f"Rischio nuovo senza {' e '.join(mancano)}: un rischio nuovo li "
+                                                           "scrive per intero (solo un rischio esistente riprende i testi "
+                                                           "validati che non cambiano)."))
         et, et_prec = x["event_type"], (prec or {}).get("event_type")
         if et == FUORI_PERIMETRO:
             if prec is None:
@@ -895,6 +1062,8 @@ def controlla(payload, baseline):
                 r.append(_rilievo("C1", x["id_rischio"], B, f"Categoria {et} diversa da quella in anagrafica ({et_prec}): un "
                                                            "rischio esistente non cambia meccanismo; se e' un altro rischio, "
                                                            "serve un id nuovo."))
+    r += controlla_collegati(rischi, set(tutti) | set(ids))
+    r += controlla_temi(scritto, baseline)
 
     for x in rischi:
         rid = x["id_rischio"]
@@ -912,6 +1081,21 @@ def controlla(payload, baseline):
             for z in var:
                 if z["dimensione"] not in cambiati:
                     r.append(_rilievo("C2", rid, B, f"Variazione dichiarata su {z['dimensione']} che non cambia rispetto alla baseline."))
+            # P17: la parte del razionale di un valore che cambia va riscritta; quella ripresa dalla baseline motiva il
+            # valore di prima.
+            ereditate = set(x.get("_ereditati") or [])
+            vecchie = [v for v in cambiati if f"razionale.{v}" in ereditate]
+            if "razionale.adeguamento" in ereditate and _diversi(x.get("anni_adeguamento"), prec.get("anni_adeguamento")):
+                vecchie.append("adeguamento")
+            for v in vecchie:
+                r.append(_rilievo("C2", rid, M, f"{ETICHETTE_PARTI[v]} cambia ma la sua parte del razionale non e' riscritta: "
+                                                "resta quella del ciclo prima, che motiva il valore di prima. Riscriverla "
+                                                "con il valore nuovo e l'evidenza."))
+            # P14 (D-96): il "so what" del ciclo prima puo' valere ancora anche con un valore cambiato: solo un dubbio.
+            if cambiati and "razionale.quindi" in ereditate:
+                r.append(_rilievo("C2", rid, O, f"Cambia {', '.join(ETICHETTE_PARTI[v] for v in cambiati)} ma QUINDI: e' "
+                                                "quella del ciclo prima: verificare che dica ancora che cosa significa il "
+                                                "rischio per la Banca, o riscriverla."))
             # C3b sul valore effettivo: al massimo un punto (una Velocity prima null entra con qualunque valore).
             for v in VALORI:
                 a, b = prec.get(v), x.get(v)
@@ -942,7 +1126,9 @@ def controlla(payload, baseline):
         if prec is not None and len(fonti) < len(prec.get("fonti", [])) and not any(_diversi(x.get(v), prec.get(v)) for v in VALORI):
             r.append(_rilievo("C5", rid, O, f"Fonti scese da {len(prec['fonti'])} a {len(fonti)} con i valori invariati: "
                                             "verificare che restino sostenuti (regola di variazione 5)."))
-        dichiarata, n_esp = esposizione_non_nota(x.get("razionale"))
+        # Solo il razionale scritto da A1 in questo ciclo: una frase in una parte ripresa dalla baseline (P17) e' gia'
+        # stata decisa dal validatore.
+        dichiarata, n_esp = esposizione_non_nota(x.get("_razionale_a1", x.get("razionale")))
         p_prop = x.get("probabilita")
         if dichiarata and isinstance(p_prop, int) and n_esp is not None and n_esp > p_prop:
             limite = ("" if prec is None else
@@ -959,7 +1145,7 @@ def controlla(payload, baseline):
 
         # ---------------- D-79 Registro unico: KRI e azioni solo per chi sara' nel radar
         if not nel_radar(rid):
-            if x.get("kri_proposti") or x.get("azioni_mitigazione"):
+            if [k for k in x.get("kri_proposti") or [] if not k.get("_ereditato")] or x.get("azioni_mitigazione"):
                 r.append(_rilievo("C9", rid, O, f"Rischio in osservazione ({previsti[rid]['motivo']}): KRI e azioni non si "
                                                 "scrivono, lo script non li registra."))
             if rid in osservati and not any(d_prec < f["data"] for f in x.get("fonti", [])):
@@ -1021,7 +1207,8 @@ def controlla(payload, baseline):
             riproposti = {k.get("kri_id") for k in kri}
             usciti = sorted(k for k, v in kri_base.items() if v["id_rischio"] == rid and k not in riproposti)
             if usciti:
-                r.append(_rilievo("C9", rid, O, f"KRI in vigore non riproposti, escono di vigore: {', '.join(usciti)}."))
+                r.append(_rilievo("C9", rid, O, f"KRI in vigore che escono di vigore (sostituiti da un KRI nuovo dello stesso "
+                                                f"tipo): {', '.join(usciti)}."))
 
     tutti_kid = [k["kri_id"] for x in rischi for k in x.get("kri_proposti", []) if k.get("kri_id")]
     for kid in sorted({k for k in tutti_kid if tutti_kid.count(k) > 1}):
@@ -1111,7 +1298,11 @@ Tre passi, tutti dopo la validazione del ciclo trimestrale:
    non stia nei dati del rischio o nella rubrica. Se no, niente file.
 3. scrivi_file_schede(): Schede_<ciclo>.xlsx, un indice e una scheda per
    rischio nell'ordine della classifica (comando schede). Senza l'output di A6
-   le schede usano i testi di A1 dal registro.
+   le schede usano i testi di A1 dal registro. Dal 04/11/2026 (P6, D-101) in fondo
+   una scheda per tema: un foglio per ogni driver con almeno due rischi (nel radar
+   e in osservazione), con i loro score e l'andamento e i gruppi collegati; nessuno
+   score del tema (D-42). I temi li calcola lo script (chiave "temi" dell'input),
+   non A6: l'allegato di A6 non li porta.
 
 Il passo 1 legge il workbook via Excel (COM); i passi 2 e 3 sono Python puro
 (openpyxl), quindi il collaudo li prova anche senza Excel.
@@ -1154,6 +1345,42 @@ def _colonna(sessione, nome):
     return [r[0] for r in v] if isinstance(v, tuple) else [v]
 
 
+def _valori(sessione, nome):
+    """Valori di un intervallo di una colonna, da Excel (tuple di righe) o dal lettore del report HTML (lista)."""
+    v = sessione.intervallo_nome(nome).Value
+    if isinstance(v, tuple):
+        return [r[0] if isinstance(r, tuple) else r for r in v]
+    return list(v) if isinstance(v, list) else [v]
+
+
+def temi_per_driver(ultime, prec, cicli, nomi_driver, legami, minimo=2):
+    """P6 (D-101): un tema per driver con almeno 'minimo' rischi attivi (radar e osservazione, non dismessi), dall'ultima
+    riga di ogni rischio. Per ogni rischio stato, score, score del ciclo prima e andamento sugli ultimi quattro cicli;
+    per il tema i collegamenti (D-97) fra i suoi rischi. Nessuno score del tema (D-42)."""
+    per_driver = {}
+    for rid, r in ultime.items():
+        if str(r.get("Stato") or "") == "Dismesso":
+            continue
+        for d in [x.strip() for x in str(r.get("Driver") or "").split(",") if x.strip()]:
+            per_driver.setdefault(d, []).append(rid)
+    temi = []
+    for cod, ids in per_driver.items():
+        if len(ids) < minimo:
+            continue
+        rischi = []
+        for rid in ids:
+            r = ultime[rid]
+            rischi.append({"id_rischio": rid, "nome": r.get("Nome"), "stato": r.get("Stato") or "Radar",
+                           "score": _num(r.get("Score_Composito")), "score_ciclo_precedente": _num((prec.get(rid) or {}).get("Score_Composito")),
+                           "andamento": [[c, _num(s)] for c, s in cicli.get(rid, [])[-4:]]})
+        rischi.sort(key=lambda x: (-(x["score"] or 0), x["id_rischio"]))
+        gruppi = [f"{rid} con {', '.join(c['id_rischio'] for c in legami.get(rid, {}).get('collegati', []) if c['id_rischio'] in ids)}"
+                  for rid in ids if any(c["id_rischio"] in ids for c in legami.get(rid, {}).get("collegati", []))]
+        temi.append({"driver": cod, "nome": nomi_driver.get(cod) or cod, "rischi": rischi, "collegati": sorted(gruppi)})
+    temi.sort(key=lambda x: (-len(x["rischi"]), x["driver"]))
+    return temi
+
+
 # ---------------------------------------------------------------- razionali in parti (D-68)
 # A1 scrive il razionale del rischio in parti con etichette fisse, come MESSAGGIO/DECISIONI della sintesi:
 # "RISCHIO: il fenomeno in termini di rischio. IMPATTO: perche' il valore, fatto e documento. PROBABILITA: ...
@@ -1161,9 +1388,13 @@ def _colonna(sessione, nome):
 # Un'etichetta conta all'inizio del testo o dopo un punto, un punto e virgola o un a capo (maiuscole o minuscole),
 # oppure ovunque se e' scritta tutta in maiuscolo: "Impatto resta 4:" a meta' frase non e' un'etichetta. I razionali
 # scritti prima (senza etichette) restano interi.
+# Dal 04/11/2026 due parti in fondo: QUINDI: (P14, D-96: che cosa significa il rischio per la Banca e che cosa va deciso
+# o osservato) e COLLEGATI: (D-97, facoltativa, solo nel rischio primario: gli id dei rischi dello stesso evento o della
+# stessa causa, ognuno con il motivo).
 ETICHETTE_RAZIONALE = {"RISCHIO": "rischio", "IMPATTO": "impatto", "PROBABILITA": "probabilita",
-                       "PROSSIMITA": "prossimita", "VELOCITY": "velocity", "ADEGUAMENTO": "adeguamento"}
-_NOMI = r"RISCHIO|IMPATTO|PROBABILIT(?:A'|À|A)|PROSSIMIT(?:A'|À|A)|VELOCITY|ADEGUAMENTO"
+                       "PROSSIMITA": "prossimita", "VELOCITY": "velocity", "ADEGUAMENTO": "adeguamento",
+                       "QUINDI": "quindi", "COLLEGATI": "collegati"}
+_NOMI = r"RISCHIO|IMPATTO|PROBABILIT(?:A'|À|A)|PROSSIMIT(?:A'|À|A)|VELOCITY|ADEGUAMENTO|QUINDI|COLLEGATI"
 _ETICHETTA = re.compile(rf"(?:(?:^|(?<=[.;\n]))\s*(?i:({_NOMI}))|(?<=\s)({_NOMI}))\s*:")
 _EFFETTO = re.compile(r"(?:(?:^|(?<=[.;\n]))\s*(?i:EFFETTO(?: ATTESO)?)|(?<=\s)EFFETTO(?: ATTESO)?)\s*:")
 
@@ -1194,6 +1425,40 @@ def parti_razionale(testo):
     return parti
 
 
+ID_RISCHIO = re.compile(r"NFR-\d{2}")
+
+
+def collegati(testo):
+    """D-97: i rischi citati nella parte COLLEGATI: di un razionale, [(id, motivo)] nell'ordine in cui sono scritti
+    ("COLLEGATI: NFR-07 (stesso evento); NFR-12 (stessa causa)"); [] se la parte manca."""
+    parte = parti_razionale(testo).get("collegati") or ""
+    out = []
+    for pezzo in re.split(r"[;\n]", parte):
+        ids = ID_RISCHIO.findall(pezzo)
+        motivo = ID_RISCHIO.sub("", pezzo).strip(" ,.:-–()").replace("(", "").replace(")", "").strip()
+        for i in ids:
+            if i not in [x for x, _ in out]:
+                out.append((i, motivo or None))
+    return out
+
+
+def legami_collegati(righe):
+    """D-97: da {id: riga del registro} (colonne ID_Rischio, Nome, Razionale, Score_Composito, Stato), per ogni rischio
+    {"collegati": i rischi che cita nella sua parte COLLEGATI: con motivo, score e stato; "collegato_a": i rischi primari
+    che lo citano}. Il verso opposto lo ricava lo script: A1 lo scrive solo nel rischio primario."""
+    out = {rid: {"collegati": [], "collegato_a": []} for rid in righe}
+    for rid, riga in righe.items():
+        for c, motivo in collegati(riga.get("Razionale")):
+            if c == rid:
+                continue
+            altra = righe.get(c) or {}
+            out[rid]["collegati"].append({"id_rischio": c, "nome": altra.get("Nome"), "motivo": motivo,
+                                          "score": _num(altra.get("Score_Composito")), "stato": altra.get("Stato") or None})
+            if c in out and rid not in [x["id_rischio"] for x in out[c]["collegato_a"]]:
+                out[c]["collegato_a"].append({"id_rischio": rid, "nome": riga.get("Nome"), "motivo": motivo})
+    return out
+
+
 def parti_effetto(testo):
     """(perche', effetto atteso) dal razionale di un'azione o di un KRI; effetto None se manca "EFFETTO:"."""
     testo = str(testo or "")
@@ -1220,6 +1485,10 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
     et_nomi = [r[0] for r in sessione.intervallo_nome("codiciL1").GetOffset(0, 1).Value]
     nome_et = dict(zip(et_codici, et_nomi))
     pesi = {d: _num(sessione.intervallo_nome(n).Value) for d, n in PESI.items()}
+    ultime = {}                                  # D-97: l'ultima riga di ogni rischio fino al ciclo, radar o osservazione
+    for x in sorted((x for x in reg if x["Ciclo"] <= ciclo), key=lambda x: x["Ciclo"]):
+        ultime[x["ID_Rischio"]] = x
+    legami = legami_collegati(ultime)
     rischi = []
     for _, a in anag:
         rid = a["ID"]
@@ -1241,6 +1510,8 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
             "razionale_rischio": (" ".join(p for p in (parti.get("altro"), parti.get("rischio")) if p) or None)
                                  if parti else r["Razionale"],
             "motivazioni": {k: parti.get(k) for k in DIMENSIONI + ["adeguamento"]} if parti else None,
+            "quindi": parti.get("quindi"),            # P14 (D-96): che cosa significa per la Banca
+            **legami.get(rid, {"collegati": [], "collegato_a": []}),
             "valori": {d: _num(r[COLONNA_DIM[d]]) for d in DIMENSIONI},
             "score": _num(r["Score_Composito"]),
             "score_ciclo_precedente": _num(prec["Score_Composito"]) if prec else None,
@@ -1269,17 +1540,37 @@ def input_schede(scr, sessione, ciclo, ciclo_prec, data_rif):
     rischi.sort(key=lambda x: (-(x["score"] or 0), posizione[x["id_rischio"]]))
     for n, x in enumerate(rischi, start=1):
         x["posizione_in_classifica"] = n
+    # P6 (D-101): i temi per driver, dagli stessi dati (radar e osservazione).
+    prec_righe = {x["ID_Rischio"]: x for x in reg if x["Ciclo"] == ciclo_prec}
+    andamenti = {}
+    for c in cicli:
+        for x in reg:
+            if x["Ciclo"] == c:
+                andamenti.setdefault(x["ID_Rischio"], []).append((c, x["Score_Composito"]))
+    try:
+        nomi_driver = dict(zip(_valori(sessione, "codiciDriver"), _valori(sessione, "nomiDriver")))
+    except Exception:                                # noqa: BLE001 - registro senza i nomi dei driver: i codici bastano
+        nomi_driver = {}
     return {"ciclo": ciclo, "data_riferimento": data_rif, "ciclo_precedente": ciclo_prec, "pesi": pesi,
-            "rischi": rischi}
+            "rischi": rischi, "temi": temi_per_driver(ultime, prec_righe, andamenti, nomi_driver, legami)}
+
+
+def per_a6(ingresso):
+    """L'allegato di A6: l'input delle schede senza i temi, che sono dello script (P6)."""
+    return {k: v for k, v in ingresso.items() if k != "temi"}
 
 
 # ================================================================ 2. controlli sull'output di A6
 NUMERO = re.compile(r"\d+(?:[.,]\d+)?")
 
 
+CODICI = re.compile(r"\b(?:NFR-\d{2}(?:-K\d+)?|TEMA-\d{2,3}|DRV-[A-Z]+)\b")
+
+
 def numeri(testo):
-    """Numeri di un testo come valori (4,2 = 4.2; 06 = 6): cosi' 10/06/2026 e 2026-06-10 coincidono."""
-    return {float(n.replace(",", ".")) for n in NUMERO.findall(str(testo))}
+    """Numeri di un testo come valori (4,2 = 4.2; 06 = 6): cosi' 10/06/2026 e 2026-06-10 coincidono. Gli identificativi
+    (NFR-07, NFR-07-K1, TEMA-01) non sono numeri: una scheda puo' citare un rischio collegato (D-97)."""
+    return {float(n.replace(",", ".")) for n in NUMERO.findall(CODICI.sub(" ", str(testo)))}
 
 
 def controlla_a6(ingresso, uscita, testo_rubrica=""):
@@ -1413,6 +1704,20 @@ def _nv(v):
     return NON_VALUTATA if v is None else v
 
 
+def nome_foglio_tema(tema):
+    return f"Tema {tema['driver']}"[:31]
+
+
+def testo_collegati(r):
+    """D-97: le righe del riquadro "Rischi collegati" di una scheda: i rischi che cita (rischio primario) e quelli che lo
+    citano (con la riga "Collegato a", ricavata dallo script)."""
+    righe = [f"• {c['id_rischio']} {c.get('nome') or ''} — score {_it(c.get('score'))}, {c.get('stato') or 'stato non noto'}"
+             + (f" ({c['motivo']})" if c.get("motivo") else "") for c in r.get("collegati") or []]
+    righe += [f"• Collegato a {c['id_rischio']} {c.get('nome') or ''} (rischio primario"
+              + (f"; {c['motivo']}" if c.get("motivo") else "") + ")" for c in r.get("collegato_a") or []]
+    return righe
+
+
 def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
     """Schede_<ciclo>.xlsx: indice e una scheda per rischio. uscita_a6 = output di A6 gia'
     controllato, o None (testi di A1 dal registro)."""
@@ -1501,6 +1806,19 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             ws.cell(row=riga, column=x).border = sottile
         ws.row_dimensions[riga].height = 20
     fine = 5 + len(ingresso["rischi"])
+    temi = ingresso.get("temi") or []
+    if temi:                                         # P6: l'elenco delle schede per tema, sotto i rischi
+        fine += 1
+        ws.merge_cells(start_row=fine, start_column=1, end_row=fine, end_column=8)
+        cella(ws, fine, 1, "Schede per tema: un foglio per driver con almeno due rischi (nel radar e in osservazione); "
+                           "nessuno score del tema (D-42).", font=Font(size=11, bold=True, color=BLU_NOTTE))
+        for tema in temi:
+            fine += 1
+            c = cella(ws, fine, 2, tema["driver"], font=Font(bold=True, color=BLU_DIM, underline="single"))
+            c.hyperlink = f"#'{nome_foglio_tema(tema)}'!A1"
+            cella(ws, fine, 3, f"{tema['nome']} · {len(tema['rischi'])} rischi: "
+                               + ", ".join(x["id_rischio"] for x in tema["rischi"]), font=Font(size=9))
+        fine += 1
     ws.merge_cells(start_row=fine + 1, start_column=1, end_row=fine + 1, end_column=8)
     cella(ws, fine + 1, 1, "Legenda — " + LEGENDA, font=Font(size=8, italic=True, color=TESTO_TENUE),
           alignment=Alignment(wrap_text=True, vertical="top"))
@@ -1573,6 +1891,15 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             sezione("Razionale: il fenomeno in termini di rischio" if motivazioni else "Razionale (registro)")
             testo_lungo(r.get("razionale_rischio", r.get("razionale")) or "—")
         riga += 1
+        if r.get("quindi"):                          # P14 (D-96): dal razionale di A1, anche con i testi di A6
+            sezione("Che cosa significa per la Banca")
+            testo_lungo(r["quindi"], fondo="F7F9FC")
+            riga += 1
+        righe_coll = testo_collegati(r)
+        if righe_coll:                               # D-97
+            sezione("Rischi collegati")
+            testo_lungo("\n".join(righe_coll))
+            riga += 1
         sezione("Valutazione, dimensione per dimensione (valori validati)")
         for j, testo in ((1, "Dimensione"), (2, "Valore"), (3, "Perche' questo valore: informazioni e documenti")):
             cella(ws, riga, j, testo, font=Font(size=9, bold=True, color=TESTO_TENUE))
@@ -1679,7 +2006,8 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
             ws.merge_cells(start_row=riga, start_column=7, end_row=riga, end_column=8)
             cella(ws, riga, 1, f["riferimento"], font=Font(size=10), alignment=Alignment(wrap_text=True, vertical="top"))
             cella(ws, riga, 4, _data_it(f.get("data")), font=Font(size=10), alignment=Alignment(vertical="top"))
-            cella(ws, riga, 5, f.get("tipo"), font=Font(size=10, bold=True, color=BLU_DIM if f.get("tipo") == "Interna" else TESTO_TENUE),
+            cella(ws, riga, 5, f.get("tipo"), font=Font(size=10, bold=True, color={"Interna": BLU_DIM, "Rapporto": BLU_NOTTE}.get(
+                      f.get("tipo"), TESTO_TENUE), italic=f.get("tipo") == "Rapporto"),
                   alignment=Alignment(vertical="top"))
             ril = f.get("rilevanza")
             cella(ws, riga, 6, RILEVANZA.get(ril, ril), fill=fill(SCALA_RIL.get(ril, "FFFFFF")), font=Font(size=10, bold=True),
@@ -1755,6 +2083,53 @@ def scrivi_file_schede(ingresso, uscita_a6, percorso, validazione=""):
               alignment=Alignment(wrap_text=True, vertical="top"))
         ws.row_dimensions[riga].height = righe_testo("Legenda — " + LEGENDA, tot, 8) * 11 + 6   # 36 fisso la tagliava
         stampa(ws)
+    nel_file = {r["id_rischio"] for r in ingresso["rischi"]}
+    for tema in ingresso.get("temi") or []:          # P6 (D-101): una scheda per tema
+        ws = wb.create_sheet(nome_foglio_tema(tema))
+        ws.sheet_view.showGridLines = False
+        for l, w in zip("ABCDEFGH", [10, 46, 14, 9, 10, 30, 10, 10]):
+            ws.column_dimensions[l].width = w
+        ws.merge_cells("A1:F1")
+        cella(ws, 1, 1, intestazione, font=Font(size=9, color="FFFFFF"), fill=fill(BLU_MEDIO),
+              alignment=Alignment(vertical="center", indent=1))
+        ws.merge_cells("A2:F2")
+        cella(ws, 2, 1, f"Tema {tema['driver']} · {tema['nome']} · {len(tema['rischi'])} rischi",
+              font=Font(size=14, bold=True, color="FFFFFF"), fill=fill(BLU_NOTTE), alignment=Alignment(vertical="center", indent=1))
+        ws.row_dimensions[2].height = 30
+        ws.merge_cells("A3:F3")
+        cella(ws, 3, 1, "I rischi del registro alimentati da questo driver, nel radar e in osservazione, con i loro score. "
+                        "Ogni rischio resta valutato a se': il tema non ha uno score proprio (D-42).",
+              font=Font(size=9, color=TESTO), fill=fill("DDEBF7"), alignment=Alignment(wrap_text=True, vertical="top", indent=1))
+        ws.row_dimensions[3].height = 30
+        for j, testo in enumerate(["ID", "Rischio", "Stato", "Score", "Variazione", "Andamento (ultimi cicli)"], start=1):
+            cella(ws, 5, j, testo, font=Font(bold=True, color="FFFFFF"), fill=fill(BLU_NOTTE))
+        riga = 6
+        for x in tema["rischi"]:
+            c = cella(ws, riga, 1, x["id_rischio"], font=Font(bold=True, color=BLU_DIM, underline="single" if x["id_rischio"] in nel_file else None))
+            if x["id_rischio"] in nel_file:
+                c.hyperlink = f"#'{x['id_rischio']}'!A1"
+            cella(ws, riga, 2, x["nome"], font=Font(size=10), alignment=Alignment(wrap_text=True, vertical="center"))
+            cella(ws, riga, 3, x["stato"], font=Font(size=9))
+            cella(ws, riga, 4, x["score"], number_format="0.00", font=Font(bold=True))
+            d = None if x["score_ciclo_precedente"] is None or x["score"] is None else round(x["score"] - x["score_ciclo_precedente"], 2)
+            cella(ws, riga, 5, "nuovo" if d is None else ("▲ +" if d > 0 else "▼ " if d < 0 else "● ") + _it(d), font=Font(size=9))
+            cella(ws, riga, 6, " → ".join(_it(s, 1) for _, s in x["andamento"] if s is not None), font=Font(size=9, color=TESTO_TENUE))
+            for col in range(1, 7):
+                ws.cell(row=riga, column=col).border = sottile
+            ws.row_dimensions[riga].height = max(20, righe_testo(x["nome"] or "", 46) * 13.5 + 5)
+            riga += 1
+        if tema["collegati"]:
+            riga += 1
+            cella(ws, riga, 1, "Rischi collegati (stesso evento o stessa causa, D-97): " + "; ".join(tema["collegati"]) + ".",
+                  font=Font(size=9.5))
+            riga += 1
+        riga += 1
+        ws.merge_cells(start_row=riga, start_column=1, end_row=riga, end_column=6)
+        cella(ws, riga, 1, "Score 1-5, 5 = peggiore. Variazione sul ciclo precedente. In osservazione = fuori dal radar (niente "
+                           "KRI ne' azioni). La scheda di un rischio del radar si apre con un clic sull'ID.",
+              font=Font(size=8, italic=True, color=TESTO_TENUE), alignment=Alignment(wrap_text=True))
+        ws.row_dimensions[riga].height = 24
+        stampa(ws, orizzontale=True)
     Path(percorso).parent.mkdir(parents=True, exist_ok=True)
     wb.save(percorso)
     return percorso
@@ -1969,6 +2344,7 @@ skill per Copilot Studio, che 09_Copilot_Studio/prepara_kit.py compone copiando 
 che importa. Un solo codice: quello che il precontrollo trova in Copilot Studio, il comando lo trova sul PC.
 """
 
+import copy
 import hashlib
 import json
 import re
@@ -1987,13 +2363,16 @@ def precontrolla(payload, baseline, schema):
     if errori:
         return {"schema": errori, "rilievi": [], "formato": []}
     formato = []                                     # una riga per rischio: il messaggio resta corto anche con A1 vecchio
-    for x in payload["rischi"]:
+    # P17: la forma si guarda sul rischio completo dei testi validati che A1 non riscrive (su una copia: l'impronta e
+    # l'allegato di A5 restano quelli dell'output di A1).
+    for x in controlli_a5.eredita_testi(copy.deepcopy(payload), baseline)["rischi"]:
         parti = schede.parti_razionale(x["razionale"])
-        attese = [e for e, k in schede.ETICHETTE_RAZIONALE.items()
-                  if k != "adeguamento" or x.get("anni_adeguamento") is not None]
+        # QUINDI: manca = testo troppo corto (C10, D-96); COLLEGATI: e' facoltativa (D-97)
+        attese = [e for e, k in schede.ETICHETTE_RAZIONALE.items() if k not in ("quindi", "collegati")
+                  and (k != "adeguamento" or x.get("anni_adeguamento") is not None)]
         mancano = [e for e in attese if not parti.get(schede.ETICHETTE_RAZIONALE[e])]
         azioni = [str(n) for n, a in enumerate(x["azioni_mitigazione"], start=1) if schede.parti_effetto(a["razionale"])[1] is None]
-        kri = [k["tipo"] for k in x["kri_proposti"] if schede.parti_effetto(k["razionale"])[1] is None]
+        kri = [k["tipo"] for k in x["kri_proposti"] if not k.get("_ereditato") and schede.parti_effetto(k["razionale"])[1] is None]
         senza = ([("azione " if len(azioni) == 1 else "azioni ") + ", ".join(azioni)] if azioni else []) + \
                 (["KRI di " + " e di ".join(kri)] if kri else [])
         problemi = ((["razionale senza le parti " + ", ".join(e + ":" for e in mancano)] if mancano else [])

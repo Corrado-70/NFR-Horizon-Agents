@@ -113,11 +113,11 @@ def leggi(conf, oggi=None):
         att.append(_attivita("baseline", "Preparare la baseline (comando baseline)", "analista",
                              "nell'archivio non c'e' ancora Baseline_corrente.json"))
     elif corrente and s["riapertura"]:
-        att.append(_attivita("validazione", f"Validare la riapertura del ciclo {corrente}", "validatore",
+        att.append(_attivita("validazione", f"Approvare la riapertura del ciclo {corrente}", "validatore",
                              f"riaperta da {s['riapertura'].get('riaperta_da', '?')} il "
                              f"{str(s['riapertura'].get('riaperta_il', '?')).replace('T', ' ')}"))
     elif corrente and not s["validato"]:
-        att.append(_attivita("validazione", f"Validare il ciclo {corrente}", "validatore",
+        att.append(_attivita("validazione", f"Approvare il ciclo {corrente}", "validatore",
                              "il ciclo e' scritto; il ciclo dopo non parte finche' non e' validato"))
     if s["straordinario"]:
         pronto = f"A8_{da_valutare}.json" in in_arrivo
@@ -142,7 +142,7 @@ def leggi(conf, oggi=None):
         att.append(_attivita("settimanale", f"Settimana del {dt.date.fromisoformat(lun):%d/%m}: {passo}", "analista",
                              "aggiornamento settimanale"))
     elif not w["validata"]:
-        att.append(_attivita("valida_settimana", f"Validare le notizie della settimana del {dt.date.fromisoformat(lun):%d/%m} "
+        att.append(_attivita("valida_settimana", f"Approvare le notizie della settimana del {dt.date.fromisoformat(lun):%d/%m} "
                              "(facoltativo)", "validatore", "consigliato"))
     s["attivita"] = att
     s["prossimo"] = att[0] if att else _attivita("niente", "Niente da fare adesso", "—", "prossimo passo: lunedi'")

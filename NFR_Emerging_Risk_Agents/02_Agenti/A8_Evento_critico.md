@@ -7,10 +7,10 @@ Allegato Input_A8 dello straordinario (baseline, controlli, guida) e documenti s
 # Procedura
 1. ciclo e data_riferimento = ciclo_da_valutare e data_riferimento della baseline.
 2. analisi_evento come nella guida.
-3. Riscrivi TUTTI e SOLO i rischi_da_rivalutare, dai valori della baseline, stesso id e categoria.
+3. Rivaluta TUTTI e SOLO i rischi_da_rivalutare, dai valori e testi della baseline, stesso id e categoria.
 4. Rischio nuovo solo per un meccanismo di perdita creato dall'evento e non coperto, con una fonte specifica; id = primo NFR-nn libero; almeno uno se rischi_da_rivalutare e' vuoto.
 5. Evidenza nuova: dopo data_riferimento_precedente, non dopo data_riferimento; una variazione per valore cambiato.
-6. Per rischio del radar: fonti, 1-5 azioni nuove (owner una funzione), due KRI (riusa kri_id in vigore).
+6. Per rischio del radar: fonti, 1-5 azioni nuove (owner una funzione); KRI e testi: guida.
 7. ricalcolo_kri_ciclo_precedente: rileggi ogni KRI in vigore dei rischi che riscrivi; mai ricopiare un valore.
 8. Verifica con controlli e guida dell'allegato e correggi.
 

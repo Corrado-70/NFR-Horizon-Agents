@@ -52,20 +52,20 @@ Osservazione C1; rischio che entra senza KRI o azioni = Da motivare C9; rischio 
 | Campo | Regola | Destinazione |
 |---|---|---|
 | `id_rischio` | `^NFR-[0-9]{2}$`, stabile per sempre | RiskRegister.ID_Rischio, anagrafica |
-| `nome`, `descrizione` | lunghezze | RiskRegister, anagrafica (nome) |
+| `nome`, `descrizione` | lunghezze; dal 03/11/2026 (P17) `descrizione` **non obbligatoria** per un rischio esistente: se A1 non la scrive (o la lascia vuota) lo script riprende quella validata della baseline (`controlli_a5.eredita_testi`); un rischio nuovo la scrive sempre (C1 Bloccante) | RiskRegister, anagrafica (nome) |
 | `event_type` | una delle nove categorie della tassonomia interna (9.1 ... 9.13) o `FP` (rischio esistente fuori perimetro, D-74); un codice di Basilea della baseline si riclassifica | RiskRegister.Event_Type, anagrafica |
 | `driver` | enum, almeno 1, senza ripetizioni | RiskRegister.Driver (testo "a, b") |
 | `impatto`, `prossimita` | interi 1-5 | colonne Impatto (era Severity, D-57) e Prossimita; lo Score_Composito e' formula (pesi D-50) |
 | `velocity` | intero 1-5 **o null** (obbligatorio): null = non valutata, se nessuna fonte ne documenta i tempi (D-50) | RiskRegister.Velocity (vuota); nel composito solo se valutata, i pesi si ridistribuiscono |
 | `anni_adeguamento` | numero 0-30 o null (obbligatorio): anni di un adeguamento strutturale stimati da A1, motivati nel razionale (D-60) | RiskRegister.Anni_Adeguamento; il valore validato va nell'anagrafica (Y minima di Mosca) |
 | `variazioni[]` | dimensione (impatto, velocity, prossimita, probabilita), evidenza (>= 20 caratteri), data_evidenza | RiskRegister.Variazioni (JSON), con "da" e "a" aggiunti dallo script dalla baseline (D-51) |
-| `fonti[]` | almeno 1; riferimento, data, tipo Interna/Esterna | RiskRegister.Fonti (JSON); C5 conta le fonti |
-| `razionale` | 50-2500 caratteri; **in parti con etichette fisse** (D-68, chieste dallo scheletro del prompt): `RISCHIO:` il fenomeno in termini di rischio (causa, evento, danno); `IMPATTO:`, `PROBABILITA:`, `PROSSIMITA:`, `VELOCITY:` perche' quel valore, con il fatto e il documento; `ADEGUAMENTO:` se c'e' una stima. Cita un dato numerico con la fonte, se esiste, e dichiara come valutazione un numero senza fonte (rubrica, regola 7; A5 in C4). Il formato non e' imposto dallo schema: un razionale senza etichette passa, `trimestrale` lo segnala con un avviso e la scheda lo mostra intero | RiskRegister.Razionale; le parti le legge `schede.parti_razionale` |
+| `fonti[]` | almeno 1; riferimento, data, tipo Interna/Esterna/Rapporto (dal 04/11/2026, D-95: un rapporto di scenario di `Analisi_Esterne/Rapporti_Scenario`) | RiskRegister.Fonti (JSON); C5 conta le fonti |
+| `razionale` | fino a 2500 caratteri, **non obbligatorio** per un rischio esistente (P17, 03/11/2026): A1 scrive solo le parti che cambiano e lo script ricompone il razionale con le altre parti di quello validato (baseline); la parte di un valore cambiato va riscritta (C2, da motivare); un rischio nuovo lo scrive intero (C1 Bloccante). **In parti con etichette fisse** (D-68, chieste dallo scheletro del prompt): `RISCHIO:` il fenomeno in termini di rischio (causa, evento, danno); `IMPATTO:`, `PROBABILITA:`, `PROSSIMITA:`, `VELOCITY:` perche' quel valore, con il fatto e il documento; `ADEGUAMENTO:` se c'e' una stima; dal 04/11/2026, chieste dalla guida di scrittura (lo scheletro del prompt e' al limite), `QUINDI:` che cosa significa il rischio per la Banca e che cosa va deciso (D-96: misurata da C10, 120-250 caratteri) e, solo nel rischio primario di un gruppo, `COLLEGATI:` gli id dei rischi collegati con il motivo (D-97, facoltativa; controllata come Osservazione di C1). Cita un dato numerico con la fonte, se esiste, e dichiara come valutazione un numero senza fonte (rubrica, regola 7; A5 in C4). Il formato non e' imposto dallo schema: un razionale senza etichette passa, `trimestrale` lo segnala con un avviso e la scheda lo mostra intero | RiskRegister.Razionale; le parti le legge `schede.parti_razionale` |
 | `orizzonte_anni` | intero 1-30 o null (facoltativo, D-79): per un rischio in osservazione, gli anni stimati prima che possa manifestarsi (la Prossimita non distingue oltre i 3 anni) | RiskRegister.Orizzonte_Anni; foglio Osservazione, pagina Fenomeni |
 | `segnale_avvicinamento` | 10-300 caratteri o null (facoltativo, D-79): il fatto osservabile che lo porterebbe nel radar | RiskRegister.Segnale_Avvicinamento; foglio Osservazione, pagina Fenomeni; A3 lo verifica sulle notizie |
 | `azioni_mitigazione[]` | da 0 a 5 (D-79: nessuna per un rischio in osservazione; da 1 a 5 per uno del radar, lo presidia C9); descrizione, owner, orizzonte (3/6/12 mesi), razionale (20-700 caratteri: perche', poi `EFFETTO:` che cosa dovrebbe cambiare, D-68; niente `dimensione`, D-54) | una riga in Azioni per elemento |
 | `probabilita` | intero 1-5, obbligatorio; descrittori di plausibilita' (D-52, D-61) | RiskRegister.Probabilita; nel composito; area del Radar_Mosca (x Impatto) |
-| `kri_proposti[]` | al massimo 2 (D-79): **due** per un rischio del radar, uno per tipo (D-64, lo presidia C9), nessuno per uno in osservazione | storico KRI, una riga per KRI nel ciclo, solo per i rischi del radar; kri_id riusato = stessa serie |
+| `kri_proposti[]` | al massimo 2 (D-79): **due** per un rischio del radar, uno per tipo (D-64, lo presidia C9), nessuno per uno in osservazione. Dal 03/11/2026 (P17) un KRI in vigore che A1 non ripropone resta in vigore com'era (lo script lo riprende dalla baseline); un KRI nuovo (kri_id null) prende il posto di quello in vigore dello stesso tipo | storico KRI, una riga per KRI nel ciclo, solo per i rischi del radar; kri_id riusato = stessa serie |
 
 L'esito (Nuovo se l'id non e' nella baseline; Variato se cambia Impatto,
 Probabilita, Prossimita o Velocity, anche da vuota a un valore; altrimenti
@@ -148,7 +148,8 @@ driver, owner, attenzione del supervisore, anni di adeguamento, presidio dei
 controlli, esito, descrizione, `razionale_rischio` (la parte RISCHIO del
 razionale; il razionale intero se A1 non l'ha diviso) e `motivazioni` (impatto,
 probabilita, prossimita, velocity, adeguamento; null se il razionale non e'
-diviso, D-68), `valori` (impatto, probabilita,
+diviso, D-68), `quindi` (D-96), `collegati` e `collegato_a` (D-97: i rischi
+citati nella parte COLLEGATI: con nome, motivo, score e stato, e i primari che lo citano), `valori` (impatto, probabilita,
 prossimita, velocity; null = non valutata), score e score del
 ciclo prima, `urgenza` con esito, x, y, z e margine, segnali netti delle
 ultime 4 settimane, `livello_allerta` (livello e motivo, D-63), variazioni,
@@ -165,9 +166,11 @@ identica `Baseline_corrente.txt`, da leggere a mano), input di
 A1, A3, A4 e A5, che la ricevono negli allegati `Input_<agente>` (D-84): `ciclo_precedente`, `data_riferimento_precedente`,
 `ciclo_da_valutare`, `data_riferimento`, `rischi[]` (id, nome, event_type,
 driver, owner, presidio dei controlli, anni di adeguamento (dall'anagrafica), impatto,
-velocity (null = non valutata), prossimita, probabilita, esito_precedente, razionale, fonti,
+velocity (null = non valutata), prossimita, probabilita, esito_precedente, descrizione (dal 03/11/2026, P17), razionale, fonti,
 storico dei due cicli prima), `kri_in_vigore[]` (con valore e data
-dell'ultima rilevazione), `azioni_aperte[]`. E' codice, non un contratto con
+dell'ultima rilevazione e, dal 03/11/2026, il razionale), `azioni_aperte[]` e, dal 04/11/2026 in un ciclo
+trimestrale con temi aperti, `temi_da_verificare[]` (codice TEMA-nn, tema, chi lo chiede, perche': D-98; dal file
+`temi_da_verificare.md` della library Kernel, che l'analista cura dall'app). E' codice, non un contratto con
 un LLM: non ha uno schema proprio, e il collaudo verifica che sia
 esattamente quella usata per scrivere i payload di prova.
 

@@ -18,7 +18,7 @@
     "colonne_rinominate: colonne che hanno cambiato nome (D-57: Severity -> Impatto): aggiorna-registro copia i valori della",
     "  colonna vecchia in quella nuova."
   ],
-  "versione_template": "2026-10-09",
+  "versione_template": "2026-11-04",
   "tabelle": {
     "tblRegister": {
       "foglio": "RiskRegister",
@@ -42,7 +42,7 @@
         {"nome": "Descrizione", "sorgente": "payload:rischi[].descrizione", "larghezza": 50, "significato": "Meccanismo di perdita: che cosa succede, a chi, con quale danno."},
         {"nome": "Razionale", "sorgente": "payload:rischi[].razionale", "larghezza": 60, "significato": "In parti (D-68): RISCHIO: il fenomeno in termini di rischio; IMPATTO:, PROBABILITA:, PROSSIMITA:, VELOCITY: perche' il valore, con fatti e documenti; ADEGUAMENTO: se ci sono anni di adeguamento."},
         {"nome": "Variazioni", "sorgente": "payload:rischi[].variazioni|json", "larghezza": 40, "significato": "Per ogni valore cambiato: da, a (li aggiunge lo script), evidenza datata di A1 (leggibile nelle schede)."},
-        {"nome": "Fonti", "sorgente": "payload:rischi[].fonti|json", "larghezza": 40, "significato": "Fonti citate, con data, tipo Interna/Esterna e rilevanza 1-3 per la previsione (D-58; leggibili nelle Schede)."},
+        {"nome": "Fonti", "sorgente": "payload:rischi[].fonti|json", "larghezza": 40, "significato": "Fonti citate, con data, tipo Interna/Esterna/Rapporto (rapporto di scenario, D-95) e rilevanza 1-3 per la previsione (D-58; leggibili nelle Schede)."},
         {"nome": "Rilievi", "sorgente": "derivato:rilievi_rischio", "larghezza": 50, "significato": "Segnalazioni di A5 e dei controlli sul rischio, una per riga; \"DA MOTIVARE\" = la validazione chiede una Motivazione (D-71). Sono anche nella colonna Segnalazioni del foglio Validazione."},
         {"nome": "Owner", "sorgente": "derivato:owner_da_anagrafica", "significato": "Funzione responsabile, presa dall'anagrafica (Parametri)."},
         {"nome": "Chiave", "sorgente": "formula:={Ciclo}&\"|\"&{ID_Rischio}", "significato": "Ciclo|ID: chiave di ricerca per le viste."},

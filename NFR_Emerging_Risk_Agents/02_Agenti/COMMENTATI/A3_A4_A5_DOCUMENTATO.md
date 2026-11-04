@@ -162,6 +162,11 @@ rischio esistente non cambia categoria (D-74: salvo la riclassificazione di un
 codice di Basilea, che e' un'Osservazione): se il meccanismo di perdita e' un
 altro, e' un rischio nuovo con un id nuovo. Fino al 29/09 C1 guardava anche
 l'esito, che ora calcola lo script (D-51).
+Dal 04/11/2026 la parte meccanizzata di C1 guarda anche, come Osservazioni e
+fuori dal testo del controllo (il prompt di A5 e' al limite): la parte
+COLLEGATI: del rischio primario (D-97: id che esistono, non il rischio stesso,
+non dichiarata dai due lati) e i temi da verificare della baseline (D-98: un
+tema senza risposta e' un'Osservazione sul ciclo).
 
 ### C2 — Variazioni
 Una voce per ogni valore cambiato, e solo per quelli: nessuna variazione
@@ -169,6 +174,9 @@ nascosta dietro una conferma. Il confronto "da/a" non c'e' piu' perche' i due
 valori li aggiunge lo script dalla baseline; resta il controllo che ogni
 cambio abbia la sua evidenza, compreso il passaggio di una Velocity da un
 valore a non valutata.
+Dal 04/11/2026 (D-96) una parte QUINDI: ripresa dal ciclo prima mentre un
+valore cambia e' un'Osservazione: il "so what" puo' valere ancora, ma va
+riletto.
 
 ### C3 — Evidenza delle variazioni
 Data nella finestra del ciclo, evidenza specifica, massimo un punto: le regole
@@ -219,7 +227,8 @@ aperta dello stesso rischio; un'azione solo simile la giudica A5.
 Due per rischio, uno di Esposizione e uno di Evoluzione (D-64; prima da 1 a 3,
 D-53); soglie entrambe o nessuna (D-53). "Uno per tipo" e le soglie invertite
 non sono esprimibili in JSON Schema: C9 e la formula Stato del foglio sono i
-presidi. Un KRI in vigore non riproposto e' un'Osservazione: esce di vigore;
+presidi. Dal 03/11 (D-93) un KRI in vigore non riproposto resta in vigore (lo script lo riprende dalla
+baseline); un KRI nuovo prende il posto di quello in vigore dello stesso tipo, e l'uscita del vecchio e' un'Osservazione;
 anche un tipo diverso da quello della baseline e' un'Osservazione (un KRI non
 cambia natura). Il prompt chiede ad A5 anche che i tipi siano "coerenti con
 cio' che misurano": e' giudizio, lo script non lo controlla.
@@ -239,6 +248,17 @@ Dal 03/11 (D-92) le righe dei rischi sono a una fascia intermedia (descrizione
 350-600, ogni dimensione 150-250, azioni e KRI 150-300): con la fascia alta
 l'output di A1 non stava nelle risposte di Copilot e il "continua" non
 funzionava. Le righe dell'analisi dell'evento di A8 non cambiano.
+Dal 04/11 (D-96, P14) la tabella ha una riga per la parte QUINDI: del razionale
+(120-250): un razionale senza QUINDI e' un testo troppo corto, e il precontrollo
+la fa aggiungere ad A1. La frase di C10 cita QUINDI (12 caratteri in piu' nel
+prompt di A5).
+Dal 03/11 (D-93, P17) C10 misura solo i testi scritti da A1: quelli di un
+rischio esistente ripresi dalla baseline sono gia' validati. Per lo stesso
+motivo C1 chiede descrizione e razionale solo a un rischio nuovo, e C2 chiede
+(da motivare) di riscrivere la parte del razionale di un valore che cambia: se
+resta quella della baseline motiva il valore di prima. Le righe dei controlli
+lo dicono in poche parole (il prompt di A5 e' a 7.966 caratteri); la regola
+intera e' nella guida di scrittura.
 
 ## Esito
 "Da rivedere" se almeno un Bloccante. Dal 06/10 (D-71) A5 e' **facoltativo** e
@@ -366,6 +386,11 @@ rischi (D-86) valgono anche per lui. La tabella ha in piu' le righe dell'analisi
 catena_causale 600-1300, effetto su ogni rischio toccato 150-350, uso di ogni documento 100-250, limiti 150-500):
 C10 ne fa un'Osservazione sul ciclo (id_rischio null). Le istruzioni di A8 non cambiano (7.993 caratteri: non c'e'
 spazio, e non serve: la tabella e' nell'allegato).
+
+**Testi dei rischi esistenti (D-93, 03/11).** Stesse regole di A1 (scelta dell'utente): per un rischio che rivaluta A8
+scrive solo i testi che cambiano, e nella descrizione l'evoluzione e' l'evento; i KRI in vigore restano. Passi 3
+("Rivaluta ... dai valori e testi della baseline") e 6 ("KRI e testi: guida") riscritti nello stesso spazio (7.987
+caratteri).
 
 **Perche' esiste.** Il ciclo straordinario (D-75) rivaluta pochi rischi per un evento che non puo' aspettare il
 trimestre. A1 e' scritto per valutare tutto il registro con la stessa profondita'; per un evento serve l'opposto:

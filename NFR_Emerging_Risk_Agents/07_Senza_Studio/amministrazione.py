@@ -425,7 +425,19 @@ def testi_inizio(conf, conf_grezza, motivo, s):
         raise Fermo(f"Il registro {registro} non c'e'.")
     if aperto_qui(registro):
         raise Fermo(f"{registro.name} e' aperto in Excel su questo PC: chiuderlo e rilanciare.")
-    return parcheggia(conf, conf_grezza, "testi", [registro], motivo, extra={"ciclo": ciclo}, copia=True)
+    # P17: i testi da rileggere dopo le rettifiche di una riapertura (scritti da valida) vanno nell'atto.
+    return parcheggia(conf, conf_grezza, "testi", [registro], motivo, copia=True,
+                      extra={"ciclo": ciclo, "testi_da_rileggere": testi_da_rileggere(conf, ciclo)})
+
+
+def testi_da_rileggere(conf, ciclo):
+    """P17: le voci dell'elenco dei testi da rileggere del ciclo ([] se non c'e')."""
+    from esegui_ciclo_locale import file_testi_da_rileggere
+    percorso = file_testi_da_rileggere(conf, ciclo)
+    try:
+        return json.loads(percorso.read_text(encoding="utf-8"))["voci"] if percorso.exists() else []
+    except (OSError, ValueError, KeyError):
+        return []
 
 
 def testi_aperti(conf):
@@ -461,6 +473,13 @@ def testi_fine(conf, conf_grezza, nome=None, rigenera=None):
     atto["finito_il"] = dt.datetime.now().replace(microsecond=0).isoformat()
     _scrivi(cartella / "atto.json", atto)
     traccia(conf, {**atto, "operazione": "testi_fine"}, cartella)
+    if atto.get("testi_da_rileggere"):
+        # P17: l'elenco e' stato letto (resta nell'atto, e la riapertura chiusa lo conserva): non si ripropone.
+        from esegui_ciclo_locale import file_testi_da_rileggere
+        try:
+            file_testi_da_rileggere(conf, atto["ciclo"]).unlink(missing_ok=True)
+        except OSError:
+            pass
     return cartella, atto, cambiato
 
 
@@ -630,9 +649,13 @@ def esegui(arg, conf, grezza):
         import stato
         with lucchetto.preso(uscita, "testi", utente):
             cartella, atto = testi_inizio(conf, grezza, arg.motivo.strip(), stato.leggi(conf))
+        from esegui_ciclo_locale import riga_testo_da_rileggere
+        voci = atto.get("testi_da_rileggere") or []
         print(f"Testi a mano del ciclo {atto['ciclo']}: copia del registro di adesso nel parcheggio {cartella.name}.\n"
-              "Ora aprire il registro, correggere SOLO le colonne di testo (guida, sezione 3-ter), salvare e chiudere Excel; "
-              "poi: python amministrazione.py --admin testi-fine")
+              + (f"TESTI DA RILEGGERE dopo le rettifiche della riapertura ({len(voci)}, P17):\n"
+                 + "\n".join(f"  - {riga_testo_da_rileggere(v)}" for v in voci) + "\n" if voci else "")
+              + "Ora aprire il registro, correggere SOLO le colonne di testo (guida, sezione 3-ter), salvare e chiudere "
+              "Excel; poi: python amministrazione.py --admin testi-fine")
         return 0
     if arg.comando == "testi-fine":
         with lucchetto.preso(uscita, "testi", utente):
