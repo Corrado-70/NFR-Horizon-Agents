@@ -26,7 +26,7 @@ Come si tiene vivo, a ogni intervento:
 | Obiettivo | versione del processo tutta nel tenant, senza Python sul PC (D-82); la scelta per l'esercizio fra le due versioni si fa sui risultati delle prove T0-T8 (D-83) |
 | Strada del motore | **da capire** (utente, 30/10; D-91). V1 (regole in TypeScript, eseguite da Office Scripts lanciati dai flussi) e' l'ipotesi di lavoro del 23/10, non ancora una scelta definitiva. V2 e F2 sono cadute con T4.1 (K9): il code interpreter dei prompt non esegue il nostro codice |
 | Agenti | Copilot Studio o Agent Builder si scelgono dopo, con il confronto di qualita': il motore e' lo stesso nei due casi |
-| Allineamento a `main` | fino a D-91 (30/10), con `genera_CS.py` |
+| Allineamento a `main` | fino a D-102 (04/11, commit `ed63ea0` di `main`): merge, `genera_CS.py`, `prepara_kit.py`, `prepara_busta.py` (busta K9 col motore attuale); collaudo veloce del ramo verde (test_controlli 348/348) |
 | Motore V1 | non iniziato: nel ramo ci sono solo gli script delle prove (`Da_caricare/prove`). Stima 8-11 settimane, da misurare |
 
 **In sospeso**:
@@ -38,7 +38,16 @@ Come si tiene vivo, a ogni intervento:
 **Prossimo passo**: la scelta della strada del motore (sezione 1-bis). Node.js e' installato su questo PC
 (v24, solo sviluppo), se serve la misura di V1.
 
-**Da tenere presente**: le scale a 6 livelli (A-19, TODO comune, P15) sono una modifica comune: nascono su `main` e
+**Da tenere presente** (merge del 04/11): da `main` arrivano regole che il motore del ramo dovra' tradurre e parti
+dell'app che qui vanno rifatte come argomenti e flussi, quando si decide la strada del motore:
+- regole nuove dello script: testi ereditati (`controlli_a5.eredita_testi`, D-93), parti QUINDI e COLLEGATI con i
+  loro controlli (C10, C1), temi da verificare nella baseline e controllo della risposta (D-98);
+- template `2026-11-04`: scia del Radar_Mosca (`cicloScia`, `cicliTraiettoria`, colonne CV-DF) scritta da `imposta_ciclo`;
+- app: finestra dei temi da verificare (P9), riepilogo mensile delle notizie (P7, `riepilogo_mensile.py`), finestra per
+  processo con "Approvazioni e report" e l'approvazione delle notizie che rifa' il report (AU8, D-102); schede per tema
+  (P6) dentro `schede.py`.
+
+Le scale a 6 livelli (A-19, TODO comune, P15) sono una modifica comune: nascono su `main` e
 arrivano qui con il merge. Cambiano le soglie e i numeri ammessi che il motore V1 deve tradurre: conviene fare il
 precontrollo in TypeScript sulle regole nuove, o mettere in conto di rifarne quella parte.
 
