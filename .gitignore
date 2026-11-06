@@ -4,3 +4,5 @@ __pycache__/
 Demo_W1_W2/Archivio_Cicli/
 NFR_Emerging_Risk_Agents/07_Senza_Studio/installato.json
 _obsoleti_*/
+.claude/gcp/
+.claude/.vidima-state
