@@ -3,3 +3,11 @@ VERSIONE.txt export-subst
 # fuori dal pacchetto: la presentazione (la rifa' genera_presentazione.py) e i documenti di analisi
 Presentazione/*.pptx export-ignore
 Analisi_Architettura/** export-ignore
+# fuori dal pacchetto: i file di git, le impostazioni di Claude Code e i documenti di sviluppo
+.gitignore export-ignore
+.gitattributes export-ignore
+.claude/ export-ignore
+CLAUDE.md export-ignore
+HANDOFF_stato_e_prossimi_passi.md export-ignore
+PROMPT_MASTER_rigenerazione.md export-ignore
+Revisione_*.md export-ignore
