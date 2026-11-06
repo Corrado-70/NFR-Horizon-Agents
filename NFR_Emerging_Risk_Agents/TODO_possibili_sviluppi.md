@@ -45,17 +45,16 @@ Sezioni:
 | Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
 | Ultimo commit | 04/11: testi ereditati (P17, D-93), passo 3 (D-94...D-98), Quadro in due pagine, passo 7 (P2, P7, P6: D-99...D-101), G5 in parte e finestra dell'app per processo (AU8, D-102); su GitHub |
 | Collaudo | 04/11, con Excel: catena 407/407; collaudo veloce verde (test_controlli 340, test_app 86, test_report_html 23) |
-| Ultimo pacchetto preparato | istruzioni del pacchetto del 04/11 in testa ad `AGGIORNAMENTO_IN_BANCA.md` (template `2026-11-04`, `aggiorna-registro`, A1, A5 e A8 da reincollare, cartella `Rapporti_Scenario`); **zip non ancora fatto**: si fa quando l'utente lo chiede |
+| Ultimo pacchetto preparato | istruzioni del pacchetto del 04/11 in testa ad `AGGIORNAMENTO_IN_BANCA.md` (template `2026-11-04`, `aggiorna-registro`, A1, A5 e A8 da reincollare, cartella `Rapporti_Scenario`); zip per la posta **`NFR-Horizon-Agents_2026-11-04_ed63ea0_posta.zip`** (04/11 sera, 202 file, i tre `.cmd` rinominati `.txt`) |
 | In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
 | Ramo `copilot-studio-pieno` | allineato a `main` il 04/11 (merge, `genera_CS.py`, `prepara_kit.py`); la finestra dei temi, il riepilogo mensile e la finestra per processo vanno rifatti li' come argomenti e flussi quando si decide la strada del motore (D-91) |
 
-**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). Resta il pacchetto (zip per la posta) da preparare quando l'utente lo
-chiede, poi le prove in Banca.
+**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). Il 05/11 la prova del pacchetto in Banca.
 
-**Prossimo passo**: la nota del Quadro su due righe (n. 1), lo zip quando l'utente lo chiede (n. 2), poi le prove in
-Banca (numeri 3-5 della sezione 1) con il pacchetto del 04/11: installazione con
+**Prossimo passo**: il 05/11 le prove in Banca (numeri 2-4 della sezione 1) con il pacchetto del 04/11: installazione con
 `aggiorna-registro`, poi il ciclo 2026Q4 di prova (B7, B9) con le verifiche elencate in `AGGIORNAMENTO_IN_BANCA.md`,
-passo 6. Dopo, le scale a 6 livelli (6). L'elenco completo, con lo stato di ogni voce, e' la sezione 1.
+passo 6. La nota del Quadro su due righe (n. 1) si fa quando si torna allo sviluppo; dopo,
+le scale a 6 livelli (5). L'elenco completo, con lo stato di ogni voce, e' la sezione 1.
 
 **Decisioni che aspettano** (il testo e' in DECISIONI):
 
@@ -81,22 +80,21 @@ due pagine, passo 7 (P2, P7, P6, D-99...D-101), G5 in parte, AU8 (D-102), demo e
 | # | Voce | Che cosa | Era | Giorni | Stato | Dettaglio |
 |---|---|---|---|---|---|---|
 | 1 | **G5** nota del Quadro | la nota sotto i primi cinque su due righe, con il dettaglio tolto il 04/11 ("l'ultimo ciclo del trimestre, straordinario compreso"); circa 11 punti in piu' in pagina 1, poi la catena | in parallelo | 0,25 | da fare, subito (proposta accettata dall'utente il 04/11) | sezione 6 |
-| 2 | Zip del pacchetto | `<nome>_posta.zip` del commit del 04/11, con le istruzioni gia' in testa ad `AGGIORNAMENTO_IN_BANCA.md` | 0 | — | in attesa della richiesta dell'utente | sezione 0 |
-| 3 | **B1-B4, B5-bis** in Banca | installazione del pacchetto unico e verifiche dell'app | 1 | 1-2 | in attesa dello zip (n. 2); prima prova il 29/10 | sezione 2 |
-| 4 | **B7, B9, B6** in Banca; **B8** se c'e' tempo | ciclo 2026Q4 di prova, qualita' di A1 e A8, prova di A7; K15 contraddittorio | 4 | in Banca | in attesa del n. 3 | sezione 2 |
-| 5 | **AU9** A1 a lotti | solo se nel ciclo di prova la risposta di A1 si taglia ancora | dopo 1 | 1-1,5 | in attesa dell'esito del n. 4 | sezione 4 |
-| 6 | **P15.1 / A-19** scale a 6 livelli | rubrica, schemi e registro nuovo (riparte da zero), con i driver (A-24); prima del ciclo vero | 2 | 4-6 piu' un ciclo di prova | in attesa: dopo le prove in Banca, su richiesta dell'utente | sezione 3 |
-| 7 | **P1** segnali per dimensione | dimensione e descrittore nei segnali di A3 e A4, freccia di pressione sul radar | 5 | 2-3 | da fare, solo se finisce prima di gennaio | sezione 3 |
-| 8 | **AU5** demo dai flussi | la demo passa dai flussi dell'app con appunti simulati | in parallelo | 1 | da fare | sezione 4 |
-| 9 | **G1, G3, G2** manutenzione dei grafici | parametri dei grafici in una tabella, script di anteprima, documento su come modificarli | in parallelo | 2 | da fare | sezione 6 |
-| 10 | **G6** report intermedio | rischi di A1 accanto ai rilievi, prima della scrittura | in parallelo | 0,5 | da fare quando servira' | sezione 6 |
-| 11 | **Q1** quantificazione | nota di metodo da far approvare, poi prototipo su 1-2 rischi | in parallelo | nota 1-2, prototipo 3-5 | da fare (stime degli esperti: lavoro della Banca) | sezione 5 |
-| 12 | **M1 (c), M4** pulizia | collaudo piu' corto; cartelle del codice da unire | sempre | — | da fare, bassa priorita' | sezione 7 |
-| 13 | **P13** punti 3b, 4, 6 | esposizione nell'anagrafica, salto con evidenza forte, taratura dei descrittori | dopo il ciclo vero | 1-3 | in attesa del ciclo 2026Q4 vero | sezione 3 |
-| 14 | **P12** contraddittorio | agente A9 dopo A1 | dopo il ciclo vero | 3-4 | in attesa della prova K15 (n. 4) | sezione 3 |
-| 15 | **P15.3** altri spunti esterni | A-20...A-23 e la scheda di A-24 | dopo il ciclo vero | 0,5-4 per voce | in attesa di una richiesta dell'utente | sezione 3 |
-| 16 | Revisione della procedura | meno passi manuali e file da allineare | dopo la prova in Banca | 0,5 piu' le voci che ne escono | da fare | sezione 8 |
-| 17 | Questioni aperte | conseguenze dei livelli di allerta, taratura, QUINDI per A3... | quando capitano | — | da decidere | sezione 8 |
+| 2 | **B1-B4, B5-bis** in Banca | installazione del pacchetto unico e verifiche dell'app | 1 | 1-2 | zip pronto il 04/11, prova il 05/11; prima prova il 29/10 | sezione 2 |
+| 3 | **B7, B9, B6** in Banca; **B8** se c'e' tempo | ciclo 2026Q4 di prova, qualita' di A1 e A8, prova di A7; K15 contraddittorio | 4 | in Banca | in attesa del n. 2 | sezione 2 |
+| 4 | **AU9** A1 a lotti | solo se nel ciclo di prova la risposta di A1 si taglia ancora | dopo 1 | 1-1,5 | in attesa dell'esito del n. 3 | sezione 4 |
+| 5 | **P15.1 / A-19** scale a 6 livelli | rubrica, schemi e registro nuovo (riparte da zero), con i driver (A-24); prima del ciclo vero | 2 | 4-6 piu' un ciclo di prova | in attesa: dopo le prove in Banca, su richiesta dell'utente | sezione 3 |
+| 6 | **P1** segnali per dimensione | dimensione e descrittore nei segnali di A3 e A4, freccia di pressione sul radar | 5 | 2-3 | da fare, solo se finisce prima di gennaio | sezione 3 |
+| 7 | **AU5** demo dai flussi | la demo passa dai flussi dell'app con appunti simulati | in parallelo | 1 | da fare | sezione 4 |
+| 8 | **G1, G3, G2** manutenzione dei grafici | parametri dei grafici in una tabella, script di anteprima, documento su come modificarli | in parallelo | 2 | da fare | sezione 6 |
+| 9 | **G6** report intermedio | rischi di A1 accanto ai rilievi, prima della scrittura | in parallelo | 0,5 | da fare quando servira' | sezione 6 |
+| 10 | **Q1** quantificazione | nota di metodo da far approvare, poi prototipo su 1-2 rischi | in parallelo | nota 1-2, prototipo 3-5 | da fare (stime degli esperti: lavoro della Banca) | sezione 5 |
+| 11 | **M1 (c), M4** pulizia | collaudo piu' corto; cartelle del codice da unire | sempre | — | da fare, bassa priorita' | sezione 7 |
+| 12 | **P13** punti 3b, 4, 6 | esposizione nell'anagrafica, salto con evidenza forte, taratura dei descrittori | dopo il ciclo vero | 1-3 | in attesa del ciclo 2026Q4 vero | sezione 3 |
+| 13 | **P12** contraddittorio | agente A9 dopo A1 | dopo il ciclo vero | 3-4 | in attesa della prova K15 (n. 3) | sezione 3 |
+| 14 | **P15.3** altri spunti esterni | A-20...A-23 e la scheda di A-24 | dopo il ciclo vero | 0,5-4 per voce | in attesa di una richiesta dell'utente | sezione 3 |
+| 15 | Revisione della procedura | meno passi manuali e file da allineare | dopo la prova in Banca | 0,5 piu' le voci che ne escono | da fare | sezione 8 |
+| 16 | Questioni aperte | conseguenze dei livelli di allerta, taratura, QUINDI per A3... | quando capitano | — | da decidere | sezione 8 |
 
 ## 2. Passi sul PC della Banca
 
@@ -137,19 +135,19 @@ Decisioni dell'utente che fanno da cornice:
 | Temi che l'analista chiede di verificare | c'e': finestra dell'app, temi nella baseline, risposta controllata (D-98) | P9: **fatto** il 04/11 |
 | Report aggiornato, non rifatto, e ciclo straordinario | c'e' (Confermato/Variato/Nuovo, al piu' un punto; straordinario D-75, A8 D-77) | fatto |
 | Fenomeni lontani o quasi impossibili oggi | c'e': rischi in osservazione del registro unico (D-79); meccanismi anche solo potenziali e segnali deboli nella guida di A1 (D-94) | P16: **fatto** il 04/11 |
-| Settimanale: analisi su tutti i rischi toccati | in parte: nove intensita' per notizia, un solo rischio collegato | **P1**: da fare (n. 7) |
-| Settimanale: trend dei rischi esistenti e pressione visibile sul radar | in parte: segnali netti, flag, soglia 3 in 4 settimane; il radar non mostra la pressione | **P1**: da fare (n. 7) |
-| Spot: impatto per dimensione | in parte: A4 indica il descrittore messo in discussione | **P1**: da fare (n. 7) |
+| Settimanale: analisi su tutti i rischi toccati | in parte: nove intensita' per notizia, un solo rischio collegato | **P1**: da fare (n. 6) |
+| Settimanale: trend dei rischi esistenti e pressione visibile sul radar | in parte: segnali netti, flag, soglia 3 in 4 settimane; il radar non mostra la pressione | **P1**: da fare (n. 6) |
+| Spot: impatto per dimensione | in parte: A4 indica il descrittore messo in discussione | **P1**: da fare (n. 6) |
 | Evento con piu' meccanismi di perdita | c'e': COLLEGATI: nel rischio primario, "Collegato a" nelle schede (D-97); schede per tema (D-101) | P5: **superata** (D-97); P6: **fatto** il 04/11 |
 | Spostamento nel tempo dei rischi | c'e': scia sul radar e traiettoria nel Quadro (D-99) | P2: **fatto** il 04/11 |
 | Cadenza mensile | c'e': riepilogo mensile in Excel e HTML (D-100) | P7: **fatto** il 04/11 |
-| Contraddittorio sulla valutazione ("decimo uomo"): letture opposte, rischi mancanti, ipotesi, combinazioni | manca: A5 controlla la coerenza dell'output di A1, non la sua completezza ne' le letture alternative | **P12**: in attesa (n. 14) |
+| Contraddittorio sulla valutazione ("decimo uomo"): letture opposte, rischi mancanti, ipotesi, combinazioni | manca: A5 controlla la coerenza dell'output di A1, non la sua completezza ne' le letture alternative | **P12**: in attesa (n. 13) |
 | Testi del registro e delle schede chiari e diretti, ma completi e approfonditi, con il "so what" per la Banca | in parte: guida di scrittura (descrizione in 3-5 frasi, razionale in parti con descrittore, fatto e "perche' non il valore vicino"), lunghezze minime e consigliate con il controllo C10 (D-86, D-88), parte QUINDI: e sezione "Stile" (D-96); resta da decidere l'estensione ad A3 (sezione 8) | P14: **fatto** il 04/11 |
-| Valutazioni senza asimmetrie: rischi nuovi non tutti bassi, rischi lontani a mitigazione lunga visibili all'urgenza | in parte: diagnosi e anni di adeguamento dei rischi in osservazione (D-80), esposizione non nota (D-81) fatti; restano salto con evidenza forte, taratura | **P13**: in parte fatto (n. 13) |
+| Valutazioni senza asimmetrie: rischi nuovi non tutti bassi, rischi lontani a mitigazione lunga visibili all'urgenza | in parte: diagnosi e anni di adeguamento dei rischi in osservazione (D-80), esposizione non nota (D-81) fatti; restano salto con evidenza forte, taratura | **P13**: in parte fatto (n. 12) |
 
 ### P12. Contraddittorio sulla valutazione trimestrale, "decimo uomo" (proposta del 19/10/2026, A-17)
 
-**Stato: in attesa** della prova K15 (B8) · n. 14 dell'ordine di lavoro.
+**Stato: in attesa** della prova K15 (B8) · n. 13 dell'ordine di lavoro.
 
 - **Perche'**: le regole (conferma di default, un punto per ciclo) proteggono dall'inflazione ma favoriscono lo status
   quo; A5 non usa la knowledge (D-09) e non cerca cio' che A1 non ha visto. Manca chi sostenga la tesi opposta.
@@ -165,7 +163,7 @@ Decisioni dell'utente che fanno da cornice:
 
 ### P13. Ancoraggio e asimmetrie della valutazione (proposta del 19/10/2026)
 
-**Stato: in parte fatto** (punti 1, 2 e 3a, D-80 e D-81); i punti 3b, 4, 5 e 6 **in attesa** del ciclo 2026Q4 vero · n. 13 dell'ordine di lavoro.
+**Stato: in parte fatto** (punti 1, 2 e 3a, D-80 e D-81); i punti 3b, 4, 5 e 6 **in attesa** del ciclo 2026Q4 vero · n. 12 dell'ordine di lavoro.
 
 - **Perche'**: analisi `Analisi_Architettura/17_Decimo_uomo.md`, 17.10. Le regole che frenano l'inflazione (conferma di
   default, un punto per ciclo, valori di prima nella baseline, accettazione senza gesti) fanno anche restare basso un
@@ -189,7 +187,7 @@ Decisioni dell'utente che fanno da cornice:
 
 ### P15. Spunti dalla proposta esterna di osservatorio (analisi 19, 30/10/2026)
 
-**Stato: da fare, su richiesta dell'utente**: punto 1 (scale a 6 livelli) n. 6 dell'ordine, dopo le prove in Banca; punto 2 e' la prova B8 (n. 4); punto 3 n. 15, dopo il ciclo vero.
+**Stato: da fare, su richiesta dell'utente**: punto 1 (scale a 6 livelli) n. 5 dell'ordine, dopo le prove in Banca; punto 2 e' la prova B8 (n. 3); punto 3 n. 14, dopo il ciclo vero.
 
 - **Perche'**: una proposta esterna per la stessa attivita' (`Analisi_Architettura/19_Confronto_proposta_esterna.md`)
   porta scale a 6 livelli, alberi decisionali, rischio residuo, agente avversariale, fonti per scopo.
@@ -206,7 +204,7 @@ Decisioni dell'utente che fanno da cornice:
 
 ### P1. Segnali qualitativi per dimensione e pressione sul radar (settimanale e spot)
 
-**Stato: da fare** · n. 7 dell'ordine di lavoro (solo se finisce prima di gennaio).
+**Stato: da fare** · n. 6 dell'ordine di lavoro (solo se finisce prima di gennaio).
 
 - **Perche'**: oggi fra un trimestre e l'altro il radar non dice quali rischi sono sotto pressione, e il settimanale
   dice "peggiorativo" ma non "su quale dimensione". Per D-41 senza numeri: nessun notch, nessuna posizione ipotetica.
@@ -244,7 +242,7 @@ file; piu' analisti sullo stesso registro; niente coda delle richieste.
 
 ### AU5 (resto). La demo attraverso i flussi
 
-**Stato: da fare** · n. 8 dell'ordine di lavoro.
+**Stato: da fare** · n. 7 dell'ordine di lavoro.
 
 - **Perche'**: i flussi dell'app sono collaudati con un Ambiente finto; straordinario, schede, report, riapertura,
   dismissione, parere di A4, A7, diagnosi e sblocca sono scritti ma non coperti dalla demo (18.2, F5).
@@ -255,7 +253,7 @@ file; piu' analisti sullo stesso registro; niente coda delle richieste.
 
 ### AU9. A1 a lotti, al posto del "continua" (segnalazione dell'utente del 03/11/2026)
 
-**Stato: in attesa** dell'esito del ciclo di prova in Banca · n. 5 dell'ordine di lavoro.
+**Stato: in attesa** dell'esito del ciclo di prova in Banca · n. 4 dell'ordine di lavoro.
 
 - **Perche'**: in Agent Builder il "continua" nella stessa chat non funziona: A1 a volte ricomincia da capo, a volte
   dice che non ha altro da aggiungere. Con la D-92 l'output di A1 scende di circa il 40% (sulla demo da circa 4.900 a
@@ -279,7 +277,7 @@ file; piu' analisti sullo stesso registro; niente coda delle richieste.
 
 ### Q1. Nota di metodo e prototipo di probabilita' e impatto quantitativi
 
-**Stato: da fare** · n. 11 dell'ordine di lavoro.
+**Stato: da fare** · n. 10 dell'ordine di lavoro.
 
 - **Perche'**: per i 3-5 rischi piu' rilevanti (AGIRE ORA o primi per score) una stima in euro e in frequenza annua da'
   un ancoraggio alla scala 1-5 e un confronto per il comitato. Serve a **calibrare e sfidare** gli score, non a
@@ -314,7 +312,7 @@ G2, poi i difetti di G5.
 
 ### G1. Isolare i parametri dei grafici
 
-**Stato: da fare** · n. 9 dell'ordine di lavoro.
+**Stato: da fare** · n. 8 dell'ordine di lavoro.
 
 - **Cosa fare**: una tabella `GRAFICI` all'inizio di `genera_dashboard.py`, una voce per grafico (foglio, ancoraggio,
   dimensioni, titolo, legenda, colori delle serie, scala degli assi, scala delle bolle, testi degli anelli); le
@@ -324,7 +322,7 @@ G2, poi i difetti di G5.
 
 ### G3. Script di anteprima dei grafici
 
-**Stato: da fare** · n. 9 dell'ordine di lavoro.
+**Stato: da fare** · n. 8 dell'ordine di lavoro.
 
 - **Cosa fare**: `03_Excel/anteprima_grafici.py [file.xlsx]` che apre il file in sola lettura, ricalcola ed esporta in
   PNG tutti i grafici, compresa la storia di un KRI a scelta. Default: il template appena generato.
@@ -333,7 +331,7 @@ G2, poi i difetti di G5.
 
 ### G2. Documentare come modificare ed estendere i grafici
 
-**Stato: da fare** · n. 9 dell'ordine di lavoro (dopo G1).
+**Stato: da fare** · n. 8 dell'ordine di lavoro (dopo G1).
 
 - **Cosa fare**: `03_Excel/grafici_come_modificarli.md`: i tre livelli (cosa mostra, quali dati entrano, come
   appare); ricette (colori e dimensioni, scala di un asse, una serie in piu', un grafico nuovo, un intervallo dinamico
@@ -346,7 +344,7 @@ G2, poi i difetti di G5.
 
 ### G5. Difetti estetici noti
 
-**Stato: in parte fatto** (04/11: le due matrici) · la nota del Quadro e' il n. 1 dell'ordine di lavoro, il resto il n. 9.
+**Stato: in parte fatto** (04/11: le due matrici) · la nota del Quadro e' il n. 1 dell'ordine di lavoro, il resto il n. 8.
 
 | Dove | Difetto | Idea di soluzione |
 |---|---|---|
@@ -359,7 +357,7 @@ G2, poi i difetti di G5.
 
 ### G6. Report intermedio leggibile: rischi di A1 accanto ai rilievi dei controlli
 
-**Stato: da fare quando servira'** · n. 10 dell'ordine di lavoro.
+**Stato: da fare quando servira'** · n. 9 dell'ordine di lavoro.
 
 - **Perche'**: nato dal collaudo del primo ciclo (29/09). Ridimensionato: dal 06/10 (D-71) le segnalazioni stanno sui
   rischi nella griglia di validazione e il precontrollo (D-69) scrive il messaggio per A1. Resta utile per leggere A1
@@ -374,8 +372,8 @@ G2, poi i difetti di G5.
 
 | # | Voce | Stato |
 |---|---|---|
-| M1 (c) | Collaudo piu' corto: meno letture complete del registro nel gruppo `catena` (oggi circa 40-60 minuti in parallelo; il gruppo `catena` resta in sequenza e da solo dura quasi tutto) | da fare (n. 12) |
-| M4 (resto) | Cartelle del codice (`07_Senza_Studio`, `09_Copilot_Studio`) da unire: doveva farlo l'installatore, che non l'ha fatto; `installa.cmd`, la guida e `AGGIORNAMENTO_IN_BANCA.md` puntano a `07_Senza_Studio`. Conviene solo insieme a un pacchetto che cambia comunque i percorsi | da fare, bassa priorita' (n. 12) |
+| M1 (c) | Collaudo piu' corto: meno letture complete del registro nel gruppo `catena` (oggi circa 40-60 minuti in parallelo; il gruppo `catena` resta in sequenza e da solo dura quasi tutto) | da fare (n. 11) |
+| M4 (resto) | Cartelle del codice (`07_Senza_Studio`, `09_Copilot_Studio`) da unire: doveva farlo l'installatore, che non l'ha fatto; `installa.cmd`, la guida e `AGGIORNAMENTO_IN_BANCA.md` puntano a `07_Senza_Studio`. Conviene solo insieme a un pacchetto che cambia comunque i percorsi | da fare, bassa priorita' (n. 11) |
 
 ## 8. Questioni aperte emerse dal lavoro
 
@@ -391,7 +389,7 @@ Piccole, da decidere quando capita l'occasione:
 
 ### Revisione dell'intera procedura per ridurne la complessita' (richiesta del 13/10/2026) — IMPORTANTE, dopo la prova in Banca
 
-**Stato: da fare** dopo la prova in Banca · n. 16 dell'ordine di lavoro.
+**Stato: da fare** dopo la prova in Banca · n. 15 dell'ordine di lavoro.
 
 - **Perche'**: il 13/10 l'allineamento al pacchetto ha richiesto molti giri a vuoto: script e kernel di versioni diverse
   (messaggi "e' della versione ..."), `configurazione.json` perso alla sostituzione della cartella, registro che risultava
@@ -455,7 +453,7 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | AU8 | Finestra per processo: riquadri per cadenza, "Approvazioni e report" unico con il periodo nel nome, nomi nuovi con l'agente fra parentesi, Aggiungi un rischio (A8), Diagnosi in Admin; l'approvazione delle notizie rigenera il report (e il mensile a fine mese) | 04/11 | D-102 | `app_nfr.py`, `flussi.py`; guida, "I processi" |
 | G5 (parte) | Matrice P x I del report HTML a spaziatura fissa; matrice piccola del Quadro con "n rischi" | 04/11 | — | `report_html.py`, `genera_dashboard.py` |
 | Demo e presentazione | Demo rilanciata con testi lunghi, QUINDI, COLLEGATI, un tema, scia, commento in pagina 1, schede per tema e riepilogo mensile; presentazione di 70 slide | 04/11 | — | `Demo_W1_W2/REPORT_demo.md`, `Presentazione/` |
-| Allineamento del 04/11 | Documenti, istruzioni del pacchetto in `AGGIORNAMENTO_IN_BANCA.md`, commit e push di `main`, merge nel ramo `copilot-studio-pieno` con `genera_CS.py` e `prepara_kit.py` | 04/11 | — | sezione 0 |
+| Allineamento del 04/11 | Documenti, istruzioni del pacchetto in `AGGIORNAMENTO_IN_BANCA.md`, commit e push di `main`, merge nel ramo `copilot-studio-pieno` con `genera_CS.py` e `prepara_kit.py`; zip per la posta `..._2026-11-04_ed63ea0_posta.zip` | 04/11 | — | sezione 0 |
 | P9 | Temi da verificare: finestra dell'app (menu Altro, proposta prima di A1), temi aperti nella baseline, risposta controllata in validazione | 04/11 | D-98 | `temi.py`, `flussi.py`, guida passo passo ("Menu Altro") |
 | Testi a mano in Admin | Con copia del registro e atto; il report si rifa' a fine correzione | 30/10 | D-90 | `amministrazione.py`; guida, 3-ter |
 | A-11 e PROMPT_MASTER | Variante Power Automate archiviata, parti vive spostate; PROMPT_MASTER allineato a D-83 | 30/10 | D-91 | `struttura_e_liste.md`, `controlli_e_model_risk.md` sezione 7, `Analisi_Architettura/Archivio` |
