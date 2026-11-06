@@ -3,7 +3,7 @@
 **Da qui si parte.** Questo file dice a che punto e' il lavoro su `main` e che cosa viene dopo: per riprendere basta la
 sezione 0. Ogni voce aperta dice perche' serve, cosa fare e come capire che e' fatta.
 
-**Aggiornato al 04/11/2026.**
+**Aggiornato al 06/11/2026.**
 
 Come si tiene vivo, a ogni intervento:
 1. all'inizio si legge la sezione 0; alla fine si aggiornano la data, il quadro, gli impegni in sospeso e il prossimo
@@ -43,16 +43,16 @@ Sezioni:
 |---|---|
 | Obiettivo | primo ciclo vero **2026Q4**, primo run di A1 a inizio gennaio 2027 (D-22) |
 | Versione in uso | `main`: agenti in Agent Builder, app Python sul PC (D-83); tappe M1-M5 fatte |
-| Ultimo commit | 04/11: testi ereditati (P17, D-93), passo 3 (D-94...D-98), Quadro in due pagine, passo 7 (P2, P7, P6: D-99...D-101), G5 in parte e finestra dell'app per processo (AU8, D-102); su GitHub |
+| Ultimo commit | 06/11: PC della Banca agganciato a GitHub (clone di `main`; credenziali e impostazioni locali di Claude Code escluse); pacchetto alleggerito con `export-ignore` in `.gitattributes`; zip tolti dal repository. Ultimo commit di sviluppo 04/11: testi ereditati (P17, D-93), passo 3 (D-94...D-98), Quadro in due pagine, passo 7 (P2, P7, P6: D-99...D-101), G5 in parte e finestra dell'app per processo (AU8, D-102); su GitHub |
 | Collaudo | 04/11, con Excel: catena 407/407; collaudo veloce verde (test_controlli 340, test_app 86, test_report_html 23) |
-| Ultimo pacchetto preparato | istruzioni del pacchetto del 04/11 in testa ad `AGGIORNAMENTO_IN_BANCA.md` (template `2026-11-04`, `aggiorna-registro`, A1, A5 e A8 da reincollare, cartella `Rapporti_Scenario`); zip per la posta **`NFR-Horizon-Agents_2026-11-04_ed63ea0_posta.zip`** (04/11 sera, 202 file, i tre `.cmd` rinominati `.txt`) |
-| In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; l'installazione del pacchetto del 30/10 non e' ancora annotata (B1) |
+| Ultimo pacchetto preparato | zip **`NFR-Horizon-Agents_2026-11-06_<commit>.zip`** (06/11, il commit e' quello che aggiorna questa sezione; 178 file, 3,5 MB, i `.cmd` con il nome vero): stesso software dello zip per la posta `..._2026-11-04_ed63ea0_posta.zip` del 04/11, con le istruzioni del pacchetto del 04/11 in testa ad `AGGIORNAMENTO_IN_BANCA.md` (template `2026-11-04`, `aggiorna-registro`, A1, A5 e A8 da reincollare, cartella `Rapporti_Scenario`). Fuori dallo zip (`.gitattributes`): la presentazione `.pptx`, `Analisi_Architettura`, i file di git, `.claude/`, `CLAUDE.md`, HANDOFF, PROMPT_MASTER e `Revisione_*.md`. Gli zip non stanno nel repository: `git archive --format=zip -o NFR-Horizon-Agents_<data>_<commit>.zip HEAD` |
+| In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; il 05/11 il progetto copiato sul PC della Banca, collaudo veloce verde (`--senza-excel`, con `py -3`); il 06/11 la copia e' diventata un clone di GitHub. L'installazione in uso e' su OneDrive (`NFR Horizon Scan OneDrive`): la versione installata si legge in `07_Senza_Studio\installato.json`, non ancora annotata (B1) |
 | Ramo `copilot-studio-pieno` | allineato a `main` il 04/11 (merge, `genera_CS.py`, `prepara_kit.py`); la finestra dei temi, il riepilogo mensile e la finestra per processo vanno rifatti li' come argomenti e flussi quando si decide la strada del motore (D-91) |
 
-**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). Il 05/11 la prova del pacchetto in Banca.
+**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). In Banca: leggere la versione installata su OneDrive e, se precede `ed63ea0`, installare lo zip del 06/11 (B1-B4).
 
-**Prossimo passo**: il 05/11 le prove in Banca (numeri 2-4 della sezione 1) con il pacchetto del 04/11: installazione con
-`aggiorna-registro`, poi il ciclo 2026Q4 di prova (B7, B9) con le verifiche elencate in `AGGIORNAMENTO_IN_BANCA.md`,
+**Prossimo passo**: le prove in Banca (numeri 2-4 della sezione 1) con lo zip del 06/11 (stesso software del 04/11):
+installazione con `aggiorna-registro`, poi il ciclo 2026Q4 di prova (B7, B9) con le verifiche elencate in `AGGIORNAMENTO_IN_BANCA.md`,
 passo 6. La nota del Quadro su due righe (n. 1) si fa quando si torna allo sviluppo; dopo,
 le scale a 6 livelli (5). L'elenco completo, con lo stato di ogni voce, e' la sezione 1.
 
@@ -80,7 +80,7 @@ due pagine, passo 7 (P2, P7, P6, D-99...D-101), G5 in parte, AU8 (D-102), demo e
 | # | Voce | Che cosa | Era | Giorni | Stato | Dettaglio |
 |---|---|---|---|---|---|---|
 | 1 | **G5** nota del Quadro | la nota sotto i primi cinque su due righe, con il dettaglio tolto il 04/11 ("l'ultimo ciclo del trimestre, straordinario compreso"); circa 11 punti in piu' in pagina 1, poi la catena | in parallelo | 0,25 | da fare, subito (proposta accettata dall'utente il 04/11) | sezione 6 |
-| 2 | **B1-B4, B5-bis** in Banca | installazione del pacchetto unico e verifiche dell'app | 1 | 1-2 | zip pronto il 04/11, prova il 05/11; prima prova il 29/10 | sezione 2 |
+| 2 | **B1-B4, B5-bis** in Banca | installazione del pacchetto unico e verifiche dell'app | 1 | 1-2 | zip del 06/11 pronto (stesso software del 04/11); versione installata su OneDrive da leggere; prima prova il 29/10 | sezione 2 |
 | 3 | **B7, B9, B6** in Banca; **B8** se c'e' tempo | ciclo 2026Q4 di prova, qualita' di A1 e A8, prova di A7; K15 contraddittorio | 4 | in Banca | in attesa del n. 2 | sezione 2 |
 | 4 | **AU9** A1 a lotti | solo se nel ciclo di prova la risposta di A1 si taglia ancora | dopo 1 | 1-1,5 | in attesa dell'esito del n. 3 | sezione 4 |
 | 5 | **P15.1 / A-19** scale a 6 livelli | rubrica, schemi e registro nuovo (riparte da zero), con i driver (A-24); prima del ciclo vero | 2 | 4-6 piu' un ciclo di prova | in attesa: dopo le prove in Banca, su richiesta dell'utente | sezione 3 |
@@ -104,11 +104,11 @@ ramo (9-bis).
 
 | # | Passo | Per quali decisioni | Stato |
 |---|---|---|---|
-| B1 | Pacchetto corrente con `installa.cmd`, sopra quello del 23/10; sposta da solo in `_obsoleti_<data>` le cartelle dei pacchetti vecchi (`04_SharePoint`, `05_Workflow`, `06_Governance`, `08_Deploy`) | D-78, D-89 | da fare |
-| B2 | Kernel nella library: lo copia `installa.cmd` dopo una conferma (i file sostituiti in `Kernel\_precedenti\<data>`) e toglie `Baseline_corrente.txt` e `Tassonomia dei Rischi.csv` | D-74, D-89 | da fare |
-| B3 | Reincollare gli agenti che `installa.cmd` elenca: sopra il pacchetto del 23/10 bastano A4, A5, A6 e A7 | D-86...D-88 | da fare |
-| B4 | `aggiorna-registro`: non serve con questo pacchetto, la struttura resta `2026-10-09`. Solo per un registro in una struttura precedente, prima su una copia | D-74, D-79 | non serve con il pacchetto corrente |
-| B5-bis | **Verifiche dell'app, tappe M1-M5**: elenco in `AGGIORNAMENTO_IN_BANCA.md` ("Verifiche da fare"), esiti in `Analisi_Architettura/18_App_orchestrazione.md`, 18.6. **29/10**: prima prova, un trimestre dall'app fino a `trimestrale` e validazione (A1, precontrollo, una correzione, precontrollo superato); i problemi trovati sono corretti. Restano, sul pacchetto corrente: risposta lunga di A1 dagli appunti, link degli agenti, lucchetto con un collega, installazione completa (pip, collegamenti, attivita' della raccolta, Verifica del PC con Excel), report HTML, Admin | D-83, D-85...D-90 | in corso |
+| B1 | Pacchetto corrente (zip del 06/11, stesso software di `ed63ea0` del 04/11) estratto nella cartella del pacchetto su OneDrive e `installa.cmd` lanciato da li' (lavora sulla cartella in cui si trova). Prima leggere la versione installata (`07_Senza_Studio\installato.json`, o la prima riga di `installa.cmd`): se e' gia' `ed63ea0`, non c'e' niente da installare. Sposta da solo in `_obsoleti_<data>` i file elencati in `obsoleti.txt` | D-78, D-89 | da fare: versione installata da leggere |
+| B2 | Kernel nella library: lo copia `installa.cmd` dopo una conferma (i file sostituiti in `Kernel\_precedenti\<data>`); rispetto al pacchetto del 30/10 cambiano `guida_scrittura_A1.md`, `schema_output_A1.json`, `controlli_A5.md`, `fonti.md` e `mappatura_campi.json` | D-74, D-89, D-92...D-98 | da fare |
+| B3 | Reincollare gli agenti che `installa.cmd` elenca: sopra il pacchetto del 30/10 o del 03/11 A1, A5 e A8; sopra quello del 23/10 anche A4, A6 e A7 | D-86...D-88, D-92, D-93 | da fare |
+| B4 | `aggiorna-registro` al template `2026-11-04`: serve con questo pacchetto, prima su una copia e poi sul registro vero (`AGGIORNAMENTO_IN_BANCA.md`, passo 4; guida, 0-bis) | D-74, D-79, D-99 | da fare |
+| B5-bis | **Verifiche dell'app, tappe M1-M5**: elenco in `AGGIORNAMENTO_IN_BANCA.md` ("Verifiche da fare" e, per il pacchetto del 04/11, passo 6 dell'aggiornamento rapido), esiti in `Analisi_Architettura/18_App_orchestrazione.md`, 18.6 (nel clone git: dal 06/11 `Analisi_Architettura` non e' nel pacchetto installato). **29/10**: prima prova, un trimestre dall'app fino a `trimestrale` e validazione (A1, precontrollo, una correzione, precontrollo superato); i problemi trovati sono corretti. Restano, sul pacchetto corrente: risposta lunga di A1 dagli appunti, link degli agenti, lucchetto con un collega, installazione completa (pip, collegamenti, attivita' della raccolta, Verifica del PC con Excel), report HTML, Admin | D-83, D-85...D-90 | in corso |
 | B6 | Prova di A7 (`04_Riferimenti/Prove/Prova_A7.md`), anche per la prima persona | D-72, D-87 | da fare |
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5. **29/10**: un giro di correzione, senza le lunghezze di C10; da rifare sulla versione dei passi 2 e 3 dell'ordine | S1 (D-49...D-56), D-69, D-71 | in corso |
 | B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore. Dal 30/10 con il mandato esteso (A-17, analisi 19) | A-17 | da fare |
@@ -454,6 +454,7 @@ Una riga per voce realizzata; il dettaglio e' nella decisione e nell'HANDOFF.
 | G5 (parte) | Matrice P x I del report HTML a spaziatura fissa; matrice piccola del Quadro con "n rischi" | 04/11 | — | `report_html.py`, `genera_dashboard.py` |
 | Demo e presentazione | Demo rilanciata con testi lunghi, QUINDI, COLLEGATI, un tema, scia, commento in pagina 1, schede per tema e riepilogo mensile; presentazione di 70 slide | 04/11 | — | `Demo_W1_W2/REPORT_demo.md`, `Presentazione/` |
 | Allineamento del 04/11 | Documenti, istruzioni del pacchetto in `AGGIORNAMENTO_IN_BANCA.md`, commit e push di `main`, merge nel ramo `copilot-studio-pieno` con `genera_CS.py` e `prepara_kit.py`; zip per la posta `..._2026-11-04_ed63ea0_posta.zip` | 04/11 | — | sezione 0 |
+| PC della Banca su GitHub, pacchetto piu' leggero | La copia del 05/11 agganciata a GitHub (credenziali GCP e impostazioni locali escluse); dal pacchetto fuori presentazione, analisi, file di git e documenti di sviluppo (da 12 a 3,5 MB); zip tolti dal repository | 06/11 | — | sezione 0; `.gitattributes`, `.gitignore` |
 | P9 | Temi da verificare: finestra dell'app (menu Altro, proposta prima di A1), temi aperti nella baseline, risposta controllata in validazione | 04/11 | D-98 | `temi.py`, `flussi.py`, guida passo passo ("Menu Altro") |
 | Testi a mano in Admin | Con copia del registro e atto; il report si rifa' a fine correzione | 30/10 | D-90 | `amministrazione.py`; guida, 3-ter |
 | A-11 e PROMPT_MASTER | Variante Power Automate archiviata, parti vive spostate; PROMPT_MASTER allineato a D-83 | 30/10 | D-91 | `struttura_e_liste.md`, `controlli_e_model_risk.md` sezione 7, `Analisi_Architettura/Archivio` |
