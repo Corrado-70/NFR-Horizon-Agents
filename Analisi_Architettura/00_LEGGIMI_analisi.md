@@ -1,5 +1,8 @@
 # Analisi dell'architettura — tre strade
 
+**Dal 06/11/2026 c'e' l'analisi 20** (`20_Agenti_Claude_Vertex.md`): Claude su Vertex come terza origine degli agenti
+della strada A, decisioni aperte A-25..A-29.
+
 **Esito del 23/10/2026 (D-83)**: su `main` la strada A, con l'app Python di orchestrazione (analisi 12, 12.3); la versione tutta in Copilot Studio sul ramo `copilot-studio-pieno` (D-82); niente V4, il report HTML diventa una seconda uscita del report al comitato. A-15 e A-16 sono chiuse. Il piano dell'app e il suo avanzamento, con le spunte: `18_App_orchestrazione.md`.
 
 **Dal 09/10/2026 le strade sono tre: `14_Tre_strade.md`** (A tutto sul PC, CS-1 ibrida, CS-2 tutto in Copilot
@@ -24,6 +27,7 @@ motore `esegui_ciclo_locale.py` che resta l'unico a scrivere (D-10).
 
 | Documento | Tema | Stato |
 |---|---|---|
+| `20_Agenti_Claude_Vertex.md` | agenti Claude (Opus) sul Vertex di Google Cloud della Banca, senza internet per il modello. E' la strada A con una terza origine degli agenti: l'app chiama il modello senza chat e senza strumenti; trasporto `claude-p` (Claude Code autorizzato dalla Banca, DB1), `api` come riserva; Python prelegge le fonti in un corpus con manifest e lettori; schema di decodifica; anelli da correggere prima su `main`; A7 in una finestra di chat. Opzioni O0-O4, costi, sicurezza, qualita' a tre bracci, tappe CL0-CL7, prove K16-K25. **Analisi critica in 20.14** (R1-R18, pre-mortem, opzioni scartate) | 06/11/2026: raccomandata O4; domande DB1-DB8 da portare in Banca; decisioni aperte A-25..A-29; il pacchetto non cambia |
 | `19_Confronto_proposta_esterna.md` | confronto con una proposta esterna di osservatorio NFR con agenti (ottobre 2026): architettura, agente avversariale, STOP (STOP morbidi e omissioni), radar inerente e residuo (dubbi sul calcolo, complementarita' con Mosca), scheda, scale a 6 livelli, alberi decisionali (pavimento di evidenza, alternative A, B, prova C), fonti (segnali deboli e segnali forti degli analisti), driver e perimetro; precisazioni su Mosca e sulla tendenza | 30/10/2026: scale a 6 livelli date per assodate dall'utente, ripartenza da zero; decisioni aperte A-19..A-24 |
 | `17_Decimo_uomo.md` | contraddittorio sulla valutazione trimestrale ("decimo uomo"): perche' non dentro A5 (D-09, limite dei caratteri); opzione 1, agente separato **A9 Contraddittore** (ricerca propria, tesi in entrambi i versi, rischi mancanti, ipotesi critiche, combinazioni; Osservazioni in validazione, rischi mancanti come temi da verificare per A1); opzione 2, contraddittorio dentro A1 (2a nel JSON, 2b secondo messaggio); confronto, rischi, effetti, prova K15 senza codice, stima | 19/10/2026: raccomandata l'opzione 1 a due tappe; proposta la decisione A-17, si chiude dopo K15 |
 | `18_App_orchestrazione.md` | piano dell'app Python di orchestrazione su `main` (strada A, D-83) a tappe M1-M4 e **registro di avanzamento** con le spunte: fatto, da verificare (catena, demo, Banca), da fare | 23/10/2026: M1 e M2 fatte, M3 e M4 da fare; si aggiorna a ogni passo |

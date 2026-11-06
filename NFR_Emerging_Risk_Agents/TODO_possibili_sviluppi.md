@@ -28,8 +28,8 @@ Sezioni:
 1. ordine di lavoro: **tutto cio' che resta, in un'unica lista numerata con lo stato**;
 2. passi sul PC della Banca (non sviluppo: installare e provare cio' che c'e' gia');
 3. processi (P1, P12, P13, P15);
-4. automazione del processo: l'app di orchestrazione, fatta (finestra per processo dal 04/11, AU8); restano la demo (AU5) e
-   A1 a lotti (AU9);
+4. automazione del processo: l'app di orchestrazione, fatta (finestra per processo dal 04/11, AU8); restano la demo (AU5),
+   A1 a lotti (AU9) e il canale Claude su Vertex (AU10, analisi 20);
 5. quantificazione (Q1);
 6. grafici e report (G1, G2, G3, G5, G6);
 7. pulizia residua (M1, M4);
@@ -48,13 +48,15 @@ Sezioni:
 | Ultimo pacchetto preparato | zip **`NFR-Horizon-Agents_2026-11-06_<commit>.zip`** (06/11, il commit e' quello che aggiorna questa sezione; 178 file, 3,5 MB, i `.cmd` con il nome vero): stesso software dello zip per la posta `..._2026-11-04_ed63ea0_posta.zip` del 04/11, con le istruzioni del pacchetto del 04/11 in testa ad `AGGIORNAMENTO_IN_BANCA.md` (template `2026-11-04`, `aggiorna-registro`, A1, A5 e A8 da reincollare, cartella `Rapporti_Scenario`). Fuori dallo zip (`.gitattributes`): la presentazione `.pptx`, `Analisi_Architettura`, i file di git, `.claude/`, `CLAUDE.md`, HANDOFF, PROMPT_MASTER e `Revisione_*.md`. Gli zip non stanno nel repository: `git archive --format=zip -o NFR-Horizon-Agents_<data>_<commit>.zip HEAD` |
 | In Banca | il 29/10 prima prova dell'app, con un pacchetto precedente; il 05/11 il progetto copiato sul PC della Banca, collaudo veloce verde (`--senza-excel`, con `py -3`); il 06/11 la copia e' diventata un clone di GitHub. L'installazione in uso e' su OneDrive (`NFR Horizon Scan OneDrive`): la versione installata si legge in `07_Senza_Studio\installato.json`, non ancora annotata (B1) |
 | Ramo `copilot-studio-pieno` | allineato a `main` il 04/11 (merge, `genera_CS.py`, `prepara_kit.py`); la finestra dei temi, il riepilogo mensile e la finestra per processo vanno rifatti li' come argomenti e flussi quando si decide la strada del motore (D-91) |
+| Analisi aperta piu' recente | 06/11: **analisi 20**, `Analisi_Architettura/20_Agenti_Claude_Vertex.md`. Agenti Claude su Vertex come terza origine della strada A, con analisi critica in 20.14; decisioni A-25...A-29, prove K16-K25, tappe CL0-CL7 (AU10). Nessun codice: il pacchetto non cambia |
 
-**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). In Banca: leggere la versione installata su OneDrive e, se precede `ed63ea0`, installare lo zip del 06/11 (B1-B4).
+**In sospeso**: nessun lavoro di sviluppo a meta'; primo ritocco: la nota sotto i primi cinque del Quadro su due righe (G5). In Banca: leggere la versione installata su OneDrive e, se precede `ed63ea0`, installare lo zip del 06/11 (B1-B4). Dall'analisi 20: le domande DB3-DB8 da portare in Banca, perche' DB1 e DB2 hanno avuto risposta il 06/11, e la prova K16 (n. 17, B10).
 
 **Prossimo passo**: le prove in Banca (numeri 2-4 della sezione 1) con lo zip del 06/11 (stesso software del 04/11):
 installazione con `aggiorna-registro`, poi il ciclo 2026Q4 di prova (B7, B9) con le verifiche elencate in `AGGIORNAMENTO_IN_BANCA.md`,
 passo 6. La nota del Quadro su due righe (n. 1) si fa quando si torna allo sviluppo; dopo,
-le scale a 6 livelli (5). L'elenco completo, con lo stato di ogni voce, e' la sezione 1.
+le scale a 6 livelli (5). **Insieme alle prove in Banca**: le domande DB3-DB8 dell'analisi 20 e, se Claude Code e' sul
+PC, la prova K16 senza codice (n. 17). L'elenco completo, con lo stato di ogni voce, e' la sezione 1.
 
 **Decisioni che aspettano** (il testo e' in DECISIONI):
 
@@ -64,6 +66,7 @@ le scale a 6 livelli (5). L'elenco completo, con lo stato di ogni voce, e' la se
 | A-24 driver | con A-19 |
 | A-17 contraddittorio | dopo la prova K15 (B8) |
 | A-20, A-21, A-22, A-23 spunti della proposta esterna | su richiesta dell'utente (P15) |
+| A-25...A-29 canale Claude su Vertex (analisi 20): canale, corpus, prompt, conformita', rami | A-28 e il trasporto dopo le risposte DB1-DB8; A-25 dopo K19 e K25 (AU10) |
 | A-12 taratura | dopo il ciclo 2026Q4 reale |
 
 ## 1. Ordine di lavoro: le cose ancora aperte, in un'unica lista
@@ -76,6 +79,10 @@ stessa parola di stato sta in testa. La colonna "Era" dice il numero che la voce
 **Chiuso il 04/11** (sezione 9): passo 3 (P4, P9, P14, P16, rischi collegati al posto di P5, D-94...D-98), Quadro in
 due pagine, passo 7 (P2, P7, P6, D-99...D-101), G5 in parte, AU8 (D-102), demo e presentazione, documenti e ramo
 `copilot-studio-pieno` allineati; collaudo con Excel 407/407.
+
+**Aggiunte il 06/11** (analisi 20): le voci 17-19 stanno in coda per non cambiare i numeri citati nelle altre sezioni.
+La 17 si fa insieme alle prove in Banca (n. 2-3); la 18 dopo; la 19 aspetta le risposte della 17, la decisione
+dell'utente e A-19 (n. 5).
 
 | # | Voce | Che cosa | Era | Giorni | Stato | Dettaglio |
 |---|---|---|---|---|---|---|
@@ -95,6 +102,9 @@ due pagine, passo 7 (P2, P7, P6, D-99...D-101), G5 in parte, AU8 (D-102), demo e
 | 14 | **P15.3** altri spunti esterni | A-20...A-23 e la scheda di A-24 | dopo il ciclo vero | 0,5-4 per voce | in attesa di una richiesta dell'utente | sezione 3 |
 | 15 | Revisione della procedura | meno passi manuali e file da allineare | dopo la prova in Banca | 0,5 piu' le voci che ne escono | da fare | sezione 8 |
 | 16 | Questioni aperte | conseguenze dei livelli di allerta, taratura, QUINDI per A3... | quando capitano | — | da decidere | sezione 8 |
+| 17 | **AU10, tappa CL0** domande alla Banca e prova senza codice | domande DB1-DB8 dell'analisi 20 (autorizzazione, accesso a Vertex, rete, Claude Code, modelli e quote, DPO, Legale, model risk); K16 se Claude Code e' sul PC, K17 con lo script di prova | nuova (06/11) | 0,5-1 piu' le attese | da fare, insieme alle prove in Banca (n. 2-3) | sezione 2 (B10), sezione 4 |
+| 18 | **AU10, tappa CL1** anelli e canale su `main` | i tre anelli che ripartono da uno stato vecchio (20.5.3), il livello "canale", il contatore dei tentativi; utili anche con Agent Builder | nuova (06/11) | 2-3 | da fare, dopo le prove in Banca e prima di CL2 | sezione 4 |
+| 19 | **AU10, tappe CL2-CL7** canale Claude | prototipo sul ramo `canale-claude` (A-29), corpus, pilota in ombra limitato, passaggio | nuova (06/11) | 18-25 piu' un ciclo | in attesa delle risposte di CL0 e della decisione dell'utente; dopo A-19 (n. 5) | sezione 4 |
 
 ## 2. Passi sul PC della Banca
 
@@ -113,6 +123,7 @@ ramo (9-bis).
 | B7 | Ciclo 2026Q4 di prova (prima del ciclo vero): converge in 1-2 giri A1, senza A5 o con A5. **29/10**: un giro di correzione, senza le lunghezze di C10; da rifare sulla versione dei passi 2 e 3 dell'ordine | S1 (D-49...D-56), D-69, D-71 | in corso |
 | B8 | Facoltativo, per A-17: **K15** contraddittorio senza codice sul ciclo 2026Q4 (`Analisi_Architettura/17_Decimo_uomo.md`, 17.8): A9 in Agent Builder dopo A1, piu' la variante 2b nella chat di A1; il validatore giudica ogni tesi utile, gia' nota o rumore. Dal 30/10 con il mandato esteso (A-17, analisi 19) | A-17 | da fare |
 | B9 | **Prova di qualita' di A1 e A8 su documenti pubblici** (proposta del 24/10): una libreria di documenti pubblici (EBA, BCE, ENISA, rassegne stampa; niente di interno alla Banca) sul PC di sviluppo e la stessa in Banca. (a) Sul PC di sviluppo Claude fa A1 o A8 con le istruzioni, l'allegato `Input_A1`/`Input_A8` e i documenti, poi precontrollo e `trimestrale` sul registro di prova: dice se istruzioni e documenti bastano, non che cosa fara' l'agente (Claude legge i documenti per intero, Agent Builder ne pesca dei pezzi). (b) Prova piu' utile: l'agente vero in Banca sugli stessi documenti, il JSON (senza dati della Banca) riportato e controllato da Claude affermazione per affermazione (fatti e date nel documento citato, descrittori della rubrica, fenomeni mancati o scartati a torto) | qualita' di A1 (D-21), P14 | da fare |
+| B10 | **Canale Claude, tappa CL0** (`Analisi_Architettura/20_Agenti_Claude_Vertex.md`, 20.1.2 e 20.12). (a) Le domande DB1-DB8 a IT, cloud team, DPO, Legale e model risk: autorizzazione per un'app propria o solo per Claude Code, autenticazione a Vertex e gcloud, uscita di rete verso `aiplatform.eu.rep.googleapis.com`, Claude Code e pip, progetto, regione `eu`, modelli e quote, registro delle richieste, parere scritto sui dati, testo completo delle fonti, riesame di D-23. **06/11: risposte a DB1** (l'autorizzazione vale per lo strumento Claude Code sul PC, quindi trasporto `claude-p`) **e a DB2** (ADC dell'utente con gcloud). Ora decisiva **DB4**: Claude Code su ogni PC degli analisti, uso non interattivo da uno script compreso nell'autorizzazione, nessun blocco dell'EDR. (b) **K16**, se Claude Code e' sul PC: A1 con il prompt per Claude e `Input_A1` del ciclo di prova, JSON in un file, poi "Scegli file" e precontrollo nell'app. (c) **K17** con lo script di prova (proxy, token, host `eu`, quota) | A-25, A-28 | da fare (n. 17) |
 
 ## 3. Processi: cosa manca rispetto al disegno atteso
 
@@ -272,6 +283,33 @@ file; piu' analisti sullo stesso registro; niente coda delle richieste.
 - **Fatto quando**: un ciclo di 15 rischi arriva intero in Banca senza "continua", e il precontrollo lo legge come un
   output solo.
 - **Impegno**: circa 1-1,5 giorni.
+- **Con il canale Claude (AU10)**: AU9 non serve. A1 sta in una chiamata sola (fino a 128K token in uscita), e
+  spezzarla per rischio romperebbe la coerenza tra rischi (analisi 20, 20.6). AU9 resta solo per Agent Builder.
+
+### AU10. Canale Claude su Vertex, terza origine degli agenti (analisi 20, 06/11/2026)
+
+**Stato: da fare** la tappa CL0 (n. 17) · **da fare** la CL1 (n. 18) · **in attesa** le CL2-CL7 (n. 19).
+
+- **Perche'**: la Banca fornisce Claude (Opus) su Google Cloud Vertex. Chiamato dall'app, senza chat, toglie:
+  - i tre gesti per agente;
+  - le risposte tagliate;
+  - il limite degli 8.000 caratteri;
+  - la lettura parziale dei documenti;
+  - il limite dei 4 siti.
+
+  Restano il registro, il motore unico che scrive (D-10), i controlli e la validazione umana.
+- **Cosa fare**: le tappe CL0-CL7 di 20.12:
+  - CL0: domande DB1-DB8, K16 e K17 (B10);
+  - CL1 su `main`: i tre anelli con stato vecchio di `flussi.py`, il livello "canale" e il contatore;
+  - CL2-CL4 sul ramo `canale-claude` (A-29), da creare quando l'utente lo dice: `agenti_claude.py` con il trasporto
+    `claude-p` (Claude Code autorizzato, DB1) e `api` come riserva, schema di decodifica, corpus con manifest e lettori,
+    A7 in una finestra di chat, anteprima G6;
+  - CL5: A-19 su `main`;
+  - CL6: pilota in ombra limitato;
+  - CL7: passaggio dietro la scelta "Agenti".
+- **Decisioni**: A-25...A-29 (DECISIONI, sezione 2).
+- **Fatto quando**: K19 e K25 superate e A-25 decisa.
+- **Impegno**: 20-28 giorni (variante minima senza corpus 9-12), A-19 esclusa.
 
 ## 5. Quantificazione per i rischi piu' rilevanti
 

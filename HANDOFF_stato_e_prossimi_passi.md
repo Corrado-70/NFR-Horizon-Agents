@@ -1682,6 +1682,62 @@ delle notizie che rigenera il report.
   manuale del template, PROMPT_MASTER, analisi 18, presentazione, `REPORT_demo.md` (scia, commento, schede per tema,
   mensile), TODO.
 
+## 2-quaterquadragies. 06/11: analisi 20, agenti Claude su Vertex (A-25...A-29)
+
+Richiesta dell'utente: studiare una soluzione con Python e agenti Claude Code che giri in Banca, su un PC. La Banca
+fornisce Claude (modelli Opus) tramite Google Cloud Vertex; il modello non ha accesso a internet; la raccolta RSS in
+Python funziona e resta. Dopo la stesura, un'analisi critica delle proposte. Risposte dell'utente:
+- l'analisi su `main`, il ramo solo con il prototipo;
+- su Vertex sono ammessi tutti i dati, registro compreso;
+- pip funziona;
+- Claude Code sul PC e il suo lancio da Python non sono confermati.
+
+- **Documento**: `Analisi_Architettura/20_Agenti_Claude_Vertex.md`, sezioni 20.0-20.14.
+  - La documentazione ufficiale (Claude Code su Vertex, modalita' senza interfaccia, rete, Agent SDK, uscita
+    strutturata, modelli, effort, guida di Opus 5.5) e' stata consultata il 06/11 ed e' elencata in fondo.
+  - I riferimenti `file:riga` sono stati riletti sul commit `37489b6`.
+- **Raccomandazione O4**:
+  - la strada A con una terza origine "Claude (Vertex)", invariati registro, D-10, controlli e validazione;
+  - chiamate senza strumenti, con uscita strutturata, lanciate da `agenti_claude.py` come processo;
+  - trasporto `api` (sola libreria standard, stesso percorso di rete della raccolta RSS) oppure `claude-p` (Claude Code
+    dell'IT con `--tools ""`), secondo la domanda DB1;
+  - corpus preletto da Python, con manifest e lettori;
+  - A7 in una finestra di chat dell'app;
+  - Agent Builder come ripiego.
+- **Trovato rileggendo il codice**: tre anelli di `flussi.py` che ripartono da uno stato vecchio. Oggi li ferma
+  l'analista; vanno corretti su `main` prima di un canale automatico (tappa CL1):
+  - il settimanale manda ad A3 qualunque FERMATO;
+  - il trimestrale riusa un `Correzione_A1` vecchio;
+  - la nuova richiesta ad A5 riusa un `Input_A5` vecchio, senza precontrollo.
+- **Fatti che cambiano le ipotesi**:
+  - Opus 5.5 non accetta la temperatura;
+  - gli schemi del kernel non passano tali e quali all'uscita strutturata (serve lo schema di decodifica);
+  - l'Agent SDK valida con draft-07;
+  - Claude Code non legge i PAC;
+  - per Opus recente con i dati in UE serve la multi-regione `eu`;
+  - AU9 non serve con il canale Claude.
+- **Analisi critica** (20.14):
+  - verifica delle affermazioni (le spiegazioni di A7 sono 113 KB e non 215; D-27 approva anche l'uso in un agente
+    di AI);
+  - 18 punti R1-R18, gia' riportati nelle sezioni, tra cui: trasporto con la sola libreria standard, fornitore di
+    sviluppo con i soli dati pubblici, A7 nella finestra dell'app, risposte predefinite per D-71, D-86 e D-88,
+    calendario a due scenari, soglia di quota e prova di effort, forma di G6, pilota in ombra limitato;
+  - pre-mortem;
+  - opzioni scartate nella versione migliore;
+  - coerenza con le decisioni.
+- **Stima**: 20-28 giorni, variante minima 9-12. Tappe CL0-CL7, prove K16-K25, domande alla Banca DB1-DB8.
+- **Documenti**: indice delle analisi, DECISIONI (A-25...A-29), TODO (sezione 0, voci 17-19, B10, AU10, nota su AU9),
+  PROMPT_MASTER (storia e decisioni aperte). Nessun codice e nessun cambio del pacchetto.
+- **Risposte dello stesso giorno**: DB2, ADC dell'utente con gcloud; DB1, l'autorizzazione vale per lo strumento Claude
+  Code sul PC. Quindi in Banca il trasporto e' `claude-p` e `api` resta una riserva. L'analisi e' aggiornata (20.1.2,
+  20.5.2, K16, K17, A-25) con una seconda rilettura critica (20.14.8, R19-R24):
+  - impostazioni con `--bare` passate con `--settings`;
+  - `CLAUDE_CODE_MAX_OUTPUT_TOKENS`;
+  - uscita strutturata con e senza `--json-schema`;
+  - versione di Claude Code;
+  - uso non interattivo da confermare (DB4);
+  - Claude Code su ogni PC.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente
