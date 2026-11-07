@@ -90,6 +90,22 @@ Rispetto alle analisi precedenti:
       interattivo (DB4 b) non e' autorizzato.
     - **Subito, con qualunque canale: l'assistente di validazione**, cioe' Claude Code interattivo in sola lettura sui
       file del ciclo (A-30, K26).
+11. **Aggiunta del 07/11 (20.16): l'interfaccia.** Le applicazioni agentiche del mercato tengono il flusso nel codice e
+    fermano il modello in pause previste, come il progetto. Proposta: tre superfici sopra il codice di oggi.
+    - **Chat** in Claude Code con i soli strumenti del progetto (server MCP locale), senza shell: sostituisce la
+      variante O3 guidata (A-31).
+    - **Cruscotto** HTML in sola lettura (A-31).
+    - **Validazione nel browser** con i testi interi correggibili e un file di decisioni che `valida` applica come la
+      griglia (A-32).
+
+    Valgono con qualunque origine degli agenti. Stima 10-15 giorni, prove K28 e K29.
+12. **La soluzione e il percorso (20.17).** O4 e l'interfaccia di 20.16 stanno su due livelli: O4 cambia chi risponde,
+    la chat e la pagina cambiano con che cosa lavora la persona, e il nucleo che tiene i paletti resta lo stesso.
+    - **Soluzione proposta**: O4 come motore degli agenti, chat, cruscotto e pagina di validazione come interfaccia;
+      Agent Builder, la finestra tkinter e la griglia come ripieghi.
+    - **Percorso in cinque fasi, additivo**: il primo ciclo vero resta su Agent Builder, e ogni fase serve anche da
+      sola.
+    - **Totale**: 31-42 giorni, A-19 compresa. La pagina di validazione serve in ogni scenario della Banca.
 
 ## 20.1 Cosa sappiamo e cosa no
 
@@ -122,6 +138,10 @@ tempo (prezzi, modelli abilitati, regioni, opzioni del CLI) vanno **riverificati
 | F20 | Hook: `PreToolUse` puo' negare una chiamata (`permissionDecision: deny`, o uscita 2); `Stop` puo' impedire l'arresto (`decision: block` con `reason`). Gli hook delle impostazioni valgono anche dentro i sotto-agenti. Le impostazioni gestite possono spegnere gli hook del progetto (`allowManagedHooksOnly`) (07/11) | hooks | l'ordine dei passi si puo' far rispettare dal codice, se l'IT lo consente (DB9) |
 | F21 | Permessi: si valuta prima `deny`, poi `ask`, poi `allow`. Le regole Bash e PowerShell confrontano il testo del comando e "non sono un confine di sicurezza intorno al programma". I divieti su Read ed Edit non valgono per uno script che apre i file da se'. La modalita' `dontAsk` rifiuta cio' che non e' ammesso (07/11) | permissions | con la shell l'unico recinto e' un elenco chiuso di comandi |
 | F22 | Il sandbox di Claude Code gira su macOS, Linux e WSL2; su Windows nativo i comandi girano senza sandbox (07/11) | sandboxing | sul PC della Banca non c'e' un recinto del sistema operativo intorno alla shell |
+| F23 | Server MCP di progetto in `.mcp.json`: nelle sessioni interattive Claude Code chiede l'approvazione prima di usarli; le impostazioni gestite possono fornire, permettere o bloccare server MCP. Uscita di uno strumento MCP: avviso oltre 10.000 token, limite predefinito 25.000 (`MAX_MCP_OUTPUT_TOKENS`); i risultati di testo oltre 50.000 caratteri vanno su file, salvo che il server alzi il limite dello strumento (07/11) | mcp | gli strumenti del progetto restituiscono estratti, non file interi |
+| F24 | `--tools` limita gli strumenti interni di Claude Code e **non tocca gli strumenti MCP** (07/11) | cli-reference | una sessione con i soli strumenti del progetto e' possibile |
+| F25 | MCP Apps (estensione SEP-1865, interfacce HTML dentro la chat): ci sono nelle app di chat di Claude e in VS Code (sperimentale, `chat.mcp.apps.enabled`); secondo una guida di compatibilita' del 20/10/2026, Claude Code non le mostra (fonte secondaria, 07/11) | VS Code blog, mcpbundles | per ora niente moduli dentro la chat di Claude Code: la validazione va in una pagina a parte |
+| F26 | File System Access API (`showSaveFilePicker`): Chrome ed Edge dalla versione 86, non Firefox ne' Safari; per le pagine aperte da file locale (`file://`) non c'e' una regola documentata; ripiego standard: lo scaricamento (07/11) | web.dev | una pagina HTML locale salva in modo sicuro con lo scaricamento; la scrittura diretta va provata in Edge (K29) |
 
 ### 20.1.2 Domande per la Banca
 
@@ -137,7 +157,7 @@ Sono domande, non prove: si chiede a chi sa.
 | DB6 | DPO | Riferimento scritto per "tutti i dati ammessi": quale endpoint, quale conservazione, registro delle richieste, sessioni di Claude Code sul PC | A-28 resta aperta |
 | DB7 | Legale | D-27 approva le fonti a licenza con "uso verificato, anche in un agente di AI". Scaricare **in automatico** il testo completo degli articoli e tenerlo in una cache locale per un periodo fissato rientra in quell'uso? Vale anche per i rapporti (D-95)? | solo estratti per le fonti escluse |
 | DB8 | Model risk | Il cambio di fornitore e l'automazione del giro cambiano la valutazione di D-23? | nota di riesame (20.9) |
-| DB9 | IT | (07/11, per 20.15) Nelle impostazioni gestite di Claude Code della Banca: (a) gli strumenti Bash e PowerShell sono ammessi? (b) Gli hook del progetto sono ammessi, o c'e' `allowManagedHooksOnly`? (c) Le regole di permesso del progetto contano, o c'e' `allowManagedPermissionRulesOnly`? (d) Skill e sotto-agenti del progetto sono ammessi? (e) Per quanti giorni restano sul PC le sessioni (`cleanupPeriodDays`)? | (a) no: niente variante O3 guidata; l'assistente di validazione resta possibile, perche' non usa la shell. (b) o (c) no: hook e regole li installa l'IT nelle impostazioni gestite, oppure niente variante guidata. (d) no: le istruzioni dell'assistente vanno nel `CLAUDE.md` della cartella del ciclo. (e) e' un punto per il DPO (A-28) |
+| DB9 | IT | (07/11, per 20.15 e 20.16) Nelle impostazioni gestite di Claude Code della Banca: (a) gli strumenti Bash e PowerShell sono ammessi? (b) Gli hook del progetto sono ammessi, o c'e' `allowManagedHooksOnly`? (c) Le regole di permesso del progetto contano, o c'e' `allowManagedPermissionRulesOnly`? (d) Skill e sotto-agenti del progetto sono ammessi? (e) Per quanti giorni restano sul PC le sessioni (`cleanupPeriodDays`)? (f) Un server MCP locale del progetto (`.mcp.json`, un processo Python sul PC) e' ammesso, o i server MCP li decide solo l'IT? (g) Sul PC c'e' VS Code con l'estensione di Claude Code, o solo il terminale? (h) In Edge, una pagina HTML locale con JavaScript puo' salvare un file con la File System Access API, o e' bloccata da una policy? | (a) no: niente variante O3 guidata; l'assistente di validazione e la chat di 20.16 restano possibili, perche' non usano la shell. (b) o (c) no: hook e regole li installa l'IT nelle impostazioni gestite. (d) no: le istruzioni dell'assistente vanno nel `CLAUDE.md` della cartella del ciclo. (e) e' un punto per il DPO (A-28). (f) no: l'IT installa il server `nfr` come server gestito, oppure niente chat con gli strumenti del progetto (resta l'app). (g) solo terminale: la chat funziona uguale, con un aspetto piu' spartano. (h) no: la pagina di validazione salva con lo scaricamento |
 
 **Risposte ricevute**
 
@@ -221,6 +241,8 @@ passi lo calcola `stato.leggi()`, lo stesso codice dell'app, e gli hook lo fanno
 - la seconda (l'ordine) e la terza (i comandi vietati) si chiudono;
 - la prima (la shell) si riduce, ma resta (20.15.3, punto 1);
 - la quarta non pesa: anche in O4 l'app resta.
+
+In 20.16 la chat con i soli strumenti del progetto chiude anche la prima obiezione, perche' la shell non c'e'.
 
 **Perche' O2 non serve per A1** (e non per A3, A8):
 - un agente con Read e Grep sceglie da solo che cosa leggere, quindi ricrea il problema "ne pesca dei pezzi" che oggi
@@ -824,7 +846,9 @@ secondo i tempi delle risposte DB1-DB8:
 | **K24** | Banca | A7 nella finestra di chat dell'app, con la traccia di `04_Riferimenti/Prove/Prova_A7.md` | come B6; risposte che citano le spiegazioni giuste | A7 resta su Agent Builder |
 | **K25** | Banca | pilota in ombra limitato (CL6) su una copia del registro, con la griglia di validazione | rettifiche non oltre il 30%; tempo e costo registrati | A-25 si decide su questi esiti |
 | **K26** | Banca, ciclo di prova (07/11, 20.15.5) | assistente di validazione su un ciclo scritto: le domande della traccia di `04_Riferimenti/Prove/Prova_A7.md` piu' 5 sui file del ciclo (perche' un punteggio, che cosa e' cambiato, quali fonti, che cosa contesta A5); 3 tentativi di fargli scrivere un file, lanciare un comando o approvare | risposte che citano il file e il campo giusti; i 3 tentativi negati; nessun file cambiato (impronte prima e dopo) | A7 resta su Agent Builder o nella finestra dell'app (20.8) |
-| **K27** | sviluppo, demo, Claude Code personale (regola di B9) (07/11, 20.15) | variante O3 guidata su un trimestre e una settimana della demo, 3 volte; 7 forzature: saltare A5, allungare a mano un testo del JSON, lanciare `valida`, lanciare `sblocca`, `python -c`, una notizia con istruzioni nascoste, il registro aperto in Excel | stesso ordine dei passi di `stato.leggi` 3 volte su 3; le 7 forzature negate o fermate con un messaggio chiaro; registro intatto; nessun anello | la variante resta scartata; resta O4 |
+| **K27** | sviluppo, demo, Claude Code personale (regola di B9) (07/11, 20.15) | variante O3 guidata su un trimestre e una settimana della demo, 3 volte; 7 forzature: saltare A5, allungare a mano un testo del JSON, lanciare `valida`, lanciare `sblocca`, `python -c`, una notizia con istruzioni nascoste, il registro aperto in Excel | stesso ordine dei passi di `stato.leggi` 3 volte su 3; le 7 forzature negate o fermate con un messaggio chiaro; registro intatto; nessun anello | la variante resta scartata; resta O4. **Dal 07/11 non si fa**: la variante e' superata da A-31 (20.16), che si prova con K28 |
+| **K28** | sviluppo, demo (07/11, 20.16.8) | chat con i soli strumenti del server MCP `nfr`, nel pannello di VS Code e nel terminale: trimestre e settimana della demo 3 volte, con le domande del flusso a meta' passo e 5 forzature | ordine dei passi di `stato.leggi`; forzature impossibili; registro uguale a quello del collaudo | resta l'app |
+| **K29** | Banca, ciclo di prova (07/11, 20.16.8) | stesso ciclo validato con la griglia e con la pagina nel browser, su due copie del registro; testi rettificati e riscrittura di una parte; salvataggio con lo scaricamento e con la File System Access API | storico uguale sui valori; testi con l'origine; giudizio del validatore; nessun blocco del browser | resta la griglia |
 
 **Stima**
 
@@ -839,6 +863,9 @@ secondo i tempi delle risposte DB1-DB8:
 | Collaudo, guida, documenti | 3-4 |
 | Pilota e confronto | 1-2 piu' un ciclo |
 | **Totale** | **20-28 giorni** (A-19 esclusa) |
+
+**Dal 07/11 l'ordine delle tappe e' quello di 20.17**, insieme ad A-30, A-31 e A-32. La finestra di chat di A7
+prevista in CL4 non si fa: la sostituisce la chat in Claude Code (A-31).
 
 **Variante minima**: CL0, CL1, CL2, e A3 con gli estratti RSS di oggi, senza corpus. Costa **9-12 giorni** e toglie gia'
 i gesti, i tagli e il limite dei caratteri. Il corpus si aggiunge dopo, se K19 dice che le fonti contano.
@@ -859,7 +886,9 @@ i gesti, i tagli e il limite dei caratteri. Il corpus si aggiunge dopo, se K19 d
 | **A-27** | **Prompt senza limite**: `componi_prompt` a due destinazioni, schema di decodifica derivato; D-16 e AU9 superate per il canale Claude; D-92 da rivedere dopo il passaggio; restano D-93, D-69, D-68, D-33 e D-35 | Responsabile | con CL2 |
 | **A-28** | **Conformita' e model risk del canale**: regione `eu`, identita' per analista, nessuna chiave sul PC, registro delle richieste su Vertex secondo il DPO, conservazione, nessuno strumento, modello fissato; riesame di D-23; parere scritto del DPO a complemento di D-24 | Responsabile, DPO, model risk, IT | prima di usare dati veri in K25 |
 | **A-29** | **Rami**: le correzioni comuni (CL1) su `main` subito; il prototipo su un ramo `canale-claude` (cartella `NFR Horizon Agents CC`, worktree), unito a `main` dietro la scelta "Agenti" dopo K19; `copilot-studio-pieno` senza lavoro nuovo finche' A-25 e' aperta; `CLAUDE.md` aggiornato quando il ramo nasce | Utente | a CL2 |
-| **A-30** | (07/11, 20.15) **Assistente di validazione**: Claude Code interattivo in sola lettura sui file del ciclo e sulle spiegazioni, aperto dal bottone di A7; niente scrittura, niente comandi, niente approvazioni; indipendente dall'origine degli agenti. La **variante O3 guidata** resta un'alternativa dentro A-25, da decidere con DB9 e K27 | Responsabile, IT | dopo DB9 e K26 |
+| **A-30** | (07/11, 20.15) **Assistente di validazione**: Claude Code interattivo in sola lettura sui file del ciclo e sulle spiegazioni, aperto dal bottone di A7; niente scrittura, niente comandi, niente approvazioni; indipendente dall'origine degli agenti. La **variante O3 guidata** resta un'alternativa dentro A-25, da decidere con DB9 e K27; **superata il 07/11 da A-31** | Responsabile, IT | dopo DB9 e K26 |
+| **A-31** | (07/11, 20.16) **Interfaccia agentica**: chat in Claude Code con i soli strumenti del progetto (server MCP `nfr`, nessuna shell, nessuna scrittura di file, "approva" escluso) e cruscotto HTML in sola lettura, sopra il codice di oggi e con qualunque origine degli agenti; la finestra tkinter resta come ripiego e per Admin | Responsabile, utente, IT | dopo DB9 (f, g) e K28 |
+| **A-32** | (07/11, 20.16) **Validazione nel browser con i testi**: valori vincolati alla rubrica, testi interi correggibili con le modifiche in vista e la loro origine, riscrittura di una parte fatta da A1, nessun "accetta tutto"; file di decisioni applicato da `valida` come la griglia, che resta valida | Responsabile, validatore | dopo K29; dopo A-19 o con la rubrica letta dal kernel |
 
 **Non cambia**:
 - D-10 (il motore e' l'unico che scrive);
@@ -1086,6 +1115,8 @@ I riferimenti `file:riga` sono del commit `713772d`. I fatti su Claude Code sono
      ciclo 2026Q4. Decisione proposta **A-30**, prova **K26**;
    - la variante guidata si prova sulla demo, sul PC di sviluppo (**K27**), come alternativa ad `agenti_claude.py`
      dentro A-25. Vince solo se l'uso non interattivo da uno script non e' autorizzato (DB4 b) e DB9 lo consente.
+     **Superata lo stesso giorno da 20.16**: la chat con i soli strumenti del progetto ottiene lo stesso risultato senza
+     la shell (A-31). Restano valide l'analisi dei problemi (20.15.3) e l'assistente di validazione (20.15.5).
 
 ### 20.15.2 Come funzionerebbe
 
@@ -1360,6 +1391,349 @@ DB4 (b) e' si', O4 resta migliore: stesso risultato, senza shell.
 - **20.13**: decisione A-30.
 - **Non cambiano**: la raccomandazione O4, le tappe CL0-CL7, la stima di 20-28 giorni, D-10, D-82, D-83.
 
+## 20.16 L'interfaccia: chat con gli strumenti del progetto, cruscotto e validazione nel browser
+
+Data: 07/11/2026. Osservazione e richiesta dell'utente:
+
+> E' che il giro con interfaccio GUI python mi piace poco graficamente e mi sembra un po' old come modalità di
+> interazione con uno strumento che è "molto IA". Serve a dare vincoli stretti e a garantire il risultato ma
+> interfaccie chatbot o mascherate da GUI in un browser sono molto più moderne
+
+> Sì mi piace, ma estendi per favolre la tua analisi di alternative al mercato, cerca su webe capisci le modalità
+> tipiche di interazione di applicazioni agentiche complesse (come questa?) in cui da un lato uso funzioanlità da LLM
+> dall'altro devo mettere dei paletti per garantire la coerenza e consistena. Ricorda che ho sia parti in output, sia
+> parti in "validazione" su cui posso voler correggere parti intere degli output (funziona su HTML o non so?)
+
+Le fonti sul mercato sono state consultate il 07/11/2026 e sono in fondo. Molte sono documentazione dei produttori;
+quelle secondarie sono segnalate. I fatti su Claude Code sono F23-F26 (20.1.1). I riferimenti `file:riga` sono del
+commit `64fb066`.
+
+### 20.16.1 In breve
+
+1. **I paletti non stanno nella finestra, ma in che cosa il modello puo' toccare.** Le applicazioni agentiche serie
+   convergono sullo stesso disegno del progetto:
+   - un percorso scritto nel codice, con il modello dentro i passi;
+   - controlli programmati tra un passo e l'altro;
+   - l'intervento umano come pausa prevista del flusso, con lo stato salvato e la ripresa.
+
+   Lo dicono Anthropic ("workflows" contro "agents"), i 12-factor agents ("own your control flow"), LangGraph
+   (`interrupt`), OpenAI (`needsApproval`), Microsoft (Agent Framework e Copilot Studio). Il progetto e' gia' cosi'
+   (20.16.2).
+2. **Le modalita' di interazione del mercato sono sei** (20.16.4): chat; copilota a lato dei dati; documento con
+   modifiche proposte (canvas); coda di revisione (inbox); cruscotto; interfaccia generata dentro la chat. Nessuna
+   basta da sola: ognuna serve un lavoro diverso.
+3. **Proposta: tre superfici sopra il codice di oggi**, che resta l'unico che decide e scrive (20.16.5):
+   - **chat** in Claude Code (pannello di VS Code o terminale) con i **soli strumenti del progetto**, attraverso un
+     server MCP locale: niente shell, niente file. Guida il giro, fa le domande dell'app, spiega. Sostituisce la
+     variante O3 guidata di 20.15, senza la shell;
+   - **cruscotto** HTML in sola lettura: stato, avanzamento, anteprima dei rischi;
+   - **validazione nel browser**: una scheda per rischio, valori con le sole scelte della rubrica, **testi interi
+     correggibili** con le modifiche in vista e la motivazione, richieste di riscrittura di una parte. Esce un file di
+     decisioni che `valida` applica come oggi la griglia.
+4. **Funziona in HTML? Si'**, con un confine preciso: la pagina raccoglie le decisioni, il motore le controlla e le
+   scrive (D-10). La pagina salva le decisioni con lo scaricamento, che funziona ovunque. La scrittura diretta in Edge e
+   un piccolo server locale sono possibili dopo una prova (20.16.7).
+5. **L'interfaccia non dipende dall'origine degli agenti.** La chat funziona con:
+   - Agent Builder (la risposta arriva dagli appunti, come oggi);
+   - Claude con `claude -p` (O4);
+   - i sotto-agenti nella sessione, se l'uso da uno script non e' autorizzato (DB4 b).
+
+   Per questo diventa una decisione a se', **A-31**. La validazione nel browser, che cambia anche che cosa si puo'
+   correggere in validazione, e' **A-32**.
+6. **Comprare non sostituisce.** Le piattaforme GRC (ServiceNow IRM, IBM OpenPages con watsonx, SAI360 con Signal AI)
+   usano lo stesso schema, "l'agente propone un elenco, il risk manager conferma e lo porta nel registro". Pero'
+   richiedono un acquisto e la migrazione del registro, e non lasciano controllare rubrica, kernel e controlli
+   (20.16.6).
+7. **Stima**: 10-15 giorni in tutto. La validazione nel browser (5-7 giorni) vale anche con Agent Builder. Va fatta
+   dopo A-19, oppure leggendo la rubrica dal kernel, cosi' le scale a 6 livelli non la toccano. Prove K28 e K29.
+
+### 20.16.2 Che cosa insegna il mercato: i principi
+
+| Principio | Chi lo dice | Nel progetto oggi | Che cosa aggiunge |
+|---|---|---|---|
+| **Workflow, non agente**: percorsi scritti nel codice, il modello dentro i passi, "gate" programmati tra i passi; un modello genera e un altro valuta (evaluator-optimizer) | Anthropic, "Building effective agents" | `flussi` e `stato.leggi()`; il precontrollo e' il gate; A1, precontrollo e correzione sono l'evaluator-optimizer; A5 e' il valutatore | conferma che la strada e' quella giusta |
+| **Il controllo del flusso resta tuo; l'umano si contatta con una chiamata di strumento**: la domanda alla persona e' un passo previsto, la risposta torna come dato strutturato | 12-factor agents (HumanLayer), fattori 7 e 8 (fonti secondarie) | le domande dell'app (`amb.conferma`, `amb.chiedi`) | in chat la domanda diventa la risposta di uno strumento, e la scelta torna con lo strumento successivo |
+| **Pausa e ripresa con lo stato salvato**: approva o respingi, rivedi e correggi lo stato, rivedi la chiamata di uno strumento, valida l'ingresso | LangGraph (`interrupt`, `Command`, checkpointer); Microsoft Agent Framework (`request_info`, `response_handler`); OpenAI Agents SDK (`needsApproval`, `RunState` ripristinabile) | `Stato/<periodo>.json`, `In_arrivo`, il ciclo scritto che aspetta la validazione | **"rivedi e correggi lo stato"** prima di applicarlo: e' la correzione di parti intere che chiede l'utente |
+| **Controlli accanto allo strumento che produce l'effetto** | OpenAI, guardrails e human review | C1-C10 e schema nel motore, prima di scrivere | — |
+| **Approvazione solo per le azioni rischiose**, per non stancare chi rivede | OpenAI; guide di settore (secondarie) | si accetta lasciando la proposta; motivazione obbligatoria solo per le rettifiche e le righe ⚑ | — |
+| **Agenti "ambient" e coda di revisione**: l'agente lavora da se' e chiede alla persona solo per avvisare, domandare o far rivedere | LangChain, "Ambient agents" e Agent Inbox | A3 parte il lunedi' alle 7; la settimana e il ciclo aspettano l'approvazione | il cruscotto come coda: "da approvare", "A3 propone uno straordinario", "lucchetto preso da X" |
+| **Le modifiche dell'AI arrivano come modifiche proposte**: ogni sezione si accetta o si respinge in modo esplicito; niente "accetta tutto"; traccia non alterabile | Tiptap AI Toolkit, Nutrient Document Authoring; guide legali e farmaceutiche (secondarie) | `Storico_Validazioni` campo per campo; impronte | le proposte di testo in validazione, con la vista delle modifiche |
+| **Riscrivere solo una parte** ("inpainting", "magic edit"): si sceglie il pezzo, si da' un'istruzione, si vede la proposta prima che sostituisca | shapeof.ai e cataloghi di pattern | la correzione rifa' tutto A1 (D-93 eredita i testi che non cambiano) | "riscrivi questa parte" in validazione, fatta con le regole di A1 su una parte sola |
+| **Supervisione umana effettiva**: chi supervisiona deve conoscere il rischio di affidarsi troppo (automation bias), poter ignorare o cambiare l'uscita, e farlo davvero; una quota di rettifiche troppo bassa e' un segnale | AI Act, art. 14 (in particolare il par. 4, lettere b e d; commenti secondari) | rettifiche al massimo il 30% (D-21), `diagnosi`, revisione annuale della quota di rettifiche ("validazione di facciata") | interfaccia che rende facile rettificare e difficile approvare senza guardare (20.16.5 C). Se il sistema rientri nell'art. 14 lo decide la Banca; qui e' un metro di buona pratica |
+
+### 20.16.3 I paletti: dove stanno, e chi li puo' scavalcare
+
+| Livello | Paletto | Dove sta | Con la chat e il browser |
+|---|---|---|---|
+| Struttura | schema JSON, rubrica, tassonomia | kernel, `valida_output.py`, `ingresso` | invariato; nella pagina di validazione i valori si scelgono solo tra quelli della rubrica |
+| Contenuto | C1-C10, guida di scrittura, lunghezze (C10) | precontrollo, motore | invariato; una parte riscritta in validazione ripassa dal controllo di quella parte |
+| Processo | ordine dei passi, lucchetto, copia di lavoro, un solo motore che scrive | `stato.leggi()`, `flussi`, `lucchetto`, motore (D-10, D-82, D-83) | invariato: la chat chiama solo strumenti che usano questo codice; la pagina non scrive il registro |
+| Contraddittorio | A5, doppio run, `confronta` | flussi, A5 | invariato |
+| Persona | validazione, motivazioni, ⚑, respingi | griglia e `valida` | la pagina chiede le stesse cose; "approva" resta della persona |
+| Traccia | `Storico_Validazioni`, `In_arrivo/Originali`, impronte, `Prompt_in_uso` | motore, ingresso | in piu': l'origine di ogni testo (agente, validatore, assistente accettato dal validatore) |
+| Misura | D-21, `diagnosi` | motore | in piu': quante schede il validatore ha aperto |
+
+**Chi puo' scavalcare un paletto**: nessuna delle tre superfici. La chat non ha strumenti che scrivono, e la pagina
+produce un file che il motore controlla come la griglia. E' la stessa regola di 20.15, raggiunta senza la shell.
+
+### 20.16.4 Le modalita' di interazione del mercato
+
+| # | Modalita' | Esempi | Buona per | Debole per | Nel progetto |
+|---|---|---|---|---|---|
+| 1 | **Chat** | Claude, ChatGPT, Microsoft 365 Copilot | domande, spiegazioni, avviare un passo, rispondere alle domande del flusso | rivedere 50 righe con ordine; vedere l'insieme | guida del giro, A7, richieste di riscrittura |
+| 2 | **Copilota a lato dei dati** | Now Assist in ServiceNow IRM; l'assistente di OpenPages; CopilotKit nelle app | aiuto nel contesto di cio' che si guarda | se non vede lo stesso dato, risponde su un'altra cosa | l'assistente accanto alla pagina di validazione |
+| 3 | **Documento con modifiche proposte** (canvas) | ChatGPT canvas, Claude artifacts; Tiptap e Nutrient per l'AI in revisione | testi lunghi, riscritture di una parte, accetta o respingi per sezione | numeri con vincoli | i testi di ogni rischio in validazione |
+| 4 | **Coda di revisione** (inbox) | LangChain Agent Inbox; Copilot Studio (richiesta di informazioni e approvazioni a piu' stadi, in Outlook); l'elenco da rivedere dell'agente di identificazione dei rischi di ServiceNow | decisioni puntuali, asincrone, di piu' persone | esplorare | "da approvare", proposte di straordinario, notizie della settimana |
+| 5 | **Cruscotto o app con pulsanti** | la finestra tkinter di oggi; Streamlit, Chainlit, Gradio; le applicazioni GRC | stato, avanzamento, azioni con conseguenze | conversare | il cruscotto HTML in sola lettura |
+| 6 | **Interfaccia generata dentro la chat** | MCP Apps; AG-UI con CopilotKit | moduli e grafici dentro la conversazione | maturita'; Claude Code non le mostra (F25) | non ora; da rivedere quando Claude Code le mostrera' |
+
+Le applicazioni complesse usano in genere piu' modalita' insieme: per esempio la coda per le decisioni, il documento
+per i testi, la chat per le domande. La finestra di oggi copre solo la 5, e per il resto rimanda a Excel e ad Agent
+Builder.
+
+### 20.16.5 La proposta: tre superfici
+
+```
+  chat (Claude Code: pannello di VS Code o terminale)          pagina di validazione (browser)
+  "/ciclo"  "perche' R-07 e' salito?"  "riscrivi la parte P"     una scheda per rischio: valori, testi,
+  strumenti: solo quelli del server MCP "nfr"                    modifiche in vista, motivazioni
+        |  stato, esegui_prossimo_passo, rispondi,                      |  Decisioni_<periodo>.json
+        |  leggi_ciclo, proponi_testo                                   |
+        v                                                               v
+  ┌──────────────────────────────────────────────────────────────────────────────────────┐
+  │ codice di oggi: stato.leggi -> flussi -> ingresso -> precontrollo -> motore (D-10)    │
+  │ origine degli agenti: Agent Builder (appunti) | claude -p (O4) | sotto-agenti        │
+  └──────────────────────────────────────────────────────────────────────────────────────┘
+        |
+        v
+  cruscotto HTML (sola lettura): stato, avanzamento, coda delle cose da fare, anteprima G6, report
+```
+
+**A. La chat con gli strumenti del progetto**
+
+- **Come si apre.** Claude Code nella cartella del pacchetto, con i soli strumenti dei sotto-agenti e di lettura
+  (`--tools "Agent,Read"`) piu' il server MCP del progetto, `nfr`, dichiarato in `.mcp.json`. `--tools` non tocca gli
+  strumenti MCP (F24).
+  - Read e' limitato dai permessi alla cartella del ciclo.
+  - Al primo uso Claude Code chiede di approvare il server (F23); in Banca serve DB9 (f).
+- **Il server `nfr`** e' un processo Python sul PC.
+  - Fa girare `flussi` in un thread, come la finestra di oggi (`app_nfr.py:109`), con un terzo `Ambiente` accanto a
+    `AmbienteTk` e ad `AmbienteFinto` (`test_app.py:253`).
+  - Quando il flusso chiede qualcosa (`conferma`, `chiedi`), si sospende e la domanda torna alla chat come risposta
+    dello strumento; la scelta della persona arriva con `rispondi`. E' il meccanismo `interrupt` di LangGraph e il
+    fattore 7 dei 12-factor agents, sul codice che c'e' gia'.
+
+| Strumento | Che cosa fa | Chi lo usa | Permesso |
+|---|---|---|---|
+| `stato` | `stato.leggi()`: dove siamo, il prossimo passo, chi lo deve fare | chat | ammesso |
+| `esegui_prossimo_passo` | avvia il flusso del passo che dice lo stato, mai un altro; restituisce l'esito, oppure la domanda del flusso | chat | ammesso |
+| `rispondi(scelta)` | riprende il flusso sospeso con la scelta della persona | chat | ammesso |
+| `ricevi_dagli_appunti(agente)` | con Agent Builder: legge la risposta dagli appunti e la passa a `ingresso.ricevi` (le funzioni di oggi) | chat | ammesso |
+| `consegna_output(agente, periodo, json)` | con i sotto-agenti (DB4 b no): passa la risposta a `ingresso.ricevi`, con schema, origine e impronta | solo i sotto-agenti | ammesso |
+| `leggi_ciclo(rischio, parte)` | estratti dei JSON del ciclo, del precontrollo, di A5 e delle spiegazioni (sotto il limite di F23) | chat | ammesso |
+| `proponi_testo(rischio, campo, testo, perche')` | scrive una **proposta** nel file delle proposte della validazione; non tocca il registro | chat | con conferma della persona (`ask`) |
+| `apri(cosa)` | apre il cruscotto, la pagina di validazione, il report, la cartella | chat | ammesso |
+
+- **Non esposti**: `valida`, `riapri`, `sblocca`, `dismetti`, Admin. Restano nell'app, o nei comandi lanciati dalla
+  persona.
+- **Con `claude -p` (O4)** `esegui_prossimo_passo` chiama `agenti_claude.py` come previsto in 20.5. La chat fa solo
+  da interfaccia, e il canale resta quello di O4: richiesta esatta, schema, doppio run, budget.
+- **Con i sotto-agenti** (se DB4 b e' no), A1 e A5 sono sotto-agenti con Read sulla cartella degli ingressi e
+  `consegna_output`. Si applicano le regole di 20.15.3 sull'indipendenza (punto 5) e sulla traccia (punto 10), senza
+  la shell.
+- **Perche' i dieci problemi di 20.15.3 si riducono**:
+  - la shell non c'e' (punti 1 e 4);
+  - nessuno strumento scrive file (2 e 8);
+  - l'ordine sta dentro `esegui_prossimo_passo` (3);
+  - lo stato resta nei file (6);
+  - gli anelli li ferma il flusso di oggi, con le correzioni di CL1 (7);
+  - gli strumenti si collaudano senza rete, chiamandoli dal collaudo con l'ambiente finto (9).
+
+**B. Il cruscotto**
+
+- Una pagina HTML scritta da Python dopo ogni passo (`Cruscotto.html` nell'archivio). Si ricarica da sola ogni
+  minuto, perche' una pagina locale non riceve notifiche.
+- Contenuto:
+  - il prossimo passo e chi lo deve fare (`stato.leggi()`);
+  - l'avanzamento del ciclo: A1, precontrollo, A5, scritto, in validazione, approvato, schede, report;
+  - la coda delle cose da fare (20.16.2, coda di revisione);
+  - il lucchetto e gli ultimi errori;
+  - i collegamenti all'anteprima G6 (20.5.9), al report HTML e alla pagina di validazione.
+- Usa lo stile e il codice del report HTML (analisi 16, tappa M4). Non ha pulsanti che agiscono: le azioni passano
+  dalla chat o dall'app.
+
+**C. La validazione nel browser**
+
+- **Che cosa e'.** `Validazione_<periodo>.html`, scritta dal motore quando il ciclo e' scritto, accanto alla griglia
+  di Excel. A sinistra la coda dei rischi (con ⚑ e "da rivedere"), a destra la scheda del rischio aperto.
+- **Valori.** Si sceglie solo tra i livelli della rubrica, con il descrittore del livello accanto. La proposta
+  dell'agente resta visibile in grigio; un valore cambiato diventa arancio e chiede la motivazione (almeno 10
+  caratteri). Sono le stesse regole e gli stessi campi della griglia (`mappatura_campi.json`, `validazione`).
+- **Testi interi.** Descrizione, parti del razionale (D-68), nome e note dei KRI, descrizione delle azioni.
+  - Ogni testo e' modificabile e la vista delle modifiche mostra le differenze, parola per parola, rispetto alla
+    proposta.
+  - Per un rischio gia' nel registro si vede anche il testo validato del ciclo prima (D-93).
+  - Si respingono KRI, azioni e notizie, come oggi. Aggiungere un KRI o un'azione e' un secondo passo, perche'
+    gli identificativi li assegna il motore.
+- **Riscrivere una parte.** Il validatore scrive un'istruzione sulla parte, per esempio "la Banca non usa quel
+  fornitore: riscrivi la parte Probabilita". La richiesta va alla chat: la riscrittura la fa **A1 con le sue regole e
+  su quella parte sola** (come D-93), passa dal controllo di quella parte (C10 e C2) e torna come proposta, con le
+  modifiche in vista. Il validatore la accetta, la cambia o la scarta. Un testo dell'assistente non entra mai senza
+  un'accettazione esplicita.
+- **Contro l'approvazione senza guardare** (AI Act, art. 14; 20.16.2):
+  - non c'e' un "accetta tutto";
+  - le righe ⚑ chiedono sempre la motivazione;
+  - il file delle decisioni dice quali schede il validatore ha aperto, e `diagnosi` lo riporta accanto alla quota di
+    rettifiche;
+  - rettificare costa un clic e una motivazione, non un giro in Excel.
+- **Come tornano le decisioni.** La pagina tiene la bozza nel browser (`localStorage`) e con "Salva le decisioni"
+  produce `Decisioni_<periodo>.json`.
+
+| Modo | Come | Pro | Contro |
+|---|---|---|---|
+| **Scaricamento** (proposto) | il browser salva il file in Download; `valida` lo cerca li' e nella cartella del ciclo | funziona con qualunque browser e da file locale; nessun permesso | un passaggio in piu' per la persona; il file si puo' toccare a mano, come oggi la griglia |
+| File System Access API | la pagina scrive il file nella cartella scelta, in Edge o Chrome | nessun passaggio in piu' | da file locale non e' documentato (F26); puo' essere bloccato da una policy (DB9 h); da provare in K29 |
+| Server locale | Python serve la pagina su `localhost` e riceve le decisioni | salvataggio immediato; proposte della chat visibili subito | un processo in ascolto su una porta, da far approvare all'IT; piu' codice; e' la strada dell'app nel browser (20.16.6) |
+
+  Le proposte della chat arrivano alla pagina come file `Proposte_<periodo>.js`, letto con un tag `<script>` quando
+  la pagina si ricarica. Una pagina locale non puo' leggere un JSON con `fetch`, ma puo' caricare uno script.
+- **Applicazione.** `valida --decisioni <file> --validatore "..."`. Il motore legge gia' la griglia in una struttura
+  di modifiche (`leggi_griglia`, `esegui_ciclo_locale.py:1322`, usata alla riga 3268); il file delle decisioni ha la
+  stessa forma, con in piu' i testi.
+  - Stessi controlli, stesso `Storico_Validazioni` campo per campo (chi, quando, valore, motivo), stesso report
+    rigenerato.
+  - Il file porta l'impronta dell'output del ciclo da cui e' nata la pagina: se nel frattempo il ciclo e' cambiato
+    (riapertura, nuovo A1), `valida` lo rifiuta.
+  - La griglia di Excel resta valida e porta alla stessa struttura: due superfici, una sola logica.
+
+### 20.16.6 Le alternative
+
+| Alternativa | Pro | Contro | Esito |
+|---|---|---|---|
+| **Restare con la finestra tkinter e la griglia di Excel** | nessun lavoro; collaudato; gia' in Banca | aspetto datato; i testi interi non si correggono in validazione (oggi solo dopo, con "Testi a mano", D-90) | resta come ripiego e per Admin |
+| **App nel browser con la chat dentro** (Streamlit, Chainlit, NiceGUI, oppure una pagina con un server Python) | un'unica finestra moderna; Chainlit mostra i passi intermedi e raccoglie i giudizi | la chat dentro la pagina chiama Claude da uno script (DB4 b) o con l'Agent SDK (F11); un server locale in ascolto; pacchetti pip in piu'; piu' codice da mantenere | il passo dopo, se DB4 (b) e' si' e la chat in Claude Code non basta |
+| **Copilot Studio e Microsoft 365** (richieste di informazioni e approvazioni a piu' stadi in Outlook e Teams) | nativo in Banca; approvazioni dove la persona lavora gia' | il motore non gira nel code interpreter (T4.1, D-82); approvazioni a piu' stadi in anteprima; ramo `copilot-studio-pieno` | resta sul suo ramo |
+| **Interfaccia nella chat** (MCP Apps, AG-UI con CopilotKit) | la piu' moderna: moduli e schede dentro la conversazione | Claude Code non le mostra (F25); VS Code solo sperimentale; CopilotKit e' un'app React con il suo backend | da rivedere: la pagina di validazione si potra' riusare come MCP App |
+| **Piattaforma GRC del mercato** (ServiceNow IRM con Now Assist, IBM OpenPages con watsonx, SAI360 Risk Radar con Signal AI) | prodotto mantenuto da altri; governo degli agenti (AI Control Tower di ServiceNow); fonti esterne (Signal AI) | acquisto e migrazione del registro; nessun controllo su rubrica, kernel, controlli e prompt; nessun prodotto trovato per l'horizon scanning dei rischi non finanziari con queste regole | fuori ambito. Il loro schema conferma il progetto: l'agente propone un elenco, il risk manager conferma e lo porta nel registro |
+| **Editor professionale con modifiche tracciate** (Tiptap, Nutrient) dentro la pagina | revisione come in un programma di scrittura | licenze, peso, dipendenze esterne | non serve: per testi di poche centinaia di caratteri basta la vista delle differenze in JavaScript |
+
+### 20.16.7 Problemi e perche'
+
+1. **Due superfici di validazione**, Excel e browser, che devono dare lo stesso risultato. Se divergono, lo stesso
+   ciclo validato in due modi produce due registri diversi. Contromisura: una sola struttura di modifiche in `valida`,
+   e lo stesso collaudo sulle due superfici.
+2. **Correggere i testi in validazione e' una regola nuova.** Oggi i testi si correggono solo dopo la validazione, con
+   "Testi a mano" (D-76, D-90), e solo nella forma. Con A-32:
+   - il testo corretto in validazione diventa il testo validato, che A1 eredita al ciclo dopo (D-93);
+   - `Storico_Validazioni` registra il testo di prima, quello nuovo, il motivo e l'origine;
+   - "Testi a mano" resta per i cicli gia' validati.
+3. **Chi ha scritto un testo.** Se l'assistente propone e il validatore accetta, il testo non e' ne' di A1 ne' del
+   validatore. Senza l'origine, le misure di D-21 mescolerebbero rettifiche umane e proposte del modello. Contromisura:
+   tre origini nel registro (agente, validatore, assistente accettato dal validatore).
+4. **Una pagina bella invita ad approvare in fretta.** E' il rischio di affidarsi troppo (20.9), aggravato dalla
+   comodita'. Contromisura: le regole di 20.16.5 C e la quota di rettifiche in `diagnosi`.
+5. **Il file delle decisioni e' un file sul PC.** Si puo' modificare a mano, come oggi la griglia. Il rischio non
+   cresce: `valida` lo controlla tutto, ne verifica l'impronta e registra l'utente di Windows (`lucchetto.chi_sono`).
+6. **Policy del browser e di Claude Code in Banca.** JavaScript nelle pagine locali funziona gia' con il report HTML
+   (M4). Vanno chiesti la File System Access API (DB9 h), il server MCP del progetto (DB9 f) e VS Code (DB9 g).
+7. **Dimensioni.** Un risultato MCP oltre il limite va su file (F23): `leggi_ciclo` restituisce estratti. Gli ingressi
+   dei sotto-agenti si leggono con Read dalla cartella. La consegna di A1 per intero come argomento di uno strumento va
+   provata (K28).
+
+### 20.16.8 Stima, prove, decisioni
+
+| Lavoro | Giorni |
+|---|---|
+| Server MCP `nfr`: terzo `Ambiente`, flusso sospeso e ripreso, otto strumenti, collaudo con l'ambiente finto | 3-4 |
+| Configurazione: `.mcp.json`, permessi, sotto-agenti (i prompt sono in comune con O4, 20.6) | 0,5-1 |
+| Cruscotto HTML | 1 |
+| Pagina di validazione, `valida --decisioni`, testi in validazione, origine dei testi, collaudo sulle due superfici | 5-7 |
+| Guida e documenti | 1-2 |
+| **Totale** | **10-15** |
+
+- **Ordine.** L'assistente di validazione (20.15.5), poi la chat con gli strumenti, poi la pagina di validazione.
+- **Prerequisito.** La pagina di validazione va dopo A-19, oppure legge la rubrica dal kernel, cosi' le scale a 6
+  livelli non la toccano.
+- **Indipendenza.** La chat e la pagina valgono con qualunque origine degli agenti: non aspettano A-25.
+
+| Prova | Dove | Che cosa | Superata se | Se va male |
+|---|---|---|---|---|
+| **K28** | sviluppo, demo, Claude Code personale (regola di B9) | chat con i soli strumenti di `nfr` nel pannello di VS Code e nel terminale: un trimestre e una settimana della demo, 3 volte, con Agent Builder simulato dagli appunti e con i sotto-agenti; le domande del flusso a meta' passo; 5 forzature (lanciare `valida`, scrivere un file, usare la shell, saltare A5, chiedere un passo diverso da quello dello stato); A1 consegnato per intero con `consegna_output` | stesso ordine dei passi di `stato.leggi` 3 volte su 3; domande e risposte giuste; forzature impossibili, perche' gli strumenti non ci sono; registro identico a quello del collaudo | resta l'app; si rivede il disegno degli strumenti |
+| **K29** | Banca, ciclo di prova | lo stesso ciclo validato due volte, con la griglia di Excel e con la pagina, su due copie del registro; 3 testi rettificati e 1 riscrittura di una parte; salvataggio con lo scaricamento e, se c'e', con la File System Access API in Edge; tempo del validatore | `Storico_Validazioni` uguale sui valori; testi registrati con l'origine; il validatore giudica la pagina non peggiore della griglia; nessun blocco del browser | resta la griglia; la pagina diventa solo una vista |
+
+| Codice | Decisione proposta | Chi | Entro |
+|---|---|---|---|
+| **A-31** | **Interfaccia agentica**: chat in Claude Code con i soli strumenti del progetto (server MCP locale `nfr`, nessuna shell, nessuna scrittura di file, "approva" escluso) e cruscotto HTML in sola lettura, sopra `stato`, `flussi`, `ingresso` e il motore, con qualunque origine degli agenti. Sostituisce la variante O3 guidata (A-30, parte 2). La finestra tkinter resta come ripiego e per Admin | Responsabile, utente, IT | dopo DB9 (f, g) e K28 |
+| **A-32** | **Validazione nel browser con i testi**: pagina per rischio, con valori vincolati alla rubrica, testi interi correggibili con le modifiche in vista, motivazione, riscrittura di una parte da parte di A1, nessun "accetta tutto"; decisioni in un file applicato da `valida` come la griglia, con l'origine dei testi; la griglia di Excel resta valida | Responsabile, validatore | dopo K29; dopo A-19 o con la rubrica letta dal kernel |
+
+Che cosa cambia nel resto del documento:
+- **20.0**: punto 11.
+- **20.1.1**: F23-F26.
+- **20.1.2**: DB9, parti f, g e h.
+- **20.12**: K28 e K29.
+- **20.13**: A-30 (parte 2 superata), A-31, A-32.
+
+## 20.17 La soluzione proposta e il percorso da O4
+
+Data: 07/11/2026. Domanda dell'utente:
+
+> a questo punto quale soluzioni proponi ed esiste un percorso da O4 a questa per esempio?
+
+### 20.17.1 Due livelli, non due alternative
+
+- **O4 cambia chi risponde**: gli agenti diventano chiamate a Claude lanciate dal codice, senza i gesti.
+- **A-31 e A-32 cambiano con che cosa lavora la persona**: chat, cruscotto, pagina di validazione.
+- **Sotto c'e' lo stesso nucleo**, che non cambia e tiene i paletti (20.16.3): `stato`, `flussi`, `ingresso`,
+  precontrollo, motore.
+
+**Soluzione proposta**:
+- **agenti**: O4 (`claude -p`, 20.5). Se l'uso da uno script non e' autorizzato (DB4 b), i sotto-agenti dentro la chat
+  (20.16.5 A);
+- **interfaccia**: chat in Claude Code con i soli strumenti del progetto e cruscotto HTML (A-31); validazione nel
+  browser con i testi correggibili (A-32);
+- **ripieghi, sempre disponibili**: Agent Builder, la finestra tkinter (anche per Admin), la griglia di Excel.
+
+### 20.17.2 Il percorso: additivo, un passo alla volta
+
+Ogni fase si appoggia alla precedente e non butta via niente. Dal piano di O4 cambiano due cose:
+- **la finestra di chat di A7 nell'app** (20.8, tappa CL4) **non si fa**: la sostituisce la chat in Claude Code;
+- **l'anteprima G6** (20.5.9) diventa una parte del cruscotto.
+
+| Fase | Quando | Che cosa | Tappe e voci | Giorni | Utile anche da sola? |
+|---|---|---|---|---|---|
+| 0 | novembre 2026, con le prove in Banca (B1-B4, B7) | domande DB3-DB9, prove K16 e K17, senza codice | CL0; voce 17 | 0,5-1 | si': dice quali strade sono aperte (20.17.3) |
+| 1 | dicembre 2026, su `main` | i tre anelli dei flussi, il livello "canale", il contatore; le scale a 6 livelli; l'assistente di validazione in sola lettura | CL1, A-19, A-30; voci 18, 5, 20 | 7-10, piu' il ciclo di prova di A-19 | si': gli anelli valgono anche con Agent Builder; l'assistente e' utile gia' nella validazione del 2026Q4 |
+| 2 | gennaio 2027 | **ciclo vero 2026Q4 su Agent Builder**, con l'app e la griglia di oggi (D-22). Intanto, sul ramo `canale-claude` (A-29): O4 nella variante minima (`agenti_claude.py`, prompt a due destinazioni, A1 e A5 senza corpus) e A1 in ombra sul 2026Q4 | CL2; voce 19 | 6-7 | si': toglie i gesti anche con la finestra di oggi |
+| 3 | febbraio-marzo 2027 | chat con gli strumenti del progetto e cruscotto, sopra O4 (K28); pagina di validazione con i testi (K29) | A-31, A-32; voci 21, 22 | 10-14 | la pagina si', in ogni caso; la chat se DB9 la permette |
+| 4 | da aprile 2027 | ciclo 2027Q1 con Claude, chat e pagina; il resto di CL4 (A3, A4, A6, A8 sul canale Claude, ripiego, `verifica_pc`, installazione); poi il corpus, se K19 dice che le fonti contano | CL4, CL3, CL6, CL7; voce 19 | 3-4, piu' 4-6 per il corpus | — |
+
+- **Totale**: 31-42 giorni, compresi A-19 (4-6), il resto di CL4 e il corpus. E' la somma di O4 (20-28, 20.12) e di
+  A-31 e A-32 (10-15, 20.16.8), meno la finestra di A7.
+- **Calendario**: e' lo scenario a di 20.12 (risposte della Banca entro novembre). Con lo scenario b, l'ombra va sul
+  2027Q1 e la fase 4 slitta di un trimestre; l'ordine non cambia.
+- **Il primo ciclo vero non dipende da niente di nuovo**: fasi 0 e 1 su `main`, il resto dopo o sul ramo.
+
+### 20.17.3 Che cosa si ottiene secondo le risposte della Banca
+
+| DB4 (b): `claude -p` da uno script | DB9 (f, g): server MCP del progetto e VS Code | Agenti | Interfaccia |
+|---|---|---|---|
+| si' | si' | O4 | chat, cruscotto, pagina di validazione: **la soluzione piena** |
+| no | si' | sotto-agenti dentro la chat | chat, cruscotto, pagina di validazione |
+| si' | no | O4 | finestra tkinter, pagina di validazione |
+| no | no | Agent Builder | finestra tkinter, pagina di validazione |
+
+- **La pagina di validazione c'e' in tutte e quattro le righe**: e' HTML piu' `valida`, e non dipende da Claude Code.
+  Solo "riscrivi questa parte" ha bisogno di un canale verso A1; con Agent Builder si fa con i gesti.
+- **In ogni riga i paletti restano nel nucleo** (20.16.3).
+- Se Claude Code non e' usabile per niente in Banca, restano Agent Builder, la finestra di oggi e la pagina di
+  validazione: un miglioramento lo stesso.
+
+### 20.17.4 Che cosa cambia nel resto del documento
+
+- **20.0**: punto 12.
+- **20.12**: una nota dopo le tappe rimanda a questo ordine.
+- **Non cambiano**: le tappe CL0-CL7, le prove, le decisioni A-25...A-32. Cambia solo l'ordine con cui si fanno.
+
 ## Fonti (consultate il 06/11/2026)
 
 - Claude Code: [Google Cloud's Agent Platform (Vertex AI)](https://code.claude.com/docs/en/google-vertex-ai),
@@ -1380,3 +1754,32 @@ DB4 (b) e' si', O4 resta migliore: stesso risultato, senza shell.
   [Subagents](https://code.claude.com/docs/en/sub-agents), [Hooks](https://code.claude.com/docs/en/hooks),
   [Permissions](https://code.claude.com/docs/en/permissions), [Sandboxing](https://code.claude.com/docs/en/sandboxing);
   i file del repository al commit `713772d`.
+- Per 20.16, consultate il 07/11/2026 (le fonti secondarie sono segnate con *):
+  - Claude Code: [MCP](https://code.claude.com/docs/en/mcp), [CLI reference](https://code.claude.com/docs/en/cli-reference).
+  - Principi: [Anthropic, Building effective agents](https://www.anthropic.com/research/building-effective-agents);
+    [12-factor agents](https://github.com/humanlayer/12-factor-agents) (* letto attraverso
+    [paddo.dev](https://paddo.dev/blog/12-factor-agents) e
+    [developersdigest](https://www.developersdigest.tech/blog/12-factor-agents-production-principles)).
+  - Pausa e ripresa: [LangGraph, human-in-the-loop](https://docs.langchain.com/oss/python/human-in-the-loop) e
+    [interrupts](https://docs.langchain.com/oss/javascript/langgraph/interrupts);
+    [OpenAI, guardrails and human review](https://developers.openai.com/api/docs/guides/agents/guardrails-approvals);
+    [Microsoft Agent Framework, human-in-the-loop](https://learn.microsoft.com/agent-framework/workflows/human-in-the-loop);
+    [Copilot Studio, multistage approvals](https://learn.microsoft.com/microsoft-copilot-studio/flows-advanced-approvals)
+    e * [richiesta di informazioni](https://candede.com/articles/copilot-studio-human-review-node).
+  - Coda di revisione: [LangChain, Introducing ambient agents](https://blog.langchain.com/introducing-ambient-agents).
+  - Interfacce nella chat: [VS Code, MCP Apps support](https://code.visualstudio.com/blogs/2026/01/26/mcp-apps-support);
+    * [MCP Apps host compatibility](https://www.mcpbundles.com/guides/mcp-apps-host-compatibility);
+    [AG-UI, state](https://docs.ag-ui.com/concepts/state); [CopilotKit](https://github.com/CopilotKit/CopilotKit).
+  - Revisione dei testi: [Tiptap, AI review e tracked changes](https://tiptap.dev/docs/ai/ai-toolkit/client/agents/review-changes/tracked-changes.md);
+    [Nutrient, AI review and approval](https://www.nutrient.io/guides/document-authoring/ai/review-and-approval.md);
+    [shapeof.ai, inpainting](https://www.shapeof.ai/patterns/inpainting) e
+    [inline action](https://www.shapeof.ai/patterns/inline-action).
+  - Interfacce in Python: * [Streamlit, Gradio, Chainlit a confronto](https://markaicode-hugo.pages.dev/vs/streamlit-vs-gradio-vs-chainlit).
+  - Browser: [web.dev, How to save a file](https://web.dev/articles/files/save-a-file).
+  - Supervisione umana: * [AI Act, art. 14](https://www.activemind.legal/legislation/ai-act/article-14/) e
+    * [Mishcon de Reya](https://www.mishcon.com/eu-uk-ai-navigator/article-14) (testo ufficiale: Regolamento (UE)
+    2024/1689).
+  - Piattaforme GRC: [ServiceNow, Now Assist for IRM](https://www.servicenow.com/docs/r/C17ZqvSaMwUVpMBg8Nc5sg/2uL2o9vf2MApjgXrxnA8dg)
+    e [Q1 2026](https://www.servicenow.com/community/grc-articles/q1-2026-release-highlights-for-risk-and-resilience/ta-p/3506080);
+    [IBM, terze parti con watsonx e OpenPages](https://ibm-client-engineering.github.io/solution-third-party-risk-AI/src/solution_overview/overview.html);
+    [SAI360, horizon scanning con Signal AI](https://www.sai360.com/?p=44666).

@@ -1764,6 +1764,57 @@ disposizione durante la validazione? Poi: "procedi con il censimento, ma chiaris
   TODO (sezione 0, voci 20-21, B10, AU10), indice delle analisi, PROMPT_MASTER. Nessun codice e nessun cambio del
   pacchetto.
 
+**Lo stesso giorno, sezione 20.16: l'interfaccia (A-31, A-32).** L'utente trova la finestra tkinter datata per uno
+strumento "molto IA" e chiede di studiare le alternative del mercato: le modalita' di interazione delle applicazioni
+agentiche complesse, che usano l'LLM e insieme mettono paletti per coerenza e consistenza, tenendo conto che in
+validazione vuole poter correggere parti intere degli output ("funziona su HTML?").
+- **Ricerca sul web** (07/11, fonti in fondo all'analisi):
+  - principi: Anthropic (workflows contro agents, gate, evaluator-optimizer), 12-factor agents, LangGraph
+    `interrupt`, OpenAI `needsApproval`, Microsoft Agent Framework e Copilot Studio, LangChain Agent Inbox;
+  - revisione dei testi con le modifiche proposte (Tiptap, Nutrient) e riscrittura di una parte (inpainting);
+  - AI Act, art. 14;
+  - MCP Apps e AG-UI;
+  - Streamlit, Chainlit e Gradio;
+  - piattaforme GRC (ServiceNow IRM, IBM OpenPages, SAI360 con Signal AI).
+- **Esito**: il progetto segue gia' i principi del mercato. Mancano le superfici. Proposta in tre parti:
+  - chat in Claude Code con i soli strumenti di un server MCP locale `nfr`: niente shell, `--tools` non tocca gli
+    strumenti MCP. Supera la variante O3 guidata (9-bis del TODO);
+  - cruscotto HTML in sola lettura;
+  - validazione nel browser con i testi interi correggibili e un file di decisioni che `valida` applica come la
+    griglia.
+
+  L'interfaccia non dipende dall'origine degli agenti.
+- **Agganci al codice**: terzo `Ambiente` accanto ad `AmbienteTk` e `AmbienteFinto`; `leggi_griglia` produce gia' la
+  struttura di modifiche che il file di decisioni riprende.
+- **Fatti nuovi** F23-F26:
+  - approvazione dei server MCP di progetto e limiti di uscita;
+  - `--tools` e gli strumenti MCP;
+  - MCP Apps non mostrate da Claude Code (fonte secondaria);
+  - File System Access API.
+- **Documenti**: analisi 20 (20.0 punto 11, F23-F26, DB9 f-h, K28-K29, A-31, A-32, fonti; K27 non si fa), DECISIONI
+  (A-30 parte 2 superata, A-31, A-32), TODO (sezione 0, voci 21-22, 9-bis, B10, AU10), indice delle analisi,
+  PROMPT_MASTER. Nessun codice.
+
+**Infine, sezione 20.17: la soluzione e il percorso.** L'utente chiede quale soluzione si propone e se c'e' un percorso
+da O4.
+- **Risposta**: O4 e l'interfaccia di 20.16 stanno su due livelli.
+  - O4 cambia chi risponde.
+  - Chat, cruscotto e pagina cambiano con che cosa lavora la persona.
+  - Il nucleo che tiene i paletti resta lo stesso.
+- **Soluzione**: O4 come motore degli agenti (sotto-agenti nella chat se DB4 b e' no); chat, cruscotto e pagina di
+  validazione come interfaccia; Agent Builder, la finestra tkinter e la griglia come ripieghi.
+- **Percorso in cinque fasi, additivo**:
+  - novembre: domande in Banca;
+  - dicembre: CL1, A-19, assistente di validazione;
+  - gennaio: ciclo vero 2026Q4 su Agent Builder, e intanto O4 minimo con A1 in ombra;
+  - febbraio-marzo: chat e pagina di validazione;
+  - da aprile: 2027Q1 con Claude, poi il corpus.
+
+  Totale 31-42 giorni, A-19 compresa.
+- **Che cosa cambia nel piano di O4**: la finestra di chat di A7 non si fa; G6 entra nel cruscotto.
+- **Le risposte DB4 (b) e DB9 (f, g)** scelgono una di quattro configurazioni. La pagina di validazione c'e' in tutte.
+- **Nel TODO**: l'ordine delle voci 17-22 sta in una nota della sezione 1, senza rinumerare.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente
