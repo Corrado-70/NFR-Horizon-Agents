@@ -1738,6 +1738,32 @@ Python funziona e resta. Dopo la stesura, un'analisi critica delle proposte. Ris
   - uso non interattivo da confermare (DB4);
   - Claude Code su ogni PC.
 
+## 2-quinquadragies. 07/11: Claude Code con skill, sotto-agenti e hook (analisi 20.15, A-30)
+
+Domande dell'utente: Claude Code puo' avere skill che lanciano Python e fanno scrivere l'Excel con i JSON degli
+agenti? Puo' avere un orchestratore che gira tutto il ciclo trimestrale finche' non ha finito, con la chat a
+disposizione durante la validazione? Poi: "procedi con il censimento, ma chiariscimi meglio i razionali dei problemi".
+
+- **Documento**: `Analisi_Architettura/20_Agenti_Claude_Vertex.md`, sezione 20.15; fatti F18-F22 dalla documentazione
+  di Claude Code consultata il 07/11 (skill, sotto-agenti, hook, permessi, sandbox).
+- **Risposta**: si', tecnicamente. E' O3 di 20.3, che si salva solo nella **versione guidata**:
+  - l'ordine dei passi lo decide `stato.leggi()` (`stato.py:68-150`), lo stesso codice del pulsante del prossimo passo;
+  - hook `solo_il_passo` (ammette solo i comandi del passo), `non_fermarti` (impedisce l'arresto finche' il passo
+    tocca all'analista), `impronta` (SHA-256 dell'output del sotto-agente);
+  - sotto-agenti senza shell; testo di delega fisso per A5;
+  - "Approva" resta della persona.
+- **I dieci problemi, con il loro perche'** (20.15.3): shell senza sandbox su Windows; orchestratore che corregge da
+  solo il JSON; ordine dei passi (D-82); istruzioni nascoste con una shell; indipendenza di A5; ciclo su piu' giorni e
+  persone; anelli e costi; scrittura in validazione; collaudo; traccia.
+- **Raccomandazione**: O4 resta. Subito, con qualunque canale, l'**assistente di validazione**: Claude Code
+  interattivo in sola lettura dietro il bottone di A7 (A-30 parte 1, K26). La variante guidata serve solo se l'uso non
+  interattivo da uno script non e' autorizzato (DB4 b): prototipo sulla demo, K27.
+- **Correzione**: in 20.1.2 la tabella delle risposte stava in mezzo a quella delle domande, cosi' che DB3-DB8
+  comparivano sotto le intestazioni sbagliate; spostata dopo DB9.
+- **Documenti**: analisi 20 (20.0 punto 10, F18-F22, DB9, nota in 20.3, K26-K27, A-30, fonti), DECISIONI (A-30),
+  TODO (sezione 0, voci 20-21, B10, AU10), indice delle analisi, PROMPT_MASTER. Nessun codice e nessun cambio del
+  pacchetto.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente
