@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La strada proposta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F7FA}
+a{color:#1F3864}a:hover{color:#0F1F3D}
+</style>
+</head>
+<body>
+<div style="font-family: Inter, system-ui, sans-serif; color: #18212F; background: #F5F7FA; padding: 48px 32px 64px; box-sizing: border-box">
+<div style="max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px">
+
+<header style="display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #4A5565">Analisi 20 · sezioni 20.16 e 20.17 · mockup con i dati della demo</p>
+<h1 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 44px; line-height: 1.1; font-weight: 700; color: #18212F">La strada proposta: tre superfici sopra il nucleo che decide</h1>
+<p style="margin: 0; max-width: 860px; font-size: 18px; line-height: 1.55; color: #3B4556">O4 cambia chi risponde; la chat, il cruscotto e la pagina di validazione cambiano con che cosa lavora la persona. I paletti restano nel nucleo: ordine dei passi, controlli, lucchetto, motore unico che scrive.</p>
+<nav aria-label="Schermate del mockup" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px">
+<a href="Chat.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: #1F3864; color: #FFFFFF; font-weight: 600; font-size: 15px; text-decoration: none">Chat in VS Code</a>
+<a href="Cruscotto.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D1DD; color: #1F3864; font-weight: 600; font-size: 15px; text-decoration: none">Cruscotto</a>
+<a href="Validazione.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D1DD; color: #1F3864; font-weight: 600; font-size: 15px; text-decoration: none">Validazione nel browser</a>
+</nav>
+</header>
+
+<section aria-labelledby="livelli" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="livelli" style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 600">Tre livelli</h2>
+
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #4A5565">Interfaccia · con che cosa lavora la persona</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<h3 style="margin: 0; font-size: 19px; font-weight: 700">Chat in Claude Code</h3>
+<span style="font-size: 12px; font-weight: 700; color: #1F3864; background: #E8EDF6; padding: 4px 10px; border-radius: 999px">A-31</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3B4556">Nel pannello di VS Code (ammesso, DB9 g). Guida il giro, porta in chat le domande del flusso, spiega le valutazioni.</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #18212F"><strong>Paletto:</strong> solo gli strumenti del server <code style="font-family: Consolas, monospace">nfr</code>; shell e scrittura di file vietate.</p>
+<a href="Chat.html" style="font-size: 14px; font-weight: 600">Vedi la chat</a>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<h3 style="margin: 0; font-size: 19px; font-weight: 700">Cruscotto HTML</h3>
+<span style="font-size: 12px; font-weight: 700; color: #1F3864; background: #E8EDF6; padding: 4px 10px; border-radius: 999px">A-31</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3B4556">Il prossimo passo e chi lo fa, l'avanzamento del ciclo, la coda delle cose da fare, l'anteprima dei rischi.</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #18212F"><strong>Paletto:</strong> sola lettura; scritto da Python dopo ogni passo.</p>
+<a href="Cruscotto.html" style="font-size: 14px; font-weight: 600">Vedi il cruscotto</a>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<h3 style="margin: 0; font-size: 19px; font-weight: 700">Validazione nel browser</h3>
+<span style="font-size: 12px; font-weight: 700; color: #1F3864; background: #E8EDF6; padding: 4px 10px; border-radius: 999px">A-32</span>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #3B4556">Una scheda per rischio: valori della rubrica, testi interi correggibili con le modifiche in vista, riscrittura di una parte.</p>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #18212F"><strong>Paletto:</strong> la pagina produce un file di decisioni; lo controlla e lo scrive <code style="font-family: Consolas, monospace">valida</code>.</p>
+<a href="Validazione.html" style="font-size: 14px; font-weight: 600">Prova la pagina</a>
+</article>
+</div>
+
+<div style="display: flex; align-items: center; gap: 10px; color: #4A5565; font-size: 14px; padding-left: 8px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"></path><path d="M6 14l6 6 6-6"></path></svg>
+<span>chiamano solo strumenti che usano il nucleo</span>
+</div>
+
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #4A5565">Nucleo · decide e scrive (invariato)</p>
+<div style="background: #1F3864; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px; font-family: Consolas, monospace">stato.leggi()</span>
+<span aria-hidden="true" style="color: #C9D4EA; font-size: 18px">→</span>
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px; font-family: Consolas, monospace">flussi</span>
+<span aria-hidden="true" style="color: #C9D4EA; font-size: 18px">→</span>
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px; font-family: Consolas, monospace">ingresso</span>
+<span aria-hidden="true" style="color: #C9D4EA; font-size: 18px">→</span>
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px">precontrollo C1-C10</span>
+<span aria-hidden="true" style="color: #C9D4EA; font-size: 18px">→</span>
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px">motore unico (D-10)</span>
+<span aria-hidden="true" style="color: #C9D4EA; font-size: 18px">→</span>
+<span style="background: #FFFFFF; color: #1F3864; font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 8px">registro</span>
+</div>
+<p style="margin: 0; color: #FFFFFF; font-size: 15px; line-height: 1.5">Ordine dei passi, schema e controlli, lucchetto e copia di lavoro, Storico_Validazioni, impronte: i paletti stanno qui, e nessuna superficie li scavalca.</p>
+</div>
+
+<div style="display: flex; align-items: center; gap: 10px; color: #4A5565; font-size: 14px; padding-left: 8px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A5565" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4"></path><path d="M6 10l6-6 6 6"></path></svg>
+<span>le risposte degli agenti entrano solo da ingresso</span>
+</div>
+
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #4A5565">Origine degli agenti · chi risponde</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<article style="background: #FFFFFF; border: 1px dashed #AEB8C7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Agent Builder</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">Oggi. La chat legge la risposta dagli appunti; restano i gesti. Ripiego per ogni passo.</p>
+</article>
+<article style="background: #FFFFFF; border: 2px solid #1F3864; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Claude con <code style="font-family: Consolas, monospace">claude -p</code></h3>
+<span style="font-size: 12px; font-weight: 700; color: #FFFFFF; background: #1F3864; padding: 4px 10px; border-radius: 999px">O4 · proposta</span>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">Se DB4 (b) è sì. Richiesta esatta, schema, doppio run, budget; nessun gesto.</p>
+</article>
+<article style="background: #FFFFFF; border: 1px dashed #AEB8C7; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Sotto-agenti nella chat</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">Se DB4 (b) è no. A1 e A5 leggono gli ingressi e consegnano con uno strumento; delega fissa per A5.</p>
+</article>
+</div>
+<p style="margin: 0; font-size: 14px; color: #3B4556">Sempre disponibili come ripiego: la finestra tkinter (anche per Admin), la griglia di Excel, Agent Builder.</p>
+</section>
+
+<section aria-labelledby="percorso" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="percorso" style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 600">Il percorso in cinque fasi</h2>
+<p style="margin: 0; font-size: 15px; color: #3B4556">Additivo: ogni fase serve anche da sola. Il primo ciclo vero resta su Agent Builder. Totale 31-42 giorni, A-19 compresa.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px">
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #1F3864">FASE 0 · NOVEMBRE 2026</p>
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Domande in Banca</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">DB3-DB9, prove K16, K17 e K28b. Senza codice nuovo.</p>
+<p style="margin: 0; font-size: 13px; color: #4A5565">0,5-1 giorni</p>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #1F3864">FASE 1 · DICEMBRE 2026</p>
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Nucleo e scale</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">Anelli dei flussi (CL1), scale a 6 livelli (A-19), assistente di validazione in sola lettura.</p>
+<p style="margin: 0; font-size: 13px; color: #4A5565">7-10 giorni</p>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #1F3864">FASE 2 · GENNAIO 2027</p>
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Ciclo vero e O4 minimo</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">2026Q4 su Agent Builder. Intanto agenti_claude.py, A1 e A5, A1 in ombra.</p>
+<p style="margin: 0; font-size: 13px; color: #4A5565">6-7 giorni</p>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #1F3864">FASE 3 · FEBBRAIO-MARZO 2027</p>
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">Le superfici</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">Chat e cruscotto (K28), pagina di validazione con i testi (K29).</p>
+<p style="margin: 0; font-size: 13px; color: #4A5565">10-14 giorni</p>
+</article>
+<article style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 700; color: #1F3864">FASE 4 · DA APRILE 2027</p>
+<h3 style="margin: 0; font-size: 17px; font-weight: 700">In esercizio</h3>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3B4556">2027Q1 con Claude, chat e pagina; resto di CL4; il corpus se K19 lo giustifica.</p>
+<p style="margin: 0; font-size: 13px; color: #4A5565">7-10 giorni</p>
+</article>
+</div>
+</section>
+
+<section aria-labelledby="configurazioni" style="display: flex; flex-direction: column; gap: 16px">
+<h2 id="configurazioni" style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 26px; font-weight: 600">Quattro configurazioni, secondo le risposte della Banca</h2>
+<p style="margin: 0; font-size: 15px; color: #3B4556">Decidono DB4 (b) e DB9 (f) con la prova K28b. VS Code con l'estensione è già ammesso (DB9 g, 07/11). La pagina di validazione c'è in tutte.</p>
+<div style="overflow-x: auto; background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 12px">
+<table style="width: 100%; min-width: 720px; border-collapse: collapse; font-size: 15px">
+<thead>
+<tr style="background: #EEF1F5; text-align: left">
+<th scope="col" style="padding: 14px 16px; font-weight: 700">DB4 (b) · claude -p da uno script</th>
+<th scope="col" style="padding: 14px 16px; font-weight: 700">DB9 (f) · server MCP del progetto</th>
+<th scope="col" style="padding: 14px 16px; font-weight: 700">Agenti</th>
+<th scope="col" style="padding: 14px 16px; font-weight: 700">Interfaccia</th>
+</tr>
+</thead>
+<tbody>
+<tr style="background: #E8EDF6; border-top: 1px solid #D8DDE5">
+<td style="padding: 14px 16px; font-weight: 600">sì</td>
+<td style="padding: 14px 16px; font-weight: 600">sì</td>
+<td style="padding: 14px 16px">O4</td>
+<td style="padding: 14px 16px"><strong>chat, cruscotto, pagina di validazione · soluzione piena</strong></td>
+</tr>
+<tr style="border-top: 1px solid #D8DDE5">
+<td style="padding: 14px 16px">no</td>
+<td style="padding: 14px 16px">sì</td>
+<td style="padding: 14px 16px">sotto-agenti nella chat</td>
+<td style="padding: 14px 16px">chat, cruscotto, pagina di validazione</td>
+</tr>
+<tr style="border-top: 1px solid #D8DDE5">
+<td style="padding: 14px 16px">sì</td>
+<td style="padding: 14px 16px">no</td>
+<td style="padding: 14px 16px">O4</td>
+<td style="padding: 14px 16px">finestra tkinter, pagina di validazione</td>
+</tr>
+<tr style="border-top: 1px solid #D8DDE5">
+<td style="padding: 14px 16px">no</td>
+<td style="padding: 14px 16px">no</td>
+<td style="padding: 14px 16px">Agent Builder</td>
+<td style="padding: 14px 16px">finestra tkinter, pagina di validazione</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<footer style="font-size: 13px; color: #4A5565; border-top: 1px solid #D8DDE5; padding-top: 16px">Mockup con i dati della demo del ciclo 2026Q4: nessun dato della Banca. Riferimenti: Analisi_Architettura/20_Agenti_Claude_Vertex.md, 20.16 e 20.17; decisioni A-31 e A-32.</footer>
+
+</div>
+</div>
+</body>
+</html>

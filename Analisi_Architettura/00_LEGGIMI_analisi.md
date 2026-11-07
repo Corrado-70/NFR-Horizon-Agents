@@ -5,7 +5,8 @@ della strada A, decisioni aperte A-25..A-29. Il 07/11 la sezione 20.15: Claude C
 (variante O3 guidata, assistente di validazione in sola lettura), A-30; e la sezione 20.16, l'interfaccia, con una
 ricerca sul mercato: chat con i soli strumenti del progetto, cruscotto e validazione nel browser con i testi, A-31 e
 A-32. La sezione 20.17 dice la soluzione proposta (O4 come motore, la chat e la pagina come interfaccia) e il percorso
-in cinque fasi.
+in cinque fasi, con le verifiche in ordine (20.17.5). I mockup sono in `20_Mockup_HTML/`: si aprono con `index.html` e
+mostrano la strada, la chat in VS Code, il cruscotto e la validazione interattiva, con i dati della demo.
 
 **Esito del 23/10/2026 (D-83)**: su `main` la strada A, con l'app Python di orchestrazione (analisi 12, 12.3); la versione tutta in Copilot Studio sul ramo `copilot-studio-pieno` (D-82); niente V4, il report HTML diventa una seconda uscita del report al comitato. A-15 e A-16 sono chiuse. Il piano dell'app e il suo avanzamento, con le spunte: `18_App_orchestrazione.md`.
 

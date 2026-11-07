@@ -1815,6 +1815,25 @@ da O4.
 - **Le risposte DB4 (b) e DB9 (f, g)** scelgono una di quattro configurazioni. La pagina di validazione c'e' in tutte.
 - **Nel TODO**: l'ordine delle voci 17-22 sta in una nota della sezione 1, senza rinumerare.
 
+**Dopo il push, risposta DB9 (g) e verifiche in ordine (20.17.5).**
+- **Risposta dell'utente**: VS Code con l'estensione di Claude Code e' ammesso.
+- **Dalla documentazione dell'estensione (F27)**: usa Vertex con la configurazione condivisa con il CLI, ma non ha
+  `--tools`. Gli strumenti interni si tolgono con le regole `deny` del progetto. Inoltre non mette `claude` nel PATH:
+  il manuale di K16 (passo 2) dice dove trovare il suo `claude.exe`.
+- **Nuova prova K28b**: un server MCP minimo in VS Code, senza dati.
+- **20.17.5**: le sedici verifiche in ordine, con la strada che aprono. Decidono DB4 (b) e DB9 (f).
+- **Mockup** della strada proposta, su richiesta dell'utente.
+  - Dove: canvas di design privato dell'utente, https://claude.ai/artifact/GCLhqM47R9bZNr8TfY2x9N; e, salvata su
+    richiesta dell'utente, la versione autonoma `Analisi_Architettura/20_Mockup_HTML/`. Si apre con un doppio clic su
+    `index.html`. Nella validazione "Salva le decisioni" scarica davvero il file. Il pacchetto non la contiene
+    (`.gitattributes`).
+  - Che cosa contiene, con i dati della demo 2026Q4:
+    - panoramica dei tre livelli, percorso e configurazioni;
+    - chat in VS Code con gli strumenti `nfr`, una domanda del flusso e un permesso;
+    - cruscotto;
+    - pagina di validazione interattiva: valori della rubrica, testi correggibili con le modifiche in vista,
+      "Chiedi ad A1" su una parte, motivazioni e ⚑, file di decisioni.
+
 ## 3. Scostamenti dal PROMPT_MASTER precedente, e perche' (tutti recepiti nella versione del 23/09)
 
 1. **Kernel "incollato per intero" non e' possibile.** Le istruzioni di un agente

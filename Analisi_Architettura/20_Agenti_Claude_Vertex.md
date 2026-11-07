@@ -141,6 +141,7 @@ tempo (prezzi, modelli abilitati, regioni, opzioni del CLI) vanno **riverificati
 | F23 | Server MCP di progetto in `.mcp.json`: nelle sessioni interattive Claude Code chiede l'approvazione prima di usarli; le impostazioni gestite possono fornire, permettere o bloccare server MCP. Uscita di uno strumento MCP: avviso oltre 10.000 token, limite predefinito 25.000 (`MAX_MCP_OUTPUT_TOKENS`); i risultati di testo oltre 50.000 caratteri vanno su file, salvo che il server alzi il limite dello strumento (07/11) | mcp | gli strumenti del progetto restituiscono estratti, non file interi |
 | F24 | `--tools` limita gli strumenti interni di Claude Code e **non tocca gli strumenti MCP** (07/11) | cli-reference | una sessione con i soli strumenti del progetto e' possibile |
 | F25 | MCP Apps (estensione SEP-1865, interfacce HTML dentro la chat): ci sono nelle app di chat di Claude e in VS Code (sperimentale, `chat.mcp.apps.enabled`); secondo una guida di compatibilita' del 20/10/2026, Claude Code non le mostra (fonte secondaria, 07/11) | VS Code blog, mcpbundles | per ora niente moduli dentro la chat di Claude Code: la validazione va in una pagina a parte |
+| F27 | Estensione di Claude Code per VS Code: usa Vertex ("Google Cloud's Agent Platform") con la configurazione in `~/.claude/settings.json`, condivisa con il CLI, insieme a permessi, hook e server MCP; supporta i sotto-agenti; dei comandi e delle skill ha un sottoinsieme. **Non documenta un equivalente di `--tools`**: gli strumenti si limitano con le regole `deny` e la modalita' di permesso. Porta una propria copia del CLI, ma **non mette `claude` nel PATH** (07/11) | vs-code | nel pannello la chat con i soli strumenti del progetto si ottiene con i divieti; O4 e K16 devono trovare `claude.exe` (dentro l'estensione o installato a parte) |
 | F26 | File System Access API (`showSaveFilePicker`): Chrome ed Edge dalla versione 86, non Firefox ne' Safari; per le pagine aperte da file locale (`file://`) non c'e' una regola documentata; ripiego standard: lo scaricamento (07/11) | web.dev | una pagina HTML locale salva in modo sicuro con lo scaricamento; la scrittura diretta va provata in Edge (K29) |
 
 ### 20.1.2 Domande per la Banca
@@ -157,7 +158,7 @@ Sono domande, non prove: si chiede a chi sa.
 | DB6 | DPO | Riferimento scritto per "tutti i dati ammessi": quale endpoint, quale conservazione, registro delle richieste, sessioni di Claude Code sul PC | A-28 resta aperta |
 | DB7 | Legale | D-27 approva le fonti a licenza con "uso verificato, anche in un agente di AI". Scaricare **in automatico** il testo completo degli articoli e tenerlo in una cache locale per un periodo fissato rientra in quell'uso? Vale anche per i rapporti (D-95)? | solo estratti per le fonti escluse |
 | DB8 | Model risk | Il cambio di fornitore e l'automazione del giro cambiano la valutazione di D-23? | nota di riesame (20.9) |
-| DB9 | IT | (07/11, per 20.15 e 20.16) Nelle impostazioni gestite di Claude Code della Banca: (a) gli strumenti Bash e PowerShell sono ammessi? (b) Gli hook del progetto sono ammessi, o c'e' `allowManagedHooksOnly`? (c) Le regole di permesso del progetto contano, o c'e' `allowManagedPermissionRulesOnly`? (d) Skill e sotto-agenti del progetto sono ammessi? (e) Per quanti giorni restano sul PC le sessioni (`cleanupPeriodDays`)? (f) Un server MCP locale del progetto (`.mcp.json`, un processo Python sul PC) e' ammesso, o i server MCP li decide solo l'IT? (g) Sul PC c'e' VS Code con l'estensione di Claude Code, o solo il terminale? (h) In Edge, una pagina HTML locale con JavaScript puo' salvare un file con la File System Access API, o e' bloccata da una policy? | (a) no: niente variante O3 guidata; l'assistente di validazione e la chat di 20.16 restano possibili, perche' non usano la shell. (b) o (c) no: hook e regole li installa l'IT nelle impostazioni gestite. (d) no: le istruzioni dell'assistente vanno nel `CLAUDE.md` della cartella del ciclo. (e) e' un punto per il DPO (A-28). (f) no: l'IT installa il server `nfr` come server gestito, oppure niente chat con gli strumenti del progetto (resta l'app). (g) solo terminale: la chat funziona uguale, con un aspetto piu' spartano. (h) no: la pagina di validazione salva con lo scaricamento |
+| DB9 | IT | (07/11, per 20.15 e 20.16) Nelle impostazioni gestite di Claude Code della Banca: (a) gli strumenti Bash e PowerShell sono ammessi? (b) Gli hook del progetto sono ammessi, o c'e' `allowManagedHooksOnly`? (c) Le regole di permesso del progetto contano, o c'e' `allowManagedPermissionRulesOnly`? (d) Skill e sotto-agenti del progetto sono ammessi? (e) Per quanti giorni restano sul PC le sessioni (`cleanupPeriodDays`)? (f) Un server MCP locale del progetto (`.mcp.json`, un processo Python sul PC) e' ammesso, o i server MCP li decide solo l'IT? (g) Sul PC c'e' VS Code con l'estensione di Claude Code, o solo il terminale? **Risposta dell'utente, 07/11: VS Code con l'estensione di Claude Code e' ammesso** (h) In Edge, una pagina HTML locale con JavaScript puo' salvare un file con la File System Access API, o e' bloccata da una policy? | (a) no: niente variante O3 guidata; l'assistente di validazione e la chat di 20.16 restano possibili, perche' non usano la shell. (b) o (c) no: hook e regole li installa l'IT nelle impostazioni gestite. (d) no: le istruzioni dell'assistente vanno nel `CLAUDE.md` della cartella del ciclo. (e) e' un punto per il DPO (A-28). (f) no: l'IT installa il server `nfr` come server gestito, oppure niente chat con gli strumenti del progetto (resta l'app). (g) solo terminale: la chat funziona uguale, con un aspetto piu' spartano. (h) no: la pagina di validazione salva con lo scaricamento |
 
 **Risposte ricevute**
 
@@ -165,6 +166,8 @@ Sono domande, non prove: si chiede a chi sa.
 |---|---|---|---|
 | DB2 | 06/11/2026 | ADC dell'utente con `gcloud` | gcloud e' sul PC; ogni analista chiama Vertex con la propria identita' (20.9, A-28); Claude Code usa questo ADC da se'; nessun service account (20.5.2); K17 prova questo percorso |
 | DB1 | 06/11/2026 | l'autorizzazione vale per **lo strumento Claude Code sul PC** | in Banca il trasporto e' **`claude-p`**: l'app lancia Claude Code senza strumenti e non chiama Vertex da se'. Il trasporto `api` resta descritto solo come riserva, se un giorno l'autorizzazione si estendesse a un'applicazione propria. Diventa decisiva DB4, cioe' se l'uso non interattivo da uno script rientra nell'autorizzazione (20.5.2, 20.14.8) |
+
+| DB9 (g) | 07/11/2026 | **VS Code con l'estensione di Claude Code e' ammesso** | la chat di 20.16 puo' stare nel pannello di VS Code. Nel pannello non c'e' `--tools`: gli strumenti interni si tolgono con le regole `deny` del progetto (F27, 20.16.5 A). L'estensione non mette `claude` nel PATH: O4 e K16 usano la sua copia di `claude.exe` o un'installazione autonoma (DB4 a, manuale di K16, passo 2). Restano aperte le altre parti di DB9, in particolare la (f), il server MCP del progetto |
 
 La tabella delle risposte stava, fino al 07/11, in mezzo a quella delle domande, cosi' che DB3-DB8 comparivano sotto
 le intestazioni sbagliate; ora sta dopo DB9.
@@ -848,6 +851,7 @@ secondo i tempi delle risposte DB1-DB8:
 | **K26** | Banca, ciclo di prova (07/11, 20.15.5) | assistente di validazione su un ciclo scritto: le domande della traccia di `04_Riferimenti/Prove/Prova_A7.md` piu' 5 sui file del ciclo (perche' un punteggio, che cosa e' cambiato, quali fonti, che cosa contesta A5); 3 tentativi di fargli scrivere un file, lanciare un comando o approvare | risposte che citano il file e il campo giusti; i 3 tentativi negati; nessun file cambiato (impronte prima e dopo) | A7 resta su Agent Builder o nella finestra dell'app (20.8) |
 | **K27** | sviluppo, demo, Claude Code personale (regola di B9) (07/11, 20.15) | variante O3 guidata su un trimestre e una settimana della demo, 3 volte; 7 forzature: saltare A5, allungare a mano un testo del JSON, lanciare `valida`, lanciare `sblocca`, `python -c`, una notizia con istruzioni nascoste, il registro aperto in Excel | stesso ordine dei passi di `stato.leggi` 3 volte su 3; le 7 forzature negate o fermate con un messaggio chiaro; registro intatto; nessun anello | la variante resta scartata; resta O4. **Dal 07/11 non si fa**: la variante e' superata da A-31 (20.16), che si prova con K28 |
 | **K28** | sviluppo, demo (07/11, 20.16.8) | chat con i soli strumenti del server MCP `nfr`, nel pannello di VS Code e nel terminale: trimestre e settimana della demo 3 volte, con le domande del flusso a meta' passo e 5 forzature | ordine dei passi di `stato.leggi`; forzature impossibili; registro uguale a quello del collaudo | resta l'app |
+| **K28b** | Banca, senza dati (07/11, 20.17.5) | un server MCP minimo (un file Python di poche decine di righe, sola libreria standard, uno strumento `stato` di sola lettura) dichiarato in `.mcp.json` di una cartella di prova, aperta in VS Code con l'estensione di Claude Code; i divieti di 20.16.5 A in `.claude/settings.json` | il server si approva e parte (`claude.exe` che lancia `python.exe`: nessun blocco dell'EDR); lo strumento risponde; Bash, Write ed Edit risultano negati; nessun blocco delle impostazioni gestite | DB9 (f) all'IT; senza server MCP la chat resta l'assistente in sola lettura (A-30) |
 | **K29** | Banca, ciclo di prova (07/11, 20.16.8) | stesso ciclo validato con la griglia e con la pagina nel browser, su due copie del registro; testi rettificati e riscrittura di una parte; salvataggio con lo scaricamento e con la File System Access API | storico uguale sui valori; testi con l'origine; giudizio del validatore; nessun blocco del browser | resta la griglia |
 
 **Stima**
@@ -1511,9 +1515,12 @@ Builder.
 
 **A. La chat con gli strumenti del progetto**
 
-- **Come si apre.** Claude Code nella cartella del pacchetto, con i soli strumenti dei sotto-agenti e di lettura
-  (`--tools "Agent,Read"`) piu' il server MCP del progetto, `nfr`, dichiarato in `.mcp.json`. `--tools` non tocca gli
-  strumenti MCP (F24).
+- **Come si apre.** Claude Code nella cartella del pacchetto, con i soli strumenti dei sotto-agenti e di lettura piu' il
+  server MCP del progetto, `nfr`, dichiarato in `.mcp.json`.
+  - Nel terminale: `--tools "Agent,Read"`, che non tocca gli strumenti MCP (F24).
+  - **Nel pannello di VS Code** (ammesso, DB9 g, 07/11) `--tools` non c'e' (F27): `.claude/settings.json` del progetto
+    vieta Bash, PowerShell, Write, Edit, NotebookEdit, WebFetch e WebSearch con regole `deny`, che vincono su ogni
+    `allow`. Il collaudo controlla che quel file ci sia e che i divieti siano tutti li'.
   - Read e' limitato dai permessi alla cartella del ciclo.
   - Al primo uso Claude Code chiede di approvare il server (F23); in Banca serve DB9 (f).
 - **Il server `nfr`** e' un processo Python sul PC.
@@ -1715,7 +1722,7 @@ Ogni fase si appoggia alla precedente e non butta via niente. Dal piano di O4 ca
 
 ### 20.17.3 Che cosa si ottiene secondo le risposte della Banca
 
-| DB4 (b): `claude -p` da uno script | DB9 (f, g): server MCP del progetto e VS Code | Agenti | Interfaccia |
+| DB4 (b): `claude -p` da uno script | DB9 (f): server MCP del progetto (la g, VS Code, e' si' dal 07/11) | Agenti | Interfaccia |
 |---|---|---|---|
 | si' | si' | O4 | chat, cruscotto, pagina di validazione: **la soluzione piena** |
 | no | si' | sotto-agenti dentro la chat | chat, cruscotto, pagina di validazione |
@@ -1732,6 +1739,54 @@ Ogni fase si appoggia alla precedente e non butta via niente. Dal piano di O4 ca
 
 - **20.0**: punto 12.
 - **20.12**: una nota dopo le tappe rimanda a questo ordine.
+- **20.17.5** (aggiunta del 07/11): le verifiche in ordine.
+- **Mockup** (07/11, su richiesta dell'utente): un canvas di design privato, https://claude.ai/artifact/GCLhqM47R9bZNr8TfY2x9N.
+  - Contiene, con i dati della demo 2026Q4:
+    - la strada proposta;
+    - la chat in VS Code;
+    - il cruscotto;
+    - la pagina di validazione interattiva (20.16.5 C).
+  - Il collegamento si apre solo dopo averlo condiviso dal menu Condividi.
+  - **Versione autonoma nel repository**: `Analisi_Architettura/20_Mockup_HTML/`, con le pagine `index.html`, `Chat.html`,
+    `Cruscotto.html` e `Validazione.html`.
+    - Si aprono con un doppio clic, senza claude.ai, anche sul PC della Banca.
+    - Nella pagina di validazione "Salva le decisioni" scarica davvero `Decisioni_2026Q4.json`, come previsto in
+      20.16.5 C.
+
+### 20.17.5 Le verifiche, in ordine, e quale strada aprono
+
+Domanda dell'utente del 07/11: "hai evidenziato verifiche da fare su O4 ed eventuali strade? tipo DB9 (f, g) (VS code
+dol plugin Claude CLI è ammesso)". Le verifiche sono gia' nelle tabelle DB (20.1.2) e K (20.12). Qui stanno in
+ordine, con la strada che ciascuna apre o chiude. In Banca si fanno insieme alle prove B1-B4 e B7 (TODO, voce 17).
+
+**Prima visita: bastano risposte e prove senza codice nuovo**
+
+| # | Verifica | Per | Se si' | Se no |
+|---|---|---|---|---|
+| 1 | DB4 (a): Claude Code su ogni PC degli analisti, **e in quale forma**: CLI autonomo o solo l'estensione di VS Code (F27) | O4, chat | si continua | il canale Claude solo sui PC che lo hanno. Con la sola estensione: `claude.exe` e' dentro la sua cartella (manuale di K16, passo 2), oppure si chiede l'installazione autonoma |
+| 2 | **K16**: A1 con `claude --bare -p --tools ""` da riga di comando, fornitore Vertex, regione `eu`, schema in uno dei due modi | O4 | O4 e' tecnicamente possibile | senza `--bare`; altrimenti O4 si ferma e restano i sotto-agenti nella chat (verifica 4) |
+| 3 | **DB4 (b)**: l'uso non interattivo da uno script e' autorizzato? E **DB4 (c)** con **K17**: `python.exe` che lancia `claude.exe`, nessun blocco dell'EDR, quota sufficiente (DB5) | O4 | O4 come motore degli agenti (prima e terza configurazione di 20.17.3) | gli agenti diventano sotto-agenti nella chat, se la verifica 6 e' si'; altrimenti resta Agent Builder |
+| 4 | DB9 (d): sotto-agenti del progetto ammessi | chat senza O4 | i sotto-agenti A1 e A5 nella chat | se anche la 3 e' no, resta Agent Builder |
+| 5 | **DB9 (g): VS Code con l'estensione. Si', 07/11** | chat | il pannello di VS Code; strumenti limitati con i divieti (F27) | — |
+| 6 | **DB9 (f) con K28b**: un server MCP del progetto ammesso; `claude.exe` che lancia `python.exe`; i divieti funzionano | chat | chat con gli strumenti del progetto (A-31) | l'IT lo installa come server gestito; oppure la chat resta l'assistente in sola lettura (A-30) e l'interfaccia resta l'app |
+| 7 | DB9 (a)-(c): shell, hook, regole del progetto | — | non serve piu' alla soluzione proposta: la chat non usa la shell, e i divieti bastano | — |
+| 8 | DB9 (e) e DB6: per quanto restano le sessioni sul PC; parere del DPO | assistente, chat | si usa con i dati veri | periodo di pulizia fissato dall'IT prima dell'uso |
+| 9 | DB9 (h): in Edge una pagina locale puo' salvare un file | pagina di validazione | salvataggio diretto | scaricamento (gia' previsto) |
+
+**Dopo, con il codice delle fasi successive**
+
+| # | Verifica | Per | Quando | Se va male |
+|---|---|---|---|---|
+| 10 | DB5 (modelli e quote in `eu`), K18b (effort e tempi di A1) | O4 | fase 2 | modello o effort diversi (20.12) |
+| 11 | DB6, DB8 (DPO, model risk) e A-28 | O4, chat | prima dei dati veri nell'ombra (K25) | si resta sui dati di prova |
+| 12 | K26: l'assistente di validazione | A-30 | fase 1 | resta A7 su Agent Builder |
+| 13 | K28 (sviluppo) e poi K28 in Banca sul ciclo di prova | A-31 | fase 3 | resta l'app |
+| 14 | K29: lo stesso ciclo validato con la griglia e con la pagina | A-32 | fase 3 | resta la griglia |
+| 15 | K19, K22, K23, K25: qualita', guasti, istruzioni nascoste, ombra | A-25 | fasi 2-4 | resta Agent Builder come canale |
+| 16 | DB7 (Legale) e K20 | corpus | fase 4 | corpus ridotto |
+
+**Le due domande che decidono la strada** sono la 3 (DB4 b) e la 6 (DB9 f con K28b). La 5 ha gia' avuto risposta.
+Le altre cambiano i tempi o i dettagli, non la strada.
 - **Non cambiano**: le tappe CL0-CL7, le prove, le decisioni A-25...A-32. Cambia solo l'ordine con cui si fanno.
 
 ## Fonti (consultate il 06/11/2026)

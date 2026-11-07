@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validazione nel browser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root { --ink:#18212F; --muted:#4A5565; --soft:#3B4556; --line:#D8DDE5; --ground:#F5F7FA; --navy:#1F3864; --navy-soft:#E8EDF6; --orange:#B4470E; --orange-soft:#FCEBDD; --orange-ink:#8A3207; }
+body { margin:0; background:var(--ground); color:var(--ink); font-family:Inter, system-ui, sans-serif; }
+a { color:var(--navy); } a:hover { color:#0F1F3D; }
+.pagina { max-width:1360px; margin:0 auto; padding:32px 28px 56px; display:flex; flex-direction:column; gap:20px; box-sizing:border-box; }
+.etichetta { margin:0; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+h1 { margin:0; font-family:'Space Grotesk', Inter, sans-serif; font-size:34px; font-weight:700; }
+h2 { margin:0; font-family:'Space Grotesk', Inter, sans-serif; font-size:26px; font-weight:700; }
+h3 { margin:0; font-size:17px; font-weight:700; }
+.card { background:#FFFFFF; border:1px solid var(--line); border-radius:12px; padding:22px; display:flex; flex-direction:column; gap:12px; }
+.riga { display:flex; flex-wrap:wrap; gap:12px; }
+.btn { min-height:44px; padding:0 16px; border-radius:8px; font-weight:700; font-size:14px; font-family:Inter, sans-serif; cursor:pointer; }
+.btn-primario { border:none; background:var(--navy); color:#FFFFFF; }
+.btn-secondario { border:1px solid #C9D1DD; background:#FFFFFF; color:var(--soft); font-weight:600; }
+.btn:disabled { background:var(--line); color:var(--muted); cursor:not-allowed; }
+.badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; }
+.campo { min-height:44px; padding:0 10px; border-radius:8px; font-size:14px; font-family:Inter, sans-serif; color:var(--ink); box-sizing:border-box; }
+textarea.campo { width:100%; padding:10px 12px; line-height:1.5; resize:vertical; min-height:96px; }
+.piccolo { font-size:12px; color:var(--muted); }
+.lista button { text-align:left; width:100%; padding:10px 12px; border-radius:10px; font-family:Inter, sans-serif; color:var(--ink); cursor:pointer; display:flex; flex-direction:column; gap:4px; }
+.diff { margin:0; padding:12px; border-radius:8px; background:var(--ground); font-size:14px; line-height:1.6; white-space:pre-wrap; }
+del { background:var(--orange-soft); color:var(--orange-ink); }
+ins { background:#DCE6F7; color:#10213F; }
+pre { margin:0; padding:14px; border-radius:8px; background:var(--ink); color:#E6E9EF; font-size:12px; line-height:1.5; overflow-x:auto; }
+</style>
+</head>
+<body>
+<div id="app" class="pagina"></div>
+<script>
+// Mockup autonomo della pagina di validazione (analisi 20, 20.16.5 C; decisione A-32). Dati della demo 2026Q4.
+// Stesse regole del canvas di design: valori della rubrica, testi correggibili, riscrittura di una parte, motivazioni,
+// nessun "accetta tutto". "Salva le decisioni" scarica davvero Decisioni_2026Q4.json, come previsto in esercizio.
+const LIV = {
+  I: ['Limitato: nessun cliente toccato, perdita entro 100.000 euro', 'Contenuto: alcuni clienti o un processo non critico', 'Rilevante: processo critico degradato o clientela ampia', 'Grave: funzione essenziale interrotta, sanzione probabile', 'Critico: continuità o solvibilità della Banca'],
+  P: ['Remota: solo teorica, nessun caso noto', 'Improbabile: casi altrove, o Banca poco esposta', 'Possibile: casi in altri settori; Banca esposta', 'Probabile: casi ripetuti in banche o crescita documentata', 'Quasi certa: già osservato presso istituzioni finanziarie'],
+  Pr: ['Oltre 3 anni', 'Da 2 a 3 anni', 'Da 1 a 2 anni', 'Entro 12 mesi', 'In corso o imminente presso la Banca'],
+  V: ['Oltre 12 mesi', 'Da 6 a 12 mesi', 'Da 3 a 6 mesi', 'Da 1 a 3 mesi', 'Entro 1 mese']
+};
+const NOMI = { I: 'Impatto', P: 'Probabilità', Pr: 'Prossimità', V: 'Velocity' };
+const CAMPI = { I: 'Impatto', P: 'Probabilita', Pr: 'Prossimita', V: 'Velocity' };
+const R = (id, nome, I, P, Pr, V, extra) => Object.assign({ id, nome, v: { I, P, Pr, V }, prima: null, nota: 'Valori confermati rispetto al ciclo precedente.', stato: 'nel radar', flag: null, testi: [], kri: [] }, extra || {});
+const RISCHI = [
+  R('NFR-01', 'Frodi su pagamenti istantanei abilitate da AI generativa', 4, 4, 5, 5, {
+    prima: { Pr: 4 },
+    nota: 'Prossimità da 4 a 5 per l’incident report interno del 20/11/2026: due frodi con voce sintetica su clienti corporate.',
+    testi: [
+      { campo: 'descrizione', label: 'Descrizione', testo: 'Frodi a danno dei clienti tramite voci o video sintetici che inducono bonifici istantanei irrevocabili verso conti di terzi. Per la Banca il meccanismo passa dai processi presidiati dalla Funzione Antifrode, che oggi è il punto in cui la causa può essere intercettata prima che diventi evento.' },
+      { campo: 'razionale.PROSSIMITA', label: 'Razionale · parte PROSSIMITÀ', testo: 'PROSSIMITÀ: in corso presso la Banca. L’incident report del 20/11/2026 documenta due frodi con voce sintetica su clienti corporate, con bonifici già eseguiti.' },
+      { campo: 'razionale.QUINDI', label: 'Razionale · parte QUINDI', testo: 'QUINDI: per la Banca il rischio tocca i pagamenti istantanei della clientela retail e il rimborso delle frodi, che pesa sul conto economico e sulla fiducia; va decisa la verifica rafforzata dei nuovi beneficiari prima dell’estensione dei limiti giornalieri.',
+        istr: 'Di’ chi decide la verifica rafforzata ed entro quando, come nell’azione proposta.',
+        sugg: 'QUINDI: per la Banca il rischio tocca i pagamenti istantanei della clientela retail e il rimborso delle frodi, che pesa sul conto economico e sulla fiducia. La verifica rafforzata dei nuovi beneficiari la decide la Funzione Antifrode entro il primo trimestre 2027, prima dell’estensione dei limiti giornalieri.' }
+    ],
+    kri: [
+      { id: 'NFR-01-K1', nome: 'Tentativi di frode APP per 10.000 bonifici istantanei', dettaglio: 'Evoluzione · attenzione 3 · allerta 6 · fonte: sistema antifrode transazionale' },
+      { id: 'NFR-01-K3', nome: 'Tempo medio di blocco di un beneficiario fraudolento', dettaglio: 'attenzione 4 · allerta 12 · azione collegata: Funzione Antifrode, 3 mesi' }
+    ]
+  }),
+  R('NFR-02', 'Concentrazione su un fornitore cloud critico', 4, 2, 3, 4, {
+    flag: { codice: 'C5 · esposizione non nota', testo: 'A1 non sa se tutti i servizi critici della Banca stanno presso il fornitore, e ha proposto la Probabilità senza l’esposizione. Se la Banca è esposta, il valore è Probabilità 3. Motivazione obbligatoria anche se accetti.' },
+    testi: [
+      { campo: 'razionale.PROBABILITA', label: 'Razionale · parte PROBABILITÀ', testo: 'PROBABILITÀ: improbabile. Nessuna interruzione grave del fornitore è documentata e il report del test completo di exit strategy mostra un’uscita praticabile, con soli rilievi minori.',
+        istr: 'La Banca è esposta: riscrivi la parte con la Probabilità 3 indicata dalla segnalazione.',
+        sugg: 'PROBABILITÀ: possibile. La Banca è esposta: i servizi critici ospitati dal fornitore sono quelli del Registro delle informazioni DORA. Nessuna interruzione grave è documentata e il test di exit strategy mostra un’uscita praticabile, con rilievi minori.' }
+    ]
+  }),
+  R('NFR-07', 'Ransomware presso un fornitore di servizi di pagamento', 4, 3, 3, 5),
+  R('NFR-12', 'Errori operativi nei pagamenti istantanei obbligatori', 3, 4, 4, 4),
+  R('NFR-16', 'Vertenze e carenza di tecnici nei ruoli IT critici', 3, 3, 2, 3, { stato: 'entra nel radar', nota: 'Entra nel radar per un meccanismo di perdita non coperto, sostenuto da una fonte interna (sintesi di A5).' }),
+  R('NFR-03', 'Greenwashing nella commercializzazione di prodotti ESG', 3, 3, 4, 2),
+  R('NFR-04', 'Eventi climatici estremi su sedi e data center', 3, 3, 3, 2, { nota: 'Testi allungati da A1 dopo il precontrollo (C10).' }),
+  R('NFR-05', 'Errori di processo nella migrazione del core banking', 3, 3, 3, 3),
+  R('NFR-06', 'Esfiltrazione di dati tramite strumenti di AI non autorizzati', 3, 3, 3, 3),
+  R('NFR-08', 'Accessi impropri di dipendenti ai dati dei clienti', 3, 2, 3, 3),
+  R('NFR-09', 'Violazione di sanzioni internazionali tramite triangolazioni', 4, 2, 2, 3),
+  R('NFR-10', 'Informazioni errate ai clienti da assistenti di AI generativa', 3, 3, 3, 3),
+  R('NFR-11', 'Fine del supporto dei sistemi di pagamento legacy', 3, 3, 3, 2, { nota: 'Testi allungati da A1 dopo il precontrollo (C10).' }),
+  R('NFR-14', 'Interruzione di cavi sottomarini per una crisi geopolitica', 4, 3, 1, 4),
+  R('NFR-13', 'Rottura della crittografia dei pagamenti con il calcolo quantistico', 5, 1, 1, null, { nota: 'Velocity non documentata dalle fonti: resta vuota.' })
+];
+const ORIG_ACC = 'A1 su richiesta, accettato dal validatore';
+
+const S = { sel: 'NFR-01', aperte: { 'NFR-01': true }, val: {}, mot: {}, testi: {}, origine: {}, diff: {}, istr: {}, proposte: {}, resp: {}, validatore: '', salvato: false };
+
+const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+const esc = (x) => String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const rischio = (id) => RISCHI.find((r) => r.id === id);
+const valore = (r, k) => has(S.val, r.id + '|' + k) ? S.val[r.id + '|' + k] : r.v[k];
+const testo = (r, t) => has(S.testi, r.id + '|' + t.campo) ? S.testi[r.id + '|' + t.campo] : t.testo;
+const str = (x) => String(x == null ? '' : x);
+const valoriCambiati = (r) => ['I', 'P', 'Pr', 'V'].filter((k) => str(valore(r, k)) !== str(r.v[k]));
+const testiCambiati = (r) => r.testi.filter((t) => testo(r, t) !== t.testo);
+const kriRespinti = (r) => r.kri.filter((k) => !!S.resp[k.id]);
+const haCambi = (r) => valoriCambiati(r).length > 0 || testiCambiati(r).length > 0 || kriRespinti(r).length > 0;
+const serveMot = (r) => haCambi(r) || !!r.flag;
+const motOk = (r) => (S.mot[r.id] || '').trim().length >= 10;
+
+function diff(a, b) {
+  const tk = (s) => s.split(/(\s+)/).filter((x) => x !== '');
+  const A = tk(a), B = tk(b), n = A.length, m = B.length;
+  const L = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = A[i] === B[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  let i = 0, j = 0, out = '';
+  while (i < n && j < m) {
+    if (A[i] === B[j]) { out += esc(A[i]); i++; j++; }
+    else if (L[i + 1][j] >= L[i][j + 1]) { out += '<del>' + esc(A[i]) + '</del>'; i++; }
+    else { out += '<ins>' + esc(B[j]) + '</ins>'; j++; }
+  }
+  while (i < n) out += '<del>' + esc(A[i++]) + '</del>';
+  while (j < m) out += '<ins>' + esc(B[j++]) + '</ins>';
+  return out;
+}
+
+function decisioni() {
+  const righe = RISCHI.filter((r) => serveMot(r) || S.aperte[r.id]).map((r) => {
+    const d = { oggetto: 'Rischio', id: r.id, periodo: '2026Q4', scheda_aperta: !!S.aperte[r.id] };
+    const valori = {}; valoriCambiati(r).forEach((k) => { valori[CAMPI[k]] = valore(r, k); });
+    if (Object.keys(valori).length) d.valori = valori;
+    const tt = testiCambiati(r).map((t) => ({ campo: t.campo, testo: testo(r, t), origine: S.origine[r.id + '|' + t.campo] || 'validatore' }));
+    if (tt.length) d.testi = tt;
+    const resp = kriRespinti(r).map((k) => k.id); if (resp.length) d.kri_respinti = resp;
+    if (S.mot[r.id]) d.motivazione = S.mot[r.id].trim();
+    return d;
+  });
+  return { periodo: '2026Q4', impronta_ciclo: '3f9c1a', validatore: S.validatore.trim(), schede_aperte: Object.keys(S.aperte).length, decisioni: righe };
+}
+
+function vistaLista() {
+  return RISCHI.map((x) => {
+    const sel = x.id === S.sel, V = valore(x, 'V');
+    const badge = [
+      x.flag ? '<span class="badge" style="color:var(--orange-ink);background:var(--orange-soft)">⚑ segnalazione</span>' : '',
+      haCambi(x) ? '<span class="badge" style="color:#FFFFFF;background:var(--orange)">rettificato</span>' : '',
+      serveMot(x) && !motOk(x) ? '<span class="badge" style="color:var(--orange-ink);background:#FFFFFF;border:1px solid var(--orange)">manca la motivazione</span>' : '',
+      !S.aperte[x.id] ? '<span class="badge" style="color:var(--muted);background:#EEF1F5;font-weight:400">non aperta</span>' : ''
+    ].join('');
+    return `<button type="button" data-azione="scegli" data-id="${x.id}" aria-pressed="${sel}" style="border:${sel ? '2px solid var(--navy)' : '1px solid var(--line)'};background:${sel ? 'var(--navy-soft)' : '#FFFFFF'}">
+      <span style="display:flex;flex-wrap:wrap;gap:8px;align-items:baseline"><strong style="font-size:14px">${x.id}</strong><span class="piccolo">I ${valore(x, 'I')} · P ${valore(x, 'P')} · Pr ${valore(x, 'Pr')} · V ${V == null ? '–' : V}</span></span>
+      <span style="font-size:13px;line-height:1.35">${esc(x.nome)}</span>
+      <span style="display:flex;flex-wrap:wrap;gap:6px">${badge}</span></button>`;
+  }).join('');
+}
+
+function vistaValori(r) {
+  return ['I', 'P', 'Pr', 'V'].map((k) => {
+    const prop = r.v[k], cur = valore(r, k), cambiato = str(cur) !== str(prop);
+    const opzioni = (k === 'V' ? [['', '– non documentata']] : []).concat(LIV[k].map((d, i) => [String(i + 1), (i + 1) + ' · ' + d]))
+      .map(([v, l]) => `<option value="${v}"${str(cur) === v ? ' selected' : ''}>${esc(l)}</option>`).join('');
+    return `<div style="display:flex;flex-direction:column;gap:6px">
+      <label for="dim-${k}" style="font-size:14px;font-weight:600">${NOMI[k]}</label>
+      <select id="dim-${k}" class="campo" data-campo="valore" data-k="${k}" style="border:2px solid ${cambiato ? 'var(--orange)' : '#C9D1DD'};background:${cambiato ? 'var(--orange-soft)' : '#FFFFFF'}">${opzioni}</select>
+      <span class="piccolo">Proposta di A1: ${prop == null ? 'non documentata' : prop + ' · ' + esc(LIV[k][prop - 1])}</span>
+      ${r.prima && r.prima[k] ? `<span class="piccolo">Ciclo prima: ${r.prima[k]}</span>` : ''}</div>`;
+  }).join('');
+}
+
+function vistaTesti(r) {
+  if (!r.testi.length) return '<p style="margin:0;font-size:14px;color:var(--muted)">In questo mockup i testi sono riportati solo per NFR-01 e NFR-02. Nella pagina vera ci sono per ogni rischio: descrizione, parti del razionale, KRI e azioni.</p>';
+  return r.testi.map((t) => {
+    const key = r.id + '|' + t.campo, id = (r.id + '-' + t.campo).replace(/\./g, '-'), cur = testo(r, t), edited = cur !== t.testo;
+    const origine = edited ? (S.origine[key] || 'validatore') : 'A1';
+    const bg = origine === 'A1' ? '#EEF1F5' : (origine === 'validatore' ? 'var(--orange-soft)' : '#DCE6F7');
+    const sugg = S.proposte[key];
+    const istr = has(S.istr, key) ? S.istr[key] : (t.istr || '');
+    let h = `<div style="border:1px solid #E1E5EB;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px">
+        <label for="txt-${id}" style="font-size:14px;font-weight:600">${esc(t.label)}</label>
+        <span style="font-size:12px;font-weight:600;background:${bg};padding:4px 10px;border-radius:999px">Origine: ${esc(origine)}</span></div>
+      <textarea id="txt-${id}" class="campo" rows="4" data-campo="testo" data-key="${key}" style="border:2px solid ${edited ? 'var(--orange)' : '#C9D1DD'}">${esc(cur)}</textarea>`;
+    if (edited) {
+      h += `<div class="riga"><button type="button" class="btn btn-secondario" data-azione="diff" data-key="${key}" style="color:var(--navy)">${S.diff[key] ? 'Nascondi le modifiche' : 'Mostra le modifiche rispetto alla proposta'}</button>
+        <button type="button" class="btn btn-secondario" data-azione="ripristina" data-key="${key}">Torna alla proposta di A1</button></div>`;
+      if (S.diff[key]) h += `<p class="diff">${diff(t.testo, cur)}</p>`;
+    }
+    if (t.sugg) {
+      h += `<div style="background:var(--ground);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px">
+        <label for="istr-${id}" style="font-size:13px;font-weight:600">Riscrivi questa parte · istruzione per A1</label>
+        <div class="riga" style="gap:8px"><input id="istr-${id}" type="text" class="campo" data-campo="istr" data-key="${key}" value="${esc(istr)}" style="flex:1 1 320px;border:1px solid #C9D1DD">
+        <button type="button" class="btn btn-primario" data-azione="chiedi" data-key="${key}">Chiedi ad A1</button></div>
+        <p class="piccolo" style="margin:0">A1 riscrive solo questa parte, con le sue regole; il controllo della parte (C10, C2) la riverifica. Il testo entra solo se lo accetti.</p>`;
+      if (sugg) {
+        h += `<div style="background:#FFFFFF;border:2px solid var(--navy);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <p style="margin:0;font-size:13px;font-weight:700;color:var(--navy)">Proposta di A1 · in evidenza le modifiche rispetto al testo attuale</p>
+          <p class="diff" style="background:#FFFFFF;padding:0">${diff(cur, sugg)}</p>
+          <p style="margin:0;font-size:12px;color:var(--navy)">Controllo della parte: superato (C10 lunghezza, C2 coerenza con il valore)</p>
+          <div class="riga" style="gap:8px"><button type="button" class="btn btn-primario" data-azione="accetta" data-key="${key}">Accetta la proposta</button>
+          <button type="button" class="btn btn-secondario" data-azione="scarta" data-key="${key}">Scarta</button></div></div>`;
+      }
+      h += '</div>';
+    }
+    return h + '</div>';
+  }).join('');
+}
+
+function vistaKri(r) {
+  if (!r.kri.length) return '';
+  return `<div class="card"><h3>KRI e azioni</h3>${r.kri.map((k) => `<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid #E1E5EB;border-radius:10px">
+    <div style="display:flex;flex-direction:column;gap:2px;flex:1 1 360px"><span style="font-weight:600;font-size:14px">${k.id} · ${esc(k.nome)}</span><span style="font-size:13px;color:var(--muted)">${esc(k.dettaglio)}</span></div>
+    <div style="display:flex;align-items:center;gap:8px;min-height:44px"><input id="resp-${k.id}" type="checkbox" data-campo="resp" data-id="${k.id}"${S.resp[k.id] ? ' checked' : ''} style="width:20px;height:20px">
+    <label for="resp-${k.id}" style="font-size:14px">Respingi</label></div></div>`).join('')}</div>`;
+}
+
+function vista() {
+  const r = rischio(S.sel), serve = serveMot(r), ok = motOk(r);
+  const mancanti = RISCHI.filter((x) => serveMot(x) && !motOk(x)).map((x) => x.id);
+  const nome = S.validatore.trim(), salvabile = nome.length >= 3 && mancanti.length === 0;
+  const nota = nome.length < 3 ? 'Scrivi chi approva.' : (mancanti.length ? 'Mancano le motivazioni di: ' + mancanti.join(', ') : 'Pronto: esce Decisioni_2026Q4.json');
+  const richiesta = serve ? (r.flag && !haCambi(r) ? 'obbligatoria per la segnalazione ⚑' : 'obbligatoria per la rettifica') : 'facoltativa';
+  const statoMot = serve ? (ok ? 'Motivazione sufficiente.' : 'Servono almeno 10 caratteri, con l’evidenza.') : 'Nessuna rettifica su questo rischio: la proposta vale come accettata.';
+  return `
+  <header style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <p class="etichetta">A-32 · Validazione_2026Q4.html · scritta dal motore · impronta del ciclo 3f9c1a</p>
+      <h1>Validazione del ciclo 2026Q4</h1>
+      <p style="margin:0;font-size:14px;color:var(--soft)">Lasciare la proposta vale come accettare. Ogni rettifica, e ogni scheda con ⚑, chiede una motivazione di almeno 10 caratteri.</p>
+    </div>
+    <a href="index.html" class="btn btn-secondario" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--navy)">Torna alla strada proposta</a>
+  </header>
+  <section aria-label="Stato della validazione" class="card" style="flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:20px;padding:16px 20px">
+    <div style="display:flex;flex-direction:column;gap:6px;flex:0 1 260px">
+      <label for="validatore" style="font-size:13px;font-weight:600">Chi approva</label>
+      <input id="validatore" type="text" class="campo" data-campo="validatore" value="${esc(S.validatore)}" placeholder="Nome e cognome" style="border:1px solid #C9D1DD;font-size:15px">
+    </div>
+    <dl style="margin:0;display:flex;flex-wrap:wrap;gap:24px;flex:1 1 420px">
+      <div><dt class="piccolo">Schede aperte</dt><dd style="margin:0;font-size:20px;font-weight:700">${Object.keys(S.aperte).length} di ${RISCHI.length}</dd></div>
+      <div><dt class="piccolo">Rischi rettificati</dt><dd style="margin:0;font-size:20px;font-weight:700;color:var(--orange)">${RISCHI.filter(haCambi).length}</dd></div>
+      <div><dt class="piccolo">Motivazioni mancanti</dt><dd style="margin:0;font-size:20px;font-weight:700">${mancanti.length}</dd></div>
+    </dl>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+      <button type="button" class="btn btn-primario" data-azione="salva"${salvabile ? '' : ' disabled'} style="min-height:48px;font-size:15px">Salva le decisioni</button>
+      <span class="piccolo">${esc(nota)}</span>
+    </div>
+  </section>
+  <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+    <nav aria-label="Rischi da validare" class="lista" style="flex:1 1 300px;max-width:360px;display:flex;flex-direction:column;gap:8px">
+      <p class="etichetta" style="letter-spacing:.05em">Rischi del ciclo</p>${vistaLista()}
+    </nav>
+    <section aria-labelledby="scheda-titolo" style="flex:999 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="gap:10px">
+        <p style="margin:0;font-size:13px;font-weight:700;color:var(--navy)">${r.id} · ${esc(r.stato)}</p>
+        <h2 id="scheda-titolo">${esc(r.nome)}</h2>
+        <p style="margin:0;font-size:14px;color:var(--soft)">${esc(r.nota)}</p>
+        ${r.flag ? `<div role="note" style="background:var(--orange-soft);border:1px solid #E3A57A;border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5;color:#4A1C04"><strong>⚑ ${esc(r.flag.codice)}</strong> · ${esc(r.flag.testo)}</div>` : ''}
+      </div>
+      <div class="card"><h3>Valori · solo i livelli della rubrica</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">${vistaValori(r)}</div></div>
+      <div class="card"><h3>Testi · correggibili per intero</h3>${vistaTesti(r)}</div>
+      ${vistaKri(r)}
+      <div class="card" style="gap:8px">
+        <label for="mot" style="font-size:15px;font-weight:700">Motivazione · ${richiesta}</label>
+        <textarea id="mot" class="campo" rows="3" data-campo="mot" placeholder="Il perché della decisione, con l'evidenza" style="border:2px solid ${serve && !ok ? 'var(--orange)' : '#C9D1DD'}">${esc(S.mot[r.id] || '')}</textarea>
+        <span style="font-size:13px;color:${serve && !ok ? 'var(--orange-ink)' : 'var(--muted)'}">${statoMot}</span>
+      </div>
+    </section>
+  </div>
+  ${S.salvato ? `<section aria-labelledby="file-decisioni" class="card" style="border:2px solid var(--navy)">
+    <h2 id="file-decisioni" style="font-size:18px">Decisioni_2026Q4.json · scaricato</h2>
+    <p style="margin:0;font-size:14px;color:var(--soft)">In esercizio lo applica <code>valida --decisioni</code>, con gli stessi controlli e lo stesso Storico_Validazioni della griglia di Excel; se il ciclo è cambiato dopo l'impronta, lo rifiuta.</p>
+    <pre>${esc(JSON.stringify(decisioni(), null, 2))}</pre></section>` : ''}
+  <footer style="font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px">Stesse regole della griglia (mappatura_campi.json): valori della rubrica letti dal kernel, quindi con A-19 diventano 6 livelli senza cambiare la pagina; Respingi per KRI e azioni; nessun «accetta tutto». Una scheda non aperta resta la proposta, e il file lo dice. Dati della demo.</footer>`;
+}
+
+const app = document.getElementById('app');
+function disegna() {
+  const attivo = document.activeElement, id = attivo && attivo.id;
+  let a = null, b = null;
+  try { a = attivo.selectionStart; b = attivo.selectionEnd; } catch (e) { /* select e pulsanti non hanno selezione */ }
+  app.innerHTML = vista();
+  if (id) {
+    const el = document.getElementById(id);
+    if (el) { el.focus(); try { if (a != null) el.setSelectionRange(a, b); } catch (e) { /* niente */ } }
+  }
+}
+
+function scarica() {
+  const blob = new Blob([JSON.stringify(decisioni(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob), link = document.createElement('a');
+  link.href = url; link.download = 'Decisioni_2026Q4.json'; document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+app.addEventListener('click', (ev) => {
+  const el = ev.target.closest('[data-azione]'); if (!el) return;
+  const az = el.dataset.azione, key = el.dataset.key;
+  const r = rischio(S.sel);
+  const t = key ? r.testi.find((x) => r.id + '|' + x.campo === key) : null;
+  if (az === 'scegli') { S.sel = el.dataset.id; S.aperte[S.sel] = true; }
+  else if (az === 'diff') { S.diff[key] = !S.diff[key]; }
+  else if (az === 'ripristina') { delete S.testi[key]; delete S.origine[key]; }
+  else if (az === 'chiedi' && t) { S.proposte[key] = t.sugg; }
+  else if (az === 'accetta') { S.testi[key] = S.proposte[key]; S.origine[key] = ORIG_ACC; S.proposte[key] = null; }
+  else if (az === 'scarta') { S.proposte[key] = null; }
+  else if (az === 'salva') { S.salvato = true; scarica(); }
+  disegna();
+});
+
+function aggiorna(ev) {
+  const el = ev.target, c = el.dataset && el.dataset.campo; if (!c) return;
+  const r = rischio(S.sel);
+  if (c === 'valore') { S.val[r.id + '|' + el.dataset.k] = el.value === '' ? null : Number(el.value); }
+  else if (c === 'testo') { S.testi[el.dataset.key] = el.value; S.origine[el.dataset.key] = 'validatore'; }
+  else if (c === 'istr') { S.istr[el.dataset.key] = el.value; }
+  else if (c === 'mot') { S.mot[r.id] = el.value; }
+  else if (c === 'validatore') { S.validatore = el.value; }
+  else if (c === 'resp') { S.resp[el.dataset.id] = el.checked; }
+  disegna();
+}
+app.addEventListener('input', aggiorna);
+app.addEventListener('change', (ev) => { if (ev.target.tagName === 'SELECT' || ev.target.type === 'checkbox') aggiorna(ev); });
+
+disegna();
+</script>
+</body>
+</html>

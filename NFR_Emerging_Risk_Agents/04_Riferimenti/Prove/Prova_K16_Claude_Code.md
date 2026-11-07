@@ -58,6 +58,15 @@ Controllare che esista `NFR_Emerging_Risk_Agents\04_Riferimenti\Prove\K16\prova_
    - Annotare la versione.
    - Se `where` mostra solo un file `.cmd` e nessun `.exe`, annotarlo: lo script vuole `claude.exe`, da indicare con
      `--claude <percorso>`.
+   - Se `where` non trova niente ma Claude Code si usa da **VS Code** (ammesso in Banca, DB9 g, 07/11): l'estensione
+     porta con se' una propria copia di Claude Code e non la mette nel PATH (documentazione dell'estensione, 07/11).
+     Cercarla nella cartella delle estensioni:
+     ```
+     dir /s /b "%USERPROFILE%\.vscode\extensions\claude.exe"
+     ```
+     Annotare il percorso e la versione (`"<percorso>" --version`), poi passarlo allo script con `--claude "<percorso>"`.
+     Se non c'e' nemmeno li', annotarlo: per il canale Claude (O4) serve l'installazione autonoma di Claude Code, da
+     chiedere all'IT (DB4 a).
 2. **Dove sta la configurazione verso Vertex.** Basta vedere se c'e', senza copiare i valori:
    ```
    set | findstr /i "VERTEX CLOUD_ML CLAUDE_CODE"

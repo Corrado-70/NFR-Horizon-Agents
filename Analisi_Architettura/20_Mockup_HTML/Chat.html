@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat in VS Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9EDF2}
+a{color:#9DC1FF}a:hover{color:#C7DBFF}
+</style>
+</head>
+<body>
+<div style="font-family: Inter, system-ui, sans-serif; background: #E9EDF2; padding: 32px; box-sizing: border-box; color: #18212F">
+<div style="max-width: 1376px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #4A5565">A-31 · chat con i soli strumenti del progetto</p>
+<h1 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 32px; font-weight: 700">Il giro trimestrale guidato dalla chat</h1>
+</div>
+<a href="index.html" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D1DD; color: #1F3864; font-weight: 600; font-size: 14px; text-decoration: none">Torna alla strada proposta</a>
+</div>
+
+<div style="background: #1E232B; border-radius: 12px; overflow: hidden; border: 1px solid #10141A">
+<div style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #161A20; color: #A9B1BE; font-size: 13px">
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 999px; background: #4A5363"></span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 999px; background: #4A5363"></span>
+<span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 999px; background: #4A5363"></span>
+<span style="margin-left: 12px">NFR_Horizon_Agents — editor con il pannello di Claude Code</span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; min-height: 860px">
+
+<nav aria-label="Esplora file" style="flex: 0 0 230px; background: #20262F; border-right: 1px solid #10141A; padding: 16px 12px; display: flex; flex-direction: column; gap: 6px; color: #C9D0DA; font-size: 13px; font-family: Consolas, monospace">
+<p style="margin: 0 0 6px; font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #A9B1BE">ESPLORA</p>
+<span>▾ NFR_Emerging_Risk_Agents</span>
+<span style="padding-left: 14px">▸ 01_Kernel</span>
+<span style="padding-left: 14px">▸ 07_Senza_Studio</span>
+<span style="padding-left: 14px">▾ Archivio_Cicli</span>
+<span style="padding-left: 28px">▾ Cicli/2026Q4</span>
+<span style="padding-left: 42px; color: #FFFFFF; background: #2D3644; border-radius: 4px; padding-top: 2px; padding-bottom: 2px">Anteprima_2026Q4.html</span>
+<span style="padding-left: 42px">Precontrollo_2026Q4.txt</span>
+<span style="padding-left: 42px">A5_2026Q4.json</span>
+<span style="padding-left: 42px">Validazione_2026Q4.html</span>
+<span style="padding-left: 28px">Cruscotto.html</span>
+<span style="padding-left: 14px">.mcp.json</span>
+<span style="padding-left: 14px">.claude/settings.json</span>
+</nav>
+
+<main style="flex: 999 1 480px; min-width: 0; background: #1E232B; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; color: #E6E9EF">
+<div style="display: flex; gap: 2px; font-size: 13px">
+<span style="background: #2A313C; padding: 8px 14px; border-radius: 6px 6px 0 0; color: #FFFFFF">Anteprima_2026Q4.html</span>
+<span style="padding: 8px 14px; color: #A9B1BE">Precontrollo_2026Q4.txt</span>
+</div>
+<div style="background: #FFFFFF; color: #18212F; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 20px">Anteprima del ciclo 2026Q4 · prima della validazione</h2>
+<p style="margin: 0; font-size: 14px; color: #3B4556">15 rischi proposti da A1 · precontrollo superato · A5: approvato, nessun rilievo</p>
+<div style="overflow-x: auto">
+<table style="width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14px">
+<thead>
+<tr style="text-align: left; background: #EEF1F5">
+<th scope="col" style="padding: 8px 10px">Rischio</th>
+<th scope="col" style="padding: 8px 10px">I</th>
+<th scope="col" style="padding: 8px 10px">P</th>
+<th scope="col" style="padding: 8px 10px">Pr</th>
+<th scope="col" style="padding: 8px 10px">V</th>
+<th scope="col" style="padding: 8px 10px">Rispetto alla baseline</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #E1E5EB"><td style="padding: 8px 10px"><strong>NFR-01</strong> Frodi su pagamenti istantanei abilitate da AI generativa</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px; font-weight: 700; color: #B4470E">5</td><td style="padding: 8px 10px">5</td><td style="padding: 8px 10px; color: #B4470E; font-weight: 600">Prossimità 4 → 5 (incident report interno)</td></tr>
+<tr style="border-top: 1px solid #E1E5EB"><td style="padding: 8px 10px"><strong>NFR-07</strong> Ransomware presso un fornitore di servizi di pagamento</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">5</td><td style="padding: 8px 10px; color: #4A5565">confermato</td></tr>
+<tr style="border-top: 1px solid #E1E5EB"><td style="padding: 8px 10px"><strong>NFR-12</strong> Errori operativi nei pagamenti istantanei obbligatori</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px; color: #4A5565">confermato</td></tr>
+<tr style="border-top: 1px solid #E1E5EB"><td style="padding: 8px 10px"><strong>NFR-16</strong> Vertenze e carenza di tecnici nei ruoli IT critici</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">2</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px; color: #1F3864; font-weight: 600">entra nel radar</td></tr>
+<tr style="border-top: 1px solid #E1E5EB"><td style="padding: 8px 10px"><strong>NFR-02</strong> Concentrazione su un fornitore cloud critico</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px">2</td><td style="padding: 8px 10px">3</td><td style="padding: 8px 10px">4</td><td style="padding: 8px 10px; color: #4A5565">confermato · ⚑ esposizione da verificare</td></tr>
+</tbody>
+</table>
+</div>
+<p style="margin: 0; font-size: 13px; color: #4A5565">… altri 10 rischi. L'anteprima la scrive Python dopo il precontrollo (G6).</p>
+</div>
+</main>
+
+<aside aria-label="Pannello di Claude Code" style="flex: 1 1 440px; max-width: 520px; background: #252B35; border-left: 1px solid #10141A; display: flex; flex-direction: column">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #10141A">
+<span style="color: #FFFFFF; font-weight: 600; font-size: 14px">Claude Code</span>
+<span style="font-size: 12px; color: #C9D0DA; background: #1E232B; border: 1px solid #3A4352; padding: 4px 10px; border-radius: 999px">strumenti: solo nfr</span>
+</div>
+
+<div style="flex: 1 1 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.5; color: #E6E9EF">
+
+<div style="align-self: flex-end; max-width: 85%; background: #2D4A80; color: #FFFFFF; padding: 10px 14px; border-radius: 12px 12px 2px 12px; font-family: Consolas, monospace">/ciclo</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-family: Consolas, monospace; font-size: 12px; color: #A9B1BE">
+<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A9B1BE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"></path></svg>
+<span>nfr · stato → trimestre 2026Q4 chiuso; prossimo passo A1, tocca all'analista</span>
+</div>
+<p style="margin: 0">Il trimestre 2026Q4 è chiuso. Il prossimo passo è <strong>A1 sul ciclo 2026Q4</strong>. Parto?</p>
+
+<div style="align-self: flex-end; background: #2D4A80; color: #FFFFFF; padding: 10px 14px; border-radius: 12px 12px 2px 12px">sì</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; font-family: Consolas, monospace; font-size: 12px; color: #A9B1BE; background: #1E232B; border: 1px solid #343C49; border-radius: 8px; padding: 10px 12px">
+<span>nfr · esegui_prossimo_passo</span>
+<span>  A1 (Claude, Opus 5.5, effort high) · 14 min · risposta intera</span>
+<span>  ingresso: schema ok · 15 rischi · origine Claude (Vertex)</span>
+<span>  precontrollo: 0 bloccanti · 2 testi sotto i minimi (C10)</span>
+</div>
+
+<div style="background: #2E3542; border: 1px solid #4A5468; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0">A1 è stato troppo sintetico su <strong>NFR-04</strong> e <strong>NFR-11</strong> (razionale sotto le lunghezze minime). Gli chiedo di allungarli?</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 8px; border: none; background: #9DC1FF; color: #10213F; font-weight: 700; font-size: 14px; font-family: Inter, sans-serif">Sì, allunga (consigliato)</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid #6B7587; background: transparent; color: #E6E9EF; font-weight: 600; font-size: 14px; font-family: Inter, sans-serif">No, vanno in validazione</button>
+</div>
+<p style="margin: 0; font-size: 12px; color: #A9B1BE">La domanda viene dal flusso, che resta sospeso: la risposta lo riprende con nfr · rispondi.</p>
+</div>
+
+<div style="align-self: flex-end; background: #2D4A80; color: #FFFFFF; padding: 10px 14px; border-radius: 12px 12px 2px 12px">Sì, allunga</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; font-family: Consolas, monospace; font-size: 12px; color: #A9B1BE; background: #1E232B; border: 1px solid #343C49; border-radius: 8px; padding: 10px 12px">
+<span>nfr · rispondi("allunga")</span>
+<span>  A1, correzione · precontrollo superato</span>
+<span>  A5 Challenger · approvato, 0 rilievi</span>
+<span>  trimestrale · ciclo 2026Q4 scritto (copia di lavoro, impronta 3f9c1a)</span>
+</div>
+<p style="margin: 0">Ciclo scritto: ora tocca al <strong>validatore</strong>. Ho aggiornato il cruscotto e preparato la pagina di validazione.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<a href="Validazione.html" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #6B7587; color: #E6E9EF; text-decoration: none; font-size: 13px; font-weight: 600">Apri la validazione</a>
+<a href="Cruscotto.html" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #6B7587; color: #E6E9EF; text-decoration: none; font-size: 13px; font-weight: 600">Apri il cruscotto</a>
+</div>
+
+<div style="align-self: flex-end; max-width: 85%; background: #2D4A80; color: #FFFFFF; padding: 10px 14px; border-radius: 12px 12px 2px 12px">perché NFR-01 è passato a Prossimità 5?</div>
+<div style="display: flex; align-items: center; gap: 8px; font-family: Consolas, monospace; font-size: 12px; color: #A9B1BE">
+<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A9B1BE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"></path></svg>
+<span>nfr · leggi_ciclo("NFR-01", "variazioni")</span>
+</div>
+<p style="margin: 0">Per l'<strong>incident report interno del 20/11/2026</strong>: due frodi con voce sintetica su clienti corporate, con bonifici istantanei già eseguiti. È il livello 5 della rubrica, «in corso o imminente presso la Banca». Fonte di tipo Interna, citata in <code style="font-family: Consolas, monospace">variazioni</code> e nella parte PROSSIMITÀ del razionale.</p>
+
+<div style="background: #3A2E22; border: 1px solid #A0652F; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-weight: 600; color: #FFE2C4">Permesso richiesto: nfr · proponi_testo</p>
+<p style="margin: 0; font-size: 13px; color: #F3E3D2">Scrive una proposta per la pagina di validazione (NFR-01, parte QUINDI). Non tocca il registro: la proposta entra solo se il validatore la accetta.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 8px; border: none; background: #FFC48A; color: #3A2210; font-weight: 700; font-size: 14px; font-family: Inter, sans-serif">Consenti</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid #A0652F; background: transparent; color: #FFE2C4; font-weight: 600; font-size: 14px; font-family: Inter, sans-serif">Nega</button>
+</div>
+</div>
+</div>
+
+<div style="padding: 12px 16px; border-top: 1px solid #10141A; display: flex; flex-direction: column; gap: 6px">
+<label for="msg" style="font-size: 12px; color: #A9B1BE">Messaggio per Claude</label>
+<input id="msg" type="text" placeholder="Chiedi qualcosa sul ciclo, o scrivi /ciclo" style="min-height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid #4A5468; background: #1E232B; color: #E6E9EF; font-size: 14px; font-family: Inter, sans-serif">
+<p style="margin: 0; font-size: 12px; color: #A9B1BE">Shell, scrittura di file e web vietati in .claude/settings.json · "Approva" resta all'app e al validatore</p>
+</div>
+</aside>
+
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px">
+<div style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.5"><strong>Le domande del flusso arrivano in chat.</strong> Il flusso di oggi resta sospeso finché la persona non risponde: niente risposte decise dal modello.</div>
+<div style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.5"><strong>L'ordine lo decide stato.leggi().</strong> esegui_prossimo_passo esegue solo il passo che dice lo stato, mai un altro.</div>
+<div style="background: #FFFFFF; border: 1px solid #D8DDE5; border-radius: 10px; padding: 16px; font-size: 14px; line-height: 1.5"><strong>Le scritture passano da una conferma.</strong> proponi_testo chiede il permesso e produce solo una proposta; valida, riapri e Admin non sono strumenti della chat.</div>
+</div>
+
+</div>
+</div>
+</body>
+</html>
